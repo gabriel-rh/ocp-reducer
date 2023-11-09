@@ -1,0 +1,1699 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="osdk-generating-csvs"]
+= Defining cluster service versions (CSVs)
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: osdk-generating-csvs
+
+toc::[]
+
+A _cluster service version_ (CSV), defined by a `ClusterServiceVersion` object, is a YAML manifest created from Operator metadata that assists Operator Lifecycle Manager (OLM) in running the Operator in a cluster. It is the metadata that accompanies an Operator container image, used to populate user interfaces with information such as its logo, description, and version. It is also a source of technical information that is required to run the Operator, like the RBAC rules it requires and which custom resources (CRs) it manages or depends on.
+
+The Operator SDK includes the CSV generator to generate a CSV for the current Operator project, customized using information contained in YAML manifests and Operator source files.
+
+A CSV-generating command removes the responsibility of Operator authors having in-depth OLM knowledge in order for their Operator to interact with OLM or publish metadata to the Catalog Registry. Further, because the CSV spec will likely change over time as new Kubernetes and OLM features are implemented, the Operator SDK is equipped to easily extend its update system to handle new CSV features going forward.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+[id="osdk-how-csv-gen-works_{context}"]
+= How CSV generation works
+
+Operator bundle manifests, which include cluster service versions (CSVs), describe how to display, create, and manage an application with Operator Lifecycle Manager (OLM). The CSV generator in the Operator SDK, called by the `generate bundle` subcommand, is the first step towards publishing your Operator to a catalog and deploying it with OLM. The subcommand requires certain input manifests to construct a CSV manifest; all inputs are read when the command is invoked, along with a CSV base, to idempotently generate or regenerate a CSV.
+
+Typically, the `generate kustomize manifests` subcommand would be run first to generate the input link:https://kustomize.io/[Kustomize] bases that are consumed by the `generate bundle` subcommand. However, the Operator SDK provides the `make bundle` command, which automates several tasks, including running the following subcommands in order:
+
+. `generate kustomize manifests`
+. `generate bundle`
+. `bundle validate`
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See xref:../../operators/operator_sdk/osdk-working-bundle-images.adoc#osdk-bundle-operator_osdk-working-bundle-images[Bundling an Operator] for a full procedure that includes generating a bundle and CSV.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+[id="osdk-csv-bundle-files_{context}"]
+= Generated files and resources
+
+The `make bundle` command creates the following files and directories in your Operator project:
+
+* A bundle manifests directory named `bundle/manifests` that contains a `ClusterServiceVersion` (CSV) object
+* A bundle metadata directory named `bundle/metadata`
+* All custom resource definitions (CRDs) in a `config/crd` directory
+* A Dockerfile `bundle.Dockerfile`
+
+The following resources are typically included in a CSV:
+
+Role:: Defines Operator permissions within a namespace.
+ClusterRole:: Defines cluster-wide Operator permissions.
+Deployment:: Defines how an Operand of an Operator is run in pods.
+CustomResourceDefinition (CRD):: Defines custom resources that your Operator reconciles.
+Custom resource examples:: Examples of resources adhering to the spec of a particular CRD.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+[id="osdk-csv-ver_{context}"]
+= Version management
+
+The `--version` flag for the `generate bundle` subcommand supplies a semantic version for your bundle when creating one for the first time and when upgrading an existing one.
+
+By setting the `VERSION` variable in your `Makefile`, the `--version` flag is automatically invoked using that value when the `generate bundle` subcommand is run by the `make bundle` command. The CSV version is the same as the Operator version, and a new CSV is generated when upgrading Operator versions.
+
+:leveloffset!:
+
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+[id="osdk-manually-defined-csv-fields_{context}"]
+= Manually-defined CSV fields
+
+Many CSV fields cannot be populated using generated, generic manifests that are not specific to Operator SDK. These fields are mostly human-written metadata about the Operator and various custom resource definitions (CRDs).
+
+Operator authors must directly modify their cluster service version (CSV) YAML file, adding personalized data to the following required fields. The Operator SDK gives a warning during CSV generation when a lack of data in any of the required fields is detected.
+
+The following tables detail which manually-defined CSV fields are required and which are optional.
+
+.Required CSV fields
+[cols="2a,8a",options="header"]
+|===
+|Field |Description
+
+|`metadata.name`
+|A unique name for this CSV. Operator version should be included in the name to ensure uniqueness, for example `app-operator.v0.1.1`.
+
+|`metadata.capabilities`
+|The capability level according to the Operator maturity model. Options include `Basic Install`, `Seamless Upgrades`, `Full Lifecycle`, `Deep Insights`, and `Auto Pilot`.
+
+|`spec.displayName`
+|A public name to identify the Operator.
+
+|`spec.description`
+|A short description of the functionality of the Operator.
+
+|`spec.keywords`
+|Keywords describing the Operator.
+
+|`spec.maintainers`
+|Human or organizational entities maintaining the Operator, with a `name` and `email`.
+
+|`spec.provider`
+|The provider of the Operator (usually an organization), with a `name`.
+
+|`spec.labels`
+|Key-value pairs to be used by Operator internals.
+
+|`spec.version`
+|Semantic version of the Operator, for example `0.1.1`.
+
+|`spec.customresourcedefinitions`
+|Any CRDs the Operator uses. This field is populated automatically by the Operator SDK if any CRD YAML files are present in `deploy/`. However, several fields not in the CRD manifest spec require user input:
+
+- `description`: description of the CRD.
+- `resources`: any Kubernetes resources leveraged by the CRD, for example `Pod` and `StatefulSet` objects.
+- `specDescriptors`: UI hints for inputs and outputs of the Operator.
+|===
+
+
+.Optional CSV fields
+[cols="2a,8a",options="header"]
+|===
+|Field |Description
+
+|`spec.replaces`
+|The name of the CSV being replaced by this CSV.
+
+|`spec.links`
+|URLs (for example, websites and documentation) pertaining to the Operator or application being managed, each with a `name` and `url`.
+
+|`spec.selector`
+|Selectors by which the Operator can pair resources in a cluster.
+
+|`spec.icon`
+|A base64-encoded icon unique to the Operator, set in a `base64data` field with a `mediatype`.
+
+|`spec.maturity`
+|The level of maturity the software has achieved at this version. Options include `planning`, `pre-alpha`, `alpha`, `beta`, `stable`, `mature`, `inactive`, and `deprecated`.
+
+|`metadata.annotations`
+|===
+
+Further details on what data each field above should hold are found in the link:https://github.com/operator-framework/operator-lifecycle-manager/blob/master/doc/design/building-your-csv.md[CSV spec].
+
+[NOTE]
+====
+Several YAML fields currently requiring user intervention can potentially be parsed from Operator code.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../operators/understanding/olm-what-operators-are.adoc#olm-maturity-model_olm-what-operators-are[Operator maturity model]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+[id="osdk-csv-manual-annotations_{context}"]
+= Operator metadata annotations
+
+Operator developers can manually define certain annotations in the metadata of a cluster service version (CSV) to enable features or highlight capabilities in user interfaces (UIs), such as OperatorHub.
+
+The following table lists Operator metadata annotations that can be manually defined using `metadata.annotations` fields.
+
+.Annotations
+[cols="5a,5a",options="header"]
+|===
+|Field |Description
+
+|`alm-examples`
+|Provide custom resource definition (CRD) templates with a minimum set of configuration. Compatible UIs pre-fill this template for users to further customize.
+
+|`operatorframework.io/initialization-resource`
+|Specify a single required custom resource by adding `operatorframework.io/initialization-resource` annotation to the cluster service version (CSV) during Operator installation. The user is then prompted to create the custom resource through a template provided in the CSV.  Must include a template that contains a complete YAML definition.
+
+|`operatorframework.io/suggested-namespace`
+|Set a suggested namespace where the Operator should be deployed.
+
+|`operatorframework.io/suggested-namespace-template`
+|Set a manifest for a Namespace object with the namespace default node selector specified.
+
+|`operators.openshift.io/infrastructure-features`
+|Infrastructure features supported by the Operator. Users can view and filter by these features when discovering Operators through OperatorHub in the web console. Valid, case-sensitive values:
+
+- `disconnected`: Operator supports being mirrored into disconnected catalogs, including all dependencies, and does not require internet access. All related images required for mirroring are listed by the Operator.
+- `cnf`: Operator provides a Cloud-native Network Functions (CNF) Kubernetes plugin.
+- `cni`: Operator provides a Container Network Interface (CNI) Kubernetes plugin.
+- `csi`: Operator provides a Container Storage Interface (CSI) Kubernetes plugin.
+- `fips`: Operator accepts the FIPS mode of the underlying platform and works on nodes that are booted into FIPS mode.
+
+[IMPORTANT]
+====
+When running {op-system-base-full} or {op-system-first} booted in FIPS mode, {product-title} core components use the {op-system-base} cryptographic libraries that have been submitted to NIST for FIPS 140-2/140-3 Validation on only the x86_64, ppc64le, and s390x architectures.
+====
+- `proxy-aware`: Operator supports running on a cluster behind a proxy. Operator accepts the standard proxy environment variables  `HTTP_PROXY` and `HTTPS_PROXY`, which Operator Lifecycle Manager (OLM) provides to the Operator automatically when the cluster is configured to use a proxy. Required environment variables are passed down to Operands for managed workloads.
+
+|`operators.openshift.io/valid-subscription`
+|Free-form array for listing any specific subscriptions that are required to use the Operator. For example, `'["3Scale Commercial License", "Red Hat Managed Integration"]'`.
+
+|`operators.operatorframework.io/internal-objects`
+|Hides CRDs in the UI that are not meant for user manipulation.
+
+|===
+
+[discrete]
+[id="osdk-csv-manual-annotations-examples_{context}"]
+== Example use cases
+
+.Operator supports disconnected and proxy-aware
+[source,terminal]
+----
+operators.openshift.io/infrastructure-features: '["disconnected", "proxy-aware"]'
+----
+
+.Operator requires an {product-title} license
+[source,terminal]
+----
+operators.openshift.io/valid-subscription: '["OpenShift Container Platform"]'
+----
+
+.Operator requires a 3scale license
+[source,terminal]
+----
+operators.openshift.io/valid-subscription: '["3Scale Commercial License", "Red Hat Managed Integration"]'
+----
+
+.Operator supports disconnected and proxy-aware, and requires an {product-title} license
+[source,terminal]
+----
+operators.openshift.io/infrastructure-features: '["disconnected", "proxy-aware"]'
+operators.openshift.io/valid-subscription: '["OpenShift Container Platform"]'
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../operators/operator_sdk/osdk-generating-csvs.adoc#osdk-crds-templates_osdk-generating-csvs[CRD templates]
+* xref:../../operators/operator_sdk/osdk-generating-csvs.adoc#osdk-init-resource_osdk-generating-csvs[Initializing required custom resources]
+* xref:../../operators/operator_sdk/osdk-generating-csvs.adoc#osdk-suggested-namespace_osdk-generating-csvs[Setting a suggested namespace]
+* xref:../../operators/operator_sdk/osdk-generating-csvs.adoc#osdk-suggested-namespace-default-node_osdk-generating-csvs[Setting a suggested namespace with default node selector]
+* xref:../../operators/operator_sdk/osdk-generating-csvs.adoc#olm-enabling-operator-for-restricted-network_osdk-generating-csvs[Enabling your Operator for restricted network environments] (disconnected mode)
+* xref:../../operators/operator_sdk/osdk-generating-csvs.adoc#osdk-hiding-internal-objects_osdk-generating-csvs[Hiding internal objects]
+* xref:../../installing/installing-fips.adoc#installing-fips[Support for FIPS crytography]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="olm-enabling-operator-for-restricted-network_{context}"]
+= Enabling your Operator for restricted network environments
+
+As an Operator author, your Operator must meet additional requirements to run properly in a restricted network, or disconnected, environment.
+
+.Operator requirements for supporting disconnected mode
+
+* Replace hard-coded image references with environment variables.
+* In the cluster service version (CSV) of your Operator:
+** List any _related images_, or other container images that your Operator might require to perform their functions.
+** Reference all specified images by a digest (SHA) and not by a tag.
+* All dependencies of your Operator must also support running in a disconnected mode.
+* Your Operator must not require any off-cluster resources.
+// TODO: Include more info w/ better steps on how to do this:
+//* You must understand the {product-title} proxy configuration.
+
+.Prerequisites
+
+* An Operator project with a CSV. The following procedure uses the Memcached Operator as an example for Go-, Ansible-, and Helm-based projects.
+
+.Procedure
+
+. Set an environment variable for the additional image references used by the Operator in the `config/manager/manager.yaml` file:
++
+.Example `config/manager/manager.yaml` file
+[%collapsible]
+====
+[source,yaml]
+----
+...
+spec:
+  ...
+    spec:
+      ...
+      containers:
+      - command:
+        - /manager
+        ...
+        env:
+        - name: <related_image_environment_variable> <1>
+          value: "<related_image_reference_with_tag>" <2>
+----
+<1> Define the environment variable, such as `RELATED_IMAGE_MEMCACHED`.
+<2> Set the related image reference and tag, such as `docker.io/memcached:1.4.36-alpine`.
+====
+
+. Replace hard-coded image references with environment variables in the relevant file for your Operator project type:
+
+* For Go-based Operator projects, add the environment variable to the `controllers/memcached_controller.go` file as shown in the following example:
++
+.Example `controllers/memcached_controller.go` file
+[%collapsible]
+====
+[source,diff]
+----
+  // deploymentForMemcached returns a memcached Deployment object
+
+...
+
+	Spec: corev1.PodSpec{
+        	Containers: []corev1.Container{{
+-			Image:   "memcached:1.4.36-alpine", <1>
++			Image:   os.Getenv("<related_image_environment_variable>"), <2>
+			Name:    "memcached",
+			Command: []string{"memcached", "-m=64", "-o", "modern", "-v"},
+			Ports: []corev1.ContainerPort{{
+
+...
+----
+<1> Delete the image reference and tag.
+<2> Use the `os.Getenv` function to call the `<related_image_environment_variable>`.
+
+[NOTE]
+=====
+The `os.Getenv` function returns an empty string if a variable is not set. Set the `<related_image_environment_variable>` before changing the file.
+=====
+====
+
+* For Ansible-based Operator projects, add the environment variable to the `roles/memcached/tasks/main.yml` file as shown in the following example:
++
+.Example `roles/memcached/tasks/main.yml` file
+[%collapsible]
+====
+[source,diff]
+----
+spec:
+  containers:
+  - name: memcached
+    command:
+    - memcached
+    - -m=64
+    - -o
+    - modern
+    - -v
+-   image: "docker.io/memcached:1.4.36-alpine" <1>
++   image: "{{ lookup('env', '<related_image_environment_variable>') }}" <2>
+    ports:
+      - containerPort: 11211
+
+...
+----
+<1> Delete the image reference and tag.
+<2> Use the `lookup` function to call the `<related_image_environment_variable>`.
+====
+
+* For Helm-based Operator projects, add the `overrideValues` field to the `watches.yaml` file as shown in the following example:
++
+.Example `watches.yaml` file
+[%collapsible]
+====
+[source,yaml]
+----
+...
+- group: demo.example.com
+  version: v1alpha1
+  kind: Memcached
+  chart: helm-charts/memcached
+  overrideValues: <1>
+    relatedImage: ${<related_image_environment_variable>} <2>
+----
+<1> Add the `overrideValues` field.
+<2> Define the `overrideValues` field by using the `<related_image_environment_variable>`, such as `RELATED_IMAGE_MEMCACHED`.
+====
+
+.. Add the value of the `overrideValues` field to the `helm-charts/memchached/values.yaml` file as shown in the following example:
++
+.Example `helm-charts/memchached/values.yaml` file
+[source,yaml]
+----
+...
+relatedImage: ""
+----
+
+.. Edit the chart template in the `helm-charts/memcached/templates/deployment.yaml` file as shown in the following example:
++
+.Example `helm-charts/memcached/templates/deployment.yaml` file
+[%collapsible]
+====
+[source,yaml]
+----
+containers:
+  - name: {{ .Chart.Name }}
+    securityContext:
+      - toYaml {{ .Values.securityContext | nindent 12 }}
+    image: "{{ .Values.image.pullPolicy }}
+    env: <1>
+      - name: related_image <2>
+        value: "{{ .Values.relatedImage }}" <3>
+----
+<1> Add the `env` field.
+<2> Name the environment variable.
+<3> Define the value of the environment variable.
+====
+
+. Add the `BUNDLE_GEN_FLAGS` variable definition to your `Makefile` with the following changes:
++
+.Example `Makefile`
+[source,diff]
+----
+   BUNDLE_GEN_FLAGS ?= -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
+
+   # USE_IMAGE_DIGESTS defines if images are resolved via tags or digests
+   # You can enable this value if you would like to use SHA Based Digests
+   # To enable set flag to true
+   USE_IMAGE_DIGESTS ?= false
+   ifeq ($(USE_IMAGE_DIGESTS), true)
+         BUNDLE_GEN_FLAGS += --use-image-digests
+   endif
+
+...
+
+-  $(KUSTOMIZE) build config/manifests | operator-sdk generate bundle -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS) <1>
++  $(KUSTOMIZE) build config/manifests | operator-sdk generate bundle $(BUNDLE_GEN_FLAGS) <2>
+
+...
+----
+<1> Delete this line in the `Makefile`.
+<2> Replace the line above with this line.
+
+. To update your Operator image to use a digest (SHA) and not a tag, run the `make bundle` command and set `USE_IMAGE_DIGESTS` to `true` :
++
+[source,terminal]
+----
+$ make bundle USE_IMAGE_DIGESTS=true
+----
+
+. Add the `disconnected` annotation, which indicates that the Operator works in a disconnected environment:
++
+[source,yaml]
+----
+metadata:
+  annotations:
+    operators.openshift.io/infrastructure-features: '["disconnected"]'
+----
++
+Operators can be filtered in OperatorHub by this infrastructure feature.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="olm-enabling-operator-for-multi-arch_{context}"]
+= Enabling your Operator for multiple architectures and operating systems
+
+Operator Lifecycle Manager (OLM) assumes that all Operators run on Linux hosts. However, as an Operator author, you can specify whether your Operator supports managing workloads on other architectures, if worker nodes are available in the {product-title} cluster.
+
+If your Operator supports variants other than AMD64 and Linux, you can add labels to the cluster service version (CSV) that provides the Operator to list the supported variants. Labels indicating supported architectures and operating systems are defined by the following:
+
+[source,yaml]
+----
+labels:
+    operatorframework.io/arch.<arch>: supported <1>
+    operatorframework.io/os.<os>: supported <2>
+----
+<1> Set `<arch>` to a supported string.
+<2> Set `<os>` to a supported string.
+
+[NOTE]
+====
+Only the labels on the channel head of the default channel are considered for filtering package manifests by label. This means, for example, that providing an additional architecture for an Operator in the non-default channel is possible, but that architecture is not available for filtering in the `PackageManifest` API.
+====
+
+If a CSV does not include an `os` label, it is treated as if it has the following Linux support label by default:
+
+[source,yaml]
+----
+labels:
+    operatorframework.io/os.linux: supported
+----
+
+If a CSV does not include an `arch` label, it is treated as if it has the following AMD64 support label by default:
+
+[source,yaml]
+----
+labels:
+    operatorframework.io/arch.amd64: supported
+----
+
+If an Operator supports multiple node architectures or operating systems, you can add multiple labels, as well.
+
+.Prerequisites
+
+* An Operator project with a CSV.
+* To support listing multiple architectures and operating systems, your Operator image referenced in the CSV must be a manifest list image.
+* For the Operator to work properly in restricted network, or disconnected, environments, the image referenced must also be specified using a digest (SHA) and not by a tag.
+
+.Procedure
+
+* Add a label in the `metadata.labels` of your CSV for each supported architecture and operating system that your Operator supports:
++
+[source,yaml]
+----
+labels:
+  operatorframework.io/arch.s390x: supported
+  operatorframework.io/os.zos: supported
+  operatorframework.io/os.linux: supported <1>
+  operatorframework.io/arch.amd64: supported <1>
+----
+<1> After you add a new architecture or operating system, you must also now include the default `os.linux` and `arch.amd64` variants explicitly.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See the link:https://docs.docker.com/registry/spec/manifest-v2-2/#manifest-list[Image Manifest V 2, Schema 2] specification for more information on manifest lists.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+[id="olm-arch-os-support_{context}"]
+= Architecture and operating system support for Operators
+
+The following strings are supported in Operator Lifecycle Manager (OLM) on {product-title} when labeling or filtering Operators that support multiple architectures and operating systems:
+
+.Architectures supported on {product-title}
+[options="header"]
+|===
+|Architecture |String
+
+|AMD64
+|`amd64`
+
+|{ibmpowerProductName}
+|`ppc64le`
+
+|{ibmzProductName}
+|`s390x`
+|===
+
+.Operating systems supported on {product-title}
+[options="header"]
+|===
+|Operating system |String
+
+|Linux
+|`linux`
+
+|z/OS
+|`zos`
+|===
+
+[NOTE]
+====
+Different versions of {product-title} and other Kubernetes-based distributions
+might support a different set of architectures and operating systems.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-suggested-namespace_{context}"]
+= Setting a suggested namespace
+
+Some Operators must be deployed in a specific namespace, or with ancillary resources in specific namespaces, to work properly. If resolved from a subscription, Operator Lifecycle Manager (OLM) defaults the namespaced resources of an Operator to the namespace of its subscription.
+
+As an Operator author, you can instead express a desired target namespace as part of your cluster service version (CSV) to maintain control over the final namespaces of the resources installed for their Operators. When adding the Operator to a cluster using OperatorHub, this enables the web console to autopopulate the suggested namespace for the
+cluster administrator
+during the installation process.
+
+.Procedure
+
+* In your CSV, set the `operatorframework.io/suggested-namespace` annotation to your suggested namespace:
++
+[source,yaml]
+----
+metadata:
+  annotations:
+    operatorframework.io/suggested-namespace: <namespace> <1>
+----
+<1> Set your suggested namespace.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-suggested-namespace-default-node_{context}"]
+= Setting a suggested namespace with default node selector
+
+Some Operators expect to run only on control plane nodes, which can be done by setting a `nodeSelector` in the `Pod` spec by the Operator itself.
+
+To avoid getting duplicated and potentially conflicting cluster-wide default `nodeSelector`, you can set a default node selector on the namespace where the Operator runs. The default node selector will take precedence over the cluster default so the cluster default will not be applied to the pods in the Operators namespace.
+
+When adding the Operator to a cluster using OperatorHub, the web console auto-populates the suggested namespace for the
+cluster administrator
+during the installation process. The suggested namespace is created using the namespace manifest in YAML which is included in the cluster service version (CSV).
+
+.Procedure
+
+* In your CSV, set the `operatorframework.io/suggested-namespace-template` with a manifest for a `Namespace` object. The following sample is a manifest for an example `Namespace` with the namespace default node selector specified:
++
+[source,yaml]
+----
+metadata:
+  annotations:
+    operatorframework.io/suggested-namespace-template: <1>
+      {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "vertical-pod-autoscaler-suggested-template",
+          "annotations": {
+            "openshift.io/node-selector": ""
+          }
+        }
+      }
+----
+<1> Set your suggested namespace.
++
+[NOTE]
+====
+If both `suggested-namespace` and `suggested-namespace-template` annotations are present in the CSV, `suggested-namespace-template` should take precedence.
+====
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-operatorconditions_{context}"]
+= Enabling Operator conditions
+
+Operator Lifecycle Manager (OLM) provides Operators with a channel to communicate complex states that influence OLM behavior while managing the Operator. By default, OLM creates an `OperatorCondition` custom resource definition (CRD) when it installs an Operator. Based on the conditions set in the `OperatorCondition` custom resource (CR), the behavior of OLM changes accordingly.
+
+To support Operator conditions, an Operator must be able to read the `OperatorCondition` CR created by OLM and have the ability to complete the following tasks:
+
+* Get the specific condition.
+* Set the status of a specific condition.
+
+This can be accomplished by using the link:https://github.com/operator-framework/operator-lib/tree/v0.11.0[`operator-lib`] library. An Operator author can provide a link:https://github.com/kubernetes-sigs/controller-runtime/tree/master/pkg/client[`controller-runtime` client] in their Operator for the library to access the `OperatorCondition` CR owned by the Operator in the cluster.
+
+The library provides a generic `Conditions` interface, which has the following methods to `Get` and `Set` a `conditionType` in the `OperatorCondition` CR:
+
+`Get`:: To get the specific condition, the library uses the `client.Get` function from `controller-runtime`, which requires an `ObjectKey` of type `types.NamespacedName` present in `conditionAccessor`.
+
+`Set`:: To update the status of the specific condition, the library uses the `client.Update` function from `controller-runtime`. An error occurs if the `conditionType` is not present in the CRD.
+
+The Operator is allowed to modify only the `status` subresource of the CR. Operators can either delete or update the `status.conditions` array to include the condition. For more details on the format and description of the fields present in the conditions, see the upstream link:https://godoc.org/k8s.io/apimachinery/pkg/apis/meta/v1#Condition[Condition GoDocs].
+
+[NOTE]
+====
+Operator SDK {osdk_ver} supports `operator-lib` v0.11.0.
+====
+
+.Prerequisites
+
+* An Operator project generated using the Operator SDK.
+
+.Procedure
+
+To enable Operator conditions in your Operator project:
+
+. In the `go.mod` file of your Operator project, add `operator-framework/operator-lib` as a required library:
++
+[source,go]
+----
+module github.com/example-inc/memcached-operator
+
+go 1.15
+
+require (
+  k8s.io/apimachinery v0.19.2
+  k8s.io/client-go v0.19.2
+  sigs.k8s.io/controller-runtime v0.7.0
+  operator-framework/operator-lib v0.3.0
+)
+----
+
+. Write your own constructor in your Operator logic that will result in the following outcomes:
++
+--
+* Accepts a `controller-runtime` client.
+* Accepts a `conditionType`.
+* Returns a `Condition` interface to update or add conditions.
+--
++
+Because OLM currently supports the `Upgradeable` condition, you can create an interface that has methods to access the `Upgradeable` condition. For example:
++
+[source,go]
+----
+import (
+  ...
+  apiv1 "github.com/operator-framework/api/pkg/operators/v1"
+)
+
+func NewUpgradeable(cl client.Client) (Condition, error) {
+  return NewCondition(cl, "apiv1.OperatorUpgradeable")
+}
+
+cond, err := NewUpgradeable(cl);
+----
++
+In this example, the `NewUpgradeable` constructor is further used to create a variable `cond` of type `Condition`. The `cond` variable would in turn have `Get` and `Set` methods, which can be used for handling the OLM `Upgradeable` condition.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../operators/understanding/olm/olm-operatorconditions.adoc#olm-operatorconditions[Operator conditions]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="olm-defining-csv-webhook_{context}"]
+= Defining webhooks
+
+Webhooks allow Operator authors to intercept, modify, and accept or reject resources before they are saved to the object store and handled by the Operator controller. Operator Lifecycle Manager (OLM) can manage the lifecycle of these webhooks when they are shipped alongside your Operator.
+
+The cluster service version (CSV) resource of an Operator can include a `webhookdefinitions` section to define the following types of webhooks:
+
+* Admission webhooks (validating and mutating)
+* Conversion webhooks
+
+.Procedure
+
+* Add a `webhookdefinitions` section to the `spec` section of the CSV of your Operator and include any webhook definitions using a `type` of `ValidatingAdmissionWebhook`, `MutatingAdmissionWebhook`, or `ConversionWebhook`. The following example contains all three types of webhooks:
++
+.CSV containing webhooks
+[source,yaml]
+----
+  apiVersion: operators.coreos.com/v1alpha1
+  kind: ClusterServiceVersion
+  metadata:
+    name: webhook-operator.v0.0.1
+  spec:
+    customresourcedefinitions:
+      owned:
+      - kind: WebhookTest
+        name: webhooktests.webhook.operators.coreos.io <1>
+        version: v1
+    install:
+      spec:
+        deployments:
+        - name: webhook-operator-webhook
+          ...
+          ...
+          ...
+      strategy: deployment
+    installModes:
+    - supported: false
+      type: OwnNamespace
+    - supported: false
+      type: SingleNamespace
+    - supported: false
+      type: MultiNamespace
+    - supported: true
+      type: AllNamespaces
+    webhookdefinitions:
+    - type: ValidatingAdmissionWebhook <2>
+      admissionReviewVersions:
+      - v1beta1
+      - v1
+      containerPort: 443
+      targetPort: 4343
+      deploymentName: webhook-operator-webhook
+      failurePolicy: Fail
+      generateName: vwebhooktest.kb.io
+      rules:
+      - apiGroups:
+        - webhook.operators.coreos.io
+        apiVersions:
+        - v1
+        operations:
+        - CREATE
+        - UPDATE
+        resources:
+        - webhooktests
+      sideEffects: None
+      webhookPath: /validate-webhook-operators-coreos-io-v1-webhooktest
+    - type: MutatingAdmissionWebhook <3>
+      admissionReviewVersions:
+      - v1beta1
+      - v1
+      containerPort: 443
+      targetPort: 4343
+      deploymentName: webhook-operator-webhook
+      failurePolicy: Fail
+      generateName: mwebhooktest.kb.io
+      rules:
+      - apiGroups:
+        - webhook.operators.coreos.io
+        apiVersions:
+        - v1
+        operations:
+        - CREATE
+        - UPDATE
+        resources:
+        - webhooktests
+      sideEffects: None
+      webhookPath: /mutate-webhook-operators-coreos-io-v1-webhooktest
+    - type: ConversionWebhook <4>
+      admissionReviewVersions:
+      - v1beta1
+      - v1
+      containerPort: 443
+      targetPort: 4343
+      deploymentName: webhook-operator-webhook
+      generateName: cwebhooktest.kb.io
+      sideEffects: None
+      webhookPath: /convert
+      conversionCRDs:
+      - webhooktests.webhook.operators.coreos.io <5>
+...
+----
+<1> The CRDs targeted by the conversion webhook must exist here.
+<2> A validating admission webhook.
+<3> A mutating admission webhook.
+<4> A conversion webhook.
+<5> The `spec.PreserveUnknownFields` property of each CRD must be set to `false` or `nil`.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+// This xref points to a topic that is not currently included in the OSD and ROSA docs.
+* xref:../../architecture/admission-plug-ins.adoc#admission-webhook-types_admission-plug-ins[Types of webhook admission plugins]
+* Kubernetes documentation:
+** link:https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#validatingadmissionwebhook[Validating admission webhooks]
+** link:https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#mutatingadmissionwebhook[Mutating admission webhooks]
+** link:https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/#webhook-conversion[Conversion webhooks]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+[id="olm-webhook-considerations_{context}"]
+= Webhook considerations for OLM
+
+When deploying an Operator with webhooks using Operator Lifecycle Manager (OLM), you must define the following:
+
+* The `type` field must be set to either `ValidatingAdmissionWebhook`, `MutatingAdmissionWebhook`, or `ConversionWebhook`, or the CSV will be placed in a failed phase.
+
+* The CSV must contain a deployment whose name is equivalent to the value supplied in the `deploymentName` field of the `webhookdefinition`.
+
+When the webhook is created, OLM ensures that the webhook only acts upon namespaces that match the Operator group that the Operator is deployed in.
+
+[discrete]
+[id="olm-webhook-ca_{context}"]
+=== Certificate authority constraints
+
+OLM is configured to provide each deployment with a single certificate authority (CA). The logic that generates and mounts the CA into the deployment was originally used by the API service lifecycle logic. As a result:
+
+* The TLS certificate file is mounted to the deployment at `/apiserver.local.config/certificates/apiserver.crt`.
+* The TLS key file is mounted to the deployment at `/apiserver.local.config/certificates/apiserver.key`.
+
+[discrete]
+[id="olm-admission-webhook-constraints_{context}"]
+=== Admission webhook rules constraints
+
+To prevent an Operator from configuring the cluster into an unrecoverable state, OLM places the CSV in the failed phase if the rules defined in an admission webhook intercept any of the following requests:
+
+* Requests that target all groups
+* Requests that target the `operators.coreos.com` group
+* Requests that target the `ValidatingWebhookConfigurations` or `MutatingWebhookConfigurations` resources
+
+[discrete]
+[id="olm-conversion-webhook-constraints_{context}"]
+=== Conversion webhook constraints
+
+OLM places the CSV in the failed phase if a conversion webhook definition does not adhere to the following constraints:
+
+* CSVs featuring a conversion webhook can only support the `AllNamespaces` install mode.
+* The CRD targeted by the conversion webhook must have its
+`spec.preserveUnknownFields` field set to `false` or `nil`.
+* The conversion webhook defined in the CSV must target an owned CRD.
+* There can only be one conversion webhook on the entire cluster for a given CRD.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-crds_{context}"]
+= Understanding your custom resource definitions (CRDs)
+
+There are two types of custom resource definitions (CRDs) that your Operator can use: ones that are _owned_ by it and ones that it depends on, which are _required_.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+[id="osdk-crds-owned_{context}"]
+= Owned CRDs
+
+The custom resource definitions (CRDs) owned by your Operator are the most important part of your CSV. This establishes the link between your Operator and the required RBAC rules, dependency management, and other Kubernetes concepts.
+
+It is common for your Operator to use multiple CRDs to link together concepts, such as top-level database configuration in one object and a representation of replica sets in another. Each one should be listed out in the CSV file.
+
+.Owned CRD fields
+[cols="2a,5a,2",options="header"]
+|===
+|Field |Description |Required/optional
+
+|`Name`
+|The full name of your CRD.
+|Required
+
+|`Version`
+|The version of that object API.
+|Required
+
+|`Kind`
+|The machine readable name of your CRD.
+|Required
+
+|`DisplayName`
+|A human readable version of your CRD name, for example `MongoDB Standalone`.
+|Required
+
+|`Description`
+|A short description of how this CRD is used by the Operator or a description of the functionality provided by the CRD.
+|Required
+
+|`Group`
+|The API group that this CRD belongs to, for example `database.example.com`.
+|Optional
+
+|`Resources`
+a|Your CRDs own one or more types of Kubernetes objects. These are listed in the `resources` section to inform your users of the objects they might need to troubleshoot or how to connect to the application, such as the service or ingress rule that exposes a database.
+
+It is recommended to only list out the objects that are important to a human, not an exhaustive list of everything you orchestrate. For example, do not list config maps that store internal state that are not meant to be modified by a user.
+|Optional
+
+|`SpecDescriptors`, `StatusDescriptors`, and `ActionDescriptors`
+a|These descriptors are a way to hint UIs with certain inputs or outputs of your Operator that are most important to an end user. If your CRD contains the name of a secret or config map that the user must provide, you can specify that here. These items are linked and highlighted in compatible UIs.
+
+There are three types of descriptors:
+
+* `SpecDescriptors`: A reference to fields in the `spec` block of an object.
+* `StatusDescriptors`: A reference to fields in the `status` block of an object.
+* `ActionDescriptors`: A reference to actions that can be performed on an object.
+
+All descriptors accept the following fields:
+
+* `DisplayName`: A human readable name for the `Spec`, `Status`, or `Action`.
+* `Description`: A short description of the `Spec`, `Status`, or `Action` and how it is used by the Operator.
+* `Path`: A dot-delimited path of the field on the object that this descriptor describes.
+* `X-Descriptors`: Used to determine which "capabilities" this descriptor has and which UI component to use. See the *openshift/console* project for a canonical link:https://github.com/openshift/console/tree/release-4.3/frontend/packages/operator-lifecycle-manager/src/components/descriptors/types.ts[list of React UI X-Descriptors] for {product-title}.
+
+Also see the *openshift/console* project for more information on link:https://github.com/openshift/console/tree/release-4.3/frontend/packages/operator-lifecycle-manager/src/components/descriptors[Descriptors] in general.
+|Optional
+
+|===
+
+The following example depicts a `MongoDB Standalone` CRD that requires some user input in the form of a secret and config map, and orchestrates services, stateful sets, pods and config maps:
+
+[id="osdk-crds-owned-example_{context}"]
+.Example owned CRD
+[source,yaml]
+----
+      - displayName: MongoDB Standalone
+        group: mongodb.com
+        kind: MongoDbStandalone
+        name: mongodbstandalones.mongodb.com
+        resources:
+          - kind: Service
+            name: ''
+            version: v1
+          - kind: StatefulSet
+            name: ''
+            version: v1beta2
+          - kind: Pod
+            name: ''
+            version: v1
+          - kind: ConfigMap
+            name: ''
+            version: v1
+        specDescriptors:
+          - description: Credentials for Ops Manager or Cloud Manager.
+            displayName: Credentials
+            path: credentials
+            x-descriptors:
+              - 'urn:alm:descriptor:com.tectonic.ui:selector:core:v1:Secret'
+          - description: Project this deployment belongs to.
+            displayName: Project
+            path: project
+            x-descriptors:
+              - 'urn:alm:descriptor:com.tectonic.ui:selector:core:v1:ConfigMap'
+          - description: MongoDB version to be installed.
+            displayName: Version
+            path: version
+            x-descriptors:
+              - 'urn:alm:descriptor:com.tectonic.ui:label'
+        statusDescriptors:
+          - description: The status of each of the pods for the MongoDB cluster.
+            displayName: Pod Status
+            path: pods
+            x-descriptors:
+              - 'urn:alm:descriptor:com.tectonic.ui:podStatuses'
+        version: v1
+        description: >-
+          MongoDB Deployment consisting of only one host. No replication of
+          data.
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+[id="osdk-crds-required_{context}"]
+= Required CRDs
+
+Relying on other required CRDs is completely optional and only exists to reduce the scope of individual Operators and provide a way to compose multiple Operators together to solve an end-to-end use case.
+
+An example of this is an Operator that might set up an application and install an etcd cluster (from an etcd Operator) to use for distributed locking and a Postgres database (from a Postgres Operator) for data storage.
+
+Operator Lifecycle Manager (OLM) checks against the available CRDs and Operators in the cluster to fulfill these requirements. If suitable versions are found, the Operators are started within the desired namespace and a service account created for each Operator to create, watch, and modify the Kubernetes resources required.
+
+.Required CRD fields
+[cols="2a,5a,2",options="header"]
+|===
+|Field |Description |Required/optional
+
+|`Name`
+|The full name of the CRD you require.
+|Required
+
+|`Version`
+|The version of that object API.
+|Required
+
+|`Kind`
+|The Kubernetes object kind.
+|Required
+
+|`DisplayName`
+|A human readable version of the CRD.
+|Required
+
+|`Description`
+|A summary of how the component fits in your larger architecture.
+|Required
+|===
+
+.Example required CRD
+[source,yaml]
+----
+    required:
+    - name: etcdclusters.etcd.database.coreos.com
+      version: v1beta2
+      kind: EtcdCluster
+      displayName: etcd Cluster
+      description: Represents a cluster of etcd nodes.
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/understanding/olm/olm-understanding-dependency-resolution.adoc
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+[id="olm-dependency-resolution-crd-upgrades_{context}"]
+= CRD upgrades
+
+OLM upgrades a custom resource definition (CRD) immediately if it is owned by a singular cluster service version (CSV). If a CRD is owned by multiple CSVs, then the CRD is upgraded when it has satisfied all of the following backward compatible conditions:
+
+- All existing serving versions in the current CRD are present in the new CRD.
+- All existing instances, or custom resources, that are associated with the serving versions of the CRD are valid when validated against the validation schema of the new CRD.
+
+:leveloffset!:
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="olm-dependency-resolution-adding-new-crd-version_{context}"]
+= Adding a new CRD version
+
+.Procedure
+
+To add a new version of a CRD to your Operator:
+
+. Add a new entry in the CRD resource under the `versions` section of your CSV.
++
+For example, if the current CRD has a version `v1alpha1` and you want to add a new version `v1beta1` and mark it as the new storage version, add a new entry for `v1beta1`:
++
+[source,yaml]
+----
+versions:
+  - name: v1alpha1
+    served: true
+    storage: false
+  - name: v1beta1 <1>
+    served: true
+    storage: true
+----
+<1> New entry.
+
+. Ensure the referencing version of the CRD in the `owned` section of your CSV is updated if the CSV intends to use the new version:
++
+[source,yaml]
+----
+customresourcedefinitions:
+  owned:
+  - name: cluster.example.com
+    version: v1beta1 <1>
+    kind: cluster
+    displayName: Cluster
+----
+<1> Update the `version`.
+
+. Push the updated CRD and CSV to your bundle.
+
+:leveloffset!:
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="olm-dependency-resolution-removing-crd-version_{context}"]
+= Deprecating or removing a CRD version
+
+Operator Lifecycle Manager (OLM) does not allow a serving version of a custom resource definition (CRD) to be removed right away. Instead, a deprecated version of the CRD must be first disabled by setting the `served` field in the CRD to `false`. Then, the non-serving version can be removed on the subsequent CRD upgrade.
+
+.Procedure
+
+To deprecate and remove a specific version of a CRD:
+
+. Mark the deprecated version as non-serving to indicate this version is no longer in use and may be removed in a subsequent upgrade. For example:
++
+[source,yaml]
+----
+versions:
+  - name: v1alpha1
+    served: false <1>
+    storage: true
+----
+<1> Set to `false`.
+
+. Switch the `storage` version to a serving version if the version to be deprecated is currently the `storage` version. For example:
++
+[source,yaml]
+----
+versions:
+  - name: v1alpha1
+    served: false
+    storage: false <1>
+  - name: v1beta1
+    served: true
+    storage: true <1>
+----
+<1> Update the `storage` fields accordingly.
++
+[NOTE]
+====
+To remove a specific version that is or was the `storage` version from a CRD, that version must be removed from the `storedVersion` in the status of the CRD. OLM will attempt to do this for you if it detects a stored version no longer exists in the new CRD.
+====
+
+. Upgrade the CRD with the above changes.
+
+. In subsequent upgrade cycles, the non-serving version can be removed completely from the CRD. For example:
++
+[source,yaml]
+----
+versions:
+  - name: v1beta1
+    served: true
+    storage: true
+----
+
+. Ensure the referencing CRD version in the `owned` section of your CSV is updated accordingly if that version is removed from the CRD.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+[id="osdk-crds-templates_{context}"]
+= CRD templates
+
+Users of your Operator must be made aware of which options are required versus optional. You can provide templates for each of your custom resource definitions (CRDs) with a minimum set of configuration as an annotation named `alm-examples`. Compatible UIs will pre-fill this template for users to further customize.
+
+The annotation consists of a list of the kind, for example, the CRD name and the corresponding `metadata` and `spec` of the Kubernetes object.
+
+The following full example provides templates for `EtcdCluster`, `EtcdBackup` and `EtcdRestore`:
+
+[source,yaml]
+----
+metadata:
+  annotations:
+    alm-examples: >-
+      [{"apiVersion":"etcd.database.coreos.com/v1beta2","kind":"EtcdCluster","metadata":{"name":"example","namespace":"<operator_namespace>"},"spec":{"size":3,"version":"3.2.13"}},{"apiVersion":"etcd.database.coreos.com/v1beta2","kind":"EtcdRestore","metadata":{"name":"example-etcd-cluster"},"spec":{"etcdCluster":{"name":"example-etcd-cluster"},"backupStorageType":"S3","s3":{"path":"<full-s3-path>","awsSecret":"<aws-secret>"}}},{"apiVersion":"etcd.database.coreos.com/v1beta2","kind":"EtcdBackup","metadata":{"name":"example-etcd-cluster-backup"},"spec":{"etcdEndpoints":["<etcd-cluster-endpoints>"],"storageType":"S3","s3":{"path":"<full-s3-path>","awsSecret":"<aws-secret>"}}}]
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-hiding-internal-objects_{context}"]
+= Hiding internal objects
+
+It is common practice for Operators to use custom resource definitions (CRDs) internally to accomplish a task. These objects are not meant for users to manipulate and can be confusing to users of the Operator. For example, a database Operator might have a `Replication` CRD that is created whenever a user creates a Database object with `replication: true`.
+
+As an Operator author, you can hide any CRDs in the user interface that are not meant for user manipulation by adding the `operators.operatorframework.io/internal-objects` annotation to the cluster service version (CSV) of your Operator.
+
+.Procedure
+
+. Before marking one of your CRDs as internal, ensure that any debugging information or configuration that might be required to manage the application is reflected on the status or `spec` block of your CR, if applicable to your Operator.
+
+. Add the `operators.operatorframework.io/internal-objects` annotation to the CSV of your Operator to specify any internal objects to hide in the user interface:
++
+.Internal object annotation
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  name: my-operator-v1.2.3
+  annotations:
+    operators.operatorframework.io/internal-objects: '["my.internal.crd1.io","my.internal.crd2.io"]' <1>
+...
+----
+<1> Set any internal CRDs as an array of strings.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-init-resource_{context}"]
+= Initializing required custom resources
+
+An Operator might require the user to instantiate a custom resource before the Operator can be fully functional. However, it can be challenging for a user to determine what is required or how to define the resource.
+
+As an Operator developer, you can specify a single required custom resource by adding `operatorframework.io/initialization-resource` to the cluster service version (CSV) during Operator installation. You are then prompted to create the custom resource through a template that is provided in the CSV.
+The annotation must include a template that contains a complete YAML definition that is required to initialize the resource during installation.
+
+If this annotation is defined, after installing the Operator from the {product-title} web console, the user is prompted to create the resource using the template provided in the CSV.
+
+.Procedure
+
+* Add the `operatorframework.io/initialization-resource` annotation to the CSV of your Operator to specify a required custom resource. For example, the following annotation requires the creation of a `StorageCluster` resource and provides a full YAML definition:
++
+.Initialization resource annotation
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  name: my-operator-v1.2.3
+  annotations:
+    operatorframework.io/initialization-resource: |-
+        {
+            "apiVersion": "ocs.openshift.io/v1",
+            "kind": "StorageCluster",
+            "metadata": {
+                "name": "example-storagecluster"
+            },
+            "spec": {
+                "manageNodes": false,
+                "monPVCTemplate": {
+                    "spec": {
+                        "accessModes": [
+                            "ReadWriteOnce"
+                        ],
+                        "resources": {
+                            "requests": {
+                                "storage": "10Gi"
+                            }
+                        },
+                        "storageClassName": "gp2"
+                    }
+                },
+                "storageDeviceSets": [
+                    {
+                        "count": 3,
+                        "dataPVCTemplate": {
+                            "spec": {
+                                "accessModes": [
+                                    "ReadWriteOnce"
+                                ],
+                                "resources": {
+                                    "requests": {
+                                        "storage": "1Ti"
+                                    }
+                                },
+                                "storageClassName": "gp2",
+                                "volumeMode": "Block"
+                            }
+                        },
+                        "name": "example-deviceset",
+                        "placement": {},
+                        "portable": true,
+                        "resources": {}
+                    }
+                ]
+            }
+        }
+...
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-generating-csvs.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-apiservices_{context}"]
+= Understanding your API services
+
+As with CRDs, there are two types of API services that your Operator may use: _owned_ and _required_.
+
+[id="osdk-apiservices-owned_{context}"]
+== Owned API services
+
+When a CSV owns an API service, it is responsible for describing the deployment of the extension `api-server` that backs it and the group/version/kind (GVK) it provides.
+
+An API service is uniquely identified by the group/version it provides and can be listed multiple times to denote the different kinds it is expected to provide.
+
+.Owned API service fields
+[cols="2a,5a,2",options="header"]
+|===
+|Field |Description |Required/optional
+
+|`Group`
+|Group that the API service provides, for example `database.example.com`.
+|Required
+
+|`Version`
+|Version of the API service, for example `v1alpha1`.
+|Required
+
+|`Kind`
+|A kind that the API service is expected to provide.
+|Required
+
+|`Name`
+|The plural name for the API service provided.
+|Required
+
+|`DeploymentName`
+|Name of the deployment defined by your CSV that corresponds to your API service (required for owned API services). During the CSV pending phase, the OLM Operator searches the `InstallStrategy` of your CSV for a `Deployment` spec with a matching name, and if not found, does not transition the CSV to the "Install Ready" phase.
+|Required
+
+|`DisplayName`
+|A human readable version of your API service name, for example `MongoDB Standalone`.
+|Required
+
+|`Description`
+|A short description of how this API service is used by the Operator or a description of the functionality provided by the API service.
+|Required
+
+|`Resources`
+a|Your API services own one or more types of Kubernetes objects. These are listed in the resources section to inform your users of the objects they might need to troubleshoot or how to connect to the application, such as the service or ingress rule that exposes a database.
+
+It is recommended to only list out the objects that are important to a human, not an exhaustive list of everything you orchestrate. For example, do not list config maps that store internal state that are not meant to be modified by a user.
+|Optional
+
+|`SpecDescriptors`, `StatusDescriptors`, and `ActionDescriptors`
+|Essentially the same as for owned CRDs.
+|Optional
+|===
+
+[id="osdk-apiservices-resource-creation_{context}"]
+=== API service resource creation
+
+Operator Lifecycle Manager (OLM) is responsible for creating or replacing the service and API service resources for each unique owned API service:
+
+* Service pod selectors are copied from the CSV deployment matching the `DeploymentName` field of the API service description.
+
+* A new CA key/certificate pair is generated for each installation and the base64-encoded CA bundle is embedded in the respective API service resource.
+
+[id="osdk-apiservices-service-certs_{context}"]
+=== API service serving certificates
+
+OLM handles generating a serving key/certificate pair whenever an owned API service is being installed. The serving certificate has a common name (CN) containing the hostname of the generated `Service` resource and is signed by the private key of the CA bundle embedded in the corresponding API service resource.
+
+The certificate is stored as a type `kubernetes.io/tls` secret in the deployment namespace, and a volume named `apiservice-cert` is automatically appended to the volumes section of the deployment in the CSV matching the `DeploymentName` field of the API service description.
+
+If one does not already exist, a volume mount with a matching name is also appended to all containers of that deployment. This allows users to define a volume mount with the expected name to accommodate any custom path requirements. The path of the generated volume mount defaults to `/apiserver.local.config/certificates` and any existing volume mounts with the same path are replaced.
+
+[id="osdk-apiservice-required_{context}"]
+== Required API services
+
+OLM ensures all required CSVs have an API service that is available and all expected GVKs are discoverable before attempting installation. This allows a CSV to rely on specific kinds provided by API services it does not own.
+
+.Required API service fields
+[cols="2a,5a,2",options="header"]
+|===
+|Field |Description |Required/optional
+
+|`Group`
+|Group that the API service provides, for example `database.example.com`.
+|Required
+
+|`Version`
+|Version of the API service, for example `v1alpha1`.
+|Required
+
+|`Kind`
+|A kind that the API service is expected to provide.
+|Required
+
+|`DisplayName`
+|A human readable version of your API service name, for example `MongoDB Standalone`.
+|Required
+
+|`Description`
+|A short description of how this API service is used by the Operator or a description of the functionality provided by the API service.
+|Required
+|===
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/osdk-how-csv-gen-works,modules/osdk-csv-bundle-files,modules/osdk-csv-ver,modules/osdk-manually-defined-csv-fields,modules/osdk-csv-manual-annotations,modules/olm-enabling-operator-restricted-network,modules/olm-enabling-operator-for-multi-arch,modules/olm-arch-os-support,modules/osdk-suggested-namespace,modules/osdk-suggested-namespace-node-selector,modules/osdk-operatorconditions,modules/olm-defining-csv-webhooks,modules/olm-webhook-considerations,modules/osdk-crds,modules/osdk-owned-crds,modules/osdk-required-crds,modules/olm-dependency-resolution-crd-upgrades,modules/olm-adding-new-crd-version,modules/olm-removing-crd-version,modules/osdk-crd-templates,modules/osdk-hiding-internal-objects,modules/osdk-init-resource,modules/osdk-apiservices

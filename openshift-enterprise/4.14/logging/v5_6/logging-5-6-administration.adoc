@@ -1,0 +1,537 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="logging-administration-5-6"]
+= Administering your logging deployment
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: logging-5.6-administration
+
+toc::[]
+
+//Installing the Loki Operator via webconsole
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *
+
+:_mod-docs-content-type: PROCEDURE
+[id="logging-deploy-loki-console_{context}"]
+= Deploying the Loki Operator using the web console
+
+You can use the {product-title} web console to install the Loki Operator.
+
+.Prerequisites
+
+* Supported Log Store (AWS S3, Google Cloud Storage, Azure, Swift, Minio, OpenShift Data Foundation)
+
+.Procedure
+
+To install the Loki Operator using the {product-title} web console:
+
+. In the {product-title} web console, click *Operators* -> *OperatorHub*.
+
+. Type *Loki* in the *Filter by keyword* field.
+
+.. Choose *Loki Operator* from the list of available Operators, and click *Install*.
+
+. Select *stable* or *stable-5.y* as the *Update channel*.
++
+--
+// Text snippet included in the following assemblies:
+//
+// logging/logging_release_notes/logging-5-7-release-notes.adoc
+// logging/logging_release_notes/logging-5-8-release-notes.adoc
+//
+// Text snippet included in the following modules:
+//
+//
+:_mod-docs-content-type: SNIPPET
+
+[NOTE]
+====
+The `stable` channel only provides updates to the most recent release of logging. To continue receiving updates for prior releases, you must change your subscription channel to `stable-X` where `X` is the version of logging you have installed.
+====
+--
+. Ensure that *All namespaces on the cluster* is selected under *Installation mode*.
+
+. Ensure that *openshift-operators-redhat* is selected under *Installed Namespace*.
+
+. Select *Enable Operator recommended cluster monitoring on this Namespace*.
++
+This option sets the `openshift.io/cluster-monitoring: "true"` label in the Namespace object. You must select this option to ensure that cluster monitoring scrapes the `openshift-operators-redhat` namespace.
+
+. Select an option for *Update approval*.
++
+* The *Automatic* option allows Operator Lifecycle Manager (OLM) to automatically update the Operator when a new version is available.
++
+* The *Manual* option requires a user with appropriate credentials to approve the Operator update.
+
+. Click *Install*.
+
+. Verify that the *LokiOperator* installed by switching to the *Operators* → *Installed Operators* page.
+
+.. Ensure that *LokiOperator* is listed with *Status* as *Succeeded* in all the projects.
+
++
+. Create a `Secret` YAML file that uses the `access_key_id` and `access_key_secret` fields to specify your credentials and `bucketnames`, `endpoint`, and `region` to define the object storage location. AWS is used in the following example:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: logging-loki-s3
+  namespace: openshift-logging
+stringData:
+  access_key_id: AKIAIOSFODNN7EXAMPLE
+  access_key_secret: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+  bucketnames: s3-bucket-name
+  endpoint: https://s3.eu-central-1.amazonaws.com
+  region: eu-central-1
+----
++
+. Select *Create instance* under LokiStack on the *Details* tab. Then select *YAML view*. Paste in the following template, subsituting values where appropriate.
++
+[source,yaml]
+----
+  apiVersion: loki.grafana.com/v1
+  kind: LokiStack
+  metadata:
+    name: logging-loki <1>
+    namespace: openshift-logging
+  spec:
+    size: 1x.small <2>
+    storage:
+      schemas:
+      - version: v12
+        effectiveDate: '2022-06-01'
+      secret:
+        name: logging-loki-s3 <3>
+        type: s3 <4>
+    storageClassName: <storage_class_name> <5>
+    tenants:
+      mode: openshift-logging
+----
+<1> Name should be `logging-loki`.
+<2> Select your Loki deployment size.
+<3> Define the secret used for your log storage.
+<4> Define corresponding storage type.
+<5> Enter the name of an existing storage class for temporary storage. For best performance, specify a storage class that allocates block storage. Available storage classes for your cluster can be listed using `oc get storageclasses`.
++
+.. Apply the configuration:
++
+[source,terminal]
+----
+oc apply -f logging-loki.yaml
+----
++
+. Create or edit a `ClusterLogging` CR:
++
+[source,yaml]
+----
+  apiVersion: logging.openshift.io/v1
+  kind: ClusterLogging
+  metadata:
+    name: instance
+    namespace: openshift-logging
+  spec:
+    managementState: Managed
+    logStore:
+      type: lokistack
+      lokistack:
+        name: logging-loki
+      collection:
+        type: vector
+----
++
+.. Apply the configuration:
++
+[source,terminal]
+----
+oc apply -f cr-lokistack.yaml
+----
+
+:leveloffset!:
+
+//Generic installing operators from operator hub using CLI
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/user/olm-installing-operators-in-namespace.adoc
+// * operators/admin/olm-adding-operators-to-cluster.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+//
+// Module watched for changes by Ecosystem Catalog team:
+// https://projects.engineering.redhat.com/projects/RHEC/summary
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="olm-installing-operator-from-operatorhub-using-cli_{context}"]
+= Installing from OperatorHub using the CLI
+
+Instead of using the {product-title} web console, you can install an Operator from OperatorHub by using the CLI. Use the `oc` command to create or update a `Subscription` object.
+
+.Prerequisites
+
+- Access to an {product-title} cluster using an account with
+
+
+- You have installed the OpenShift CLI (`oc`).
+
+.Procedure
+
+. View the list of Operators available to the cluster from OperatorHub:
++
+[source,terminal]
+----
+$ oc get packagemanifests -n openshift-marketplace
+----
++
+.Example output
+[source,terminal]
+----
+NAME                               CATALOG               AGE
+3scale-operator                    Red Hat Operators     91m
+advanced-cluster-management        Red Hat Operators     91m
+amq7-cert-manager                  Red Hat Operators     91m
+...
+couchbase-enterprise-certified     Certified Operators   91m
+crunchy-postgres-operator          Certified Operators   91m
+mongodb-enterprise                 Certified Operators   91m
+...
+etcd                               Community Operators   91m
+jaeger                             Community Operators   91m
+kubefed                            Community Operators   91m
+...
+----
++
+Note the catalog for your desired Operator.
+
+. Inspect your desired Operator to verify its supported install modes and available channels:
++
+[source,terminal]
+----
+$ oc describe packagemanifests <operator_name> -n openshift-marketplace
+----
+
+. An Operator group, defined by an `OperatorGroup` object, selects target namespaces in which to generate required RBAC access for all Operators in the same namespace as the Operator group.
++
+The namespace to which you subscribe the Operator must have an Operator group that matches the install mode of the Operator, either the `AllNamespaces` or `SingleNamespace` mode. If the Operator you intend to install uses the `AllNamespaces`, then the `openshift-operators` namespace already has an appropriate Operator group in place.
++
+However, if the Operator uses the `SingleNamespace` mode and you do not already have an appropriate Operator group in place, you must create one.
++
+[NOTE]
+====
+The web console version of this procedure handles the creation of the `OperatorGroup` and `Subscription` objects automatically behind the scenes for you when choosing `SingleNamespace` mode.
+====
+
+.. Create an `OperatorGroup` object YAML file, for example `operatorgroup.yaml`:
++
+.Example `OperatorGroup` object
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: <operatorgroup_name>
+  namespace: <namespace>
+spec:
+  targetNamespaces:
+  - <namespace>
+----
+
+.. Create the `OperatorGroup` object:
++
+[source,terminal]
+----
+$ oc apply -f operatorgroup.yaml
+----
+
+. Create a `Subscription` object YAML file to subscribe a namespace to an Operator, for example `sub.yaml`:
++
+.Example `Subscription` object
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: <subscription_name>
+  namespace: openshift-operators <1>
+spec:
+  channel: <channel_name> <2>
+  name: <operator_name> <3>
+  source: redhat-operators <4>
+  sourceNamespace: openshift-marketplace <5>
+  config:
+    env: <6>
+    - name: ARGS
+      value: "-v=10"
+    envFrom: <7>
+    - secretRef:
+        name: license-secret
+    volumes: <8>
+    - name: <volume_name>
+      configMap:
+        name: <configmap_name>
+    volumeMounts: <9>
+    - mountPath: <directory_name>
+      name: <volume_name>
+    tolerations: <10>
+    - operator: "Exists"
+    resources: <11>
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    nodeSelector: <12>
+      foo: bar
+----
+<1> For default `AllNamespaces` install mode usage, specify the `openshift-operators` namespace. Alternatively, you can specify a custom global namespace, if you have created one. Otherwise, specify the relevant single namespace for `SingleNamespace` install mode usage.
+<2> Name of the channel to subscribe to.
+<3> Name of the Operator to subscribe to.
+<4> Name of the catalog source that provides the Operator.
+<5> Namespace of the catalog source. Use `openshift-marketplace` for the default OperatorHub catalog sources.
+<6> The `env` parameter defines a list of Environment Variables that must exist in all containers in the pod created by OLM.
+<7> The `envFrom` parameter defines a list of sources to populate Environment Variables in the container.
+<8> The `volumes` parameter defines a list of Volumes that must exist on the pod created by OLM.
+<9> The `volumeMounts` parameter defines a list of volume mounts that must exist in all containers in the pod created by OLM. If a `volumeMount` references a `volume` that does not exist, OLM fails to deploy the Operator.
+<10> The `tolerations` parameter defines a list of Tolerations for the pod created by OLM.
+<11> The `resources` parameter defines resource constraints for all the containers in the pod created by OLM.
+<12> The `nodeSelector` parameter defines a `NodeSelector` for the pod created by OLM.
+
+. If the cluster is in STS mode, include the following fields in the `Subscription` object:
++
+[source,yaml]
+----
+kind: Subscription
+# ...
+spec:
+  installPlanApproval: Manual <1>
+  config:
+    env:
+    - name: ROLEARN
+      value: "<role_arn>" <2>
+----
+<1> Subscriptions with automatic update approvals are not recommended because there might be permission changes to make prior to updating. Subscriptions with manual update approvals ensure that administrators have the opportunity to verify the permissions of the later version and take any necessary steps prior to update.
+<2> Include the role ARN details.
+
+. Create the `Subscription` object:
++
+[source,terminal]
+----
+$ oc apply -f sub.yaml
+----
++
+At this point, OLM is now aware of the selected Operator. A cluster service version (CSV) for the Operator should appear in the target namespace, and APIs provided by the Operator should be available for creation.
+
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/logging-deploy-loki-console,modules/snippets/logging-stable-updates-snip,modules/olm-installing-from-operatorhub-using-cli

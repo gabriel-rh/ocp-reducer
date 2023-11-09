@@ -1,0 +1,415 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="advanced-build-operations"]
+= Performing advanced builds
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: advanced-build-operations
+
+toc::[]
+
+The following sections provide instructions for advanced build operations including
+setting build resources and maximum duration, assigning builds to nodes, chaining
+builds, build pruning, and build run policies.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * builds/advanced-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-setting-build-resources_{context}"]
+= Setting build resources
+
+By default, builds are completed by pods using unbound resources, such as memory and CPU. These resources can be limited.
+
+.Procedure
+
+You can limit resource use in two ways:
+
+* Limit resource use by specifying resource limits in the default container limits of a project.
+* Limit resource use by specifying resource limits as part of the build configuration. ** In the following example, each of the `resources`, `cpu`, and `memory` parameters are optional:
++
+[source,yaml]
+----
+apiVersion: "v1"
+kind: "BuildConfig"
+metadata:
+  name: "sample-build"
+spec:
+  resources:
+    limits:
+      cpu: "100m" <1>
+      memory: "256Mi" <2>
+----
+<1> `cpu` is in CPU units: `100m` represents 0.1 CPU units (100 * 1e-3).
+<2> `memory` is in bytes: `256Mi` represents 268435456 bytes (256 * 2 ^ 20).
++
+However, if a quota has been defined for your project, one of the following two items is required:
++
+*** A `resources` section set with an explicit `requests`:
++
+[source,yaml]
+----
+resources:
+  requests: <1>
+    cpu: "100m"
+    memory: "256Mi"
+----
+<1> The `requests` object contains the list of resources that correspond to the list of resources in the quota.
++
+*** A limit range defined in your project, where the defaults from the `LimitRange` object apply to pods created during the build process.
++
+Otherwise, build pod creation will fail, citing a failure to satisfy quota.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * builds/advanced-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-setting-maximum-duration_{context}"]
+= Setting maximum duration
+
+When defining a `BuildConfig` object, you can define its maximum duration by setting the `completionDeadlineSeconds` field. It is specified in seconds and is not set by default. When not set, there is no maximum duration enforced.
+
+The maximum duration is counted from the time when a build pod gets scheduled in the system, and defines how long it can be active, including the time needed to pull the builder image. After reaching the specified timeout, the build is terminated by {product-title}.
+
+.Procedure
+
+* To set maximum duration, specify `completionDeadlineSeconds` in your `BuildConfig`. The following example shows the part of a `BuildConfig` specifying `completionDeadlineSeconds` field for 30 minutes:
++
+[source,yaml]
+----
+spec:
+  completionDeadlineSeconds: 1800
+----
+
+[NOTE]
+====
+This setting is not supported with the Pipeline Strategy option.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * builds/advanced-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-assigning-builds-to-nodes_{context}"]
+= Assigning builds to specific nodes
+
+Builds can be targeted to run on specific nodes by specifying labels in the `nodeSelector` field of a build configuration. The `nodeSelector` value is a set of key-value pairs that are matched to `Node` labels when scheduling the build pod.
+
+The `nodeSelector` value can also be controlled by cluster-wide default and override values. Defaults will only be applied if the build configuration does not define any key-value pairs for the `nodeSelector` and also does not define an explicitly empty map value of `nodeSelector:{}`. Override values will replace values in the build configuration on a key by key basis.
+
+//See Configuring Global Build Defaults and Overrides for more information.
+
+[NOTE]
+====
+If the specified `NodeSelector` cannot be matched to a node with those labels, the build still stay in the `Pending` state indefinitely.
+====
+
+.Procedure
+
+* Assign builds to run on specific nodes by assigning labels in the `nodeSelector` field of the `BuildConfig`, for example:
++
+[source,yaml]
+----
+apiVersion: "v1"
+kind: "BuildConfig"
+metadata:
+  name: "sample-build"
+spec:
+  nodeSelector:<1>
+    key1: value1
+    key2: value2
+----
+<1> Builds associated with this build configuration will run only on nodes with the `key1=value2` and `key2=value2` labels.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * builds/advanced-build-operations.adoc
+
+[id="builds-chaining-builds_{context}"]
+= Chained builds
+
+For compiled languages such as Go, C, C++, and Java, including the dependencies necessary for compilation in the application image might increase the size of the image or introduce vulnerabilities that can be exploited.
+
+To avoid these problems, two builds can be chained together. One build that produces the compiled artifact, and a second build that places that artifact in a separate image that runs the artifact.
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * builds/advanced-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-build-pruning_{context}"]
+= Pruning builds
+
+By default, builds that have completed their lifecycle are persisted indefinitely. You can limit the number of previous builds that are retained.
+
+.Procedure
+
+. Limit the number of previous builds that are retained by supplying a positive integer value for `successfulBuildsHistoryLimit` or `failedBuildsHistoryLimit` in your `BuildConfig`, for example:
++
+[source,yaml]
+----
+apiVersion: "v1"
+kind: "BuildConfig"
+metadata:
+  name: "sample-build"
+spec:
+  successfulBuildsHistoryLimit: 2 <1>
+  failedBuildsHistoryLimit: 2 <2>
+----
+<1> `successfulBuildsHistoryLimit` will retain up to two builds with a status of `completed`.
+<2> `failedBuildsHistoryLimit` will retain up to two builds with a status of `failed`, `canceled`, or `error`.
+
+. Trigger build pruning by one of the following actions:
++
+* Updating a build configuration.
+* Waiting for a build to complete its lifecycle.
+
+Builds are sorted by their creation timestamp with the oldest builds being pruned first.
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * builds/advanced-build-operations.adoc
+
+[id="builds-build-run-policy_{context}"]
+= Build run policy
+
+The build run policy describes the order in which the builds created from the build configuration should run. This can be done by changing the value of the `runPolicy` field in the `spec` section of the `Build` specification.
+
+It is also possible to change the `runPolicy` value for existing build configurations, by:
+
+* Changing `Parallel` to `Serial` or `SerialLatestOnly` and triggering a new build from this configuration causes the new build to wait until all parallel builds complete as the serial build can only run alone.
+* Changing `Serial` to `SerialLatestOnly` and triggering a new build causes cancellation of all existing builds in queue, except the currently running build and the most recently created build. The newest build runs next.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/builds-setting-build-resources,modules/builds-setting-maximum-duration,modules/builds-assigning-builds-to-nodes,modules/builds-chaining-builds,modules/builds-build-pruning,modules/builds-build-run-policy

@@ -1,0 +1,531 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ossm-architecture"]
+= Understanding Service Mesh
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: ossm-architecture
+
+toc::[]
+
+{SMProductName} provides a platform for behavioral insight and operational control over your networked microservices in a service mesh. With {SMProductName}, you can connect, secure, and monitor microservices in your {product-title} environment.
+
+:leveloffset: +1
+
+////
+Module included in the following assemblies:
+-service_mesh/v1x/ossm-architecture.adoc
+-service_mesh/v2x/ossm-architecture.adoc
+////
+
+:_mod-docs-content-type: CONCEPT
+[id="ossm-understanding-service-mesh_{context}"]
+= Understanding service mesh
+
+A _service mesh_ is the network of microservices that make up applications in a distributed microservice architecture and the interactions between those microservices. When a {SMProductShortName} grows in size and complexity, it can become harder to understand and manage.
+
+Based on the open source link:https://istio.io/[Istio] project, {SMProductName} adds a transparent layer on existing distributed applications without requiring any changes to the service code. You add {SMProductName} support to services by deploying a special sidecar proxy to relevant services in the mesh that intercepts all network communication between microservices. You configure and manage the {SMProductShortName} using the {SMProductShortName} control plane features.
+
+{SMProductName} gives you an easy way to create a network of deployed services that provide:
+
+* Discovery
+* Load balancing
+* Service-to-service authentication
+* Failure recovery
+* Metrics
+* Monitoring
+
+{SMProductName} also provides more complex operational functions including:
+
+* A/B testing
+* Canary releases
+* Access control
+* End-to-end authentication
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// -service_mesh/v2x/ossm-architecture.adoc
+
+[id="ossm-architecture_{context}"]
+= Service Mesh architecture
+
+Service mesh technology operates at the network communication level. That is, service mesh components capture or intercept traffic to and from microservices, either modifying requests, redirecting them, or creating new requests to other services.
+
+image::ossm-architecture.png[Service Mesh architecture image]
+
+At a high level, {SMProductName} consists of a data plane and a control plane
+
+The *data plane* is a set of intelligent proxies, running alongside application containers in a pod, that intercept and control all inbound and outbound network communication between microservices in the service mesh.
+The data plane is implemented in such a way that it intercepts all inbound (ingress) and outbound (egress) network traffic. The Istio data plane is composed of Envoy containers running along side application containers in a pod. The Envoy container acts as a proxy, controlling all network communication into and out of the pod.
+
+* *Envoy proxies* are the only Istio components that interact with data plane traffic. All incoming (ingress) and outgoing (egress) network traffic between services flows through the proxies. The Envoy proxy also collects all metrics related to services traffic within the mesh. Envoy proxies are deployed as sidecars, running in the same pod as services. Envoy proxies are also used to implement mesh gateways.
+
+** *Sidecar proxies* manage inbound and outbound communication for their workload instance.
+
+** *Gateways* are proxies operating as load balancers receiving incoming or outgoing HTTP/TCP connections. Gateway configurations are applied to standalone Envoy proxies that are running at the edge of the mesh, rather than sidecar Envoy proxies running alongside your service workloads. You use a Gateway to manage inbound and outbound traffic for your mesh, letting you specify which traffic you want to enter or leave the mesh.
+
+*** *Ingress-gateway* - Also known as an Ingress Controller, the Ingress Gateway is a dedicated Envoy proxy that receives and controls traffic entering the service mesh. An Ingress Gateway allows features such as monitoring and route rules to be applied to traffic entering the cluster.
+
+*** *Egress-gateway* - Also known as an egress controller, the Egress Gateway is a dedicated Envoy proxy that manages traffic leaving the service mesh. An Egress Gateway allows features such as monitoring and route rules to be applied to traffic exiting the mesh.
+
+The *control plane* manages and configures the proxies that make up the data plane. It is the authoritative source for configuration, manages access control and usage policies, and collects metrics from the proxies in the service mesh.
+
+* The Istio control plane is composed of *Istiod* which consolidates several previous control plane components (Citadel, Galley, Pilot) into a single binary. Istiod provides service discovery, configuration, and certificate management. It converts high-level routing rules to Envoy configurations and propagates them to the sidecars at runtime.
+
+** Istiod can act as a Certificate Authority (CA), generating certificates supporting secure mTLS communication in the data plane. You can also use an external CA for this purpose.
+
+** Istiod is responsible for injecting sidecar proxy containers into workloads deployed to an OpenShift cluster.
+
+{SMProductName} uses the *istio-operator* to manage the installation of the control plane. An _Operator_ is a piece of software that enables you to implement and automate common activities in your OpenShift cluster. It acts as a controller, allowing you to set or change the desired state of objects in your cluster, in this case, a {SMProductName} installation.
+
+{SMProductName} also bundles the following Istio add-ons as part of the product:
+
+* *Kiali* - Kiali is the management console for {SMProductName}. It provides dashboards, observability, and robust configuration and validation capabilities. It shows the structure of your service mesh by inferring traffic topology and displays the health of your mesh. Kiali provides detailed metrics, powerful validation, access to Grafana, and strong integration with the {JaegerShortName}.
+
+* *Prometheus* - {SMProductName} uses Prometheus to store telemetry information from services. Kiali depends on Prometheus to obtain metrics, health status, and mesh topology.
+
+* *Jaeger* - {SMProductName} supports the {JaegerShortName}. Jaeger is an open source traceability server that centralizes and displays traces associated with a single request between multiple services. Using the {JaegerShortName} you can monitor and troubleshoot your microservices-based distributed systems.
+
+* *Elasticsearch* - Elasticsearch is an open source, distributed, JSON-based search and analytics engine. The {JaegerShortName} uses Elasticsearch for persistent storage.
+
+* *Grafana* - Grafana provides mesh administrators with advanced query and metrics analysis and dashboards for Istio data. Optionally, Grafana can be used to analyze service mesh metrics.
+
+The following Istio integrations are supported with {SMProductName}:
+
+* *3scale* - Istio provides an optional integration with Red Hat 3scale API Management solutions. For versions prior to 2.1, this integration was achieved via the 3scale Istio adapter. For version 2.1 and later, the 3scale integration is achieved via a WebAssembly module.
+
+:leveloffset!:
+
+For information about how to install the 3scale adapter, refer to the xref:../../service_mesh/v2x/threescale-adapter.adoc#threescale-adapter[3scale Istio adapter documentation]
+
+== Understanding Kiali
+
+Kiali provides visibility into your service mesh by showing you the microservices in your service mesh, and how they are connected.
+
+:leveloffset: +2
+
+////
+This CONCEPT module included in the following assemblies:
+-service_mesh/v1x/ossm-architecture.adoc
+-service_mesh/v2x/ossm-architecture.adoc
+////
+
+:_mod-docs-content-type: CONCEPT
+[id="ossm-kiali-overview_{context}"]
+= Kiali overview
+
+Kiali provides observability into the {SMProductShortName} running on {product-title}. Kiali helps you define, validate, and observe your Istio service mesh. It helps you to understand the structure of your service mesh by inferring the topology, and also provides information about the health of your service mesh.
+
+Kiali provides an interactive graph view of your namespace in real time that provides visibility into features like circuit breakers, request rates, latency, and even graphs of traffic flows. Kiali offers insights about components at different levels, from Applications to Services and Workloads, and can display the interactions with contextual information and charts on the selected graph node or edge. Kiali also provides the ability to validate your Istio configurations, such as gateways, destination rules, virtual services, mesh policies, and more. Kiali provides detailed metrics, and a basic Grafana integration is available for advanced queries. Distributed tracing is provided by integrating Jaeger into the Kiali console.
+
+Kiali is installed by default as part of the {SMProductName}.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+////
+This CONCEPT module included in the following assemblies:
+-service_mesh/v1x/ossm-architecture.adoc
+-service_mesh/v2x/ossm-architecture.adoc
+////
+
+:_mod-docs-content-type: CONCEPT
+[id="ossm-kiali-architecture_{context}"]
+= Kiali architecture
+
+Kiali is based on the open source link:https://kiali.io/[Kiali project]. Kiali is composed of two components: the Kiali application and the Kiali console.
+
+* *Kiali application* (back end) – This component runs in the container application platform and communicates with the service mesh components, retrieves and processes data, and exposes this data to the console. The Kiali application does not need storage. When deploying the application to a cluster, configurations are set in ConfigMaps and secrets.
+
+* *Kiali console* (front end) – The Kiali console is a web application. 	The Kiali application serves the Kiali console, which then queries the back end for data to present it to the user.
+
+In addition, Kiali depends on external services and components provided by the container application platform and Istio.
+
+* *Red Hat Service Mesh* (Istio) - Istio is a Kiali requirement. Istio is the component that provides and controls the service mesh. Although Kiali and Istio can be installed separately, Kiali depends on Istio and will not work if it is not present. Kiali needs to retrieve Istio data and configurations, which are exposed through Prometheus and the cluster API.
+
+* *Prometheus* - A dedicated Prometheus instance is included as part of the {SMProductName} installation. When Istio telemetry is enabled, metrics data are stored in Prometheus. Kiali uses this Prometheus data to determine the mesh topology, display metrics, calculate health, show possible problems, and so on. Kiali communicates directly with Prometheus and assumes the data schema used by Istio Telemetry. Prometheus is an Istio dependency and a hard dependency for Kiali, and many of Kiali's features will not work without Prometheus.
+
+* *Cluster API* - Kiali uses the API of the {product-title} (cluster API) to fetch and resolve service mesh configurations. Kiali queries the cluster API to retrieve, for example, definitions for namespaces, services, deployments, pods, and other entities. Kiali also makes queries to resolve relationships between the different cluster entities. The cluster API is also queried to retrieve Istio configurations like virtual services, destination rules, route rules, gateways, quotas, and so on.
+
+* *Jaeger* - Jaeger is optional, but is installed by default as part of the {SMProductName} installation. When you install the {JaegerShortName} as part of the default {SMProductName} installation, the Kiali console includes a tab to display distributed tracing data. Note that tracing data will not be available if you disable Istio's distributed tracing feature. Also note that user must have access to the namespace where the {SMProductShortName} control plane is installed to view tracing data.
+
+* *Grafana* - Grafana is optional, but is installed by default as part of the {SMProductName} installation. When available, the metrics pages of Kiali display links to direct the user to the same metric in Grafana. Note that user must have access to the namespace where the {SMProductShortName} control plane is installed to view links to the Grafana dashboard and view Grafana data.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+////
+This CONCEPT module included in the following assemblies:
+-service_mesh/v1x/ossm-architecture.adoc
+-service_mesh/v2x/ossm-architecture.adoc
+////
+
+[id="ossm-kiali-features_{context}"]
+= Kiali features
+//In the title include nouns or noun phrases that are used in the body text.
+//Do not start the title of concept modules with a verb..
+
+The Kiali console is integrated with Red Hat Service Mesh and provides the following capabilities:
+
+* *Health* – Quickly identify issues with applications, services, or workloads.
+
+* *Topology* – Visualize how your applications, services, or workloads communicate via the Kiali graph.
+
+* *Metrics* – Predefined metrics dashboards let you chart service mesh and application performance for Go, Node.js. Quarkus, Spring Boot, Thorntail and Vert.x. You can also create your own custom dashboards.
+
+* *Tracing* – Integration with Jaeger lets you follow the path of a request through various microservices that make up an application.
+
+* *Validations* – Perform advanced validations on the most common Istio objects (Destination Rules, Service Entries, Virtual Services, and so on).
+
+* *Configuration* – Optional ability to create, update and delete Istio routing configuration using wizards or directly in the YAML editor in the Kiali Console.
+
+:leveloffset!:
+
+== Understanding distributed tracing
+
+Every time a user takes an action in an application, a request is executed by the architecture that may require dozens of different services to participate to produce a response.
+The path of this request is a distributed transaction. The {JaegerShortName} lets you perform distributed tracing, which follows the path of a request through various microservices that make up an application.
+
+*Distributed tracing* is a technique that is used to tie the information about different units of work together—usually executed in different processes or hosts—to understand a whole chain of events in a distributed transaction.
+Distributed tracing lets developers visualize call flows in large service oriented architectures.
+It can be invaluable in understanding serialization, parallelism, and sources of latency.
+
+The {JaegerShortName} records the execution of individual requests across the whole stack of microservices, and presents them as traces. A *trace* is a data/execution path through the system. An end-to-end trace comprises one or more spans.
+
+A *span* represents a logical unit of work that has an operation name, the start time of the operation, and the duration. Spans may be nested and ordered to model causal relationships.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-0.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-1.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-2.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-3.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-4.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-5.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-6.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-7.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-8.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-9.adoc
+// * distr_tracing_arch/distr-tracing-architecture.adoc
+// * service_mesh/v2x/ossm-architecture.adoc
+// * serverless/serverless-tracing.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="distr-tracing-product-overview_{context}"]
+= Distributed tracing overview
+
+As a service owner, you can use distributed tracing to instrument your services to gather insights into your service architecture.
+You can use the {DTProductName} for monitoring, network profiling, and troubleshooting the interaction between components in modern, cloud-native, microservices-based applications.
+
+With the {DTShortName}, you can perform the following functions:
+
+* Monitor distributed transactions
+
+* Optimize performance and latency
+
+* Perform root cause analysis
+
+The {DTShortName} consists of three components:
+
+* *{JaegerName}*, which is based on the open source link:https://www.jaegertracing.io/[Jaeger project].
+
+* *{TempoName}*, which is based on the open source link:https://grafana.com/oss/tempo/[Grafana Tempo project].
+
+* *{OTELNAME}*, which is based on the open source link:https://opentelemetry.io/[OpenTelemetry project].
+
+[IMPORTANT]
+====
+Jaeger does not use FIPS validated cryptographic modules.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+////
+This module included in the following assemblies:
+-service_mesh/v2x/ossm-architecture.adoc
+-dist_tracing_arch/distr-tracing-architecture.adoc
+////
+:_mod-docs-content-type: CONCEPT
+[id="distr-tracing-architecture_{context}"]
+= {DTProductName} architecture
+
+{DTProductName} is made up of several components that work together to collect, store, and display tracing data.
+
+* *{JaegerName}* - This component is based on the open source link:https://www.jaegertracing.io/[Jaeger project].
+
+** *Client* (Jaeger client, Tracer, Reporter, instrumented application, client libraries)- The {JaegerShortName} clients are language-specific implementations of the OpenTracing API. They can be used to instrument applications for distributed tracing either manually or with a variety of existing open source frameworks, such as Camel (Fuse), Spring Boot (RHOAR), MicroProfile (RHOAR/Thorntail), Wildfly (EAP), and many more, that are already integrated with OpenTracing.
+
+** *Agent* (Jaeger agent, Server Queue, Processor Workers) - The {JaegerShortName} agent is a network daemon that listens for spans sent over User Datagram Protocol (UDP), which it batches and sends to the Collector. The agent is meant to be placed on the same host as the instrumented application. This is typically accomplished by having a sidecar in container environments such as Kubernetes.
+
+** *Jaeger Collector* (Collector, Queue, Workers) - Similar to the Jaeger agent, the Jaeger Collector receives spans and places them in an internal queue for processing. This allows the Jaeger Collector to return immediately to the client/agent instead of waiting for the span to make its way to the storage.
+
+** *Storage* (Data Store) - Collectors require a persistent storage backend. {JaegerName} has a pluggable mechanism for span storage. Note that for this release, the only supported storage is Elasticsearch.
+
+** *Query* (Query Service) - Query is a service that retrieves traces from storage.
+
+** *Ingester* (Ingester Service) - {DTProductName} can use Apache Kafka as a buffer between the Collector and the actual Elasticsearch backing storage. Ingester is a service that reads data from Kafka and writes to the Elasticsearch storage backend.
+
+** *Jaeger Console* – With the {JaegerName} user interface, you can visualize your distributed tracing data. On the Search page, you can find traces and explore details of the spans that make up an individual trace.
+
+* *{TempoName}* - This component is based on the open source link:https://grafana.com/oss/tempo/[Grafana Tempo project].
+
+** *Gateway* – The Gateway handles authentication, authorization, and forwarding requests to the Distributor or Query front-end service.
+
+** *Distributor* – The Distributor accepts spans in multiple formats including Jaeger, OpenTelemetry, and Zipkin. It routes spans to Ingesters by hashing the `+traceID+` and using a distributed consistent hash ring.
+
+** *Ingester* – The Ingester batches a trace into blocks, creates bloom filters and indexes, and then flushes it all to the back end.
+
+** *Query Frontend* – The Query Frontend is responsible for sharding the search space for an incoming query. The search query is then sent to the Queriers. The Query Frontend deployment exposes the Jaeger UI through the Tempo Query sidecar.
+
+** *Querier* - The Querier is responsible for finding the requested trace ID in either the Ingesters or the back-end storage. Depending on parameters, it can query the Ingesters and pull Bloom indexes from the back end to search blocks in object storage.
+
+** *Compactor* – The Compactors stream blocks to and from the back-end storage to reduce the total number of blocks.
+
+* *{OTELName}* - This component is based on the open source link:https://opentelemetry.io/[OpenTelemetry project].
+
+** *OpenTelemetry Collector* - The OpenTelemetry Collector is a vendor-agnostic way to receive, process, and export telemetry data. The OpenTelemetry Collector supports open-source observability data formats, for example, Jaeger and Prometheus, sending to one or more open-source or commercial back-ends. The Collector is the default location instrumentation libraries export their telemetry data.
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+////
+This module included in the following assemblies:
+-service_mesh/v2x/ossm-architecture.adoc
+-dist_tracing_arch/distr-tracing-architecture.adoc
+////
+
+[id="distr-tracing-features_{context}"]
+= {DTProductName} features
+
+{DTProductName} provides the following capabilities:
+
+* Integration with Kiali – When properly configured, you can view {DTShortName} data from the Kiali console.
+
+* High scalability – The {DTShortName} back end is designed to have no single points of failure and to scale with the business needs.
+
+* Distributed Context Propagation – Enables you to connect data from different components together to create a complete end-to-end trace.
+
+* Backwards compatibility with Zipkin – {DTProductName} has APIs that enable it to be used as a drop-in replacement for Zipkin, but Red Hat is not supporting Zipkin compatibility in this release.
+
+:leveloffset!:
+
+== Next steps
+
+* xref:../../service_mesh/v2x/preparing-ossm-installation.adoc#preparing-ossm-installation[Prepare to install {SMProductName}] in your {product-title} environment.
+
+//# includes=_attributes/common-attributes,modules/ossm-understanding-service-mesh,modules/ossm-architecture,modules/ossm-kiali-overview,modules/ossm-kiali-architecture,modules/ossm-kiali-features,modules/distr-tracing-product-overview,modules/distr-tracing-architecture,modules/distr-tracing-features

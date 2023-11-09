@@ -1,0 +1,862 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="persistent-storage-vsphere"]
+= VMware vSphere CSI Driver Operator
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: persistent-storage-csi-vsphere
+
+toc::[]
+
+== Overview
+
+{product-title} can provision persistent volumes (PVs) using the Container Storage Interface (CSI) VMware vSphere driver for Virtual Machine Disk (VMDK) volumes.
+
+Familiarity with xref:../../storage/understanding-persistent-storage.adoc#understanding-persistent-storage[persistent storage] and xref:../../storage/container_storage_interface/persistent-storage-csi.adoc#persistent-storage-csi[configuring CSI volumes] is recommended when working with a CSI Operator and driver.
+
+To create CSI-provisioned persistent volumes (PVs) that mount to vSphere storage assets, {product-title} installs the vSphere CSI Driver Operator and the vSphere CSI driver by default in the `openshift-cluster-csi-drivers` namespace.
+
+* *vSphere CSI Driver Operator*: The Operator provides a storage class, called `thin-csi`, that you can use to create persistent volumes claims (PVCs). The vSphere CSI Driver Operator supports dynamic volume provisioning by allowing storage volumes to be created on-demand, eliminating the need for cluster administrators to pre-provision storage. You can disable this default storage class if desired (see xref:../../storage/container_storage_interface/persistent-storage-csi-sc-manage.adoc#persistent-storage-csi-sc-manage[Managing the default storage class]).
+
+* *vSphere CSI driver*: The driver enables you to create and mount vSphere PVs. In {product-title} 4.14, the driver version is 3.0.2. The vSphere CSI driver supports all of the file systems supported by the underlying Red Hat Core OS release, including XFS and Ext4. For more information about supported file systems, see link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/managing_file_systems/assembly_overview-of-available-file-systems_managing-file-systems[Overview of available file systems].
+
+//Please update driver version as needed with each major OCP release starting with 4.13.
+
+//Listing the VMWare driver version here because it has a more variable set of features. The Operator version does not change independently (is parallel).
+
+[IMPORTANT]
+====
+{product-title} defaults to using the CSI plugin to provision vSphere storage.
+====
+
+[NOTE]
+====
+The vSphere CSI Driver supports dynamic and static provisioning. When using static provisioning in the PV specifications, do not use the key `storage.kubernetes.io/csiProvisionerIdentity` in `csi.volumeAttributes` because this key indicates dynamically provisioned PVs.
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-ebs.adoc
+// * storage/container_storage_interface/persistent-storage-csi-manila.adoc
+// * storage/container_storage_interface/persistent-storage-csi-aws-efs.adoc
+// * storage/container_storage_interface/osd-persistent-storage-aws-efs-csi.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="csi-about_{context}"]
+= About CSI
+Storage vendors have traditionally provided storage drivers as part of Kubernetes. With the implementation of the Container Storage Interface (CSI), third-party providers can instead deliver storage plugins using a standard interface without ever having to change the core Kubernetes code.
+
+CSI Operators give {product-title} users storage options, such as volume snapshots, that are not possible with in-tree volume plugins.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// persistent-storage-csi-vsphere.adoc
+//
+
+[id="persistent-storage-csi-vsphere-stor-policy_{context}"]
+= vSphere storage policy
+
+The vSphere CSI Driver Operator storage class uses vSphere's storage policy. {product-title} automatically creates a storage policy that targets datastore configured in cloud configuration:
+[source,yaml]
+----
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: thin-csi
+provisioner: csi.vsphere.vmware.com
+parameters:
+  StoragePolicyName: "$openshift-storage-policy-xxxx"
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: false
+reclaimPolicy: Delete
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/container_storage_interface/persistent-storage-csi-vsphere.adoc
+//
+
+[id="persistent-storage-csi-vsphere-rwx_{context}"]
+= ReadWriteMany vSphere volume support
+
+If the underlying vSphere environment supports the vSAN file service, then vSphere Container Storage Interface (CSI) Driver Operator installed by
+{product-title} supports provisioning of ReadWriteMany (RWX) volumes. If vSAN file service is not configured, then ReadWriteOnce (RWO) is the only access mode available. If you do not have vSAN file service configured, and you request RWX, the volume fails to get created and an error is logged.
+
+For more information about configuring the vSAN file service in your environment, see https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.vsan.doc/GUID-82565B82-C911-42F7-85B1-E9EF973EE90C.html[vSAN File Service].
+
+You can request RWX volumes by making the following persistent volume claim (PVC):
+
+[source,yaml]
+----
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: myclaim
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+     - ReadWriteMany
+  storageClassName: thin-csi
+----
+
+Requesting a PVC of the RWX volume type should result in provisioning of persistent volumes (PVs) backed by the vSAN file service.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/preparing-to-install-on-vsphere.adoc
+// * storage/container_storage_interface/persistent-storage-csi-vsphere.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="vsphere-csi-driver-reqs_{context}"]
+= VMware vSphere CSI Driver Operator requirements
+
+To install the vSphere CSI Driver Operator, the following requirements must be met:
+
+* VMware vSphere version 7.0 Update 2 or later
+* vCenter 7.0 Update 2 or later
+* Virtual machines of hardware version 15 or later
+* No third-party vSphere CSI driver already installed in the cluster
+
+If a third-party vSphere CSI driver is present in the cluster, {product-title} does not overwrite it. The presence of a third-party vSphere CSI driver prevents {product-title} from updating to {product-title} 4.13 or later.
+
+[NOTE]
+====
+The VMware vSphere CSI Driver Operator is supported only on clusters deployed with `platform: vsphere` in the installation manifest.
+====
+
+:leveloffset!:
+
+To remove a third-party CSI driver, see xref:../../storage/container_storage_interface/persistent-storage-csi-vsphere.adoc#persistent-storage-csi-vsphere-install-issues_persistent-storage-csi-vsphere[Removing a third-party vSphere CSI Driver].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// persistent-storage-csi-vsphere.adoc
+//
+
+[id="persistent-storage-csi-vsphere-install-issues_{context}"]
+= Removing a third-party vSphere CSI Driver Operator
+
+{product-title} 4.10, and later, includes a built-in version of the vSphere Container Storage Interface (CSI) Operator Driver that is supported by Red Hat. If you have installed a vSphere CSI driver provided by the community or another vendor, updates to the next major version of {product-title}, such as 4.13, or later, might be disabled for your cluster.
+
+{product-title} 4.12, and later, clusters are still fully supported, and updates to z-stream releases of 4.12, such as 4.12.z, are not blocked, but you must correct this state by removing the third-party vSphere CSI Driver before updates to next major version of {product-title} can occur. Removing the third-party vSphere CSI driver does not require deletion of associated persistent volume (PV) objects, and no data loss should occur.
+
+[NOTE]
+====
+These instructions may not be complete, so consult the vendor or community provider uninstall guide to ensure removal of the driver and components.
+====
+
+To uninstall the third-party vSphere CSI Driver:
+
+. Delete the third-party vSphere CSI Driver (VMware vSphere Container Storage Plugin) Deployment and Daemonset objects.
+. Delete the configmap and secret objects that were installed previously with the third-party vSphere CSI Driver.
+. Delete the third-party vSphere CSI driver `CSIDriver` object:
++
+[source,terminal]
+----
+~ $ oc delete CSIDriver csi.vsphere.vmware.com
+----
++
+[source,terminal]
+----
+csidriver.storage.k8s.io "csi.vsphere.vmware.com" deleted
+----
+
+After you have removed the third-party vSphere CSI Driver from the {product-title} cluster, installation of Red Hat's vSphere CSI Driver Operator automatically resumes, and any conditions that could block upgrades to {product-title} 4.11, or later, are automatically removed. If you had existing vSphere CSI PV objects, their lifecycle is now managed by Red Hat's vSphere CSI Driver Operator.
+
+:leveloffset!:
+
+[id="vsphere-pv-encryption"]
+== vSphere persistent disks encryption
+
+You can encrypt virtual machines (VMs) and dynamically provisioned persistent volumes (PVs) on {product-title} running on top of vSphere.
+
+[NOTE]
+====
+{product-title} does not support RWX-encrypted PVs. You cannot request RWX PVs out of a storage class that uses an encrypted storage policy.
+====
+
+You must encrypt VMs before you can encrypt PVs, which you can do during installation or postinstallation.
+
+For information about encrypting VMs, see:
+
+* xref:../../installing/installing_vsphere/installing-vsphere.adoc#installation-vsphere-encrypted-vms_installing-vsphere[Requirements for encrypting virtual machines]
+
+* xref:../../installing/installing_vsphere/installing-vsphere.adoc#installation-vsphere-machines_installing-vsphere[During installation: Step 7 of Installing RHCOS and starting the {product-title} bootstrap process]
+
+* xref:../../post_installation_configuration/vsphere-post-installation-encryption.adoc[Post-installation enabling encryption on a vSphere cluster]
+
+After encrypting VMs, you can configure a storage class that supports dynamic encryption volume provisioning using the vSphere Container Storage Interface (CSI) driver. This can be accomplished in one of two ways using:
+
+* xref:../../storage/container_storage_interface/persistent-storage-csi-vsphere.adoc#persistent-storage-csi-vsphere-encryption-datastore-url_persistent-storage-csi-vsphere[Datastore URL]: This approach is not very flexible, and forces you to use a single datastore. It also does not support topology-aware provisioning.
+
+* xref:../../storage/container_storage_interface/persistent-storage-csi-vsphere.adoc#persistent-storage-csi-vsphere-encryption-tag-based_persistent-storage-csi-vsphere[Tag-based placement]: Encrypts the provisioned volumes and uses tag-based placement to target specific datastores.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-vsphere.adoc
+//
+
+:content-type: PROCEDURE
+[id="persistent-storage-csi-vsphere-encryption-datastore-url_{context}"]
+= Using datastore URL
+
+.Procedure
+
+To encrypt using the datastore URL:
+
+. Find out the name of the default storage policy in your datastore that supports encryption.
++
+This is same policy that was used for encrypting your VMs.
+
+. Create a storage class that uses this storage policy:
++
+[source, yaml]
+----
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+ name: encryption
+provisioner: csi.vsphere.vmware.com
+parameters:
+ storagePolicyName: <storage-policy-name> <1>
+ datastoreurl: "ds:///vmfs/volumes/vsan:522e875627d-b090c96b526bb79c/"
+----
+<1> Name of default storage policy in your datastore that supports encryption
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/container_storage_interface/persistent-storage-csi-vsphere.adoc
+//
+
+:content-type: PROCEDURE
+[id="persistent-storage-csi-vsphere-encryption-tag-based_{context}"]
+= Using tag-based placement
+
+.Procedure
+
+To encrypt using tag-based placement:
+
+. In vCenter create a category for tagging datastores that will be made available to this storage class. Also, ensure that *StoragePod(Datastore clusters)*, *Datastore*, and *Folder* are selected as Associable Entities for the created category.
+
+. In vCenter, create a tag that uses the category created earlier.
+
+. Assign the previously created tag to each datastore that will be made available to the storage class. Make sure that datastores are shared with hosts participating in the {product-title} cluster.
+
+. In vCenter, from the main menu, click *Policies and Profiles*.
+
+. On the *Policies and Profiles* page, in the navigation pane, click *VM Storage Policies*.
+
+. Click *CREATE*.
+
+. Type a name for the storage policy.
+
+. Select *Enable host based rules* and *Enable tag based placement rules*.
+
+. In the *Next* tab:
+
+.. Select *Encryption* and *Default Encryption Properties*.
+
+.. Select the tag category created earlier, and select tag selected. Verify that the policy is selecting matching datastores.
+
+. Create the storage policy.
+
+. Create a storage class that uses the storage policy:
++
+[source, yaml]
+----
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+ name:  csi-encrypted
+provisioner: csi.vsphere.vmware.com
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+ storagePolicyName: <storage-policy-name> <1>
+----
+<1> Name of the storage policy that you created for encryption
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/container_storage_interface/persistent-storage-csi-vsphere.adoc
+//
+
+:content-type: CONCEPT
+[id="persistent-storage-csi-vsphere-top-aware-overview_{context}"]
+= vSphere CSI topology overview
+
+{product-title} provides the ability to deploy {product-title} for vSphere on different zones and regions, which allows you to deploy over multiple compute clusters and datacenters, thus helping to avoid a single point of failure.
+
+This is accomplished by defining zone and region categories in vCenter, and then assigning these categories to different failure domains, such as a compute cluster, by creating tags for these zone and region categories. After you have created the appropriate categories, and assigned tags to vCenter objects, you can create additional machinesets that create virtual machines (VMs) that are responsible for scheduling pods in those failure domains.
+
+The following example defines two failure domains with one region and two zones:
+
+.vSphere storage topology with one region and two zones
+|===
+|Compute cluster | Failure domain |Description
+
+|Compute cluster: ocp1,
+Datacenter: Atlanta
+|openshift-region: us-east-1 (tag), openshift-zone: us-east-1a (tag)
+|This defines a failure domain in region us-east-1 with zone us-east-1a.
+
+|Computer cluster: ocp2,
+Datacenter: Atlanta
+|openshift-region: us-east-1 (tag), openshift-zone: us-east-1b (tag)
+|This defines a different failure domain within the same region called us-east-1b.
+|===
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/container_storage_interface/persistent-storage-csi-vsphere.adoc
+//
+
+:content-type: PROCEDURE
+[id="persistent-storage-csi-vsphere-top-aware-during-install_{context}"]
+= Creating vSphere storage topology during installation
+
+== Procedure
+
+* Specify the topology during installation. See the _Configuring regions and zones for a VMware vCenter_ section.
+
+No additional action is necessary and the default storage class that is created by {product-title}
+is topology aware and should allow provisioning of volumes in different failure domains.
+
+:leveloffset!:
+[role="_additional-resources"]
+.Additional resources
+* xref:../../installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc#configuring-vsphere-regions-zones_installing-vsphere-installer-provisioned-network-customizations[Configuring regions and zones for a VMware vCenter]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/container_storage_interface/persistent-storage-csi-vsphere.adoc
+//
+
+:content-type: PROCEDURE
+[id="persistent-storage-csi-vsphere-top-aware-post-install_{context}"]
+= Creating vSphere storage topology postinstallation
+
+== Procedure
+. In the VMware vCenter vSphere client GUI, define appropriate zone and region catagories and tags.
++
+While vSphere allows you to create categories with any arbitrary name, {product-title} strongly recommends use of `openshift-region` and `openshift-zone` names for defining topology categories.
++
+For more information about vSphere categories and tags, see the VMware vSphere documentation.
+
+. In {product-title}, create failure domains. See the _Specifying multiple regions and zones for your cluster on vSphere_ section.
+
+. Create a tag to assign to datastores across failure domains:
++
+When an {product-title} spans more than one failure domain, the datastore might not be shared across those failure domains, which is where topology-aware provisioning of persistent volumes (PVs) is useful.
++
+.. In vCenter, create a category for tagging the datastores. For example, `openshift-zonal-datastore-cat`. You can use any other category name, provided the category uniquely is used for tagging datastores participating in {product-title} cluster. Also, ensure that `StoragePod`, `Datastore`, and `Folder` are selected as Associable Entities for the created category.
+.. In vCenter, create a tag that uses the previously created category. This example uses the tag name `openshift-zonal-datastore`.
+.. Assign the previously created tag (in this example `openshift-zonal-datastore`) to each datastore in a failure domain that would be considered for dynamic provisioning.
++
+[NOTE]
+====
+You can use any names you like for datastore categories and tags. The names used in this example are provided as recommendations. Ensure that the tags and categories that you define uniquely identify only datastores that are shared with all hosts in the {product-title} cluster.
+====
+
+. As needed, create a storage policy that targets the tag-based datastores in each failure domain:
+.. In vCenter, from the main menu, click *Policies and Profiles*.
+.. On the *Policies and Profiles* page, in the navigation pane, click *VM Storage Policies*.
+.. Click *CREATE*.
+.. Type a name for the storage policy.
+.. For the rules, choose Tag Placement rules and select the tag and category that targets the desired datastores (in this example, the `openshift-zonal-datastore` tag).
++
+The datastores are listed in the storage compatibility table.
+
+. Create a new storage class that uses the new zoned storage policy:
+.. Click *Storage* > *StorageClasses*.
+.. On the *StorageClasses* page, click *Create StorageClass*.
+.. Type a name for the new storage class in *Name*.
+.. Under *Provisioner*, select *csi.vsphere.vmware.com*.
+.. Under *Additional parameters*, for the StoragePolicyName parameter, set *Value* to the name of the new zoned storage policy that you created earlier.
+.. Click *Create*.
++
+.Example output
++
+[source, yaml]
+----
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: zoned-sc <1>
+provisioner: csi.vsphere.vmware.com
+parameters:
+  StoragePolicyName: zoned-storage-policy <2>
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer
+----
+<1> New topology aware storage class name.
+<2> Specify zoned storage policy.
++
+[NOTE]
+====
+You can also create the storage class by editing the preceding YAML file and running the command `oc create -f $FILE`.
+====
+
+:leveloffset!:
+[role="_additional-resources"]
+.Additional resources
+* xref:../../post_installation_configuration/post-install-vsphere-zones-regions-configuration.adoc#specifying-regions-zones-infrastructure-vsphere_post-install-vsphere-zones-regions-configuration[Specifying multiple regions and zones for your cluster on vSphere]
+* https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-vcenter-esxi-management/GUID-16422FF7-235B-4A44-92E2-532F6AED0923.html?hWord=N4IghgNiBcIC5gOYgL5A[VMware vSphere tag documentation]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/container_storage_interface/persistent-storage-csi-vsphere.adoc
+//
+
+:content-type: PROCEDURE
+[id="persistent-storage-csi-vsphere-top-aware-infra-top_{context}"]
+= Creating vSphere storage topology without an infra topology
+
+[NOTE]
+====
+{product-title} recommends using the infrastructure object for specifying failure domains in a topology aware setup. Specifying failure domains in the infrastructure object and specify topology-categories in the `ClusterCSIDriver` object at the same time is an unsupported operation.
+====
+
+== Procedure
+. In the VMware vCenter vSphere client GUI, define appropriate zone and region catagories and tags.
++
+While vSphere allows you to create categories with any arbitrary name, {product-title} strongly recommends use of `openshift-region` and `openshift-zone` names for defining topology.
++
+For more information about vSphere categories and tags, see the VMware vSphere documentation.
+
+. To allow the container storage interface (CSI) driver to detect this topology, edit the `clusterCSIDriver` object YAML file `driverConfig` section:
+* Specify the `openshift-zone` and `openshift-region` categories that you created earlier.
+* Set `driverType` to `vSphere`.
++
+[source,terminal]
+----
+~ $ oc edit clustercsidriver csi.vsphere.vmware.com -o yaml
+----
++
+.Example output
++
+[source,terminal]
+----
+apiVersion: operator.openshift.io/v1
+kind: ClusterCSIDriver
+metadata:
+  name: csi.vsphere.vmware.com
+spec:
+  logLevel: Normal
+  managementState: Managed
+  observedConfig: null
+  operatorLogLevel: Normal
+  unsupportedConfigOverrides: null
+  driverConfig:
+    driverType: vSphere <1>
+      vSphere:
+        topologyCategories: <2>
+        - openshift-zone
+        - openshift-region
+----
+<1> Ensure that `driverType` is set to `vSphere`.
+<2> `openshift-zone` and `openshift-region` categories created earlier in vCenter.
+
+. Verify that `CSINode` object has topology keys by running the following commands:
++
+[source,terminal]
+----
+~ $ oc get csinode
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME DRIVERS AGE
+co8-4s88d-infra-2m5vd 1 27m
+co8-4s88d-master-0 1 70m
+co8-4s88d-master-1 1 70m
+co8-4s88d-master-2 1 70m
+co8-4s88d-worker-j2hmg 1 47m
+co8-4s88d-worker-mbb46 1 47m
+co8-4s88d-worker-zlk7d 1 47m
+----
++
+[source,terminal]
+----
+~ $ oc get csinode co8-4s88d-worker-j2hmg -o yaml
+----
++
+.Example output
++
+[source,terminal]
+----
+...
+spec:
+  drivers:
+  - allocatable:
+      count: 59
+  name: csi-vsphere.vmware.com
+  nodeID: co8-4s88d-worker-j2hmg
+  topologyKeys: <1>
+  - topology.csi.vmware.com/openshift-zone
+  - topology.csi.vmware.com/openshift-region
+----
+<1> Topology keys from vSphere `openshift-zone` and `openshift-region` catagories.
++
+[NOTE]
+=====
+`CSINode` objects might take some time to receive updated topology information. After the driver is updated, `CSINode` objects should have topology keys in them.
+=====
+
+. Create a tag to assign to datastores across failure domains:
++
+When an {product-title} spans more than one failure domain, the datastore might not be shared across those failure domains, which is where topology-aware provisioning of persistent volumes (PVs) is useful.
++
+.. In vCenter, create a category for tagging the datastores. For example, `openshift-zonal-datastore-cat`. You can use any other category name, provided the category uniquely is used for tagging datastores participating in {product-title} cluster. Also, ensure that `StoragePod`, `Datastore`, and `Folder` are selected as Associable Entities for the created category.
+.. In vCenter, create a tag that uses the previously created category. This example uses the tag name `openshift-zonal-datastore`.
+.. Assign the previously created tag (in this example `openshift-zonal-datastore`) to each datastore in a failure domain that would be considered for dynamic provisioning.
++
+[NOTE]
+====
+You can use any names you like for categories and tags. The names used in this example are provided as recommendations. Ensure that the tags and categories that you define uniquely identify only datastores that are shared with all hosts in the {product-title} cluster.
+====
+
+. Create a storage policy that targets the tag-based datastores in each failure domain:
+.. In vCenter, from the main menu, click *Policies and Profiles*.
+.. On the *Policies and Profiles* page, in the navigation pane, click *VM Storage Policies*.
+.. Click *CREATE*.
+.. Type a name for the storage policy.
+.. For the rules, choose Tag Placement rules and select the tag and category that targets the desired datastores (in this example, the `openshift-zonal-datastore` tag).
++
+The datastores are listed in the storage compatibility table.
+
+. Create a new storage class that uses the new zoned storage policy:
+.. Click *Storage* > *StorageClasses*.
+.. On the *StorageClasses* page, click *Create StorageClass*.
+.. Type a name for the new storage class in *Name*.
+.. Under *Provisioner*, select *csi.vsphere.vmware.com*.
+.. Under *Additional parameters*, for the StoragePolicyName parameter, set *Value* to the name of the new zoned storage policy that you created earlier.
+.. Click *Create*.
++
+.Example output
++
+[source, yaml]
+----
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: zoned-sc <1>
+provisioner: csi.vsphere.vmware.com
+parameters:
+  StoragePolicyName: zoned-storage-policy <2>
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer
+----
+<1> New topology aware storage class name.
+<2> Specify zoned storage policy.
++
+[NOTE]
+====
+You can also create the storage class by editing the preceding YAML file and running the command `oc create -f $FILE`.
+====
+
+:leveloffset!:
+[role="_additional-resources"]
+.Additional resources
+* https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-vcenter-esxi-management/GUID-16422FF7-235B-4A44-92E2-532F6AED0923.html?hWord=N4IghgNiBcIC5gOYgL5A[VMware vSphere tag documentation]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/container_storage_interface/persistent-storage-csi-vsphere.adoc
+//
+
+:content-type: PROCEDURE
+[id="persistent-storage-csi-vsphere-top-aware-results_{context}"]
+= Results
+
+Creating persistent volume claims (PVCs) and PVs from the topology aware storage class are truly zonal, and should use the datastore in their respective zone depending on how pods are scheduled:
+
+[source,terminal]
+----
+~ $ oc get pv <pv-name> -o yaml
+----
+
+.Example output
+
+[source,terminal]
+----
+...
+nodeAffinity:
+  required:
+    nodeSelectorTerms:
+    - matchExpressions:
+      - key: topology.csi.vmware.com/openshift-zone <1>
+        operator: In
+        values:
+        - <openshift-zone>
+      -key: topology.csi.vmware.com/openshift-region <1>
+        operator: In
+        values:
+        - <openshift-region>
+...
+peristentVolumeclaimPolicy: Delete
+storageClassName: <zoned-storage-class-name> <2>
+volumeMode: Filesystem
+...
+----
+<1> PV has zoned keys.
+<2> PV is using the zoned storage class.
+
+:leveloffset!:
+
+== Additional resources
+* xref:../../storage/container_storage_interface/persistent-storage-csi.adoc#persistent-storage-csi[Configuring CSI volumes]
+
+//# includes=_attributes/common-attributes,modules/persistent-storage-csi-about,modules/persistent-storage-csi-vsphere-stor-policy,modules/persistent-storage-csi-vsphere-rwx,modules/vmware-csi-driver-reqs,modules/persistent-storage-csi-vsphere-install-issues,modules/persistent-storage-csi-vsphere-encryption-datastore-url,modules/persistent-storage-csi-vsphere-encryption-tag-based,modules/persistent-storage-csi-vsphere-top-aware-overview,modules/persistent-storage-csi-vsphere-top-aware-during-install,modules/persistent-storage-csi-vsphere-top-aware-post-install,modules/persistent-storage-csi-vsphere-top-aware-infra-top,modules/persistent-storage-csi-vsphere-top-aware-results

@@ -1,0 +1,711 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="applying-autoscaling"]
+= Applying autoscaling to an {product-title} cluster
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: applying-autoscaling
+
+toc::[]
+
+Applying autoscaling to an {product-title} cluster involves deploying a cluster autoscaler and then deploying machine autoscalers for each machine type in your cluster.
+
+[IMPORTANT]
+====
+You can configure the cluster autoscaler only in clusters where the Machine API Operator is operational.
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-about-autoscaling-nodes.adoc
+// * post_installation_configuration/cluster-tasks.adoc
+// * machine_management/applying-autoscaling.adoc
+// * osd_cluster_admin/osd_nodes/osd-nodes-about-autoscaling-nodes.adoc
+// * osd_cluster_admin/osd-cluster-autoscaling.adoc
+// * rosa_cluster_admin/rosa-cluster-autoscaling.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cluster-autoscaler-about_{context}"]
+= About the cluster autoscaler
+
+The cluster autoscaler adjusts the size of an {product-title} cluster to meet its current deployment needs. It uses declarative, Kubernetes-style arguments to provide infrastructure management that does not rely on objects of a specific cloud provider. The cluster autoscaler has a cluster scope, and is not associated with a particular namespace.
+
+The cluster autoscaler increases the size of the cluster when there are pods that fail to schedule on any of the current worker nodes due to insufficient resources or when another node is necessary to meet deployment needs. The cluster autoscaler does not increase the cluster resources beyond the limits that you specify.
+
+The cluster autoscaler computes the total
+memory, CPU, and GPU
+on all nodes the cluster, even though it does not manage the control plane nodes. These values are not single-machine oriented. They are an aggregation of all the resources in the entire cluster. For example, if you set the maximum memory resource limit, the cluster autoscaler includes all the nodes in the cluster when calculating the current memory usage. That calculation is then used to determine if the cluster autoscaler has the capacity to add more worker resources.
+
+[IMPORTANT]
+====
+Ensure that the `maxNodesTotal` value in the `ClusterAutoscaler` resource definition that you create is large enough to account for the total possible number of machines in your cluster. This value must encompass the number of control plane machines and the possible number of compute machines that you might scale to.
+====
+
+Every 10 seconds, the cluster autoscaler checks which nodes are unnecessary in the cluster and removes them. The cluster autoscaler considers a node for removal if the following conditions apply:
+
+* The node utilization is less than the _node utilization level_ threshold for the cluster. The node utilization level is the sum of the requested resources divided by the allocated resources for the node. If you do not specify a value in the `ClusterAutoscaler` custom resource, the cluster autoscaler uses a default value of `0.5`, which corresponds to 50% utilization.
+* The cluster autoscaler can move all pods running on the node to the other nodes. The Kubernetes scheduler is responsible for scheduling pods on the nodes.
+* The cluster autoscaler does not have scale down disabled annotation.
+
+If the following types of pods are present on a node, the cluster autoscaler will not remove the node:
+
+* Pods with restrictive pod disruption budgets (PDBs).
+* Kube-system pods that do not run on the node by default.
+* Kube-system pods that do not have a PDB or have a PDB that is too restrictive.
+* Pods that are not backed by a controller object such as a deployment, replica set, or stateful set.
+* Pods with local storage.
+* Pods that cannot be moved elsewhere because of a lack of resources, incompatible node selectors or affinity, matching anti-affinity, and so on.
+* Unless they also have a `"cluster-autoscaler.kubernetes.io/safe-to-evict": "true"` annotation, pods that have a `"cluster-autoscaler.kubernetes.io/safe-to-evict": "false"` annotation.
+
+For example, you set the maximum CPU limit to 64 cores and configure the cluster autoscaler to only create machines that have 8 cores each. If your cluster starts with 30 cores, the cluster autoscaler can add up to 4 more nodes with 32 cores, for a total of 62.
+
+If you configure the cluster autoscaler, additional usage restrictions apply:
+
+* Do not modify the nodes that are in autoscaled node groups directly. All nodes within the same node group have the same capacity and labels and run the same system pods.
+* Specify requests for your pods.
+* If you have to prevent pods from being deleted too quickly, configure appropriate PDBs.
+* Confirm that your cloud provider quota is large enough to support the maximum node pools that you configure.
+* Do not run additional node group autoscalers, especially the ones offered by your cloud provider.
+
+The horizontal pod autoscaler (HPA) and the cluster autoscaler modify cluster resources in different ways. The HPA changes the deployment's or replica set's number of replicas based on the current CPU load. If the load increases, the HPA creates new replicas, regardless of the amount of resources available to the cluster. If there are not enough resources, the cluster autoscaler adds resources so that the HPA-created pods can run. If the load decreases, the HPA stops some replicas. If this action causes some nodes to be underutilized or completely empty, the cluster autoscaler deletes the unnecessary nodes.
+
+The cluster autoscaler takes pod priorities into account. The Pod Priority and Preemption feature enables scheduling pods based on priorities if the cluster does not have enough resources, but the cluster autoscaler ensures that the cluster has resources to run all pods. To honor the intention of both features, the cluster autoscaler includes a priority cutoff function. You can use this cutoff to schedule "best-effort" pods, which do not cause the cluster autoscaler to increase resources but instead run only when spare resources are available.
+
+Pods with priority lower than the cutoff value do not cause the cluster to scale up or prevent the cluster from scaling down. No new nodes are added to run the pods, and nodes running these pods might be deleted to free resources.
+
+Cluster autoscaling is supported for the platforms that have machine API available on it.
+
+////
+Default priority cutoff is 0. It can be changed using `--expendable-pods-priority-cutoff` flag, but we discourage it. cluster autoscaler also doesn't trigger scale-up if an unschedulable Pod is already waiting for a lower priority Pod preemption.
+////
+
+:leveloffset!:
+
+[id="configuring-clusterautoscaler_{context}"]
+== Configuring the cluster autoscaler
+
+First, deploy the cluster autoscaler to manage automatic resource scaling in your {product-title} cluster.
+
+[NOTE]
+====
+Because the cluster autoscaler is scoped to the entire cluster, you can make only one cluster autoscaler for the cluster.
+====
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/applying-autoscaling.adoc
+// * post_installation_configuration/cluster-tasks.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cluster-autoscaler-cr_{context}"]
+= Cluster autoscaler resource definition
+
+This `ClusterAutoscaler` resource definition shows the parameters and sample values for the cluster autoscaler.
+
+
+[source,yaml]
+----
+apiVersion: "autoscaling.openshift.io/v1"
+kind: "ClusterAutoscaler"
+metadata:
+  name: "default"
+spec:
+  podPriorityThreshold: -10 <1>
+  resourceLimits:
+    maxNodesTotal: 24 <2>
+    cores:
+      min: 8 <3>
+      max: 128 <4>
+    memory:
+      min: 4 <5>
+      max: 256 <6>
+    gpus:
+      - type: nvidia.com/gpu <7>
+        min: 0 <8>
+        max: 16 <9>
+      - type: amd.com/gpu
+        min: 0
+        max: 4
+  logVerbosity: 4 <10>
+  scaleDown: <11>
+    enabled: true <12>
+    delayAfterAdd: 10m <13>
+    delayAfterDelete: 5m <14>
+    delayAfterFailure: 30s <15>
+    unneededTime: 5m <16>
+    utilizationThreshold: "0.4" <17>
+----
+<1> Specify the priority that a pod must exceed to cause the cluster autoscaler to deploy additional nodes. Enter a 32-bit integer value. The `podPriorityThreshold` value is compared to the value of the `PriorityClass` that you assign to each pod.
+<2> Specify the maximum number of nodes to deploy. This value is the total number of machines that are deployed in your cluster, not just the ones that the autoscaler controls. Ensure that this value is large enough to account for all of your control plane and compute machines and the total number of replicas that you specify in your `MachineAutoscaler` resources.
+<3> Specify the minimum number of cores to deploy in the cluster.
+<4> Specify the maximum number of cores to deploy in the cluster.
+<5> Specify the minimum amount of memory, in GiB, in the cluster.
+<6> Specify the maximum amount of memory, in GiB, in the cluster.
+<7> Optional: Specify the type of GPU node to deploy. Only `nvidia.com/gpu` and `amd.com/gpu` are valid types.
+<8> Specify the minimum number of GPUs to deploy in the cluster.
+<9> Specify the maximum number of GPUs to deploy in the cluster.
+<10> Specify the logging verbosity level between `0` and `10`. The following log level thresholds are provided for guidance:
++
+--
+* `1`: (Default) Basic information about changes.
+* `4`: Debug-level verbosity for troubleshooting typical issues.
+* `9`: Extensive, protocol-level debugging information.
+--
++
+If you do not specify a value, the default value of `1` is used.
+<11> In this section, you can specify the period to wait for each action by using any valid link:https://golang.org/pkg/time/#ParseDuration[ParseDuration] interval, including `ns`, `us`, `ms`, `s`, `m`, and `h`.
+<12> Specify whether the cluster autoscaler can remove unnecessary nodes.
+<13> Optional: Specify the period to wait before deleting a node after a node has recently been _added_. If you do not specify a value, the default value of `10m` is used.
+<14> Optional: Specify the period to wait before deleting a node after a node has recently been _deleted_. If you do not specify a value, the default value of `0s` is used.
+<15> Optional: Specify the period to wait before deleting a node after a scale down failure occurred. If you do not specify a value, the default value of `3m` is used.
+<16> Optional: Specify a period of time before an unnecessary node is eligible for deletion. If you do not specify a value, the default value of `10m` is used.
+<17> Optional:  Specify the _node utilization level_. Nodes below this utilization level are eligible for deletion. If you do not specify a value, the default value of `10m` is used.. The node utilization level is the sum of the requested resources divided by the allocated resources for the node, and must be a value greater than `"0"` but less than `"1"`. If you do not specify a value, the cluster autoscaler uses a default value of `"0.5"`, which corresponds to 50% utilization. This value must be expressed as a string.
+// Might be able to add a formula to show this visually, but need to look into asciidoc math formatting and what our tooling supports.
+
+[NOTE]
+====
+When performing a scaling operation, the cluster autoscaler remains within the ranges set in the `ClusterAutoscaler` resource definition, such as the minimum and maximum number of cores to deploy or the amount of memory in the cluster. However, the cluster autoscaler does not correct the current values in your cluster to be within those ranges.
+
+The minimum and maximum CPUs, memory, and GPU values are determined by calculating those resources on all nodes in the cluster, even if the cluster autoscaler does not manage the nodes. For example, the control plane nodes are considered in the total memory in the cluster, even though the cluster autoscaler does not manage the control plane nodes.
+====
+
+:leveloffset!:
+
+:FeatureName: cluster autoscaler
+:FeatureResourceName: ClusterAutoscaler
+:leveloffset: +2
+
+// Be sure to set the :FeatureName: and :FeatureResourceName: values in each assembly on the lines before
+// the include statement for this module. For example, add the following lines to the assembly:
+// :FeatureName: cluster autoscaler
+// :FeatureResourceName: ClusterAutoscaler
+//
+// Module included in the following assemblies:
+//
+// * machine_management/applying-autoscaling.adoc
+// * post_installation_configuration/cluster-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="{FeatureResourceName}-deploying_{context}"]
+= Deploying a {FeatureName}
+
+To deploy a {FeatureName}, you create an instance of the `{FeatureResourceName}` resource.
+
+.Procedure
+
+. Create a YAML file for a `{FeatureResourceName}` resource that contains the custom resource definition.
+
+. Create the custom resource in the cluster by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <filename>.yaml <1>
+----
+<1> `<filename>` is the name of the custom resource file.
+
+// Undefine attributes, so that any mistakes are easily spotted
+:!FeatureName:
+:!FeatureResourceName:
+
+:leveloffset!:
+.Next steps
+* After you configure the cluster autoscaler, you must xref:../machine_management/applying-autoscaling.adoc#configuring-machineautoscaler_applying-autoscaling[configure at least one machine autoscaler].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/applying-autoscaling.adoc
+// * post_installation_configuration/cluster-tasks.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="machine-autoscaler-about_{context}"]
+= About the machine autoscaler
+
+The machine autoscaler adjusts the number of Machines in the compute machine sets that you deploy in an {product-title} cluster. You can scale both the default `worker` compute machine set and any other compute machine sets that you create. The machine autoscaler makes more Machines when the cluster runs out of resources to support more deployments. Any changes to the values in `MachineAutoscaler` resources, such as the minimum or maximum number of instances, are immediately applied to the compute machine set they target.
+
+[IMPORTANT]
+====
+You must deploy a machine autoscaler for the cluster autoscaler to scale your machines. The cluster autoscaler uses the annotations on compute machine sets that the machine autoscaler sets to determine the resources that it can scale. If you define a cluster autoscaler without also defining machine autoscalers, the cluster autoscaler will never scale your cluster.
+====
+
+:leveloffset!:
+
+[id="configuring-machineautoscaler_{context}"]
+== Configuring machine autoscalers
+
+After you deploy the cluster autoscaler, deploy `MachineAutoscaler` resources that reference the compute machine sets that are used to scale the cluster.
+
+[IMPORTANT]
+====
+You must deploy at least one `MachineAutoscaler` resource after you deploy the `ClusterAutoscaler` resource.
+====
+
+[NOTE]
+====
+You must configure separate resources for each compute machine set. Remember that compute machine sets are different in each region, so consider whether you want to enable machine scaling in multiple regions. The compute machine set that you scale must have at least one machine in it.
+====
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/applying-autoscaling.adoc
+// * post_installation_configuration/cluster-tasks.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="machine-autoscaler-cr_{context}"]
+= Machine autoscaler resource definition
+
+This `MachineAutoscaler` resource definition shows the parameters and sample values for the machine autoscaler.
+
+
+[source,yaml]
+----
+apiVersion: "autoscaling.openshift.io/v1beta1"
+kind: "MachineAutoscaler"
+metadata:
+  name: "worker-us-east-1a" <1>
+  namespace: "openshift-machine-api"
+spec:
+  minReplicas: 1 <2>
+  maxReplicas: 12 <3>
+  scaleTargetRef: <4>
+    apiVersion: machine.openshift.io/v1beta1
+    kind: MachineSet <5>
+    name: worker-us-east-1a <6>
+----
+<1> Specify the machine autoscaler name. To make it easier to identify which compute machine set this machine autoscaler scales, specify or include the name of the compute machine set to scale. The compute machine set name takes the following form: `<clusterid>-<machineset>-<region>`.
+<2> Specify the minimum number machines of the specified type that must remain in the specified zone after the cluster autoscaler initiates cluster scaling. If running in AWS, GCP, Azure, {rh-openstack}, or vSphere, this value can be set to `0`. For other providers, do not set this value to `0`.
++
+You can save on costs by setting this value to `0` for use cases such as running expensive or limited-usage hardware that is used for specialized workloads, or by scaling a compute machine set with extra large machines. The cluster autoscaler scales the compute machine set down to zero if the machines are not in use.
++
+[IMPORTANT]
+====
+Do not set the `spec.minReplicas` value to `0` for the three compute machine sets that are created during the {product-title} installation process for an installer provisioned infrastructure.
+====
+<3> Specify the maximum number machines of the specified type that the cluster autoscaler can deploy in the specified zone after it initiates cluster scaling. Ensure that the `maxNodesTotal` value in the `ClusterAutoscaler` resource definition is large enough to allow the machine autoscaler to deploy this number of machines.
+<4> In this section, provide values that describe the existing compute machine set to scale.
+<5> The `kind` parameter value is always `MachineSet`.
+<6> The `name` value must match the name of an existing compute machine set, as shown in the `metadata.name` parameter value.
+
+:leveloffset!:
+
+:FeatureName: machine autoscaler
+:FeatureResourceName: MachineAutoscaler
+:leveloffset: +2
+
+// Be sure to set the :FeatureName: and :FeatureResourceName: values in each assembly on the lines before
+// the include statement for this module. For example, add the following lines to the assembly:
+// :FeatureName: cluster autoscaler
+// :FeatureResourceName: ClusterAutoscaler
+//
+// Module included in the following assemblies:
+//
+// * machine_management/applying-autoscaling.adoc
+// * post_installation_configuration/cluster-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="{FeatureResourceName}-deploying_{context}"]
+= Deploying a {FeatureName}
+
+To deploy a {FeatureName}, you create an instance of the `{FeatureResourceName}` resource.
+
+.Procedure
+
+. Create a YAML file for a `{FeatureResourceName}` resource that contains the custom resource definition.
+
+. Create the custom resource in the cluster by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <filename>.yaml <1>
+----
+<1> `<filename>` is the name of the custom resource file.
+
+// Undefine attributes, so that any mistakes are easily spotted
+:!FeatureName:
+:!FeatureResourceName:
+
+:leveloffset!:
+
+[id="disabling-autoscaling_{context}"]
+== Disabling autoscaling
+
+You can disable an individual machine autoscaler in your cluster or disable autoscaling on the cluster entirely.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/applying-autoscaling.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="deleting-machine-autoscaler_{context}"]
+= Disabling a machine autoscaler
+
+To disable a machine autoscaler, you delete the corresponding `MachineAutoscaler` custom resource (CR).
+
+[NOTE]
+====
+Disabling a machine autoscaler does not disable the cluster autoscaler. To disable the cluster autoscaler, follow the instructions in "Disabling the cluster autoscaler".
+====
+
+.Procedure
+
+. List the `MachineAutoscaler` CRs for the cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get MachineAutoscaler -n openshift-machine-api
+----
++
+.Example output
+[source,terminal]
+----
+NAME                 REF KIND     REF NAME             MIN   MAX   AGE
+compute-us-east-1a   MachineSet   compute-us-east-1a   1     12    39m
+compute-us-west-1a   MachineSet   compute-us-west-1a   2     4     37m
+----
+
+. Optional: Create a YAML file backup of the `MachineAutoscaler` CR by running the following command:
++
+[source,terminal]
+----
+$ oc get MachineAutoscaler/<machine_autoscaler_name> \//<1>
+  -n openshift-machine-api \
+  -o yaml> <machine_autoscaler_name_backup>.yaml //<2>
+----
+<1> `<machine_autoscaler_name>` is the name of the CR that you want to delete.
+<2> `<machine_autoscaler_name_backup>` is the name for the backup of the CR.
+
+. Delete the `MachineAutoscaler` CR by running the following command:
++
+[source,terminal]
+----
+$ oc delete MachineAutoscaler/<machine_autoscaler_name> -n openshift-machine-api
+----
++
+.Example output
+[source,terminal]
+----
+machineautoscaler.autoscaling.openshift.io "compute-us-east-1a" deleted
+----
+
+.Verification
+
+* To verify that the machine autoscaler is disabled, run the following command:
++
+[source,terminal]
+----
+$ oc get MachineAutoscaler -n openshift-machine-api
+----
++
+The disabled machine autoscaler does not appear in the list of machine autoscalers.
+
+.Next steps
+
+* If you need to re-enable the machine autoscaler, use the `<machine_autoscaler_name_backup>.yaml` backup file and follow the instructions in "Deploying a machine autoscaler".
+
+:leveloffset!:
+[role="_additional-resources"]
+.Additional resources
+* xref:../machine_management/applying-autoscaling.adoc#deleting-cluster-autoscaler_applying-autoscaling[Disabling the cluster autoscaler]
+* xref:../machine_management/applying-autoscaling.adoc#MachineAutoscaler-deploying_applying-autoscaling[Deploying a machine autoscaler]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/applying-autoscaling.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="deleting-cluster-autoscaler_{context}"]
+= Disabling the cluster autoscaler
+
+To disable the cluster autoscaler, you delete the corresponding `ClusterAutoscaler` resource.
+
+[NOTE]
+====
+Disabling the cluster autoscaler disables autoscaling on the cluster, even if the cluster has existing machine autoscalers.
+====
+
+.Procedure
+
+. List the `ClusterAutoscaler` resource for the cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get ClusterAutoscaler
+----
++
+.Example output
+[source,terminal]
+----
+NAME      AGE
+default   42m
+----
+
+. Optional: Create a YAML file backup of the `ClusterAutoscaler` CR by running the following command:
++
+[source,terminal]
+----
+$ oc get ClusterAutoscaler/default \//<1>
+  -o yaml> <cluster_autoscaler_backup_name>.yaml //<2>
+----
+<1> `default` is the name of the `ClusterAutoscaler` CR.
+<2> `<cluster_autoscaler_backup_name>` is the name for the backup of the CR.
+
+. Delete the `ClusterAutoscaler` CR by running the following command:
++
+[source,terminal]
+----
+$ oc delete ClusterAutoscaler/default
+----
++
+.Example output
+[source,terminal]
+----
+clusterautoscaler.autoscaling.openshift.io "default" deleted
+----
+
+.Verification
+
+* To verify that the cluster autoscaler is disabled, run the following command:
++
+[source,terminal]
+----
+$ oc get ClusterAutoscaler
+----
++
+.Expected output
+[source,terminal]
+----
+No resources found
+----
+
+.Next steps
+
+* Disabling the cluster autoscaler by deleting the `ClusterAutoscaler` CR prevents the cluster from autoscaling but does not delete any existing machine autoscalers on the cluster. To clean up unneeded machine autoscalers, see "Disabling a machine autoscaler".
+
+* If you need to re-enable the cluster autoscaler, use the `<cluster_autoscaler_name_backup>.yaml` backup file and follow the instructions in "Deploying a cluster autoscaler".
+
+:leveloffset!:
+[role="_additional-resources"]
+.Additional resources
+* xref:../machine_management/applying-autoscaling.adoc#deleting-machine-autoscaler_applying-autoscaling[Disabling the machine autoscaler]
+* xref:../machine_management/applying-autoscaling.adoc#ClusterAutoscaler-deploying_applying-autoscaling[Deploying a cluster autoscaler]
+
+[role="_additional-resources"]
+== Additional resources
+
+* xref:../nodes/pods/nodes-pods-priority.adoc#nodes-pods-priority[Including pod priority in pod scheduling decisions in {product-title}]
+
+//# includes=_attributes/common-attributes,modules/cluster-autoscaler-about,modules/cluster-autoscaler-cr,modules/deploying-resource,modules/machine-autoscaler-about,modules/machine-autoscaler-cr,modules/deleting-machine-autoscaler,modules/deleting-cluster-autoscaler

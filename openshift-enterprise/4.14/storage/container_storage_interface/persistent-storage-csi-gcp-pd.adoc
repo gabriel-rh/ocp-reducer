@@ -1,0 +1,426 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="persistent-storage-csi-gcp-pd"]
+= GCP PD CSI Driver Operator
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: persistent-storage-csi-gcp-pd
+
+toc::[]
+
+== Overview
+
+{product-title} can provision persistent volumes (PVs) using the Container Storage Interface (CSI) driver for Google Cloud Platform (GCP) persistent disk (PD) storage.
+
+:FeatureName: GCP PD CSI Driver Operator
+
+Familiarity with xref:../../storage/understanding-persistent-storage.adoc#understanding-persistent-storage[persistent storage] and xref:../../storage/container_storage_interface/persistent-storage-csi.adoc#persistent-storage-csi[configuring CSI volumes] is recommended when working with a Container Storage Interface (CSI) Operator and driver.
+
+To create CSI-provisioned persistent volumes (PVs) that mount to GCP PD storage assets, {product-title} installs the GCP PD CSI Driver Operator and the GCP PD CSI driver by default in the `openshift-cluster-csi-drivers` namespace.
+
+* *GCP PD CSI Driver Operator*: By default, the Operator provides a storage class that you can use to create PVCs. You can disable this default storage class if desired (see xref:../../storage/container_storage_interface/persistent-storage-csi-sc-manage.adoc#persistent-storage-csi-sc-manage[Managing the default storage class]). You also have the option to create the GCP PD storage class as described in xref:../../storage/persistent_storage/persistent-storage-gce.adoc#persistent-storage-using-gce[Persistent storage using GCE Persistent Disk].
+
+* *GCP PD driver*: The driver enables you to create and mount GCP PD PVs.
+
+[IMPORTANT]
+====
+{product-title} defaults to using the CSI plugin to provision GCP PD storage.
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-ebs.adoc
+// * storage/container_storage_interface/persistent-storage-csi-manila.adoc
+// * storage/container_storage_interface/persistent-storage-csi-aws-efs.adoc
+// * storage/container_storage_interface/osd-persistent-storage-aws-efs-csi.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="csi-about_{context}"]
+= About CSI
+Storage vendors have traditionally provided storage drivers as part of Kubernetes. With the implementation of the Container Storage Interface (CSI), third-party providers can instead deliver storage plugins using a standard interface without ever having to change the core Kubernetes code.
+
+CSI Operators give {product-title} users storage options, such as volume snapshots, that are not possible with in-tree volume plugins.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-gcp-pd.adoc
+
+[id="persistent-storage-csi-gcp-pd-storage-class-ref_{context}"]
+= GCP PD CSI driver storage class parameters
+
+The Google Cloud Platform (GCP) persistent disk (PD) Container Storage Interface (CSI) driver uses the CSI `external-provisioner` sidecar as a controller. This is a separate helper container that is deployed with the CSI driver. The sidecar manages persistent volumes (PVs) by triggering the `CreateVolume` operation.
+
+The GCP PD CSI driver uses the `csi.storage.k8s.io/fstype` parameter key to support dynamic provisioning. The following table describes all the GCP PD CSI storage class parameters that are supported by {product-title}.
+
+.CreateVolume Parameters
+[cols="2,3,2,4",options="header"]
+|===
+|Parameter  |Values  |Default  |Description
+
+|`type` | `pd-ssd` or `pd-standard` | `pd-standard` | Allows you to choose between standard PVs or solid-state-drive PVs.
+|`replication-type`| `none` or `regional-pd` | `none` | Allows you to choose between zonal or regional PVs.
+|`disk-encryption-kms-key` | Fully qualified resource identifier for the key to use to encrypt new disks. | Empty string | Uses customer-managed encryption keys (CMEK) to encrypt new disks.
+|===
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-gcp-pd.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="persistent-storage-csi-gcp-pd-encrypted-pv_{context}"]
+= Creating a custom-encrypted persistent volume
+
+When you create a `PersistentVolumeClaim` object, {product-title} provisions a new persistent volume (PV) and creates a `PersistentVolume` object. You can add a custom encryption key in Google Cloud Platform (GCP) to protect a PV in your cluster by encrypting the newly created PV.
+
+For encryption, the newly attached PV that you create uses customer-managed encryption keys (CMEK) on a cluster by using a new or existing Google Cloud Key Management Service (KMS) key.
+
+.Prerequisites
+* You are logged in to a running {product-title} cluster.
+* You have created a Cloud KMS key ring and key version.
+
+For more information about CMEK and Cloud KMS resources, see link:https://cloud.google.com/kubernetes-engine/docs/how-to/using-cmek[Using customer-managed encryption keys (CMEK)].
+
+.Procedure
+To create a custom-encrypted PV, complete the following steps:
+
+. Create a storage class with the Cloud KMS key. The following example enables dynamic provisioning of encrypted volumes:
++
+[source,yaml]
+--
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: csi-gce-pd-cmek
+provisioner: pd.csi.storage.gke.io
+volumeBindingMode: "WaitForFirstConsumer"
+allowVolumeExpansion: true
+parameters:
+  type: pd-standard
+  disk-encryption-kms-key: projects/<key-project-id>/locations/<location>/keyRings/<key-ring>/cryptoKeys/<key> <1>
+--
+<1> This field must be the resource identifier for the key that will be used to encrypt new disks. Values are case-sensitive. For more information about providing key ID values, see link:https://cloud.google.com/kms/docs/resource-hierarchy#retrieve_resource_id[Retrieving a resource's ID] and link:https://cloud.google.com/kms/docs/getting-resource-ids[Getting a Cloud KMS resource ID].
++
+[NOTE]
+====
+You cannot add the `disk-encryption-kms-key` parameter to an existing storage class. However, you can delete the storage class and recreate it with the same name and a different set of parameters. If you do this, the provisioner of the existing class must be `pd.csi.storage.gke.io`.
+====
+
+. Deploy the storage class on your {product-title} cluster using the `oc` command:
++
+[source,terminal]
+--
+$ oc describe storageclass csi-gce-pd-cmek
+--
++
+.Example output
+[source,terminal]
+--
+Name:                  csi-gce-pd-cmek
+IsDefaultClass:        No
+Annotations:           None
+Provisioner:           pd.csi.storage.gke.io
+Parameters:            disk-encryption-kms-key=projects/key-project-id/locations/location/keyRings/ring-name/cryptoKeys/key-name,type=pd-standard
+AllowVolumeExpansion:  true
+MountOptions:          none
+ReclaimPolicy:         Delete
+VolumeBindingMode:     WaitForFirstConsumer
+Events:                none
+--
+
+. Create a file named `pvc.yaml` that matches the name of your storage class object that you created in the previous step:
++
+[source,yaml]
+--
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: podpvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: csi-gce-pd-cmek
+  resources:
+    requests:
+      storage: 6Gi
+--
++
+[NOTE]
+====
+If you marked the new storage class as default, you can omit the `storageClassName` field.
+====
+
+. Apply the PVC on your cluster:
++
+[source,terminal]
+--
+$ oc apply -f pvc.yaml
+--
+
+. Get the status of your PVC and verify that it is created and bound to a newly provisioned PV:
++
+[source,terminal]
+--
+$ oc get pvc
+--
++
+[source,terminal]
+.Example output
+--
+NAME      STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS     AGE
+podpvc    Bound     pvc-e36abf50-84f3-11e8-8538-42010a800002   10Gi       RWO            csi-gce-pd-cmek  9s
+--
++
+[NOTE]
+====
+If your storage class has the `volumeBindingMode` field set to `WaitForFirstConsumer`, you must create a pod to use the PVC before you can verify it.
+====
+
+Your CMEK-protected PV is now ready to use with your {product-title} cluster.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/container_storage_interface/persistent-storage-csi-azure.adoc
+// storage/container_storage_interface/persistent-storage-csi-ebs.adoc
+// storage/container_storage_interface/persistent-storage-csi-gcp-pd.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="byok_{context}"]
+= User-managed encryption
+
+The user-managed encryption feature allows you to provide keys during installation that encrypt {product-title} node root volumes, and enables all managed storage classes to use these keys to encrypt provisioned storage volumes. You must specify the custom key in the `platform.<cloud_type>.defaultMachinePlatform` field in the install-config YAML file.
+
+This features supports the following storage types:
+
+* Amazon Web Services (AWS) Elastic Block storage (EBS)
+
+* Microsoft Azure Disk storage
+
+* Google Cloud Platform (GCP) persistent disk (PD) storage
+
+:leveloffset!:
+
+For information about installing with user-managed encryption for GCP PD, see xref:../../installing/installing_gcp/installing-gcp-customizations.adoc#installation-configuration-parameters_installing-gcp-customizations[Installation configuration parameters].
+
+[role="_additional-resources"]
+== Additional resources
+* xref:../../storage/persistent_storage/persistent-storage-gce.adoc#persistent-storage-using-gce[Persistent storage using GCE Persistent Disk]
+* xref:../../storage/container_storage_interface/persistent-storage-csi.adoc#persistent-storage-csi[Configuring CSI volumes]
+
+//# includes=_attributes/common-attributes,modules/persistent-storage-csi-about,modules/persistent-storage-csi-gcp-pd-storage-class-ref,modules/persistent-storage-csi-gcp-pd-encrypted-pv,modules/persistent-storage-byok

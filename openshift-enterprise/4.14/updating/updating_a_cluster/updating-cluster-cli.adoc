@@ -1,0 +1,601 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="updating-cluster-cli"]
+= Updating a cluster using the CLI
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: updating-cluster-cli
+
+toc::[]
+
+////
+All OpenShift advisories link directly to this assembly. If you are doing work that changes the URL, DON'T!
+But if you really need to, please contact the release notes team so they can change the advisory templates. These templates are not part of the openshift-docs repo.
+////
+
+////
+WARNING: This assembly has been moved into a subdirectory for 4.14+. Changes to this assembly for earlier versions should be done in separate PRs based off of their respective version branches. Otherwise, your cherry picks may fail.
+
+To do: Remove this comment once 4.13 docs are EOL.
+////
+
+You can update, or upgrade, an {product-title} cluster within a minor version by using the OpenShift CLI (`oc`). You can also update a cluster between minor versions by following the same instructions.
+
+== Prerequisites
+
+* Have access to the cluster as a user with `admin` privileges.
+See xref:../../authentication/using-rbac.adoc#using-rbac[Using RBAC to define and apply permissions].
+* Have a recent xref:../../backup_and_restore/control_plane_backup_and_restore/backing-up-etcd.adoc#backup-etcd[etcd backup] in case your update fails and you must restore your cluster to a previous state.
+* Support for {op-system-base}7 workers is removed in {product-title} {product-version}. You must replace {op-system-base}7 workers with {op-system-base}8 or {op-system} workers before updating to {product-title} {product-version}. Red Hat does not support in-place {op-system-base}7 to {op-system-base}8 updates for {op-system-base} workers; those hosts must be replaced with a clean operating system install.
+* Ensure all Operators previously installed through Operator Lifecycle Manager (OLM) are updated to their latest version in their latest channel. Updating the Operators ensures they have a valid update path when the default OperatorHub catalogs switch from the current minor version to the next during a cluster update. See xref:../../operators/admin/olm-upgrading-operators.adoc#olm-upgrading-operators[Updating installed Operators] for more information.
+* Ensure that all machine config pools (MCPs) are running and not paused. Nodes associated with a paused MCP are skipped during the update process. You can pause the MCPs if you are performing a canary rollout update strategy.
+* If your cluster uses manually maintained credentials, update the cloud provider resources for the new release. For more information, including how to determine if this is a requirement for your cluster, see xref:../../updating/preparing_for_updates/preparing-manual-creds-update.adoc#preparing-manual-creds-update[Preparing to update a cluster with manually maintained credentials].
+* Ensure that you address all `Upgradeable=False` conditions so the cluster allows an update to the next minor version. An alert displays at the top of the *Cluster Settings* page when you have one or more cluster Operators that cannot be updated. You can still update to the next available patch update for the minor release you are currently on.
+* Review the list of APIs that were removed in Kubernetes 1.27, migrate any affected components to use the new API version, and provide the administrator acknowledgment. For more information, see xref:../../updating/preparing_for_updates/updating-cluster-prepare.adoc#updating-cluster-prepare[Preparing to update to {product-title} 4.14].
+* If you run an Operator or you have configured any application with the pod disruption budget, you might experience an interruption during the update process. If `minAvailable` is set to 1 in `PodDisruptionBudget`, the nodes are drained to apply pending machine configs which might block the eviction process. If several nodes are rebooted, all the pods might run on only one node, and the `PodDisruptionBudget` field can prevent the node drain.
+
+[IMPORTANT]
+====
+* When an update is failing to complete, the Cluster Version Operator (CVO) reports the status of any blocking components while attempting to reconcile the update. Rolling your cluster back to a previous version is not supported.  If your update is failing to complete, contact Red Hat support.
+* Using the `unsupportedConfigOverrides` section to modify the configuration of an Operator is unsupported and might block cluster updates. You must remove this setting before you can update your cluster.
+====
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../architecture/architecture-installation.adoc#unmanaged-operators_architecture-installation[Support policy for unmanaged Operators]
+
+// Pausing a MachineHealthCheck resource
+:leveloffset: +1
+
+// Module included in the following assemblies:
+
+// * updating/updating_a_cluster/updating-cluster-cli.adoc
+// * updating/updating_a_cluster/updating-cluster-web-console.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="machine-health-checks-pausing_{context}"]
+= Pausing a MachineHealthCheck resource
+
+During the update process, nodes in the cluster might become temporarily unavailable. In the case of worker nodes, the machine health check might identify such nodes as unhealthy and reboot them. To avoid rebooting such nodes, pause all the `MachineHealthCheck` resources before updating the cluster.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+.Procedure
+
+. To list all the available `MachineHealthCheck` resources that you want to pause, run the following command:
++
+[source,terminal]
+----
+$ oc get machinehealthcheck -n openshift-machine-api
+----
+
+. To pause the machine health checks, add the `cluster.x-k8s.io/paused=""` annotation to the `MachineHealthCheck` resource. Run the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-machine-api annotate mhc <mhc-name> cluster.x-k8s.io/paused=""
+----
++
+The annotated `MachineHealthCheck` resource resembles the following YAML file:
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineHealthCheck
+metadata:
+  name: example
+  namespace: openshift-machine-api
+  annotations:
+    cluster.x-k8s.io/paused: ""
+spec:
+  selector:
+    matchLabels:
+      role: worker
+  unhealthyConditions:
+  - type:    "Ready"
+    status:  "Unknown"
+    timeout: "300s"
+  - type:    "Ready"
+    status:  "False"
+    timeout: "300s"
+  maxUnhealthy: "40%"
+status:
+  currentHealthy: 5
+  expectedMachines: 5
+----
++
+[IMPORTANT]
+====
+Resume the machine health checks after updating the cluster. To resume the check, remove the pause annotation from the `MachineHealthCheck` resource by running the following command:
+
+[source,terminal]
+----
+$ oc -n openshift-machine-api annotate mhc <mhc-name> cluster.x-k8s.io/paused-
+----
+====
+
+:leveloffset!:
+
+// About updating single node {product-title}
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-web-console.adoc
+// * updating/updating_a_cluster/updating-cluster-cli.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="update-single-node-openshift_{context}"]
+= About updating single node {product-title}
+
+You can update, or upgrade, a single-node {product-title} cluster by using either the console or CLI.
+
+However, note the following limitations:
+
+* The prerequisite to pause the `MachineHealthCheck` resources is not required because there is no other node to perform the health check.
+
+* Restoring a single-node {product-title} cluster using an etcd backup is not officially supported. However, it is good practice to perform the etcd backup in case your update fails. If your control plane is healthy, you might be able to restore your cluster to a previous state by using the backup.
+
+* Updating a single-node {product-title} cluster requires downtime and can include an automatic reboot. The amount of downtime depends on the update payload, as described in the following scenarios:
+
+** If the update payload contains an operating system update, which requires a reboot, the downtime is significant and impacts cluster management and user workloads.
+
+** If the update contains machine configuration changes that do not require a reboot, the downtime is less, and the impact on the cluster management and user workloads is lessened. In this case, the node draining step is skipped with single-node {product-title} because there is no other node in the cluster to reschedule the workloads to.
+
+** If the update payload does not contain an operating system update or machine configuration changes, a short API outage occurs and resolves quickly.
+
+[IMPORTANT]
+====
+There are conditions, such as bugs in an updated package, that can cause the single node to not restart after a reboot. In this case, the update does not rollback automatically.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For information on which machine configuration changes require a reboot, see the note in xref:../../architecture/control-plane.adoc#about-machine-config-operator_control-plane[About the Machine Config Operator].
+
+// Updating a cluster by using the CLI
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-cli.adoc
+// * updating/updating_a_cluster/updating-cluster-rhel-compute.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-upgrading-cli_{context}"]
+= Updating a cluster by using the CLI
+
+If updates are available, you can update your cluster by using the
+OpenShift CLI (`oc`).
+
+You can find information about available {product-title} advisories and updates
+link:https://access.redhat.com/downloads/content/290[in the errata section]
+of the Customer Portal.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`) that matches the version for your updated version.
+* Log in to the cluster as user with `cluster-admin` privileges.
+
+* Pause all `MachineHealthCheck` resources.
+
+.Procedure
+
+. View the available updates and note the version number of the update that
+you want to apply:
++
+[source,terminal]
+----
+$ oc adm upgrade
+----
++
+.Example output
+[source,terminal]
+----
+$ oc adm upgrade
+Cluster version is 4.13.10
+
+Upstream is unset, so the cluster will use an appropriate default.
+Channel: stable-4.13 (available channels: candidate-4.13, candidate-4.14, fast-4.13, stable-4.13)
+
+Recommended updates:
+
+  VERSION     IMAGE
+  4.13.14     quay.io/openshift-release-dev/ocp-release@sha256:406fcc160c097f61080412afcfa7fd65284ac8741ac7ad5b480e304aba73674b
+  4.13.13     quay.io/openshift-release-dev/ocp-release@sha256:d62495768e335c79a215ba56771ff5ae97e3cbb2bf49ed8fb3f6cefabcdc0f17
+  4.13.12     quay.io/openshift-release-dev/ocp-release@sha256:73946971c03b43a0dc6f7b0946b26a177c2f3c9d37105441315b4e3359373a55
+  4.13.11     quay.io/openshift-release-dev/ocp-release@sha256:e1c2377fdae1d063aaddc753b99acf25972b6997ab9a0b7e80cfef627b9ef3dd
+----
++
+[NOTE]
+====
+For details and information on how to perform an `EUS-to-EUS` channel update, please refer to the
+_Preparing to perform an EUS-to-EUS upgrade_ page, listed in the Additional resources section.
+====
+
+. Based on your organization requirements, set the appropriate update channel. For example, you can set your channel to `stable-4.13` or `fast-4.13`. For more information about channels, refer to _Understanding update channels and releases_ listed in the Additional resources section.
+//this example will need to be updated per eus release to reflect options available
+
++
+[source,terminal]
+----
+$ oc adm upgrade channel <channel>
+----
++
+For example, to set the channel to `stable-{product-version}`:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc adm upgrade channel stable-{product-version}
+----
++
+[IMPORTANT]
+====
+For production clusters, you must subscribe to a `stable-\*`, `eus-*`, or `fast-*` channel.
+====
++
+[NOTE]
+====
+When you are ready to move to the next minor version, choose the channel that corresponds to that minor version.
+The sooner the update channel is declared, the more effectively the cluster can recommend update paths to your target version.
+The cluster might take some time to evaluate all the possible updates that are available and offer the best update recommendations to choose from.
+Update recommendations can change over time, as they are based on what update options are available at the time.
+
+If you cannot see an update path to your target minor version, keep updating your cluster to the latest patch release for your current version until the next minor version is available in the path.
+====
+
+. Apply an update:
+** To update to the latest version:
++
+[source,terminal]
+----
+$ oc adm upgrade --to-latest=true <1>
+----
+
+** To update to a specific version:
++
+[source,terminal]
+----
+$ oc adm upgrade --to=<version> <1>
+----
+<1> `<version>` is the update version that you obtained from the output of the
+`oc adm upgrade` command.
+
+. Review the status of the Cluster Version Operator:
++
+[source,terminal]
+----
+$ oc adm upgrade
+----
+
+. After the update completes, you can confirm that the cluster version has
+updated to the new version:
++
+[source,terminal]
+----
+$ oc adm upgrade
+----
++
+.Example output
+[source,terminal]
+----
+Cluster version is <version>
+
+Upstream is unset, so the cluster will use an appropriate default.
+Channel: stable-<version> (available channels: candidate-<version>, eus-<version>, fast-<version>, stable-<version>)
+
+No updates available. You may force an update to a specific release image, but doing so might not be supported and might result in downtime or data loss.
+----
++
+. If you are updating your cluster to the next minor version, such as version X.y to X.(y+1), it is recommended to confirm that your nodes are updated before deploying workloads that rely on a new feature:
++
+[source,terminal]
+----
+$ oc get nodes
+----
++
+.Example output
+[source,terminal]
+----
+NAME                           STATUS   ROLES    AGE   VERSION
+ip-10-0-168-251.ec2.internal   Ready    master   82m   v1.27.3
+ip-10-0-170-223.ec2.internal   Ready    master   82m   v1.27.3
+ip-10-0-179-95.ec2.internal    Ready    worker   70m   v1.27.3
+ip-10-0-182-134.ec2.internal   Ready    worker   70m   v1.27.3
+ip-10-0-211-16.ec2.internal    Ready    master   82m   v1.27.3
+ip-10-0-250-100.ec2.internal   Ready    worker   69m   v1.27.3
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../updating/updating_a_cluster/eus-eus-update.adoc#eus-eus-update[Performing an EUS-to-EUS update]
+* xref:../../updating/understanding_updates/understanding-update-channels-release.adoc#understanding-update-channels-releases[Understanding update channels and releases]
+
+// Updating along a conditional update path
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-cli.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-conditional-upgrade-path{context}"]
+= Updating along a conditional update path
+
+You can update along a recommended conditional update path using the web console or the OpenShift CLI (`oc`).
+When a conditional update is not recommended for your cluster, you can update along a conditional update path using the OpenShift CLI (`oc`) 4.10 or later.
+
+.Procedure
+
+. To view the description of the update when it is not recommended because a risk might apply, run the following command:
++
+[source,terminal]
+----
+$ oc adm upgrade --include-not-recommended
+----
+
+. If the cluster administrator evaluates the potential known risks and decides it is acceptable for the current cluster, then the administrator can waive the safety guards and proceed the update by running the following command:
++
+[source,terminal]
+----
+$ oc adm upgrade --allow-not-recommended --to <version> <.>
+----
+<.> `<version>` is the supported but not recommended update version that you obtained from the output of the previous command.
+
+:leveloffset!:
+
+// OKD removed the section that this link points to.
+
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../updating/understanding_updates/understanding-update-channels-release.adoc#understanding-update-channels-releases[Understanding update channels and releases]
+
+
+// Changing the update server by using the CLI
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-cli.adoc
+// * updating/updating_a_cluster/updating-cluster-rhel-compute.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-changing-update-server-cli_{context}"]
+= Changing the update server by using the CLI
+
+Changing the update server is optional. If you have an OpenShift Update Service (OSUS) installed and configured locally, you must set the URL for the server as the `upstream` to use the local server during updates. The default value for `upstream` is `\https://api.openshift.com/api/upgrades_info/v1/graph`.
+
+.Procedure
+
+* Change the `upstream` parameter value in the cluster version:
++
+[source,terminal]
+----
+$ oc patch clusterversion/version --patch '{"spec":{"upstream":"<update-server-url>"}}' --type=merge
+----
+The `<update-server-url>` variable specifies the URL for the update server.
++
+.Example output
++
+[source,terminal]
+----
+clusterversion.config.openshift.io/version patched
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/machine-health-checks-pausing,modules/updating-sno,modules/update-upgrading-cli,modules/update-conditional-updates,modules/update-changing-update-server-cli

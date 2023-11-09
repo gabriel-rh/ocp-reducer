@@ -1,0 +1,778 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="using-rbac"]
+= Using RBAC to define and apply permissions
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: using-rbac
+
+toc::[]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/using-rbac.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="authorization-overview_{context}"]
+= RBAC overview
+
+Role-based access control (RBAC) objects determine whether a user is allowed to
+perform a given action within a project.
+
+administrators can use the cluster roles and
+bindings to control who has various access levels to the {product-title}
+platform itself and all projects.
+
+Developers can use local roles and bindings to control who has access
+to their projects. Note that authorization is a separate step from
+authentication, which is more about determining the identity of who is taking the action.
+
+Authorization is managed using:
+
+[cols="1,4",options="header"]
+|===
+
+|Authorization object |Description
+
+|Rules |Sets of permitted verbs on a set of objects. For example,
+whether a user or service account can `create` pods.
+
+|Roles |Collections of rules. You can associate, or bind, users and groups
+to multiple roles.
+
+|Bindings |Associations between users and/or groups with a role.
+|===
+
+
+Be mindful of the difference between local and cluster bindings. For example,
+if you bind the `cluster-admin` role to a user by using a local role binding,
+it might appear that this user has the privileges of a cluster administrator.
+This is not the case. Binding the `cluster-admin` to a user in a project
+grants super administrator privileges for only that
+project to the user. That user has the permissions of the cluster role
+`admin`, plus a few additional permissions like the ability to edit rate limits,
+for that project.
+This binding can be confusing via the web console UI, which does not list
+cluster role bindings that are bound to true cluster administrators. However, it
+does list local role bindings that you can use to locally bind `cluster-admin`.
+
+////
+If you do, when you upgrade
+your cluster, the default roles are updated and
+automatically reconciled when the server is started. During reconciliation, any
+permissions that are missing from
+the default roles are added. If you added more permissions to the role, they are
+not removed.
+
+If you customized the default roles and configured them to prevent automatic
+role reconciliation, you must manually update policy definitions
+when you upgrade {product-title}.
+////
+
+
+The relationships between cluster roles, local roles, cluster role bindings,
+local role bindings, users, groups and service accounts are illustrated below.
+
+image::rbac.png[{product-title} RBAC]
+
+[WARNING]
+====
+The `get pods/exec`, `get pods/*`, and `get *` rules grant execution privileges when they are applied to a role. Apply the principle of least privilege and assign only the minimal RBAC rights required for users and agents. For more information, see link:https://access.redhat.com/solutions/6989997[RBAC rules allow execution privileges].
+====
+
+[id="evaluating-authorization_{context}"]
+== Evaluating authorization
+
+{product-title} evaluates authorization by using:
+
+Identity:: The user name and list of groups that the user belongs to.
+
+Action:: The action you perform. In most cases, this consists of:
+* *Project*: The project you access. A project is a Kubernetes namespace with
+additional annotations that allows a community of users to organize and manage
+their content in isolation from other communities.
+* *Verb* : The action itself:  `get`, `list`, `create`, `update`, `delete`, `deletecollection`, or `watch`.
+* *Resource name*: The API endpoint that you access.
+Bindings:: The full list of bindings, the associations between users or groups
+with a role.
+
+{product-title} evaluates authorization by using the following steps:
+
+. The identity and the project-scoped action is used to find all bindings that
+apply to the user or their groups.
+. Bindings are used to locate all the roles that apply.
+. Roles are used to find all the rules that apply.
+. The action is checked against each rule to find a match.
+. If no matching rule is found, the action is then denied by default.
+
+
+including a matrix of the verbs and resources each are associated with.
+
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/using-rbac.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+
+[id="rbac-projects-namespaces_{context}"]
+= Projects and namespaces
+
+A Kubernetes _namespace_ provides a mechanism to scope resources in a cluster.
+The
+https://kubernetes.io/docs/tasks/administer-cluster/namespaces/[Kubernetes documentation]
+has more information on namespaces.
+
+Namespaces provide a unique scope for:
+
+* Named resources to avoid basic naming collisions.
+* Delegated management authority to trusted users.
+* The ability to limit community resource consumption.
+
+Most objects in the system are scoped by namespace, but some are
+excepted and have no namespace, including nodes and users.
+
+A _project_ is a Kubernetes namespace with additional annotations and is the central vehicle
+by which access to resources for regular users is managed.
+A project allows a community of users to organize and manage their content in
+isolation from other communities. Users must be given access to projects by administrators,
+or if allowed to create projects, automatically have access to their own projects.
+
+Projects can have a separate `name`, `displayName`, and `description`.
+
+- The mandatory `name` is a unique identifier for the project and is most visible when using the CLI tools or API. The maximum name length is 63 characters.
+- The optional `displayName` is how the project is displayed in the web console (defaults to `name`).
+- The optional `description` can be a more detailed description of the project and is also visible in the web console.
+
+Each project scopes its own set of:
+
+[cols="1,4",options="header"]
+|===
+
+|Object
+|Description
+
+|`Objects`
+|Pods, services, replication controllers, etc.
+
+|`Policies`
+|Rules for which users can or cannot perform actions on objects.
+
+|`Constraints`
+|Quotas for each kind of object that can be limited.
+
+|`Service accounts`
+|Service accounts act automatically with designated access to objects in the project.
+
+|===
+
+Cluster administrators can create projects and delegate administrative rights
+for the project to any member of the user community. Cluster administrators can
+also allow developers to create their own projects.
+
+Developers and administrators can interact with projects by using the CLI or the
+web console.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/using-rbac.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+
+[id="rbac-default-projects_{context}"]
+= Default projects
+
+{product-title} comes with a number of default projects, and projects
+starting with `openshift-` are the most essential to users.
+These projects host master components that run as pods and other infrastructure
+components. The pods created in these namespaces that have a
+link:https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/#rescheduler-guaranteed-scheduling-of-critical-add-ons[critical pod annotation]
+are considered critical, and the have guaranteed admission by kubelet.
+Pods created for master components in these namespaces are already marked as
+critical.
+
+// Text snippet included in the following assemblies:
+//
+// * applications/projects/working-with-projects.adoc
+// * applications/quotas/quotas-setting-across-multiple-projects.adoc
+// * openshift_images/image-streams-manage.adoc
+//
+// Text snippet included in the following modules:
+//
+// * modules/admission-plug-ins-about.adoc
+// * modules/creating-a-project-using-the-CLI.adoc
+// * modules/creating-a-project-using-the-web-console.adoc
+// * modules/images-managing-images-enabling-imagestreams-kube.adoc
+// * modules/odc-creating-projects-using-developer-perspective.adoc
+// * modules/rbac-default-projects.adoc
+// * modules/security-context-constraints-psa-about.adoc
+// * modules/security-context-constraints-rbac.adoc
+
+:_mod-docs-content-type: SNIPPET
+
+[IMPORTANT]
+====
+Do not run workloads in or share access to default projects. Default projects are reserved for running core cluster components.
+
+The following default projects are considered highly privileged: `default`, `kube-public`, `kube-system`, `openshift`, `openshift-infra`, `openshift-node`, and other system-created projects that have the `openshift.io/run-level` label set to `0` or `1`. Functionality that relies on admission plugins, such as pod security admission, security context constraints, cluster resource quotas, and image reference resolution, does not work in highly privileged projects.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/using-rbac.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="viewing-cluster-roles_{context}"]
+= Viewing cluster roles and bindings
+
+You can use the `oc` CLI to view cluster roles and bindings by using the
+`oc describe` command.
+
+.Prerequisites
+
+* Install the `oc` CLI.
+* Obtain permission to view the cluster roles and bindings.
+
+
+.Procedure
+
+. To view the cluster roles and their associated rule sets:
++
+
+. To view the current set of cluster role bindings, which shows the users and
+groups that are bound to various roles:
++
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/using-rbac.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="viewing-local-roles_{context}"]
+= Viewing local roles and bindings
+
+You can use the `oc` CLI to view local roles and bindings by using the
+`oc describe` command.
+
+.Prerequisites
+
+* Install the `oc` CLI.
+* Obtain permission to view the local roles and bindings:
+
+
+** Users with the `admin` default cluster role bound locally can view and manage
+roles and bindings in that project.
+
+.Procedure
+
+. To view the current set of local role bindings, which show the users and groups
+that are bound to various roles for the current project:
++
+[source,terminal]
+----
+$ oc describe rolebinding.rbac
+----
+
+. To view the local role bindings for a different project, add the `-n` flag
+to the command:
++
+[source,terminal]
+----
+$ oc describe rolebinding.rbac -n joe-project
+----
++
+.Example output
+[source,terminal]
+----
+Name:         admin
+Labels:       <none>
+Annotations:  <none>
+Role:
+  Kind:  ClusterRole
+  Name:  admin
+Subjects:
+  Kind  Name        Namespace
+  ----  ----        ---------
+  User  kube:admin
+
+
+Name:         system:deployers
+Labels:       <none>
+Annotations:  openshift.io/description:
+                Allows deploymentconfigs in this namespace to rollout pods in
+                this namespace.  It is auto-managed by a controller; remove
+                subjects to disa...
+Role:
+  Kind:  ClusterRole
+  Name:  system:deployer
+Subjects:
+  Kind            Name      Namespace
+  ----            ----      ---------
+  ServiceAccount  deployer  joe-project
+
+
+Name:         system:image-builders
+Labels:       <none>
+Annotations:  openshift.io/description:
+                Allows builds in this namespace to push images to this
+                namespace.  It is auto-managed by a controller; remove subjects
+                to disable.
+Role:
+  Kind:  ClusterRole
+  Name:  system:image-builder
+Subjects:
+  Kind            Name     Namespace
+  ----            ----     ---------
+  ServiceAccount  builder  joe-project
+
+
+Name:         system:image-pullers
+Labels:       <none>
+Annotations:  openshift.io/description:
+                Allows all pods in this namespace to pull images from this
+                namespace.  It is auto-managed by a controller; remove subjects
+                to disable.
+Role:
+  Kind:  ClusterRole
+  Name:  system:image-puller
+Subjects:
+  Kind   Name                                Namespace
+  ----   ----                                ---------
+  Group  system:serviceaccounts:joe-project
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/using-rbac.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="adding-roles_{context}"]
+= Adding roles to users
+
+You can use  the `oc adm` administrator CLI to manage the roles and bindings.
+
+Binding, or adding, a role to users or groups gives the user or group the access
+that is granted by the role. You can add and remove roles to and from users and
+groups using `oc adm policy` commands.
+
+You can bind any of the default cluster roles to local users or groups in your
+project.
+
+.Procedure
+
+. Add a role to a user in a specific project:
++
+[source,terminal]
+----
+$ oc adm policy add-role-to-user <role> <user> -n <project>
+----
++
+For example, you can add the `admin` role to the `alice` user in `joe` project
+by running:
++
+[source,terminal]
+----
+$ oc adm policy add-role-to-user admin alice -n joe
+----
++
+[TIP]
+====
+You can alternatively apply the following YAML to add the role to the user:
+
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: admin-0
+  namespace: joe
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: alice
+----
+====
+
+. View the local role bindings and verify the addition in the output:
++
+[source,terminal]
+----
+$ oc describe rolebinding.rbac -n <project>
+----
++
+For example, to view the local role bindings for the `joe` project:
++
+[source,terminal]
+----
+$ oc describe rolebinding.rbac -n joe
+----
++
+.Example output
+[source,terminal]
+----
+
+Name:         admin
+Labels:       <none>
+Annotations:  <none>
+Role:
+  Kind:  ClusterRole
+  Name:  admin
+Subjects:
+  Kind  Name        Namespace
+  ----  ----        ---------
+  User  kube:admin
+
+
+Name:         admin-0
+Labels:       <none>
+Annotations:  <none>
+Role:
+  Kind:  ClusterRole
+  Name:  admin
+Subjects:
+  Kind  Name   Namespace
+  ----  ----   ---------
+  User  alice <1>
+
+
+Name:         system:deployers
+Labels:       <none>
+Annotations:  openshift.io/description:
+                Allows deploymentconfigs in this namespace to rollout pods in
+                this namespace.  It is auto-managed by a controller; remove
+                subjects to disa...
+Role:
+  Kind:  ClusterRole
+  Name:  system:deployer
+Subjects:
+  Kind            Name      Namespace
+  ----            ----      ---------
+  ServiceAccount  deployer  joe
+
+
+Name:         system:image-builders
+Labels:       <none>
+Annotations:  openshift.io/description:
+                Allows builds in this namespace to push images to this
+                namespace.  It is auto-managed by a controller; remove subjects
+                to disable.
+Role:
+  Kind:  ClusterRole
+  Name:  system:image-builder
+Subjects:
+  Kind            Name     Namespace
+  ----            ----     ---------
+  ServiceAccount  builder  joe
+
+
+Name:         system:image-pullers
+Labels:       <none>
+Annotations:  openshift.io/description:
+                Allows all pods in this namespace to pull images from this
+                namespace.  It is auto-managed by a controller; remove subjects
+                to disable.
+Role:
+  Kind:  ClusterRole
+  Name:  system:image-puller
+Subjects:
+  Kind   Name                                Namespace
+  ----   ----                                ---------
+  Group  system:serviceaccounts:joe
+----
+<1> The `alice` user has been added to the `admins` `RoleBinding`.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/using-rbac.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+
+:_mod-docs-content-type: PROCEDURE
+
+:leveloffset!:
+
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/using-rbac.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+
+[id="local-role-binding-commands_{context}"]
+= Local role binding commands
+
+When you manage a user or group's associated roles for local role bindings using the
+following operations, a project may be specified with the `-n` flag. If it is
+not specified, then the current project is used.
+
+You can use the following commands for local RBAC management.
+
+.Local role binding operations
+[options="header"]
+|===
+
+|Command |Description
+
+|`$ oc adm policy who-can _<verb>_ _<resource>_`
+|Indicates which users can perform an action on a resource.
+
+|`$ oc adm policy add-role-to-user _<role>_ _<username>_`
+|Binds a specified role to specified users in the current project.
+
+|`$ oc adm policy remove-role-from-user _<role>_ _<username>_`
+|Removes a given role from specified users in the current project.
+
+|`$ oc adm policy remove-user _<username>_`
+|Removes specified users and all of their roles in the current project.
+
+|`$ oc adm policy add-role-to-group _<role>_ _<groupname>_`
+|Binds a given role to specified groups in the current project.
+
+|`$ oc adm policy remove-role-from-group _<role>_ _<groupname>_`
+|Removes a given role from specified groups in the current project.
+
+|`$ oc adm policy remove-group _<groupname>_`
+|Removes specified groups and all of their roles in the current project.
+
+|===
+
+:leveloffset!:
+
+
+//# includes=_attributes/common-attributes,modules/rbac-overview,modules/rbac-projects-namespaces,modules/rbac-default-projects,modules/snippets/default-projects,modules/rbac-viewing-cluster-roles,modules/rbac-viewing-local-roles,modules/rbac-adding-roles,modules/rbac-creating-local-role,modules/rbac-local-role-binding-commands

@@ -1,0 +1,571 @@
+:_mod-docs-content-type: ASSEMBLY
+:context: nodes-cma-autoscaling-custom-adding
+[id="nodes-cma-autoscaling-custom-adding"]
+= Understanding how to add custom metrics autoscalers
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+
+toc::[]
+
+
+To add a custom metrics autoscaler, create a `ScaledObject` custom resource for a deployment, stateful set, or custom resource. Create a `ScaledJob` custom resource for a job.
+
+You can create only one scaled object for each workload that you want to scale. Also, you cannot use a scaled object and the horizontal pod autoscaler (HPA) on the same workload.
+
+// If you want to scale based on a custom trigger and CPU/Memory, you can create multiple triggers in the scaled object or scaled job.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/cma/nodes-cma-autoscaling-custom-adding.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-cma-autoscaling-custom-creating-workload_{context}"]
+= Adding a custom metrics autoscaler to a workload
+
+You can create a custom metrics autoscaler for a workload that is created by a `Deployment`, `StatefulSet`, or `custom resource` object.
+
+.Prerequisites
+
+* The Custom Metrics Autoscaler Operator must be installed.
+
+* If you use a custom metrics autoscaler for scaling based on CPU or memory:
+
+** Your cluster administrator must have properly configured cluster metrics. You can use the `oc describe PodMetrics <pod-name>` command to determine if metrics are configured. If metrics are configured, the output appears similar to the following, with CPU and Memory displayed under Usage.
++
+[source,terminal]
+----
+$ oc describe PodMetrics openshift-kube-scheduler-ip-10-0-135-131.ec2.internal
+----
++
+.Example output
+[source,yaml,options="nowrap"]
+----
+Name:         openshift-kube-scheduler-ip-10-0-135-131.ec2.internal
+Namespace:    openshift-kube-scheduler
+Labels:       <none>
+Annotations:  <none>
+API Version:  metrics.k8s.io/v1beta1
+Containers:
+  Name:  wait-for-host-port
+  Usage:
+    Memory:  0
+  Name:      scheduler
+  Usage:
+    Cpu:     8m
+    Memory:  45440Ki
+Kind:        PodMetrics
+Metadata:
+  Creation Timestamp:  2019-05-23T18:47:56Z
+  Self Link:           /apis/metrics.k8s.io/v1beta1/namespaces/openshift-kube-scheduler/pods/openshift-kube-scheduler-ip-10-0-135-131.ec2.internal
+Timestamp:             2019-05-23T18:47:56Z
+Window:                1m0s
+Events:                <none>
+----
+
+** The pods associated with the object you want to scale must include specified memory and CPU limits. For example:
++
+.Example pod spec
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+# ...
+spec:
+  containers:
+  - name: app
+    image: images.my-company.example/app:v4
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+# ...
+----
+
+.Procedure
+
+. Create a YAML file similar to the following. Only the name `<2>`, object name `<4>`, and object kind `<5>` are required:
++
+.Example scaled object
+[source,yaml,options="nowrap"]
+----
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  annotations:
+    autoscaling.keda.sh/paused-replicas: "0" <1>
+  name: scaledobject <2>
+  namespace: my-namespace
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1 <3>
+    name: example-deployment <4>
+    kind: Deployment <5>
+    envSourceContainerName: .spec.template.spec.containers[0] <6>
+  cooldownPeriod:  200 <7>
+  maxReplicaCount: 100 <8>
+  minReplicaCount: 0 <9>
+  metricsServer: <10>
+    auditConfig:
+      logFormat: "json"
+      logOutputVolumeClaim: "persistentVolumeClaimName"
+      policy:
+        rules:
+        - level: Metadata
+        omitStages: "RequestReceived"
+        omitManagedFields: false
+      lifetime:
+        maxAge: "2"
+        maxBackup: "1"
+        maxSize: "50"
+  fallback: <11>
+    failureThreshold: 3
+    replicas: 6
+  pollingInterval: 30 <12>
+  advanced:
+    restoreToOriginalReplicaCount: false <13>
+    horizontalPodAutoscalerConfig:
+      name: keda-hpa-scale-down <14>
+      behavior: <15>
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 15
+  triggers:
+  - type: prometheus <16>
+    metadata:
+      serverAddress: https://thanos-querier.openshift-monitoring.svc.cluster.local:9092
+      namespace: kedatest
+      metricName: http_requests_total
+      threshold: '5'
+      query: sum(rate(http_requests_total{job="test-app"}[1m]))
+      authModes: basic
+    authenticationRef: <17>
+      name: prom-triggerauthentication
+      kind: TriggerAuthentication
+----
+<1> Optional: Specifies that the Custom Metrics Autoscaler Operator is to scale the replicas to the specified value and stop autoscaling, as described in the "Pausing the custom metrics autoscaler for a workload" section.
+<2> Specifies a name for this custom metrics autoscaler.
+<3> Optional: Specifies the API version of the target resource. The default is `apps/v1`.
+<4> Specifies the name of the object that you want to scale.
+<5> Specifies the `kind` as `Deployment`, `StatefulSet` or `CustomResource`.
+<6> Optional: Specifies the name of the container in the target resource, from which the custom metrics autoscaler gets environment variables holding secrets and so forth. The default is `.spec.template.spec.containers[0]`.
+<7> Optional. Specifies the period in seconds to wait after the last trigger is reported before scaling the deployment back to `0` if the `minReplicaCount` is set to `0`. The default is `300`.
+<8> Optional: Specifies the maximum number of replicas when scaling up. The default is `100`.
+<9> Optional: Specifies the minimum number of replicas when scaling down.
+<10> Optional: Specifies the parameters for audit logs. as described in the "Configuring audit logging" section.
+<11> Optional: Specifies the number of replicas to fall back to if a scaler fails to get metrics from the source for the number of times defined by the `failureThreshold` parameter. For more information on fallback behavior, see the link:https://keda.sh/docs/2.7/concepts/scaling-deployments/#fallback[KEDA documentation].
+<12> Optional: Specifies the interval in seconds to check each trigger on. The default is `30`.
+<13> Optional: Specifies whether to scale back the target resource to the original replica count after the scaled object is deleted. The default is `false`, which keeps the replica count as it is when the scaled object is deleted.
+<14> Optional: Specifies a name for the horizontal pod autoscaler. The default is `keda-hpa-{scaled-object-name}`.
+<15> Optional: Specifies a scaling policy to use to control the rate to scale pods up or down, as described in the "Scaling policies" section.
+<16> Specifies the trigger to use as the basis for scaling, as described in the "Understanding the custom metrics autoscaler triggers" section. This example uses {product-title} monitoring.
+<17> Optional: Specifies a trigger authentication or a cluster trigger authentication. For more information, see _Understanding the custom metrics autoscaler trigger authentication_ in the _Additional resources_ section.
+* Enter `TriggerAuthentication` to use a trigger authentication. This is the default.
+* Enter `ClusterTriggerAuthentication` to use a cluster trigger authentication.
+
+. Create the custom metrics autoscaler by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <filename>.yaml
+----
+
+.Verification
+
+* View the command output to verify that the custom metrics autoscaler was created:
++
+[source,terminal]
+----
+$ oc get scaledobject <scaled_object_name>
+----
++
+.Example output
+[source,terminal]
+----
+NAME            SCALETARGETKIND      SCALETARGETNAME        MIN   MAX   TRIGGERS     AUTHENTICATION               READY   ACTIVE   FALLBACK   AGE
+scaledobject    apps/v1.Deployment   example-deployment     0     50    prometheus   prom-triggerauthentication   True    True     True       17s
+----
++
+Note the following fields in the output:
++
+--
+* `TRIGGERS`: Indicates the trigger, or scaler, that is being used.
+* `AUTHENTICATION`: Indicates the name of any trigger authentication being used.
+* `READY`: Indicates whether the scaled object is ready to start scaling:
+** If `True`, the scaled object is ready.
+** If `False`, the scaled object is not ready because of a problem in one or more of the objects you created.
+* `ACTIVE`: Indicates whether scaling is taking place:
+** If `True`, scaling is taking place.
+** If `False`, scaling is not taking place because there are no metrics or there is a problem in one or more of the objects you created.
+* `FALLBACK`: Indicates whether the custom metrics autoscaler is able to get metrics from the source
+** If `False`, the custom metrics autoscaler is getting metrics.
+** If `True`, the custom metrics autoscaler is getting metrics because there are no metrics or there is a problem in one or more of the objects you created.
+--
+
+
+:leveloffset!:
+
+//Scaling by using a scaled job is a Technology Preview feature. TP not supported in ROSA/OSD
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/cma/nodes-cma-autoscaling-custom-adding.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-cma-autoscaling-custom-creating-job_{context}"]
+= Adding a custom metrics autoscaler to a job
+
+You can create a custom metrics autoscaler for any `Job` object.
+
+:FeatureName: Scaling by using a scaled job
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+.Prerequisites
+
+* The Custom Metrics Autoscaler Operator must be installed.
+
+.Procedure
+
+. Create a YAML file similar to the following:
++
+[source,yaml,options="nowrap"]
+----
+kind: ScaledJob
+apiVersion: keda.sh/v1alpha1
+metadata:
+  name: scaledjob
+  namespace: my-namespace
+spec:
+  failedJobsHistoryLimit: 5
+  jobTargetRef:
+    activeDeadlineSeconds: 600 <1>
+    backoffLimit: 6 <2>
+    parallelism: 1 <3>
+    completions: 1 <4>
+    template:  <5>
+      metadata:
+        name: pi
+      spec:
+        containers:
+        - name: pi
+          image: perl
+          command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+  maxReplicaCount: 100 <6>
+  pollingInterval: 30 <7>
+  successfulJobsHistoryLimit: 5 <8>
+  failedJobsHistoryLimit: 5 <9>
+  envSourceContainerName: <10>
+  rolloutStrategy: gradual <11>
+  scalingStrategy: <12>
+    strategy: "custom"
+    customScalingQueueLengthDeduction: 1
+    customScalingRunningJobPercentage: "0.5"
+    pendingPodConditions:
+      - "Ready"
+      - "PodScheduled"
+      - "AnyOtherCustomPodCondition"
+    multipleScalersCalculation : "max"
+  triggers:
+  - type: prometheus <13>
+    metadata:
+      serverAddress: https://thanos-querier.openshift-monitoring.svc.cluster.local:9092
+      namespace: kedatest
+      metricName: http_requests_total
+      threshold: '5'
+      query: sum(rate(http_requests_total{job="test-app"}[1m]))
+      authModes: "bearer"
+    authenticationRef: <14>
+      name: prom-cluster-triggerauthentication
+----
+<1> Specifies the maximum duration the job can run.
+<2> Specifies the number of retries for a job. The default is `6`.
+<3> Optional: Specifies how many pod replicas a job should run in parallel; defaults to `1`.
+* For non-parallel jobs, leave unset. When unset, the default is `1`.
+<4> Optional: Specifies how many successful pod completions are needed to mark a job completed.
+* For non-parallel jobs, leave unset. When unset,  the default is `1`.
+* For parallel jobs with a fixed completion count, specify the number of completions.
+* For parallel jobs with a work queue, leave unset. When unset the default is the value of the `parallelism` parameter.
+<5> Specifies the template for the pod the controller creates.
+<6> Optional: Specifies the maximum number of replicas when scaling up. The default is `100`.
+<7> Optional: Specifies the interval in seconds to check each trigger on. The default is `30`.
+<8> Optional: Specifies the number of successful finished jobs should be kept. The default is `100`.
+<9> Optional: Specifies how many failed jobs should be kept. The default is `100`.
+<10> Optional: Specifies the name of the container in the target resource, from which the custom autoscaler gets environment variables holding secrets and so forth. The default is `.spec.template.spec.containers[0]`.
+<11> Optional: Specifies whether existing jobs are terminated whenever a scaled job is being updated:
++
+--
+* `default`: The autoscaler terminates an existing job if its associated scaled job is updated. The autoscaler recreates the job with the latest specs.
+* `gradual`: The autoscaler does not terminate an existing job if its associated scaled job is updated. The autoscaler creates new jobs with the latest specs.
+--
++
+<12> Optional: Specifies a scaling strategy: `default`, `custom`, or `accurate`. The default is `default`. For more information, see the link in the "Additional resources" section that follows.
+<13> Specifies the trigger to use as the basis for scaling, as described in the "Understanding the custom metrics autoscaler triggers" section.
+<14> Optional: Specifies a trigger authentication or a cluster trigger authentication. For more information, see _Understanding the custom metrics autoscaler trigger authentication_ in the _Additional resources_ section.
+* Enter `TriggerAuthentication` to use a trigger authentication. This is the default.
+* Enter `ClusterTriggerAuthentication` to use a cluster trigger authentication.
+
+. Create the custom metrics autoscaler by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <filename>.yaml
+----
+
+.Verification
+
+* View the command output to verify that the custom metrics autoscaler was created:
++
+[source,terminal]
+----
+$ oc get scaledjob <scaled_job_name>
+----
++
+.Example output
+[source,terminal]
+----
+NAME        MAX   TRIGGERS     AUTHENTICATION              READY   ACTIVE    AGE
+scaledjob   100   prometheus   prom-triggerauthentication  True    True      8s
+----
++
+Note the following fields in the output:
++
+--
+* `TRIGGERS`: Indicates the trigger, or scaler, that is being used.
+* `AUTHENTICATION`: Indicates the name of any trigger authentication being used.
+* `READY`: Indicates whether the scaled object is ready to start scaling:
+** If `True`, the scaled object is ready.
+** If `False`, the scaled object is not ready because of a problem in one or more of the objects you created.
+* `ACTIVE`: Indicates whether scaling is taking place:
+** If `True`, scaling is taking place.
+** If `False`, scaling is not taking place because there are no metrics or there is a problem in one or more of the objects you created.
+--
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="nodes-cma-autoscaling-custom-adding-additional-resources"]
+== Additional resources
+
+* xref:../../nodes/cma/nodes-cma-autoscaling-custom-trigger-auth.adoc#nodes-cma-autoscaling-custom-trigger-auth[Understanding custom metrics autoscaler trigger authentications]
+
+//# includes=_attributes/common-attributes,modules/nodes-cma-autoscaling-custom-creating-workload,modules/nodes-cma-autoscaling-custom-creating-job,modules/snippets/technology-preview

@@ -1,0 +1,488 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="metallb-configure-return-traffic"]
+= Managing symmetric routing with MetalLB
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: metallb-configure-return-traffic
+
+toc::[]
+
+As a cluster administrator, you can effectively manage traffic for pods behind a MetalLB load-balancer service with multiple host interfaces by implementing features from MetalLB, NMState, and OVN-Kubernetes. By combining these features in this context, you can provide symmetric routing, traffic segregation, and support clients on different networks with overlapping CIDR addresses.
+
+To achieve this functionality, learn how to implement virtual routing and forwarding (VRF) instances with MetalLB, and configure egress services.
+
+:FeatureName: Configuring symmetric traffic by using a VRF instance with MetalLB and an egress service
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+[id="challenges-of-managing-symmetric-routing-with-metallb"]
+== Challenges of managing symmetric routing with MetalLB
+
+When you use MetalLB with multiple host interfaces, MetalLB exposes and announces a service through all available interfaces on the host. This can present challenges relating to network isolation, asymmetric return traffic and overlapping CIDR addresses.
+
+One option to ensure that return traffic reaches the correct client is to use static routes. However, with this solution, MetalLB cannot isolate the services and then announce each service through a different interface. Additionally, static routing requires manual configuration and requires maintenance if remote sites are added.
+
+A further challenge of symmetric routing when implementing a MetalLB service is scenarios where external systems expect the source and destination IP address for an application to be the same. The default behavior for {product-title} is to assign the IP address of the host network interface as the source IP address for traffic originating from pods. This is problematic with multiple host interfaces.
+
+You can overcome these challenges by implementing a configuration that combines features from MetalLB, NMState, and OVN-Kubernetes.
+
+[id="overview-of-managing-symmetric-routing-using-vrf-based-networks-with-metallb"]
+== Overview of managing symmetric routing by using VRFs with MetalLB
+
+You can overcome the challenges of implementing symmetric routing by using NMState to configure a VRF instance on a host, associating the VRF instance with a MetalLB `BGPPeer` resource, and configuring an egress service for egress traffic with OVN-Kubernetes.
+
+.Network overview of managing symmetric routing by using VRFs with MetalLB
+image::357_OpenShift_MetalLB_VRF_0823.png[Network overview of managing symmetric routing by using VRFs with MetalLB]
+
+The configuration process involves three stages:
+
+.1. Define a VRF and routing rules
+
+* Configure a `NodeNetworkConfigurationPolicy` custom resource (CR) to associate a VRF instance with a network interface.
+* Use the VRF routing table to direct ingress and egress traffic.
+
+.2. Link the VRF to a MetalLB `BGPPeer`
+
+* Configure a MetalLB `BGPPeer` resource to use the VRF instance on a network interface.
+* By associating the `BGPPeer` resource with the VRF instance, the designated network interface becomes the primary interface for the BGP session, and MetalLB advertises the services through this interface.
+
+.3. Configure an egress service
+
+* Configure an egress service to choose the network associated with the VRF instance for egress traffic.
+* Optional: Configure an egress service to use the IP address of the MetalLB load-balancer service as the source IP for egress traffic.
+
+// Deploying an egress service for VRF
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/configuring-egress-traffic-for-vrf-loadbalancer-services.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-metallb-configure-return-traffic-proc_{context}"]
+= Configuring symmetric routing by using VRFs with MetalLB
+
+You can configure symmetric network routing for applications behind a MetalLB service that require the same ingress and egress network paths.
+
+This example associates a VRF routing table with MetalLB and an egress service to enable symmetric routing for ingress and egress traffic for pods behind a `LoadBalancer` service.
+
+[NOTE]
+====
+* If you use the `sourceIPBy: "LoadBalancerIP"` setting in the `EgressService` CR, you must specify the load-balancer node in the `BGPAdvertisement` custom resource (CR).
+
+* You can use the `sourceIPBy: "Network"` setting on clusters that use OVN-Kubernetes configured with the `gatewayConfig.routingViaHost` specification set to `true` only. Additionally, if you use the `sourceIPBy: "Network"` setting, you must schedule the application workload on nodes configured with the network VRF instance.
+====
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create a `NodeNetworkConfigurationPolicy` CR to define the VRF instance:
+
+.. Create a file, such as `node-network-vrf.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: vrfpolicy <1>
+spec:
+  nodeSelector:
+    vrf: "true" <2>
+  maxUnavailable: 3
+  desiredState:
+    interfaces:
+      - name: ens4vrf <3>
+        type: vrf <4>
+        state: up
+        vrf:
+          port:
+            - ens4 <5>
+          route-table-id: 2 <6>
+    routes: <7>
+      config:
+        - destination: 0.0.0.0/0
+          metric: 150
+          next-hop-address: 192.168.130.1
+          next-hop-interface: ens4
+          table-id: 2
+    route-rules: <8>
+      config:
+        - ip-to: 172.30.0.0/16
+          priority: 998
+          route-table: 254
+        - ip-to: 10.132.0.0/14
+          priority: 998
+          route-table: 254
+----
+<1> The name of the policy.
+<2> This example applies the policy to all nodes with the label `vrf:true`.
+<3> The name of the interface.
+<4> The type of interface. This example creates a VRF instance.
+<5> The node interface that the VRF attaches to.
+<6> The name of the route table ID for the VRF.
+<7> Defines the configuration for network routes. The `next-hop-address` field defines the IP address of the next hop for the route. The `next-hop-interface` field defines the outgoing interface for the route. In this example, the VRF routing table is `2`, which references the ID that you define in the `EgressService` CR.
+<8> Defines additional route rules. The `ip-to` fields must match the `Cluster Network` CIDR and `Service Network` CIDR. You can view the values for these CIDR address specifications by running the following command: `oc describe network.config/cluster`.
+
+.. Apply the policy by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f node-network-vrf.yaml
+----
+
+. Create a `BGPPeer` custom resource (CR):
+
+.. Create a file, such as `frr-via-vrf.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: frrviavrf
+  namespace: metallb-system
+spec:
+  myASN: 100
+  peerASN: 200
+  peerAddress: 192.168.130.1
+  vrf: ens4vrf <1>
+----
+<1> Specifies the VRF instance to associate with the BGP peer. MetalLB can advertise services and make routing decisions based on the routing information in the VRF.
+
+.. Apply the configuration for the BGP peer by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f frr-via-vrf.yaml
+----
+
+. Create an `IPAddressPool` CR:
+
+.. Create a file, such as `first-pool.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: first-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.169.10.0/32
+----
+
+.. Apply the configuration for the IP address pool by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f first-pool.yaml
+----
+
+. Create a `BGPAdvertisement` CR:
+
+.. Create a file, such as `first-adv.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta1
+kind: BGPAdvertisement
+metadata:
+  name: first-adv
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - first-pool
+  peers:
+    - frrviavrf <1>
+  nodeSelectors:
+    - matchLabels:
+        egress-service.k8s.ovn.org/test-server1: "" <2>
+----
+<1> In this example, MetalLB advertises a range of IP addresses from the `first-pool` IP address pool to the `frrviavrf` BGP peer.
+<2> In this example, the `EgressService` CR configures the source IP address for egress traffic to use the load-balancer service IP address. Therefore, you must specify the load-balancer node for return traffic to use the same return path for the traffic originating from the pod.
+
+.. Apply the configuration for the BGP advertisement by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f first-adv.yaml
+----
+
+. Create an `EgressService` CR:
+
+.. Create a file, such as `egress-service.yaml`, with content like the following example:
++
+[source,yaml,options="nowrap",role="white-space-pre"]
+----
+apiVersion: k8s.ovn.org/v1
+kind: EgressService
+metadata:
+  name: server1 <1>
+  namespace: test <2>
+spec:
+  sourceIPBy: "LoadBalancerIP" <3>
+  nodeSelector:
+    matchLabels:
+      vrf: "true" <4>
+  network: "2" <5>
+----
+<1> Specify the name for the egress service. The name of the `EgressService` resource must match the name of the load-balancer service that you want to modify.
+<2> Specify the namespace for the egress service. The namespace for the `EgressService` must match the namespace of the load-balancer service that you want to modify. The egress service is namespace-scoped.
+<3> This example assigns the `LoadBalancer` service ingress IP address as the source IP address for egress traffic.
+<4> If you specify `LoadBalancer` for the `sourceIPBy` specification, a single node handles the `LoadBalancer` service traffic. In this example, only a node with the label `vrf: "true"` can handle the service traffic. If you do not specify a node, OVN-Kubernetes selects a worker node to handle the service traffic. When a node is selected, OVN-Kubernetes labels the node in the following format: `egress-service.k8s.ovn.org/<svc_namespace>-<svc_name>: ""`.
+<5> Specify the routing table for egress traffic.
+
+.. Apply the configuration for the egress service by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f egress-service.yaml
+----
+
+.Verification
+
+. Verify that you can access the application endpoint of the pods running behind the MetalLB service by running the following command:
++
+[source,terminal]
+----
+$ curl <external_ip_address>:<port_number> <1>
+----
+<1> Update the external IP address and port number to suit your application endpoint.
+
+. Optional: If you assigned the `LoadBalancer` service ingress IP address as the source IP address for egress traffic, verify this configuration by using tools such as `tcpdump` to analyze packets received at the external client.
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../networking/multiple_networks/about-virtual-routing-and-forwarding.adoc#cnf-about-virtual-routing-and-forwarding_about-virtual-routing-and-forwarding[About virtual routing and forwarding]
+
+* xref:../../networking/metallb/metallb-configure-bgp-peers.adoc#nw-metallb-bgp-peer-vrf_configure-metallb-bgp-peers[Exposing a service through a network VRF]
+
+* xref:../../networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc#virt-example-host-vrf_k8s_nmstate-updating-node-network-config[Example: Network interface with a VRF instance node network configuration policy]
+
+* xref:../../networking/ovn_kubernetes_network_provider/configuring-egress-traffic-for-vrf-loadbalancer-services.adoc#configuring-egress-traffic-loadbalancer-services[Configuring an egress service]
+
+//# includes=_attributes/common-attributes,snippets/technology-preview,modules/nw-metallb-configure-return-traffic-proc

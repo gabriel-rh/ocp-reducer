@@ -1,0 +1,677 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="hcp-managing"]
+= Managing hosted control planes
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: hcp-managing
+
+toc::[]
+
+After you configure your environment for hosted control planes and create a hosted cluster, you can further manage your clusters and nodes.
+
+:FeatureName: Hosted control planes
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updates/updating_a_cluster/updating-hosted-control-planes.adoc
+// * hosted_control_planes/hcp-managing.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="updates-for-hosted-control-planes_{context}"]
+= Updates for hosted control planes
+
+Updates for hosted control planes involve updating the hosted cluster and the node pools. For a cluster to remain fully operational during an update process, you must meet the requirements of the link:https://kubernetes.io/releases/version-skew-policy/[Kubernetes version skew policy] while completing the control plane and node updates.
+
+[id="updates-for-hosted-control-planes-hostedcluster_{context}"]
+== Updates for the hosted cluster
+
+The `spec.release` value dictates the version of the control plane. The `HostedCluster` object transmits the intended `spec.release` value to the `HostedControlPlane.spec.release` value and runs the appropriate Control Plane Operator version.
+
+The hosted control plane manages the rollout of the new version of the control plane components along with any {product-title} components through the new version of the Cluster Version Operator (CVO).
+
+[id="updates-for-hosted-control-planes-nodepools_{context}"]
+== Updates for node pools
+
+With node pools, you can configure the software that is running in the nodes by exposing the `spec.release` and `spec.config` values. You can start a rolling node pool update in the following ways:
+
+* Changing the `spec.release` or `spec.config` values.
+* Changing any platform-specific field, such as the AWS instance type. The result is a set of new instances with the new type.
+* Changing the cluster configuration, if the change propagates to the node.
+
+Node pools support replace updates and in-place updates. The `nodepool.spec.release` value dictates the version of any particular node pool. A `NodePool` object completes a replace or an in-place rolling update according to the `.spec.management.upgradeType` value.
+
+After you create a node pool, you cannot change the update type. If you want to change the update type, you must create a node pool and delete the other one.
+
+[id="updates-for-nodepools-replace_{context}"]
+=== Replace updates for node pools
+
+A _replace_ update creates instances in the new version while it removes old instances from the previous version. This update type is effective in cloud environments where this level of immutability is cost effective.
+
+Replace updates do not preserve any manual changes because the node is entirely re-provisioned.
+
+[id="updates-for-nodepools-inplace_{context}"]
+=== In place updates for node pools
+
+An _in-place_ update directly updates the operating systems of the instances. This type is suitable for environments where the infrastructure constraints are higher, such as bare metal.
+
+In-place updates can preserve manual changes, but will report errors if you make manual changes to any file system or operating system configuration that the cluster directly manages, such as kubelet certificates.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updates/updating_a_cluster/updating-hosted-control-planes.adoc
+// * hosted_control_planes/hcp-managing.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="updating-node-pools-for-hcp_{context}"]
+= Updating node pools for hosted control planes
+
+On hosted control planes, you update your version of {product-title} by updating the node pools. The node pool version must not surpass the hosted control plane version.
+
+.Procedure
+
+* To start the process to update to a new version of {product-title}, change the `spec.release.image` value of the node pool by entering the following command:
++
+[source,terminal]
+----
+$ oc -n NAMESPACE patch HC HCNAME --patch '{"spec":{"release":{"image": "example"}}}' --type=merge
+----
+
+.Verification
+
+* To verify that the new version was rolled out, check the `.status.version` value and the status conditions.
+
+
+
+
+:leveloffset!:
+//restarting hosted control plane components
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hosted_control_planes/hcp-managing.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="hosted-control-planes-pause-reconciliation_{context}"]
+= Pausing the reconciliation of a hosted cluster and hosted control plane
+
+If you are a cluster instance administrator, you can pause the reconciliation of a hosted cluster and hosted control plane. You might want to pause reconciliation when you back up and restore an etcd database or when you need to debug problems with a hosted cluster or hosted control plane.
+
+.Procedure
+
+. To pause reconciliation for a hosted cluster and hosted control plane, populate the `pausedUntil` field of the `HostedCluster` resource, as shown in the following examples. In the examples, the value for `pausedUntil` is defined in an environment variable prior to the command.
++
+** To pause the reconciliation until a specific time, specify an RFC339 timestamp:
++
+[source,terminal]
+----
+PAUSED_UNTIL="2022-03-03T03:28:48Z"
+oc patch -n <hosted-cluster-namespace> hostedclusters/<hosted-cluster-name> -p '{"spec":{"pausedUntil":"'${PAUSED_UNTIL}'"}}' --type=merge
+----
++
+The reconciliation is paused until the specified time is passed.
++
+** To pause the reconciliation indefinitely, pass a Boolean value of `true`:
++
+[source,terminal]
+----
+PAUSED_UNTIL="true"
+oc patch -n <hosted-cluster-namespace> hostedclusters/<hosted-cluster-name> -p '{"spec":{"pausedUntil":"'${PAUSED_UNTIL}'"}}' --type=merge
+----
++
+The reconciliation is paused until you remove the field from the `HostedCluster` resource.
++
+When the pause reconciliation field is populated for the `HostedCluster` resource, the field is automatically added to the associated `HostedControlPlane` resource.
+
+. To remove the `pausedUntil` field, enter the following patch command:
++
+[source,terminal]
+----
+oc patch -n <hosted-cluster-namespace> hostedclusters/<hosted-cluster-name> -p '{"spec":{"pausedUntil":null}}' --type=merge
+----
+
+
+
+
+
+
+:leveloffset!:
+//using service-level DNS for control plane services
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hosted_control_planes/hcp-managing.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="hosted-control-planes-metrics-sets_{context}"]
+= Configuring metrics sets for hosted control planes
+
+Hosted control planes for Red Hat {product-title} creates `ServiceMonitor` resources in each control plane namespace that allow a Prometheus stack to gather metrics from the control planes. The `ServiceMonitor` resources use metrics relabelings to define which metrics are included or excluded from a particular component, such as etcd or the Kubernetes API server. The number of metrics that are produced by control planes directly impacts the resource requirements of the monitoring stack that gathers them.
+
+Instead of producing a fixed number of metrics that apply to all situations, you can configure a metrics set that identifies a set of metrics to produce for each control plane. The following metrics sets are supported:
+
+* `Telemetry`: These metrics are needed for telemetry. This set is the default set and is the smallest set of metrics.
+* `SRE`: This set includes the necessary metrics to produce alerts and allow the troubleshooting of control plane components.
+* `All`: This set includes all of the metrics that are produced by standalone {product-title} control plane components.
+
+To configure a metrics set, set the `METRICS_SET` environment variable in the HyperShift Operator deployment by entering the following command:
+
+[source,terminal]
+----
+$ oc set env -n hypershift deployment/operator METRICS_SET=All
+----
+
+[#hosted-control-planes-sre-metrics-set]
+== Configuring the SRE metrics set
+
+When you specify the `SRE` metrics set, the HyperShift Operator looks for a config map named `sre-metric-set` with a single key: `config`. The value of the `config` key must contain a set of `RelabelConfigs` that are organized by control plane component.
+
+You can specify the following components:
+
+* `etcd`
+* `kubeAPIServer`
+* `kubeControllerManager`
+* `openshiftAPIServer`
+* `openshiftControllerManager`
+* `openshiftRouteControllerManager`
+* `cvo`
+* `olm`
+* `catalogOperator`
+* `registryOperator`
+* `nodeTuningOperator`
+* `controlPlaneOperator`
+* `hostedClusterConfigOperator`
+
+A configuration of the `SRE` metrics set is illustrated in the following example:
+
+[source,terminal]
+----
+kubeAPIServer:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|server).*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_admission_controller_admission_latencies_seconds_.*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_admission_step_admission_latencies_seconds_.*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "scheduler_(e2e_scheduling_latency_microseconds|scheduling_algorithm_predicate_evaluation|scheduling_algorithm_priority_evaluation|scheduling_algorithm_preemption_evaluation|scheduling_algorithm_latency_microseconds|binding_latency_microseconds|scheduling_latency_seconds)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_(request_count|request_latencies|request_latencies_summary|dropped_requests|storage_data_key_generation_latencies_microseconds|storage_transformation_failures_total|storage_transformation_latencies_microseconds|proxy_tunnel_sync_latency_secs)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "docker_(operations|operations_latency_microseconds|operations_errors|operations_timeout)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "reflector_(items_per_list|items_per_watch|list_duration_seconds|lists_total|short_watches_total|watch_duration_seconds|watches_total)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "etcd_(helper_cache_hit_count|helper_cache_miss_count|helper_cache_entry_count|request_cache_get_latencies_summary|request_cache_add_latencies_summary|request_latencies_summary)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "transformation_(transformation_latencies_microseconds|failures_total)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "network_plugin_operations_latency_microseconds|sync_proxy_rules_latency_microseconds|rest_client_request_latency_seconds"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_request_duration_seconds_bucket;(0.15|0.25|0.3|0.35|0.4|0.45|0.6|0.7|0.8|0.9|1.25|1.5|1.75|2.5|3|3.5|4.5|6|7|8|9|15|25|30|50)"
+    sourceLabels: ["__name__", "le"]
+kubeControllerManager:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|request|server).*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "rest_client_request_latency_seconds_(bucket|count|sum)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "root_ca_cert_publisher_sync_duration_seconds_(bucket|count|sum)"
+    sourceLabels: ["__name__"]
+openshiftAPIServer:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|server).*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_admission_controller_admission_latencies_seconds_.*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_admission_step_admission_latencies_seconds_.*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_request_duration_seconds_bucket;(0.15|0.25|0.3|0.35|0.4|0.45|0.6|0.7|0.8|0.9|1.25|1.5|1.75|2.5|3|3.5|4.5|6|7|8|9|15|25|30|50)"
+    sourceLabels: ["__name__", "le"]
+openshiftControllerManager:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|request|server).*"
+    sourceLabels: ["__name__"]
+openshiftRouteControllerManager:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|request|server).*"
+    sourceLabels: ["__name__"]
+olm:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|server).*"
+    sourceLabels: ["__name__"]
+catalogOperator:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|server).*"
+    sourceLabels: ["__name__"]
+cvo:
+  - action: drop
+    regex: "etcd_(debugging|disk|server).*"
+    sourceLabels: ["__name__"]
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hosted_control_planes/hcp-managing.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="hosted-control-planes-monitoring-dashboard_{context}"]
+= Creating monitoring dashboards for hosted clusters
+
+The HyperShift Operator can create or delete monitoring dashboards in the management cluster for each hosted cluster that it manages.
+
+[#hosted-control-planes-enable-dashboard]
+== Enabling monitoring dashboards
+
+To enable monitoring dashboards in a hosted cluster, complete the following steps:
+
+.Procedure
+
+. Create the `hypershift-operator-install-flags` config map in the `local-cluster` namespace, being sure to specify the `--monitoring-dashboards` flag in the `data.installFlagsToAdd` section. For example:
+
++
+[source,yaml]
+----
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: hypershift-operator-install-flags
+  namespace: local-cluster
+data:
+  installFlagsToAdd: "--monitoring-dashboards"
+  installFlagsToRemove: ""
+----
+
+. Wait a couple of minutes for the HyperShift Operator deployment in the `hypershift` namespace to be updated to include the following environment variable:
+
++
+----
+    - name: MONITORING_DASHBOARDS
+      value: "1"
+----
+
++
+When monitoring dashboards are enabled, for each hosted cluster that the HyperShift Operator manages, the Operator creates a config map named `cp-[NAMESPACE]-[NAME]` in the `openshift-config-managed` namespace, where `NAMESPACE` is the namespace of the hosted cluster and `NAME` is the name of the hosted cluster. As a result, a new dashboard is added in the administrative console of the management cluster.
+
+. To view the dashboard, log in to the management cluster's console and go to the dashboard for the hosted cluster by clicking *Observe -> Dashboards*.
+
+. Optional: To disable a monitoring dashboards in a hosted cluster, remove the `--monitoring-dashboards` flag from the `hypershift-operator-install-flags` config map. When you delete a hosted cluster, its corresponding dashboard is also deleted.
+
+[#hosted-control-planes-customize-dashboards]
+== Dashboard customization
+
+To generate dashboards for each hosted cluster, the HyperShift Operator uses a template that is stored in the `monitoring-dashboard-template` config map in the operator namespace (`hypershift`). This template contains a set of Grafana panels that contain the metrics for the dashboard. You can edit the content of the config map to customize the dashboards.
+
+When a dashboard is generated, the following strings are replaced with values that correspond to a specific hosted cluster:
+
+|===
+| Name | Description
+| [x-]`__NAME__` | The name of the hosted cluster
+| [x-]`__NAMESPACE__` | The namespace of the hosted cluster
+| [x-]`__CONTROL_PLANE_NAMESPACE__` | The namespace where the control plane pods of the hosted cluster are placed
+| [x-]`__CLUSTER_ID__` | The UUID of the hosted cluster, which matches the `_id` label of the hosted cluster metrics
+|===
+
+:leveloffset!:
+//automated machine management
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hosted_control_planes/hcp-managing.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="scale-down-data-plane_{context}"]
+= Scaling down the data plane to zero
+
+If you are not using the hosted control plane, to save the resources and cost you can scale down a data plane to zero.
+
+[NOTE]
+====
+Ensure you are prepared to scale down the data plane to zero. Because the workload from the worker nodes disappears after scaling down.
+====
+
+.Procedure
+
+. Set the `kubeconfig` file to access the hosted cluster by running the following command:
++
+[source,terminal]
+----
+$ export KUBECONFIG=<install_directory>/auth/kubeconfig
+----
+
+. Get the name of the `NodePool` resource associated to your hosted cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get nodepool --namespace <HOSTED_CLUSTER_NAMESPACE>
+----
+
+. Optional: To prevent the pods from draining, add the `nodeDrainTimeout` field in the `NodePool` resource by running the following command:
++
+[source,terminal]
+----
+$ oc edit NodePool <nodepool> -o yaml --namespace <HOSTED_CLUSTER_NAMESPACE>
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: hypershift.openshift.io/v1alpha1
+kind: NodePool
+metadata:
+# ...
+  name: nodepool-1
+  namespace: clusters
+# ...
+spec:
+  arch: amd64
+  clusterName: clustername <1>
+  management:
+    autoRepair: false
+    replace:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 0
+      strategy: RollingUpdate
+    upgradeType: Replace
+  nodeDrainTimeout: 0s <2>
+# ...
+----
+<1> Defines the name of your hosted cluster.
+<2> Specifies the total amount of time that the controller spends to drain a node. By default, the `nodeDrainTimeout: 0s` setting blocks the node draining process.
++
+[NOTE]
+====
+To allow the node draining process to continue for a certain period of time, you can set the value of the `nodeDrainTimeout` field accordingly, for example, `nodeDrainTimeout: 1m`.
+====
+
+. Scale down the `NodePool` resource associated to your hosted cluster by running the following command:
++
+[source,terminal]
+----
+$ oc scale nodepool/<NODEPOOL_NAME> --namespace <HOSTED_CLUSTER_NAMESPACE> --replicas=0
+----
++
+[NOTE]
+====
+After scaling down the data plan to zero, some pods in the control plane stay in the `Pending` status and the hosted control plane stays up and running. If necessary, you can scale up the `NodePool` resource.
+====
+
+. Optional: Scale up the `NodePool` resource associated to your hosted cluster by running the following command:
++
+[source,terminal]
+----
+$ oc scale nodepool/<NODEPOOL_NAME> --namespace <HOSTED_CLUSTER_NAMESPACE> --replicas=1
+----
++
+After rescaling the `NodePool` resource,  wait for couple of minutes for the `NodePool` resource to become available in a `Ready` state.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assembly:
+//
+// * hosted_control_planes/hcp-managing.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="delete-hosted-cluster_{context}"]
+= Deleting a hosted cluster
+
+The steps to delete a hosted cluster differ depending on which provider you use.
+
+.Procedure
+
+* If the cluster is on AWS, follow the instructions in link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html/clusters/cluster_mce_overview#hypershift-cluster-destroy-aws[Destroying a hosted cluster on AWS].
+
+* If the cluster is on bare metal, follow the instructions in link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html/clusters/cluster_mce_overview#hypershift-cluster-destroy-bm[Destroying a hosted cluster on bare metal].
+
+* If the cluster is on {VirtProductName}, follow the instructions in link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html/clusters/cluster_mce_overview#hypershift-cluster-destroy-kubevirt[Destroying a hosted cluster on OpenShift Virtualization].
+
+.Next steps
+
+If you want to disable the hosted control plane feature, see link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html/clusters/cluster_mce_overview#disable-hosted-control-planes[Disabling the hosted control plane feature].
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,snippets/technology-preview,modules/updates-for-hosted-control-planes,modules/updating-node-pools-for-hcp,modules/hosted-control-planes-pause-reconciliation,modules/hosted-control-planes-metrics-sets,modules/hosted-control-planes-monitoring-dashboard,modules/scale-down-data-plane,modules/delete-hosted-cluster

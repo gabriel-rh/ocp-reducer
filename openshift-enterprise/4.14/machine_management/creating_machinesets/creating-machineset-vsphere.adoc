@@ -1,0 +1,837 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="creating-machineset-vsphere"]
+= Creating a compute machine set on vSphere
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: creating-machineset-vsphere
+
+toc::[]
+
+You can create a different compute machine set to serve a specific purpose in your {product-title} cluster on VMware vSphere. For example, you might create infrastructure machine sets and related machines so that you can move supporting workloads to the new machines.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-osp.adoc
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+// * machine_management/deploying-machine-health-checks.adoc
+// * machine_management/manually-scaling-machinesets.adoc
+// * post_installation_configuration/node-tasks.adoc
+// * nodes-nodes-creating-infrastructure-nodes.adoc
+
+[IMPORTANT]
+====
+You can use the advanced machine management and scaling capabilities only in clusters where the Machine API is operational. Clusters with user-provisioned infrastructure require additional validation and configuration to use the Machine API.
+
+Clusters with the infrastructure platform type `none` cannot use the Machine API. This limitation applies even if the compute machines that are attached to the cluster are installed on a platform that supports the feature. This parameter cannot be changed after installation.
+
+To view the platform type for your cluster, run the following command:
+
+[source,terminal]
+----
+$ oc get infrastructure cluster -o jsonpath='{.status.platform}'
+----
+====
+
+:leveloffset!:
+
+//Sample YAML for a compute machine set custom resource on vSphere
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+
+
+:_mod-docs-content-type: REFERENCE
+[id="machineset-yaml-vsphere_{context}"]
+= Sample YAML for a compute machine set custom resource on vSphere
+
+This sample YAML defines a compute machine set that runs on VMware vSphere and creates nodes that are labeled with
+`node-role.kubernetes.io/<role>: ""`.
+`node-role.kubernetes.io/infra: ""`.
+
+In this sample, `<infrastructure_id>` is the infrastructure ID label that is based on the cluster ID that you set when you provisioned the cluster, and
+`<role>`
+`<infra>`
+is the node label to add.
+
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  creationTimestamp: null
+  labels:
+    machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+  name: <infrastructure_id>-<role> <2>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+      machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role> <2>
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+        machine.openshift.io/cluster-api-machine-role: <role> <3>
+        machine.openshift.io/cluster-api-machine-type: <role> <3>
+        machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role> <2>
+    spec:
+      metadata:
+        creationTimestamp: null
+        labels:
+          node-role.kubernetes.io/<role>: "" <3>
+      providerSpec:
+        value:
+          apiVersion: vsphereprovider.openshift.io/v1beta1
+          credentialsSecret:
+            name: vsphere-cloud-credentials
+          diskGiB: 120
+          kind: VSphereMachineProviderSpec
+          memoryMiB: 8192
+          metadata:
+            creationTimestamp: null
+          network:
+            devices:
+            - networkName: "<vm_network_name>" <4>
+          numCPUs: 4
+          numCoresPerSocket: 1
+          snapshot: ""
+          template: <vm_template_name> <5>
+          userDataSecret:
+            name: worker-user-data
+          workspace:
+            datacenter: <vcenter_datacenter_name> <6>
+            datastore: <vcenter_datastore_name> <7>
+            folder: <vcenter_vm_folder_path> <8>
+            resourcepool: <vsphere_resource_pool> <9>
+            server: <vcenter_server_ip> <10>
+----
+<1> Specify the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. If you have the OpenShift CLI (`oc`) installed, you can obtain the infrastructure ID by running the following command:
++
+[source,terminal]
+----
+$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster
+----
+<2> Specify the infrastructure ID and node label.
+<3> Specify the node label to add.
+<4> Specify the vSphere VM network to deploy the compute machine set to. This VM network must be where other compute machines reside in the cluster.
+<5> Specify the vSphere VM template to use, such as `user-5ddjd-rhcos`.
+<6> Specify the vCenter Datacenter to deploy the compute machine set on.
+<7> Specify the vCenter Datastore to deploy the compute machine set on.
+<8> Specify the path to the vSphere VM folder in vCenter, such as `/dc1/vm/user-inst-5ddjd`.
+<9> Specify the vSphere resource pool for your VMs.
+<10> Specify the vCenter server IP or fully qualified domain name.
+
+
+:leveloffset!:
+
+//Minimum required vCenter privileges for compute machine set management
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+
+[id="machineset-vsphere-requirements-user-provisioned-machine-sets_{context}"]
+= Minimum required vCenter privileges for compute machine set management
+
+To manage compute machine sets in an {product-title} cluster on vCenter, you must use an account with privileges to read, create, and delete the required resources. Using an account that has global administrative privileges is the simplest way to access all of the necessary permissions.
+
+If you cannot use an account with global administrative privileges, you must create roles to grant the minimum required privileges. The following table lists the minimum vCenter roles and privileges that are required to create, scale, and delete compute machine sets and to delete machines in your {product-title} cluster.
+
+.Minimum vCenter roles and privileges required for compute machine set management
+[%collapsible]
+====
+[cols="3a,3a,3a",options="header"]
+|===
+|vSphere object for role
+|When required
+|Required privileges
+
+|vSphere vCenter
+|Always
+|
+[%hardbreaks]
+`InventoryService.Tagging.AttachTag`
+`InventoryService.Tagging.CreateCategory`
+`InventoryService.Tagging.CreateTag`
+`InventoryService.Tagging.DeleteCategory`
+`InventoryService.Tagging.DeleteTag`
+`InventoryService.Tagging.EditCategory`
+`InventoryService.Tagging.EditTag`
+`Sessions.ValidateSession`
+`StorageProfile.Update`^1^
+`StorageProfile.View`^1^
+
+|vSphere vCenter Cluster
+|Always
+|
+[%hardbreaks]
+`Resource.AssignVMToPool`
+
+|vSphere Datastore
+|Always
+|
+[%hardbreaks]
+`Datastore.AllocateSpace`
+`Datastore.Browse`
+
+|vSphere Port Group
+|Always
+|`Network.Assign`
+
+|Virtual Machine Folder
+|Always
+|
+[%hardbreaks]
+`VirtualMachine.Config.AddRemoveDevice`
+`VirtualMachine.Config.AdvancedConfig`
+`VirtualMachine.Config.Annotation`
+`VirtualMachine.Config.CPUCount`
+`VirtualMachine.Config.DiskExtend`
+`VirtualMachine.Config.Memory`
+`VirtualMachine.Config.Settings`
+`VirtualMachine.Interact.PowerOff`
+`VirtualMachine.Interact.PowerOn`
+`VirtualMachine.Inventory.CreateFromExisting`
+`VirtualMachine.Inventory.Delete`
+`VirtualMachine.Provisioning.Clone`
+
+|vSphere vCenter Datacenter
+|If the installation program creates the virtual machine folder
+|
+[%hardbreaks]
+`Resource.AssignVMToPool`
+`VirtualMachine.Provisioning.DeployTemplate`
+
+3+a|
+^1^ The `StorageProfile.Update` and `StorageProfile.View` permissions are required only for storage backends that use the Container Storage Interface (CSI).
+|===
+====
+
+The following table details the permissions and propagation settings that are required for compute machine set management.
+
+.Required permissions and propagation settings
+[%collapsible]
+====
+[cols="3a,3a,3a,3a",options="header"]
+|===
+|vSphere object
+|Folder type
+|Propagate to children
+|Permissions required
+
+|vSphere vCenter
+|Always
+|Not required
+|Listed required privileges
+
+.2+|vSphere vCenter Datacenter
+|Existing folder
+|Not required
+|`ReadOnly` permission
+
+|Installation program creates the folder
+|Required
+|Listed required privileges
+
+|vSphere vCenter Cluster
+|Always
+|Required
+|Listed required privileges
+
+|vSphere vCenter Datastore
+|Always
+|Not required
+|Listed required privileges
+
+|vSphere Switch
+|Always
+|Not required
+|`ReadOnly` permission
+
+|vSphere Port Group
+|Always
+|Not required
+|Listed required privileges
+
+|vSphere vCenter Virtual Machine Folder
+|Existing folder
+|Required
+|Listed required privileges
+|===
+====
+
+For more information about creating an account with only the required privileges, see link:https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.security.doc/GUID-5372F580-5C23-4E9C-8A4E-EF1B4DD9033E.html[vSphere Permissions and User Management Tasks] in the vSphere documentation.
+
+:leveloffset!:
+
+//Requirements for clusters with user-provisioned infrastructure to use compute machine sets
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+//
+// Currently only in the vSphere compute machine set content, but we will want this for other platforms such as AWS and GCP.
+
+:vsphere:
+
+:_mod-docs-content-type: CONCEPT
+[id="compute-machineset-upi-reqs_{context}"]
+= Requirements for clusters with user-provisioned infrastructure to use compute machine sets
+
+To use compute machine sets on clusters that have user-provisioned infrastructure, you must ensure that you cluster configuration supports using the Machine API.
+
+:!vsphere:
+
+:leveloffset!:
+
+//Obtaining the infrastructure ID
+[discrete]
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+//
+// Currently only in the vSphere compute machine set content, but we will want this for other platforms such as AWS and GCP.
+
+:vsphere:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-upi-reqs-infra-id_{context}"]
+= Obtaining the infrastructure ID
+
+To create compute machine sets, you must be able to supply the infrastructure ID for your cluster.
+
+.Procedure
+
+* To obtain the infrastructure ID for your cluster, run the following command:
++
+[source,terminal]
+----
+$ oc get infrastructure cluster -o jsonpath='{.status.infrastructureName}'
+----
+
+:!vsphere:
+
+:leveloffset!:
+
+//Satisfying vSphere credentials requirements
+[discrete]
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-upi-reqs-vsphere-creds_{context}"]
+= Satisfying vSphere credentials requirements
+
+To use compute machine sets, the Machine API must be able to interact with vCenter. Credentials that authorize the Machine API components to interact with vCenter must exist in a secret in the `openshift-machine-api` namespace.
+
+.Procedure
+
+. To determine whether the required credentials exist, run the following command:
++
+[source,terminal]
+----
+$ oc get secret \
+  -n openshift-machine-api vsphere-cloud-credentials \
+  -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
+----
++
+.Sample output
+[source,terminal]
+----
+<vcenter-server>.password=<openshift-user-password>
+<vcenter-server>.username=<openshift-user>
+----
++
+where `<vcenter-server>` is the IP address or fully qualified domain name (FQDN) of the vCenter server and `<openshift-user>` and `<openshift-user-password>` are the {product-title} administrator credentials to use.
+
+. If the secret does not exist, create it by running the following command:
++
+[source,terminal]
+----
+$ oc create secret generic vsphere-cloud-credentials \
+  -n openshift-machine-api \
+  --from-literal=<vcenter-server>.username=<openshift-user> --from-literal=<vcenter-server>.password=<openshift-user-password>
+----
+
+:leveloffset!:
+
+//Satisfying ignition configuration requirements
+[discrete]
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+//
+// Currently only in the vSphere compute machine set content, but we will want this for other platforms such as AWS and GCP.
+
+:vsphere:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-upi-reqs-ignition-config_{context}"]
+= Satisfying Ignition configuration requirements
+
+Provisioning virtual machines (VMs) requires a valid Ignition configuration. The Ignition configuration contains the `machine-config-server` address and a system trust bundle for obtaining further Ignition configurations from the Machine Config Operator.
+
+By default, this configuration is stored in the `worker-user-data` secret in the `machine-api-operator` namespace. Compute machine sets reference the secret during the machine creation process.
+
+.Procedure
+
+. To determine whether the required secret exists, run the following command:
++
+[source,terminal]
+----
+$ oc get secret \
+  -n openshift-machine-api worker-user-data \
+  -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
+----
++
+.Sample output
+[source,terminal]
+----
+disableTemplating: false
+userData: <1>
+  {
+    "ignition": {
+      ...
+      },
+    ...
+  }
+----
+<1> The full output is omitted here, but should have this format.
+
+. If the secret does not exist, create it by running the following command:
++
+[source,terminal]
+----
+$ oc create secret generic worker-user-data \
+  -n openshift-machine-api \
+  --from-file=<installation_directory>/worker.ign
+----
++
+where `<installation_directory>` is the directory that was used to store your installation assets during cluster installation.
+
+:!vsphere:
+
+:leveloffset!:
+[role="_additional-resources"]
+.Additional resources
+* xref:../../post_installation_configuration/machine-configuration-tasks.adoc#understanding-the-machine-config-operator[Understanding the Machine Config Operator]
+* xref:../../installing/installing_vsphere/installing-vsphere.adoc#installation-vsphere-machines_installing-vsphere[Installing {op-system} and starting the {product-title} bootstrap process]
+
+//Creating a compute machine set
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-osp.adoc
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-aws.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-azure.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-vsphere.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-gcp.adoc
+// * post_installation_configuration/cluster-tasks.adoc
+// * post_installation_configuration/installation-creating-aws-subnet-localzone.adoc
+// * post_installation_configuration/aws-compute-edge-tasks.adoc
+
+:vsphere:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-creating_{context}"]
+= Creating a compute machine set
+
+In addition to the compute machine sets created by the installation program, you can create your own to dynamically manage the machine compute resources for specific workloads of your choice.
+
+[NOTE]
+====
+Clusters that are installed with user-provisioned infrastructure have a different networking stack than clusters with infrastructure that is provisioned by the installation program. As a result of this difference, automatic load balancer management is unsupported on clusters that have user-provisioned infrastructure. For these clusters, a compute machine set can only create `worker` and `infra` type machines.
+====
+
+.Prerequisites
+
+* Deploy an {product-title} cluster.
+* Install the OpenShift CLI (`oc`).
+* Log in to `oc` as a user with `cluster-admin` permission.
+* Have the necessary permissions to deploy VMs in your vCenter instance and have the required access to the datastore specified.
+* If your cluster uses user-provisioned infrastructure, you have satisfied the specific Machine API requirements for that configuration.
+
+.Procedure
+
+. Create a new YAML file that contains the compute machine set custom resource (CR) sample and is named `<file_name>.yaml`.
++
+Ensure that you set the `<clusterID>` and `<role>` parameter values.
+
+. Optional: If you are not sure which value to set for a specific field, you can check an existing compute machine set from your cluster.
+
+.. To list the compute machine sets in your cluster, run the following command:
++
+[source,terminal]
+----
+$ oc get machinesets -n openshift-machine-api
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m
+----
+
+.. To view values of a specific compute machine set custom resource (CR), run the following command:
++
+[source,terminal]
+----
+$ oc get machineset <machineset_name> \
+  -n openshift-machine-api -o yaml
+----
++
+--
+.Example output
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+  name: <infrastructure_id>-<role> <2>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: <infrastructure_id>
+      machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: <infrastructure_id>
+        machine.openshift.io/cluster-api-machine-role: <role>
+        machine.openshift.io/cluster-api-machine-type: <role>
+        machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>
+    spec:
+      providerSpec: <3>
+        ...
+----
+<1> The cluster infrastructure ID.
+<2> A default node label.
++
+[NOTE]
+====
+For clusters that have user-provisioned infrastructure, a compute machine set can only create `worker` and `infra` type machines.
+====
+<3> The values in the `<providerSpec>` section of the compute machine set CR are platform-specific. For more information about `<providerSpec>` parameters in the CR, see the sample compute machine set CR configuration for your provider.
+--
+
+.. If you are creating a compute machine set for a cluster that has user-provisioned infrastructure, note the following important values:
++
+.Example vSphere `providerSpec` values
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+...
+template:
+  ...
+  spec:
+    providerSpec:
+      value:
+        apiVersion: machine.openshift.io/v1beta1
+        credentialsSecret:
+          name: vsphere-cloud-credentials <1>
+        diskGiB: 120
+        kind: VSphereMachineProviderSpec
+        memoryMiB: 16384
+        network:
+          devices:
+            - networkName: "<vm_network_name>"
+        numCPUs: 4
+        numCoresPerSocket: 4
+        snapshot: ""
+        template: <vm_template_name> <2>
+        userDataSecret:
+          name: worker-user-data <3>
+        workspace:
+          datacenter: <vcenter_datacenter_name>
+          datastore: <vcenter_datastore_name>
+          folder: <vcenter_vm_folder_path>
+          resourcepool: <vsphere_resource_pool>
+          server: <vcenter_server_address> <4>
+----
+<1> The name of the secret in the `openshift-machine-api` namespace that contains the required vCenter credentials.
+<2> The name of the {op-system} VM template for your cluster that was created during installation.
+<3> The name of the secret in the `openshift-machine-api` namespace that contains the required Ignition configuration credentials.
+<4> The IP address or fully qualified domain name (FQDN) of the vCenter server.
+
+. Create a `MachineSet` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <file_name>.yaml
+----
+
+
+.Verification
+
+* View the list of compute machine sets by running the following command:
++
+[source,terminal]
+----
+$ oc get machineset -n openshift-machine-api
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-infra-us-east-1a    1         1         1       1           11m
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m
+----
++
+When the new compute machine set is available, the `DESIRED` and `CURRENT` values match. If the compute machine set is not available, wait a few minutes and run the command again.
+
+
+:!vsphere:
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/machine-user-provisioned-limitations,modules/machineset-yaml-vsphere,modules/machineset-vsphere-required-permissions,modules/compute-machineset-upi-reqs,modules/machineset-upi-reqs-infra-id,modules/machineset-upi-reqs-vsphere-creds,modules/machineset-upi-reqs-ignition-config,modules/machineset-creating

@@ -1,0 +1,466 @@
+:_mod-docs-content-type: ASSEMBLY
+:context: nodes-cma-autoscaling-custom-trigger-auth
+[id="nodes-cma-autoscaling-custom-trigger-auth"]
+= Understanding custom metrics autoscaler trigger authentications
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+
+toc::[]
+
+
+A trigger authentication allows you to include authentication information in a scaled object or a scaled job that can be used by the associated containers. You can use trigger authentications to pass {product-title} secrets, platform-native pod authentication mechanisms, environment variables, and so on.
+
+You define a `TriggerAuthentication` object in the same namespace as the object that you want to scale. That trigger authentication can be used only by objects in that namespace.
+
+Alternatively, to share credentials between objects in multiple namespaces, you can create a `ClusterTriggerAuthentication` object that can be used across all namespaces.
+
+Trigger authentications and cluster trigger authentication use the same configuration. However, a cluster trigger authentication requires an additional `kind` parameter in the authentication reference of the scaled object.
+
+.Example trigger authentication with a secret
+[source,yaml]
+----
+kind: TriggerAuthentication
+apiVersion: keda.sh/v1alpha1
+metadata:
+  name: secret-triggerauthentication
+  namespace: my-namespace <1>
+spec:
+  secretTargetRef: <2>
+  - parameter: user-name <3>
+    name: my-secret <4>
+    key: USER_NAME <5>
+  - parameter: password
+    name: my-secret
+    key: USER_PASSWORD
+----
+<1> Specifies the namespace of the object you want to scale.
+<2> Specifies that this trigger authentication uses a secret for authorization.
+<3> Specifies the authentication parameter to supply by using the secret.
+<4> Specifies the name of the secret to use.
+<5> Specifies the key in the secret to use with the specified parameter.
+
+.Example cluster trigger authentication with a secret
+[source,yaml]
+----
+kind: ClusterTriggerAuthentication
+apiVersion: keda.sh/v1alpha1
+metadata: <1>
+  name: secret-cluster-triggerauthentication
+spec:
+  secretTargetRef: <2>
+  - parameter: user-name <3>
+    name: secret-name <4>
+    key: USER_NAME <5>
+  - parameter: user-password
+    name: secret-name
+    key: USER_PASSWORD
+----
+<1> Note that no namespace is used with a cluster trigger authentication.
+<2> Specifies that this trigger authentication uses a secret for authorization.
+<3> Specifies the authentication parameter to supply by using the secret.
+<4> Specifies the name of the secret to use.
+<5> Specifies the key in the secret to use with the specified parameter.
+
+.Example trigger authentication with a token
+[source,yaml]
+----
+kind: TriggerAuthentication
+apiVersion: keda.sh/v1alpha1
+metadata:
+  name: token-triggerauthentication
+  namespace: my-namespace <1>
+spec:
+  secretTargetRef: <2>
+  - parameter: bearerToken <3>
+    name: my-token-2vzfq <4>
+    key: token <5>
+  - parameter: ca
+    name: my-token-2vzfq
+    key: ca.crt
+----
+<1> Specifies the namespace of the object you want to scale.
+<2> Specifies that this trigger authentication uses a secret for authorization.
+<3> Specifies the authentication parameter to supply by using the token.
+<4> Specifies the name of the token to use.
+<5> Specifies the key in the token to use with the specified parameter.
+
+.Example trigger authentication with an environment variable
+[source,yaml]
+----
+kind: TriggerAuthentication
+apiVersion: keda.sh/v1alpha1
+metadata:
+  name: env-var-triggerauthentication
+  namespace: my-namespace <1>
+spec:
+  env: <2>
+  - parameter: access_key <3>
+    name: ACCESS_KEY <4>
+    containerName: my-container <5>
+----
+<1> Specifies the namespace of the object you want to scale.
+<2> Specifies that this trigger authentication uses environment variables for authorization.
+<3> Specify the parameter to set with this variable.
+<4> Specify the name of the environment variable.
+<5> Optional: Specify a container that requires authentication. The container must be in the same resource as referenced by `scaleTargetRef` in the scaled object.
+
+.Example trigger authentication with pod authentication providers
+[source,yaml]
+----
+kind: TriggerAuthentication
+apiVersion: keda.sh/v1alpha1
+metadata:
+  name: pod-id-triggerauthentication
+  namespace: my-namespace <1>
+spec:
+  podIdentity: <2>
+    provider: aws-eks <3>
+----
+<1> Specifies the namespace of the object you want to scale.
+<2> Specifies that this trigger authentication uses a platform-native pod authentication method for authorization.
+<3> Specifies a pod identity. Supported values are `none`, `azure`, `aws-eks`, or `aws-kiam`. The default is `none`.
+
+// Remove ifdef after https://github.com/openshift/openshift-docs/pull/62147 merges
+.Additional resources
+
+* For information about {product-title} secrets, see xref:../../nodes/pods/nodes-pods-secrets.adoc#nodes-pods-secrets[Providing sensitive data to pods].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/cma/nodes-cma-autoscaling-custom-trigger-auth.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-cma-autoscaling-custom-trigger-auth-using_{context}"]
+= Using trigger authentications
+
+You use trigger authentications and cluster trigger authentications by using a custom resource to create the authentication,  then add a reference to a scaled object or scaled job.
+
+.Prerequisites
+
+* The Custom Metrics Autoscaler Operator must be installed.
+
+* If you are using a secret, the `Secret` object must exist, for example:
++
+.Example secret
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret
+data:
+  user-name: <base64_USER_NAME>
+  password: <base64_USER_PASSWORD>
+----
+
+.Procedure
+
+. Create the `TriggerAuthentication` or  `ClusterTriggerAuthentication` object.
+
+.. Create a YAML file that defines the object:
++
+.Example trigger authentication with a secret
+[source,yaml]
+----
+kind: TriggerAuthentication
+apiVersion: keda.sh/v1alpha1
+metadata:
+  name: prom-triggerauthentication
+  namespace: my-namespace
+spec:
+  secretTargetRef:
+  - parameter: user-name
+    name: my-secret
+    key: USER_NAME
+  - parameter: password
+    name: my-secret
+    key: USER_PASSWORD
+----
+
+.. Create the `TriggerAuthentication` object:
++
+[source,terminal]
+----
+$ oc create -f <filename>.yaml
+----
+
+. Create or edit a `ScaledObject` YAML file that uses the trigger authentication:
+
+.. Create a YAML file that defines the object by running the following command:
++
+.Example scaled object with a trigger authentication
+[source,yaml,options="nowrap"]
+----
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: scaledobject
+  namespace: my-namespace
+spec:
+  scaleTargetRef:
+    name: example-deployment
+  maxReplicaCount: 100
+  minReplicaCount: 0
+  pollingInterval: 30
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: https://thanos-querier.openshift-monitoring.svc.cluster.local:9092
+      namespace: kedatest # replace <NAMESPACE>
+      metricName: http_requests_total
+      threshold: '5'
+      query: sum(rate(http_requests_total{job="test-app"}[1m]))
+      authModes: "basic"
+    authenticationRef:
+      name: prom-triggerauthentication <1>
+      kind: TriggerAuthentication <2>
+----
+<1> Specify the name of your trigger authentication object.
+<2> Specify `TriggerAuthentication`. `TriggerAuthentication` is the default.
++
+.Example scaled object with a cluster trigger authentication
+[source,yaml,options="nowrap"]
+----
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: scaledobject
+  namespace: my-namespace
+spec:
+  scaleTargetRef:
+    name: example-deployment
+  maxReplicaCount: 100
+  minReplicaCount: 0
+  pollingInterval: 30
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: https://thanos-querier.openshift-monitoring.svc.cluster.local:9092
+      namespace: kedatest # replace <NAMESPACE>
+      metricName: http_requests_total
+      threshold: '5'
+      query: sum(rate(http_requests_total{job="test-app"}[1m]))
+      authModes: "basic"
+    authenticationRef:
+      name: prom-cluster-triggerauthentication <1>
+      kind: ClusterTriggerAuthentication <2>
+----
+<1> Specify the name of your trigger authentication object.
+<2> Specify `ClusterTriggerAuthentication`.
+
+.. Create the scaled object by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f <filename>
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/nodes-cma-autoscaling-custom-trigger-auth-using

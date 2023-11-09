@@ -1,0 +1,628 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="configuring-network-observability-operators"]
+= Configuring the Network Observability Operator
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: network_observability
+
+toc::[]
+
+You can update the Flow Collector API resource to configure the Network Observability Operator and its managed components. The  Flow Collector is explicitly created during installation. Since this resource operates cluster-wide, only a single `FlowCollector` is allowed, and it has to be named `cluster`.
+
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+
+// * networking/network_observability/configuring-operators.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="network-observability-flowcollector-view_{context}"]
+= View the FlowCollector resource
+You can view and edit YAML directly in the {product-title} web console.
+
+.Procedure
+. In the web console, navigate to *Operators* -> *Installed Operators*.
+. Under the *Provided APIs* heading for the *NetObserv Operator*, select *Flow Collector*.
+. Select *cluster* then select the *YAML* tab. There, you can modify the `FlowCollector` resource to configure the Network Observability operator.
+
+The following example shows a sample `FlowCollector` resource for {product-title} Network Observability operator:
+[id="network-observability-flowcollector-configuring-about-sample_{context}"]
+.Sample `FlowCollector` resource
+[source, yaml]
+----
+apiVersion: flows.netobserv.io/v1beta1
+kind: FlowCollector
+metadata:
+  name: cluster
+spec:
+  namespace: netobserv
+  deploymentModel: DIRECT
+  agent:
+    type: EBPF                                <1>
+    ebpf:
+      sampling: 50                            <2>
+      logLevel: info
+      privileged: false
+      resources:
+        requests:
+          memory: 50Mi
+          cpu: 100m
+        limits:
+          memory: 800Mi
+  processor:
+    logLevel: info
+    resources:
+      requests:
+        memory: 100Mi
+        cpu: 100m
+      limits:
+        memory: 800Mi
+    conversationEndTimeout: 10s
+    logTypes: FLOWS                            <3>
+    conversationHeartbeatInterval: 30s
+  loki:                                       <4>
+    url: 'https://loki-gateway-http.netobserv.svc:8080/api/logs/v1/network'
+    statusUrl: 'https://loki-query-frontend-http.netobserv.svc:3100/'
+    authToken: FORWARD
+    tls:
+      enable: true
+      caCert:
+        type: configmap
+        name: loki-gateway-ca-bundle
+        certFile: service-ca.crt
+        namespace: loki-namespace          #  <5>
+  consolePlugin:
+    register: true
+    logLevel: info
+    portNaming:
+      enable: true
+      portNames:
+        "3100": loki
+    quickFilters:                             <6>
+    - name: Applications
+      filter:
+        src_namespace!: 'openshift-,netobserv'
+        dst_namespace!: 'openshift-,netobserv'
+      default: true
+    - name: Infrastructure
+      filter:
+        src_namespace: 'openshift-,netobserv'
+        dst_namespace: 'openshift-,netobserv'
+    - name: Pods network
+      filter:
+        src_kind: 'Pod'
+        dst_kind: 'Pod'
+      default: true
+    - name: Services network
+      filter:
+        dst_kind: 'Service'
+----
+<1> The Agent specification, `spec.agent.type`, must be `EBPF`. eBPF is the only {product-title} supported option.
+<2> You can set the Sampling specification, `spec.agent.ebpf.sampling`, to manage resources. Lower sampling values might consume a large amount of computational, memory and storage resources. You can mitigate this by specifying a sampling ratio value. A value of 100 means 1 flow every 100 is sampled. A value of 0 or 1 means all flows are captured. The lower the value, the increase in returned flows and the accuracy of derived metrics. By default, eBPF sampling is set to a value of 50, so 1 flow every 50 is sampled. Note that more sampled flows also means more storage needed. It is recommend to start with default values and refine empirically, to determine which setting your cluster can manage.
+<3> The optional specifications `spec.processor.logTypes`, `spec.processor.conversationHeartbeatInterval`, and `spec.processor.conversationEndTimeout` can be set to enable conversation tracking. When enabled, conversation events are queryable in the web console. The values for `spec.processor.logTypes` are as follows: `FLOWS` `CONVERSATIONS`, `ENDED_CONVERSATIONS`, or `ALL`. Storage requirements are highest for `ALL` and lowest for `ENDED_CONVERSATIONS`.
+<4> The Loki specification, `spec.loki`, specifies the Loki client. The default values match the Loki install paths mentioned in the Installing the Loki Operator section. If you used another installation method for Loki, specify the appropriate client information for your install.
+<5> The original certificates are copied to the Network Observability instance namespace and watched for updates. When not provided, the namespace defaults to be the same as "spec.namespace". If you chose to install Loki in a different namespace, you must specify it in the `spec.loki.tls.caCert.namespace` field.   Similarly, the `spec.exporters.kafka.tls.caCert.namespace` field is available for Kafka installed in a different namespace.
+<6> The `spec.quickFilters` specification defines filters that show up in the web console. The `Application` filter keys,`src_namespace` and `dst_namespace`, are negated (`!`), so the `Application` filter shows all traffic that _does not_ originate from, or have a destination to, any `openshift-` or `netobserv` namespaces. For more information, see Configuring quick filters below.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+For more information about conversation tracking, see xref:../network_observability/observing-network-traffic.adoc#network-observability-working-with-conversations_nw-observe-network-traffic[Working with conversations].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+
+// * networking/network_observability/configuring-operators.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-flowcollector-kafka-config_{context}"]
+= Configuring the Flow Collector resource with Kafka
+You can configure the `FlowCollector` resource to use Kafka for high-throughput and low-latency data feeds. A Kafka instance needs to be running, and a Kafka topic dedicated to {product-title} Network Observability must be created in that instance. For more information, see link:https://access.redhat.com/documentation/en-us/red_hat_amq/7.7/html/using_amq_streams_on_openshift/using-the-topic-operator-str[Kafka documentation with AMQ Streams].
+
+.Prerequisites
+* Kafka is installed. Red Hat supports Kafka with AMQ Streams Operator.
+
+.Procedure
+. In the web console, navigate to *Operators* → *Installed Operators*.
+
+. Under the *Provided APIs* heading for the Network Observability Operator, select *Flow Collector*.
+
+. Select the cluster and then click the *YAML* tab.
+
+. Modify the `FlowCollector` resource for {product-title} Network Observability Operator to use Kafka, as shown in the following sample YAML:
+
+.Sample Kafka configuration in `FlowCollector` resource
+[id="network-observability-flowcollector-configuring-kafka-sample_{context}"]
+[source, yaml]
+----
+apiVersion: flows.netobserv.io/v1beta1
+kind: FlowCollector
+metadata:
+  name: cluster
+spec:
+  deploymentModel: KAFKA                                    <1>
+  kafka:
+    address: "kafka-cluster-kafka-bootstrap.netobserv"      <2>
+    topic: network-flows                                    <3>
+    tls:
+      enable: false                                         <4>
+----
+<1> Set `spec.deploymentModel` to `KAFKA` instead of `DIRECT` to enable the Kafka deployment model.
+<2> `spec.kafka.address` refers to the Kafka bootstrap server address. You can specify a port if needed, for instance `kafka-cluster-kafka-bootstrap.netobserv:9093` for using TLS on port 9093.
+<3> `spec.kafka.topic` should match the name of a topic created in Kafka.
+<4> `spec.kafka.tls` can be used to encrypt all communications to and from Kafka with TLS or mTLS. When enabled, the Kafka CA certificate must be available as a ConfigMap or a Secret, both in the namespace where the `flowlogs-pipeline` processor component is deployed (default: `netobserv`) and where the eBPF agents are deployed (default: `netobserv-privileged`). It must be referenced with `spec.kafka.tls.caCert`. When using mTLS, client secrets must be available in these namespaces as well (they can be generated for instance using the AMQ Streams User Operator) and referenced with `spec.kafka.tls.userCert`.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// network_observability/configuring-operator.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-enriched-flows_{context}"]
+= Export enriched network flow data
+
+You can send network flows to Kafka, IPFIX, or both at the same time. Any processor or storage that supports Kafka or IPFIX input, such as Splunk, Elasticsearch, or Fluentd, can consume the enriched network flow data.
+
+.Prerequisites
+* Your Kafka or IPFIX collector endpoint(s) are available from Network Observability `flowlogs-pipeline` pods.
+
+.Procedure
+
+. In the web console, navigate to *Operators* -> *Installed Operators*.
+. Under the *Provided APIs* heading for the *NetObserv Operator*, select *Flow Collector*.
+. Select *cluster* and then select the *YAML* tab.
+. Edit the `FlowCollector` to configure `spec.exporters` as follows:
++
+[source,yaml]
+----
+apiVersion: flows.netobserv.io/v1alpha1
+kind: FlowCollector
+metadata:
+  name: cluster
+spec:
+  exporters:
+  - type: KAFKA                         <3>
+      kafka:
+        address: "kafka-cluster-kafka-bootstrap.netobserv"
+        topic: netobserv-flows-export   <1>
+        tls:
+          enable: false                 <2>
+  - type: IPFIX                         <3>
+      ipfix:
+        targetHost: "ipfix-collector.ipfix.svc.cluster.local"
+        targetPort: 4739
+        transport: tcp or udp           <4>
+
+
+----
+<1> The Network Observability Operator exports all flows to the configured Kafka topic.
+<2> You can encrypt all communications to and from Kafka with SSL/TLS or mTLS. When enabled, the Kafka CA certificate must be available as a ConfigMap or a Secret, both in the namespace where the `flowlogs-pipeline` processor component is deployed (default: netobserv). It must be referenced with `spec.exporters.tls.caCert`. When using mTLS, client secrets must be available in these namespaces as well (they can be generated for instance using the AMQ Streams User Operator) and referenced with `spec.exporters.tls.userCert`.
+<3> You can export flows to IPFIX instead of or in conjunction with exporting flows to Kafka.
+<4> You have the option to specify transport. The default value is `tcp` but you can also specify `udp`.
+. After configuration, network flows data can be sent to an available output in a JSON format. For more information, see _Network flows format reference_.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+For more information about specifying flow format, see xref:../network_observability/json-flows-format-reference.adoc#network-observability-flows-format_json_reference[Network flows format reference].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+
+// * networking/network_observability/configuring-operators.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-config-FLP-sampling_{context}"]
+
+= Updating the Flow Collector resource
+As an alternative to editing YAML in the {product-title} web console, you can configure specifications, such as eBPF sampling, by patching the `flowcollector` custom resource (CR):
+
+.Procedure
+
+. Run the following command to patch the `flowcollector` CR and update the `spec.agent.ebpf.sampling` value:
++
+[source,terminal]
+----
+$ oc patch flowcollector cluster --type=json -p "[{"op": "replace", "path": "/spec/agent/ebpf/sampling", "value": <new value>}] -n netobserv"
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+
+// * networking/network_observability/configuring-operators.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-config-quick-filters_{context}"]
+= Configuring quick filters
+
+You can modify the filters in the `FlowCollector` resource. Exact matches are possible using double-quotes around values. Otherwise, partial matches are used for textual values. The bang (!) character, placed at the end of a key, means negation. See the sample `FlowCollector` resource for more context about modifying the YAML.
+
+[NOTE]
+====
+The filter matching types "all of" or "any of" is a UI setting that the users can modify from the query options. It is not part of this resource configuration.
+====
+
+Here is a list of all available filter keys:
+
+.Filter keys
+[cols="1,1,1,8a",options="header"]
+|===
+
+|Universal*
+|Source
+|Destination
+|Description
+
+|namespace
+|`src_namespace`
+|`dst_namespace`
+|Filter traffic related to a specific namespace.
+
+|name
+|`src_name`
+|`dst_name`
+|Filter traffic related to a given leaf resource name, such as a specific pod, service, or node (for host-network traffic).
+
+|kind
+|`src_kind`
+|`dst_kind`
+|Filter traffic related to a given resource kind. The resource kinds include the leaf resource (Pod, Service or Node), or the owner resource (Deployment and StatefulSet).
+
+|owner_name
+|`src_owner_name`
+|`dst_owner_name`
+|Filter traffic related to a given resource owner; that is, a workload or a set of pods. For example, it can be a Deployment name, a StatefulSet name, etc.
+
+|resource
+|`src_resource`
+|`dst_resource`
+|Filter traffic related to a specific resource that is denoted by its canonical name, that identifies it uniquely. The canonical notation is `kind.namespace.name` for namespaced kinds, or `node.name` for nodes. For example, `Deployment.my-namespace.my-web-server`.
+
+|address
+|`src_address`
+|`dst_address`
+|Filter traffic related to an IP address. IPv4 and IPv6 are supported. CIDR ranges are also supported.
+
+|mac
+|`src_mac`
+|`dst_mac`
+|Filter traffic related to a MAC address.
+
+|port
+|`src_port`
+|`dst_port`
+|Filter traffic related to a specific port.
+
+|host_address
+|`src_host_address`
+|`dst_host_address`
+|Filter traffic related to the host IP address where the pods are running.
+
+|protocol
+|N/A
+|N/A
+|Filter traffic related to a protocol, such as TCP or UDP.
+
+|===
+* Universal keys filter for any of source or destination. For example, filtering `name: 'my-pod'` means all traffic from `my-pod` and all traffic to `my-pod`, regardless of the matching type used, whether *Match all* or *Match any*.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * network_observability/configuring-operator.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-SR-IOV-config_{context}"]
+= Configuring monitoring for SR-IOV interface traffic
+In order to collect traffic from a cluster with a Single Root I/O Virtualization (SR-IOV) device, you must set the `FlowCollector` `spec.agent.ebpf.privileged` field to `true`. Then, the eBPF agent monitors other network namespaces in addition to the host network namespaces, which are monitored by default. When a pod with a virtual functions (VF) interface is created, a new network namespace is created. With `SRIOVNetwork` policy `IPAM` configurations specified, the VF interface is migrated from the host network namespace to the pod network namespace.
+
+.Prerequisites
+* Access to an {product-title} cluster with a SR-IOV device.
+* The `SRIOVNetwork` custom resource (CR) `spec.ipam` configuration must be set with an IP address from the range that the interface lists or from other plugins.
+
+.Procedure
+. In the web console, navigate to *Operators* -> *Installed Operators*.
+. Under the *Provided APIs* heading for the *NetObserv Operator*, select *Flow Collector*.
+. Select *cluster* and then select the *YAML* tab.
+. Configure the `FlowCollector` custom resource. A sample configuration is as follows:
++
+[id="network-observability-flowcollector-configuring-SRIOV-monitoring{context}"]
+.Configure `FlowCollector` for SR-IOV monitoring
+[source,yaml]
+----
+apiVersion: flows.netobserv.io/v1alpha1
+kind: FlowCollector
+metadata:
+  name: cluster
+spec:
+  namespace: netobserv
+  deploymentModel: DIRECT
+  agent:
+    type: EBPF
+    ebpf:
+      privileged: true   <1>
+----
+<1> The `spec.agent.ebpf.privileged` field value must be set to `true` to enable SR-IOV monitoring.
+
+:leveloffset!:
+[role="_additional-resources"]
+.Additional resources
+For more information about creating the `SriovNetwork` custom resource, see xref:../networking/hardware_networks/configuring-sriov-device.adoc#cnf-creating-an-additional-sriov-network-with-vrf-plug-in_configuring-sriov-device[Creating an additional SR-IOV network attachment with the CNI VRF plugin].
+
+:leveloffset: +1
+
+//module included in the following assemblies:
+// * network_observability/configuring_operator.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="network-observability-resource-recommendations_{context}"]
+= Resource management and performance considerations
+
+The amount of resources required by Network Observability depends on the size of your cluster and your requirements for the cluster to ingest and store observability data. To manage resources and set performance criteria for your cluster, consider configuring the following settings. Configuring these settings might meet your optimal setup and observability needs.
+
+The following settings can help you manage resources and performance from the outset:
+
+eBPF Sampling:: You can set the Sampling specification, `spec.agent.ebpf.sampling`, to manage resources. Smaller sampling values might consume a large amount of computational, memory and storage resources. You can mitigate this by specifying a sampling ratio value. A value of `100` means 1 flow every 100 is sampled. A value of `0` or `1` means all flows are captured. Smaller values result in an increase in returned flows and the accuracy of derived metrics. By default, eBPF sampling is set to a value of 50, so 1 flow every 50 is sampled. Note that more sampled flows also means more storage needed. Consider starting with the default values and refine empirically, in order to determine which setting your cluster can manage.
+
+Restricting or excluding interfaces::  Reduce the overall observed traffic by setting the values for `spec.agent.ebpf.interfaces` and `spec.agent.ebpf.excludeInterfaces`. By default, the agent fetches all the interfaces in the system, except the ones listed in `excludeInterfaces` and `lo` (local interface). Note that the interface names might vary according to the Container Network Interface (CNI) used.
+
+The following settings can be used to fine-tune performance after the Network Observability has been running for a while:
+
+Resource requirements and limits:: Adapt the resource requirements and limits to the load and memory usage you expect on your cluster by using the `spec.agent.ebpf.resources` and `spec.processor.resources` specifications. The default limits of 800MB might be sufficient for most medium-sized clusters.
+
+Cache max flows timeout:: Control how often flows are reported by the agents by using the eBPF agent's `spec.agent.ebpf.cacheMaxFlows` and `spec.agent.ebpf.cacheActiveTimeout` specifications. A larger value results in less traffic being generated by the agents, which correlates with a lower CPU load. However, a larger value leads to a slightly higher memory consumption, and might generate more latency in the flow collection.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * network_observability/configuring_operator.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="network-observability-resources-table_{context}"]
+= Resource considerations
+The following table outlines examples of resource considerations for clusters with certain workload sizes.
+
+[IMPORTANT]
+====
+The examples outlined in the table demonstrate scenarios that are tailored to specific workloads. Consider each example only as a baseline from which adjustments can be made to accommodate your workload needs.
+====
+
+.Resource recommendations
+[options="header"]
+|===
+|                                     | Extra small (10 nodes) | Small (25 nodes)  | Medium (65 nodes) ^[2]^ | Large (120 nodes) ^[2]^
+| *Worker Node vCPU and memory*       | 4 vCPUs\| 16GiB mem ^[1]^ | 16 vCPUs\| 64GiB mem ^[1]^ | 16 vCPUs\| 64GiB mem  ^[1]^  |16 vCPUs\| 64GiB Mem ^[1]^
+| *LokiStack size*                    | `1x.extra-small`         | `1x.small`          | `1x.small`           | `1x.medium`
+| *Network Observability controller memory limit* | 400Mi (default)        | 400Mi (default)   | 400Mi (default)    | 800Mi
+| *eBPF sampling rate*                | 50 (default)           | 50 (default)      | 50 (default)       | 50 (default)
+| *eBPF memory limit*                 | 800Mi (default)        | 800Mi (default)   | 2000Mi             | 800Mi (default)
+| *FLP memory limit*                     | 800Mi (default)        | 800Mi (default)   | 800Mi (default)    | 800Mi (default)
+| *FLP Kafka partitions*              | N/A                    | 48                | 48                 | 48
+| *Kafka consumer replicas*           | N/A                    | 24                | 24                 | 24
+| *Kafka brokers*                     | N/A                    | 3 (default)       | 3 (default)        | 3 (default)
+|===
+[.small]
+--
+1. Tested with AWS M6i instances.
+2. In addition to this worker and its controller, 3 infra nodes (size `M6i.12xlarge`) and 1 workload node (size `M6i.8xlarge`) were tested.
+--
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/network-observability-flowcollector-view,modules/network-observability-flowcollector-kafka-config,modules/network-observability-enriched-flows,modules/network-observability-configuring-FLP-sampling,modules/network-observability-configuring-quickfilters-flowcollector,modules/network-observability-SRIOV-configuration,modules/network-observability-resource-recommendations,modules/network-observability-resources-table

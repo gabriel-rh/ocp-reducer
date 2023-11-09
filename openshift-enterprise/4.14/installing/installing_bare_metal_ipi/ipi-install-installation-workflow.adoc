@@ -1,0 +1,3409 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ipi-install-installation-workflow"]
+= Setting up the environment for an OpenShift installation
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: ipi-install-installation-workflow
+
+toc::[]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * list of assemblies where this module is included
+// ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installing-rhel-on-the-provisioner-node_{context}"]
+= Installing {op-system-base} on the provisioner node
+
+With the configuration of the prerequisites complete, the next step is to install {op-system-base} {op-system-version} on the provisioner node. The installer uses the provisioner node as the orchestrator while installing the {product-title} cluster. For the purposes of this document, installing {op-system-base} on the provisioner node is out of scope. However, options include but are not limited to using a RHEL Satellite server, PXE, or installation media.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="preparing-the-provisioner-node-for-openshift-install_{context}"]
+= Preparing the provisioner node for {product-title} installation
+
+Perform the following steps to prepare the environment.
+
+.Procedure
+
+. Log in to the provisioner node via `ssh`.
+
+. Create a non-root user (`kni`) and provide that user with `sudo` privileges:
++
+[source,terminal]
+----
+# useradd kni
+----
++
+[source,terminal]
+----
+# passwd kni
+----
++
+[source,terminal]
+----
+# echo "kni ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/kni
+----
++
+[source,terminal]
+----
+# chmod 0440 /etc/sudoers.d/kni
+----
+
+. Create an `ssh` key for the new user:
++
+[source,terminal]
+----
+# su - kni -c "ssh-keygen -t ed25519 -f /home/kni/.ssh/id_rsa -N ''"
+----
+
+. Log in as the new user on the provisioner node:
++
+[source,terminal]
+----
+# su - kni
+----
+
+. Use Red Hat Subscription Manager to register the provisioner node:
++
+[source,terminal]
+----
+$ sudo subscription-manager register --username=<user> --password=<pass> --auto-attach
+$ sudo subscription-manager repos --enable=rhel-8-for-<architecture>-appstream-rpms --enable=rhel-8-for-<architecture>-baseos-rpms
+----
++
+[NOTE]
+====
+For more information about Red Hat Subscription Manager, see link:https://access.redhat.com/documentation/en-us/red_hat_subscription_management/1/html-single/rhsm/index[Using and Configuring Red Hat Subscription Manager].
+====
+
+. Install the following packages:
++
+[source,terminal]
+----
+$ sudo dnf install -y libvirt qemu-kvm mkisofs python3-devel jq ipmitool
+----
+
+. Modify the user to add the `libvirt` group to the newly created user:
++
+[source,terminal]
+----
+$ sudo usermod --append --groups libvirt <user>
+----
+
+. Restart `firewalld` and enable the `http` service:
++
+[source,terminal]
+----
+$ sudo systemctl start firewalld
+----
++
+[source,terminal]
+----
+$ sudo firewall-cmd --zone=public --add-service=http --permanent
+----
++
+[source,terminal]
+----
+$ sudo firewall-cmd --reload
+----
+
+. Start and enable the `libvirtd` service:
++
+[source,terminal]
+----
+$ sudo systemctl enable libvirtd --now
+----
+
+. Create the `default` storage pool and start it:
++
+[source,terminal]
+----
+$ sudo virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images
+----
++
+[source,terminal]
+----
+$ sudo virsh pool-start default
+----
++
+[source,terminal]
+----
+$ sudo virsh pool-autostart default
+----
+
+. Create a `pull-secret.txt` file:
++
+[source,terminal]
+----
+$ vim pull-secret.txt
+----
++
+In a web browser, navigate to link:https://console.redhat.com/openshift/install/metal/installer-provisioned[Install OpenShift on Bare Metal with installer-provisioned infrastructure]. Click **Copy pull secret**. Paste the contents into the `pull-secret.txt` file and save the contents in the `kni` user's home directory.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * list of assemblies where this module is included
+// ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="checking-ntp-sync_{context}"]
+= Checking NTP server synchronization
+
+The {product-title} installation program installs the `chrony` Network Time Protocol (NTP) service on the cluster nodes. To complete installation, each node must have access to an NTP time server. You can verify NTP server synchronization by using the `chrony` service.
+
+For disconnected clusters, you must configure the NTP servers on the control plane nodes. For more information see the _Additional resources_ section.
+
+.Prerequisites
+
+* You installed the `chrony` package on the target node.
+
+.Procedure
+
+. Log in to the node by using the `ssh` command.
+
+. View the NTP servers available to the node by running the following command:
++
+[source,terminal]
+----
+$ chronyc sources
+----
++
+.Example output
+[source,terminal]
+----
+MS Name/IP address         Stratum Poll Reach LastRx Last sample
+===============================================================================
+^+ time.cloudflare.com           3  10   377   187   -209us[ -209us] +/-   32ms
+^+ t1.time.ir2.yahoo.com         2  10   377   185  -4382us[-4382us] +/-   23ms
+^+ time.cloudflare.com           3  10   377   198   -996us[-1220us] +/-   33ms
+^* brenbox.westnet.ie            1  10   377   193  -9538us[-9761us] +/-   24ms
+----
+
+. Use the `ping` command to ensure that the node can access an NTP server, for example:
++
+[source,terminal]
+----
+$ ping time.cloudflare.com
+----
++
+.Example output
+[source,terminal]
+----
+PING time.cloudflare.com (162.159.200.123) 56(84) bytes of data.
+64 bytes from time.cloudflare.com (162.159.200.123): icmp_seq=1 ttl=54 time=32.3 ms
+64 bytes from time.cloudflare.com (162.159.200.123): icmp_seq=2 ttl=54 time=30.9 ms
+64 bytes from time.cloudflare.com (162.159.200.123): icmp_seq=3 ttl=54 time=36.7 ms
+...
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc#configuring-ntp-for-disconnected-clusters_ipi-install-installation-workflow[Optional: Configuring NTP for disconnected clusters]
+
+* xref:../../installing/installing_bare_metal_ipi/ipi-install-prerequisites.adoc#network-requirements-ntp_ipi-install-prerequisites[Network Time Protocol (NTP)]
+
+:leveloffset: +1
+
+// This is included in the following assemblies:
+//
+// ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-networking_{context}"]
+= Configuring networking
+
+Before installation, you must configure the networking on the provisioner node. Installer-provisioned clusters deploy with a bare-metal bridge and network, and an optional provisioning bridge and network.
+
+image::210_OpenShift_Baremetal_IPI_Deployment_updates_0122_1.png[Configure networking]
+
+[NOTE]
+====
+You can also configure networking from the web console.
+====
+
+.Procedure
+
+. Export the bare-metal network NIC name:
++
+[source,terminal]
+----
+$ export PUB_CONN=<baremetal_nic_name>
+----
+
+. Configure the bare-metal network:
++
+[NOTE]
+====
+The SSH connection might disconnect after executing these steps.
+====
++
+[source,terminal]
+----
+$ sudo nohup bash -c "
+    nmcli con down \"$PUB_CONN\"
+    nmcli con delete \"$PUB_CONN\"
+    # RHEL 8.1 appends the word \"System\" in front of the connection, delete in case it exists
+    nmcli con down \"System $PUB_CONN\"
+    nmcli con delete \"System $PUB_CONN\"
+    nmcli connection add ifname baremetal type bridge con-name baremetal bridge.stp no
+    nmcli con add type bridge-slave ifname \"$PUB_CONN\" master baremetal
+    pkill dhclient;dhclient baremetal
+"
+----
+
+. Optional: If you are deploying with a provisioning network, export the provisioning network NIC name:
++
+[source,terminal]
+----
+$ export PROV_CONN=<prov_nic_name>
+----
+
+. Optional: If you are deploying with a provisioning network, configure the provisioning network:
++
+[source,terminal]
+----
+$ sudo nohup bash -c "
+    nmcli con down \"$PROV_CONN\"
+    nmcli con delete \"$PROV_CONN\"
+    nmcli connection add ifname provisioning type bridge con-name provisioning
+    nmcli con add type bridge-slave ifname \"$PROV_CONN\" master provisioning
+    nmcli connection modify provisioning ipv6.addresses fd00:1101::1/64 ipv6.method manual
+    nmcli con down provisioning
+    nmcli con up provisioning
+"
+----
++
+[NOTE]
+====
+The ssh connection might disconnect after executing these steps.
+
+The IPv6 address can be any address as long as it is not routable via the bare-metal network.
+
+Ensure that UEFI is enabled and UEFI PXE settings are set to the IPv6 protocol when using IPv6 addressing.
+====
+
+. Optional: If you are deploying with a provisioning network, configure the IPv4 address on the provisioning network connection:
++
+[source,terminal]
+----
+$ nmcli connection modify provisioning ipv4.addresses 172.22.0.254/24 ipv4.method manual
+----
+
+. `ssh` back into the `provisioner` node (if required):
++
+[source,terminal]
+----
+# ssh kni@provisioner.<cluster-name>.<domain>
+----
+
+. Verify the connection bridges have been properly created:
++
+[source,terminal]
+----
+$ sudo nmcli con show
+----
++
+[source,terminal]
+----
+NAME               UUID                                  TYPE      DEVICE
+baremetal          4d5133a5-8351-4bb9-bfd4-3af264801530  bridge    baremetal
+provisioning       43942805-017f-4d7d-a2c2-7cb3324482ed  bridge    provisioning
+virbr0             d9bca40f-eee1-410b-8879-a2d4bb0465e7  bridge    virbr0
+bridge-slave-eno1  76a8ed50-c7e5-4999-b4f6-6d9014dd0812  ethernet  eno1
+bridge-slave-eno2  f31c3353-54b7-48de-893a-02d2b34c4736  ethernet  eno2
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// This module is included in the following assemblies:
+//
+// installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ipi-install-establishing-communication-between-subnets_{context}"]
+= Establishing communication between subnets
+
+In a typical {product-title} cluster setup, all nodes, including the control plane and worker nodes, reside in the same network. However, for edge computing scenarios, it can be beneficial to locate worker nodes closer to the edge. This often involves using different network segments or subnets for the remote worker nodes than the subnet used by the control plane and local worker nodes. Such a setup can reduce latency for the edge and allow for enhanced scalability. However, the network must be configured properly before installing {product-title} to ensure that the edge subnets containing the remote worker nodes can reach the subnet containing the control plane nodes and receive traffic from the control plane too.
+
+[IMPORTANT]
+====
+All control plane nodes must run in the same subnet. When using more than one subnet, you can also configure the Ingress VIP to run on the control plane nodes by using a manifest. See "Configuring network components to run on the control plane" for details.
+
+Deploying a cluster with multiple subnets requires using virtual media.
+====
+
+This procedure details the network configuration required to allow the remote worker nodes in the second subnet to communicate effectively with the control plane nodes in the first subnet and to allow the control plane nodes in the first subnet to communicate effectively with the remote worker nodes in the second subnet.
+
+In this procedure, the cluster spans two subnets:
+
+- The first subnet (`10.0.0.0`) contains the control plane and local worker nodes.
+- The second subnet (`192.168.0.0`) contains the edge worker nodes.
+
+.Procedure
+
+. Configure the first subnet to communicate with the second subnet:
+
+.. Log in as `root` to a control plane node by running the following command:
++
+[source,terminal]
+----
+$ sudo su -
+----
+
+.. Get the name of the network interface:
++
+[source,terminal]
+----
+# nmcli dev status
+----
+
+.. Add a route to the second subnet (`192.168.0.0`) via the gateway:
+s+
+[source,terminal]
+----
+# nmcli connection modify <interface_name> +ipv4.routes "192.168.0.0/24 via <gateway>"
+----
++
+Replace `<interface_name>` with the interface name. Replace `<gateway>` with the IP address of the actual gateway.
++
+.Example
++
+[source,terminal]
+----
+# nmcli connection modify eth0 +ipv4.routes "192.168.0.0/24 via 192.168.0.1"
+----
+
+.. Apply the changes:
++
+[source,terminal]
+----
+# nmcli connection up <interface_name>
+----
++
+Replace `<interface_name>` with the interface name.
+
+.. Verify the routing table to ensure the route has been added successfully:
++
+[source,terminal]
+----
+# ip route
+----
+
+.. Repeat the previous steps for each control plane node in the first subnet.
++
+[NOTE]
+====
+Adjust the commands to match your actual interface names and gateway.
+====
+
+. Configure the second subnet to communicate with the first subnet:
+
+.. Log in as `root` to a remote worker node:
++
+[source,terminal]
+----
+$ sudo su -
+----
+
+.. Get the name of the network interface:
++
+[source,terminal]
+----
+# nmcli dev status
+----
+
+.. Add a route to the first subnet (`10.0.0.0`) via the gateway:
++
+[source,terminal]
+----
+# nmcli connection modify <interface_name> +ipv4.routes "10.0.0.0/24 via <gateway>"
+----
++
+Replace `<interface_name>` with the interface name. Replace `<gateway>` with the IP address of the actual gateway.
++
+.Example
++
+[source,terminal]
+----
+# nmcli connection modify eth0 +ipv4.routes "10.0.0.0/24 via 10.0.0.1"
+----
+
+.. Apply the changes:
++
+[source,terminal]
+----
+# nmcli connection up <interface_name>
+----
++
+Replace `<interface_name>` with the interface name.
+
+.. Verify the routing table to ensure the route has been added successfully:
++
+[source,terminal]
+----
+# ip route
+----
+
+.. Repeat the previous steps for each worker node in the second subnet.
++
+[NOTE]
+====
+Adjust the commands to match your actual interface names and gateway.
+====
+
+. Once you have configured the networks, test the connectivity to ensure the remote worker nodes can reach the control plane nodes and the control plane nodes can reach the remote worker nodes.
+
+.. From the control plane nodes in the first subnet, ping a remote worker node in the second subnet:
++
+[source,terminal]
+----
+$ ping <remote_worker_node_ip_address>
+----
++
+If the ping is successful, it means the control plane nodes in the first subnet can reach the remote worker nodes in the second subnet. If you don't receive a response, review the network configurations and repeat the procedure for the node.
+
+.. From the remote worker nodes in the second subnet, ping a control plane node in the first subnet:
++
+[source,terminal]
+----
+$ ping <control_plane_node_ip_address>
+----
++
+If the ping is successful, it means the remote worker nodes in the second subnet can reach the control plane in the first subnet. If you don't receive a response, review the network configurations and repeat the procedure for the node.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="retrieving-the-openshift-installer_{context}"]
+= Retrieving the {product-title} installer
+
+Use the `stable-4.x` version of the installation program and your selected architecture to deploy the generally available stable version of {product-title}:
+
+[source,terminal,subs="attributes+"]
+----
+$ export VERSION=stable-{product-version}
+----
+[source,terminal,subs="attributes+"]
+----
+$ export RELEASE_ARCH=<architecture>
+----
+[source,terminal,subs="attributes+"]
+----
+$ export RELEASE_IMAGE=$(curl -s https://mirror.openshift.com/pub/openshift-v4/$RELEASE_ARCH/clients/ocp/$VERSION/release.txt | grep 'Pull From: quay.io' | awk -F ' ' '{print $3}')
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="extracting-the-openshift-installer_{context}"]
+= Extracting the {product-title} installer
+
+After retrieving the installer, the next step is to extract it.
+
+.Procedure
+
+. Set the environment variables:
++
+[source,terminal]
+----
+$ export cmd=openshift-baremetal-install
+----
++
+[source,terminal]
+----
+$ export pullsecret_file=~/pull-secret.txt
+----
++
+[source,terminal]
+----
+$ export extract_dir=$(pwd)
+----
+
+
+. Get the `oc` binary:
++
+[source,terminal]
+----
+$ curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/$VERSION/openshift-client-linux.tar.gz | tar zxvf - oc
+----
+
+. Extract the installer:
++
+[source,terminal]
+----
+$ sudo cp oc /usr/local/bin
+----
++
+[source,terminal]
+----
+$ oc adm release extract --registry-config "${pullsecret_file}" --command=$cmd --to "${extract_dir}" ${RELEASE_IMAGE}
+----
++
+[source,terminal]
+----
+$ sudo cp openshift-baremetal-install /usr/local/bin
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * list of assemblies where this module is included
+// ipi-install-installation-process.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ipi-install-creating-an-rhcos-images-cache_{context}"]
+= Optional: Creating an {op-system} images cache
+
+To employ image caching, you must download the {op-system-first} image used by the bootstrap VM to provision the cluster nodes. Image caching is optional, but it is especially useful when running the installation program on a network with limited bandwidth.
+
+[NOTE]
+====
+The installation program no longer needs the `clusterOSImage` {op-system} image because the correct image is in the release payload.
+====
+
+If you are running the installation program on a network with limited bandwidth and the {op-system} images download takes more than 15 to 20 minutes, the installation program will timeout. Caching images on a web server will help in such scenarios.
+
+[WARNING]
+====
+If you enable TLS for the HTTPD server, you must confirm the root certificate is signed by an authority trusted by the client and verify the trusted certificate chain between your {product-title} hub and spoke clusters and the HTTPD server. Using a server configured with an untrusted certificate prevents the images from being downloaded to the image creation service. Using untrusted HTTPS servers is not supported.
+====
+
+Install a container that contains the images.
+
+.Procedure
+
+. Install `podman`:
++
+[source,terminal]
+----
+$ sudo dnf install -y podman
+----
+
+. Open firewall port `8080` to be used for {op-system} image caching:
++
+[source,terminal]
+----
+$ sudo firewall-cmd --add-port=8080/tcp --zone=public --permanent
+----
++
+[source,terminal]
+----
+$ sudo firewall-cmd --reload
+----
+
+. Create a directory to store the `bootstraposimage`:
++
+[source,terminal]
+----
+$ mkdir /home/kni/rhcos_image_cache
+----
+
+. Set the appropriate SELinux context for the newly created directory:
++
+[source,terminal]
+----
+$ sudo semanage fcontext -a -t httpd_sys_content_t "/home/kni/rhcos_image_cache(/.*)?"
+----
++
+[source,terminal]
+----
+$ sudo restorecon -Rv /home/kni/rhcos_image_cache/
+----
+
+. Get the URI for the {op-system} image that the installation program will deploy on the bootstrap VM:
++
+[source,terminal]
+----
+$ export RHCOS_QEMU_URI=$(/usr/local/bin/openshift-baremetal-install coreos print-stream-json | jq -r --arg ARCH "$(arch)" '.architectures[$ARCH].artifacts.qemu.formats["qcow2.gz"].disk.location')
+----
+
+. Get the name of the image that the installation program will deploy on the bootstrap VM:
++
+[source,terminal]
+----
+$ export RHCOS_QEMU_NAME=${RHCOS_QEMU_URI##*/}
+----
+
+. Get the SHA hash for the {op-system} image that will be deployed on the bootstrap VM:
++
+[source,terminal]
+----
+$ export RHCOS_QEMU_UNCOMPRESSED_SHA256=$(/usr/local/bin/openshift-baremetal-install coreos print-stream-json | jq -r --arg ARCH "$(arch)" '.architectures[$ARCH].artifacts.qemu.formats["qcow2.gz"].disk["uncompressed-sha256"]')
+----
+
+. Download the image and place it in the `/home/kni/rhcos_image_cache` directory:
++
+[source,terminal]
+----
+$ curl -L ${RHCOS_QEMU_URI} -o /home/kni/rhcos_image_cache/${RHCOS_QEMU_NAME}
+----
+
+. Confirm SELinux type is of `httpd_sys_content_t` for the new file:
++
+[source,terminal]
+----
+$ ls -Z /home/kni/rhcos_image_cache
+----
+
+. Create the pod:
++
+[source,terminal]
+----
+$ podman run -d --name rhcos_image_cache \ <1>
+-v /home/kni/rhcos_image_cache:/var/www/html \
+-p 8080:8080/tcp \
+quay.io/centos7/httpd-24-centos7:latest
+----
++
+<1> Creates a caching webserver with the name `rhcos_image_cache`. This pod serves the `bootstrapOSImage` image in the `install-config.yaml` file for deployment.
+
+. Generate the `bootstrapOSImage` configuration:
++
+[source,terminal]
+----
+$ export BAREMETAL_IP=$(ip addr show dev baremetal | awk '/inet /{print $2}' | cut -d"/" -f1)
+----
++
+[source,terminal]
+----
+$ export BOOTSTRAP_OS_IMAGE="http://${BAREMETAL_IP}:8080/${RHCOS_QEMU_NAME}?sha256=${RHCOS_QEMU_UNCOMPRESSED_SHA256}"
+----
++
+[source,terminal]
+----
+$ echo "    bootstrapOSImage=${BOOTSTRAP_OS_IMAGE}"
+----
+
+. Add the required configuration to the `install-config.yaml` file under `platform.baremetal`:
++
+[source,terminal]
+----
+platform:
+  baremetal:
+    bootstrapOSImage: <bootstrap_os_image>  <1>
+----
+<1> Replace `<bootstrap_os_image>` with the value of `$BOOTSTRAP_OS_IMAGE`.
++
+See the "Configuring the install-config.yaml file" section for additional details.
+
+:leveloffset!:
+
+[id="ipi-install-configuration-files"]
+[id="additional-resources_config"]
+== Configuring the install-config.yaml file
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-the-install-config-file_{context}"]
+= Configuring the install-config.yaml file
+
+The `install-config.yaml` file requires some additional details.
+Most of the information teaches the installation program and the resulting cluster enough about the available hardware that it is able to fully manage it.
+
+[NOTE]
+====
+The installation program no longer needs the `clusterOSImage` {op-system} image because the correct image is in the release payload.
+====
+
+. Configure `install-config.yaml`. Change the appropriate variables to match the environment, including `pullSecret` and `sshKey`:
++
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: <domain>
+metadata:
+  name: <cluster_name>
+networking:
+  machineNetwork:
+  - cidr: <public_cidr>
+  networkType: OVNKubernetes
+compute:
+- name: worker
+  replicas: 2 <1>
+controlPlane:
+  name: master
+  replicas: 3
+  platform:
+    baremetal: {}
+platform:
+  baremetal:
+    apiVIPs:
+      - <api_ip>
+    ingressVIPs:
+      - <wildcard_ip>
+    provisioningNetworkCIDR: <CIDR>
+    bootstrapExternalStaticIP: <bootstrap_static_ip_address> <2>
+    bootstrapExternalStaticGateway: <bootstrap_static_gateway> <3>
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: ipmi://<out_of_band_ip> <4>
+          username: <user>
+          password: <password>
+        bootMACAddress: <NIC1_mac_address>
+        rootDeviceHints:
+         deviceName: "<installation_disk_drive_path>" <5>
+      - name: <openshift_master_1>
+        role: master
+        bmc:
+          address: ipmi://<out_of_band_ip>
+          username: <user>
+          password: <password>
+        bootMACAddress: <NIC1_mac_address>
+        rootDeviceHints:
+         deviceName: "<installation_disk_drive_path>"
+      - name: <openshift_master_2>
+        role: master
+        bmc:
+          address: ipmi://<out_of_band_ip>
+          username: <user>
+          password: <password>
+        bootMACAddress: <NIC1_mac_address>
+        rootDeviceHints:
+         deviceName: "<installation_disk_drive_path>"
+      - name: <openshift_worker_0>
+        role: worker
+        bmc:
+          address: ipmi://<out_of_band_ip>
+          username: <user>
+          password: <password>
+        bootMACAddress: <NIC1_mac_address>
+      - name: <openshift_worker_1>
+        role: worker
+        bmc:
+          address: ipmi://<out_of_band_ip>
+          username: <user>
+          password: <password>
+        bootMACAddress: <NIC1_mac_address>
+        rootDeviceHints:
+         deviceName: "<installation_disk_drive_path>"
+pullSecret: '<pull_secret>'
+sshKey: '<ssh_pub_key>'
+----
++
+--
+<1> Scale the worker machines based on the number of worker nodes that are part of the {product-title} cluster. Valid options for the `replicas` value are `0` and integers greater than or equal to `2`. Set the number of replicas to `0` to deploy a three-node cluster, which contains only three control plane machines. A three-node cluster is a smaller, more resource-efficient cluster that can be used for testing, development, and production. You cannot install the cluster with only one worker.
+<2> When deploying a cluster with static IP addresses, you must set the `bootstrapExternalStaticIP` configuration setting to specify the static IP address of the bootstrap VM when there is no DHCP server on the bare-metal network.
+<3> When deploying a cluster with static IP addresses, you must set the `bootstrapExternalStaticGateway` configuration setting to specify the gateway IP address for the bootstrap VM when there is no DHCP server on the bare-metal network.
+<4> See the BMC addressing sections for more options.
+<5> To set the path to the installation disk drive, enter the kernel name of the disk. For example, `/dev/sda`.
++
+[IMPORTANT]
+====
+Because the disk discovery order is not guaranteed, the kernel name of the disk can change across booting options for machines with multiple disks. For instance, `/dev/sda` becomes `/dev/sdb` and vice versa.
+To avoid this issue, you must use persistent disk attributes, such as the disk World Wide Name (WWN). To use the disk WWN, replace the `deviceName` parameter with the `wwnWithExtension` parameter. Depending on the parameter that you use, enter the disk name, for example, `/dev/sda` or the disk WWN, for example, `"0x64cd98f04fde100024684cf3034da5c2"`. Ensure that you enter the disk WWN value within quotes so that it is used as a string value and not a hexadecimal value.
+
+Failure to meet these requirements for the `rootDeviceHints` parameter might result in the following error:
+
+[source,text]
+----
+ironic-inspector inspection failed: No disks satisfied root device hints
+----
+====
+
+[NOTE]
+====
+Before {product-title} 4.12, the cluster installation program only accepted an IPv4 address or and IPv6 address for the `apiVIP` and `ingressVIP` configuration settings. In {product-title} 4.12 and later, these configuration settings are deprecated. Instead, use a list format in the `apiVIPs` and `ingressVIPs` configuration settings to specify IPv4 addresses, IPv6 addresses or both IP address formats.
+====
+--
+. Create a directory to store the cluster configuration:
++
+[source,terminal]
+----
+$ mkdir ~/clusterconfigs
+----
+
+. Copy the `install-config.yaml` file to the new directory:
++
+[source,terminal]
+----
+$ cp install-config.yaml ~/clusterconfigs
+----
+
+. Ensure all bare metal nodes are powered off prior to installing the {product-title} cluster:
++
+[source,terminal]
+----
+$ ipmitool -I lanplus -U <user> -P <password> -H <management-server-ip> power off
+----
+
+. Remove old bootstrap resources if any are left over from a previous deployment attempt:
++
+[source,bash]
+----
+for i in $(sudo virsh list | tail -n +3 | grep bootstrap | awk {'print $2'});
+do
+  sudo virsh destroy $i;
+  sudo virsh undefine $i;
+  sudo virsh vol-delete $i --pool $i;
+  sudo virsh vol-delete $i.ign --pool $i;
+  sudo virsh pool-destroy $i;
+  sudo virsh pool-undefine $i;
+done
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="additional-install-config-parameters_{context}"]
+= Additional `install-config` parameters
+
+See the following tables for the required parameters, the `hosts` parameter,
+and the `bmc` parameter for the `install-config.yaml` file.
+
+[cols="2,1,5"]
+[options="header"]
+.Required parameters
+|===
+|Parameters |Default |Description
+
+
+| `baseDomain`
+|
+| The domain name for the cluster. For example, `example.com`.
+
+| `bootMode`
+| `UEFI`
+| The boot mode for a node. Options are `legacy`, `UEFI`, and `UEFISecureBoot`. If `bootMode` is not set, Ironic sets it while inspecting the node.
+
+| `bootstrapExternalStaticIP`
+|
+| The static IP address for the bootstrap VM. You must set this value when deploying a cluster with static IP addresses when there is no DHCP server on the bare-metal network.
+
+| `bootstrapExternalStaticGateway`
+|
+| The static IP address of the gateway for the bootstrap VM. You must set this value when deploying a cluster with static IP addresses when there is no DHCP server on the bare-metal network.
+
+| `sshKey`
+|
+| The `sshKey` configuration setting contains the key in the `~/.ssh/id_rsa.pub` file required to access the control plane nodes and worker nodes. Typically, this key is from the `provisioner` node.
+
+| `pullSecret`
+|
+| The `pullSecret` configuration setting contains a copy of the pull secret downloaded from the link:https://console.redhat.com/openshift/install/metal/user-provisioned[Install OpenShift on Bare Metal] page when preparing the provisioner node.
+
+
+a|
+----
+metadata:
+    name:
+----
+|
+|The name to be given to the {product-title} cluster. For example, `openshift`.
+
+
+a|
+----
+networking:
+    machineNetwork:
+    - cidr:
+----
+|
+|The public CIDR (Classless Inter-Domain Routing) of the external network. For example, `10.0.0.0/24`.
+
+a|
+----
+compute:
+  - name: worker
+----
+|
+|The {product-title} cluster requires a name be provided for worker (or compute) nodes even if there are zero nodes.
+
+
+a|
+----
+compute:
+    replicas: 2
+----
+|
+|Replicas sets the number of worker (or compute) nodes in the {product-title} cluster.
+
+
+a|
+----
+controlPlane:
+    name: master
+----
+|
+|The {product-title} cluster requires a name for control plane (master) nodes.
+
+
+a|
+----
+controlPlane:
+    replicas: 3
+----
+|
+|Replicas sets the number of control plane (master) nodes included as part of the {product-title} cluster.
+
+a| `provisioningNetworkInterface` |  | The name of the network interface on nodes connected to the provisioning network. For {product-title} 4.9 and later releases, use the `bootMACAddress` configuration setting to enable Ironic to identify the IP address of the NIC instead of using the `provisioningNetworkInterface` configuration setting to identify the name of the NIC.
+
+
+| `defaultMachinePlatform` | | The default configuration used for machine pools without a platform configuration.
+
+| `apiVIPs` | a| (Optional) The virtual IP address for Kubernetes API communication.
+
+This setting must either be provided in the `install-config.yaml` file as a reserved IP from the MachineNetwork or preconfigured in the DNS so that the default name resolves correctly. Use the virtual IP address and not the FQDN when adding a value to the `apiVIPs` configuration setting in the `install-config.yaml` file. The primary IP address must be from the IPv4 network when using dual stack networking. If not set, the installation program uses `api.<cluster_name>.<base_domain>` to derive the IP address from the DNS.
+
+[NOTE]
+====
+Before {product-title} 4.12, the cluster installation program only accepted an IPv4 address or an IPv6 address for the `apiVIP` configuration setting. From {product-title} 4.12 or later, the `apiVIP` configuration setting is deprecated. Instead, use a list format for the `apiVIPs` configuration setting to specify an IPv4 address, an IPv6 address or both IP address formats.
+====
+
+
+| `disableCertificateVerification` | `False` | `redfish` and `redfish-virtualmedia` need this parameter to manage BMC addresses. The value should be `True` when using a self-signed certificate for BMC addresses.
+
+| `ingressVIPs` | a| (Optional) The virtual IP address for ingress traffic.
+
+This setting must either be provided in the `install-config.yaml` file as a reserved IP from the MachineNetwork or preconfigured in the DNS so that the default name resolves correctly. Use the virtual IP address and not the FQDN when adding a value to the `ingressVIPs` configuration setting in the `install-config.yaml` file. The primary IP address must be from the IPv4 network when using dual stack networking. If not set, the installation program uses `test.apps.<cluster_name>.<base_domain>` to derive the IP address from the DNS.
+
+[NOTE]
+====
+Before {product-title} 4.12, the cluster installation program only accepted an IPv4 address or an IPv6 address for the `ingressVIP` configuration setting. In {product-title} 4.12 and later, the `ingressVIP` configuration setting is deprecated. Instead, use a list format for the `ingressVIPs` configuration setting to specify an IPv4 addresses, an IPv6 addresses or both IP address formats.
+====
+
+|===
+
+
+[cols="1,1,3", options="header"]
+.Optional Parameters
+|===
+|Parameters
+|Default
+|Description
+
+|`provisioningDHCPRange`
+|`172.22.0.10,172.22.0.100`
+|Defines the IP range for nodes on the provisioning network.
+
+a|`provisioningNetworkCIDR`
+|`172.22.0.0/24`
+|The CIDR for the network to use for provisioning. This option is required when not using the default address range on the provisioning network.
+
+|`clusterProvisioningIP`
+|The third IP address of the `provisioningNetworkCIDR`.
+|The IP address within the cluster where the provisioning services run. Defaults to the third IP address of the provisioning subnet. For example, `172.22.0.3`.
+
+|`bootstrapProvisioningIP`
+|The second IP address of the `provisioningNetworkCIDR`.
+|The IP address on the bootstrap VM where the provisioning services run while the installer is deploying the control plane (master) nodes. Defaults to the second IP address of the provisioning subnet. For example, `172.22.0.2` or `2620:52:0:1307::2`.
+
+| `externalBridge`
+| `baremetal`
+| The name of the bare-metal bridge of the hypervisor attached to the bare-metal network.
+
+| `provisioningBridge`
+| `provisioning`
+| The name of the provisioning bridge on the `provisioner` host attached to the provisioning network.
+
+|`architecture`
+|
+|Defines the host architecture for your cluster. Valid values are `amd64` or `arm64`.
+
+| `defaultMachinePlatform`
+|
+| The default configuration used for machine pools without a platform configuration.
+
+| `bootstrapOSImage`
+|
+| A URL to override the default operating system image for the bootstrap node. The URL must contain a SHA-256 hash of the image. For example:
+`https://mirror.openshift.com/rhcos-<version>-qemu.qcow2.gz?sha256=<uncompressed_sha256>`.
+
+| `provisioningNetwork`
+|
+| The `provisioningNetwork` configuration setting determines whether the cluster uses the provisioning network. If it does, the configuration setting also determines if the cluster manages the network.
+
+`Disabled`: Set this parameter to `Disabled` to disable the requirement for a provisioning network. When set to `Disabled`, you must only use virtual media based provisioning, or bring up the cluster using the assisted installer. If `Disabled` and using power management, BMCs must be accessible from the bare-metal network. If `Disabled`, you must provide two IP addresses on the bare-metal network that are used for the provisioning services.
+
+`Managed`: Set this parameter to `Managed`, which is the default, to fully manage the provisioning network, including DHCP, TFTP, and so on.
+
+`Unmanaged`: Set this parameter to `Unmanaged` to enable the provisioning network but take care of manual configuration of DHCP. Virtual media provisioning is recommended but PXE is still available if required.
+
+| `httpProxy`
+|
+| Set this parameter to the appropriate HTTP proxy used within your environment.
+
+| `httpsProxy`
+|
+| Set this parameter to the appropriate HTTPS proxy used within your environment.
+
+| `noProxy`
+|
+| Set this parameter to the appropriate list of exclusions for proxy usage within your environment.
+
+|===
+
+[discrete]
+== Hosts
+
+The `hosts` parameter is a list of separate bare metal assets used to build the cluster.
+
+[width="100%", cols="3,2,5",  options="header"]
+.Hosts
+|===
+|Name |Default |Description
+| `name`
+|
+| The name of the `BareMetalHost` resource to associate with the details. For example, `openshift-master-0`.
+
+
+| `role`
+|
+| The role of the bare metal node. Either `master` or `worker`.
+
+
+| `bmc`
+|
+| Connection details for the baseboard management controller. See the BMC addressing section for additional details.
+
+
+| `bootMACAddress`
+|
+a| The MAC address of the NIC that the host uses for the provisioning network. Ironic retrieves the IP address using the `bootMACAddress` configuration setting. Then, it binds to the host.
+
+[NOTE]
+====
+You must provide a valid MAC address from the host if you disabled the provisioning network.
+====
+
+| `networkConfig`
+|
+| Set this optional parameter to configure the network interface of a host. See "(Optional) Configuring host network interfaces" for additional details.
+
+|===
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// installing/installing_bare_metal_ipi/ipi-install-configuration-files.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id='bmc-addressing_{context}']
+= BMC addressing
+
+Most vendors support Baseboard Management Controller (BMC) addressing with the Intelligent Platform Management Interface (IPMI). IPMI does not encrypt communications. It is suitable for use within a data center over a secured or dedicated management network. Check with your vendor to see if they support Redfish network boot. Redfish delivers simple and secure management for converged, hybrid IT and the Software Defined Data Center (SDDC). Redfish is human readable and machine capable, and leverages common internet and web services standards to expose information directly to the modern tool chain. If your hardware does not support Redfish network boot, use IPMI.
+
+[discrete]
+== IPMI
+
+Hosts using IPMI use the `ipmi://<out-of-band-ip>:<port>` address format, which defaults to port `623` if not specified. The following example demonstrates an IPMI configuration within the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: ipmi://<out-of-band-ip>
+          username: <user>
+          password: <password>
+----
+
+[IMPORTANT]
+====
+The `provisioning` network is required when PXE booting using IPMI for BMC addressing. It is not possible to PXE boot hosts without a `provisioning` network. If you deploy without a `provisioning` network, you must use a virtual media BMC addressing option such as `redfish-virtualmedia` or `idrac-virtualmedia`. See "Redfish virtual media for HPE iLO" in the "BMC addressing for HPE iLO" section or "Redfish virtual media for Dell iDRAC" in the "BMC addressing for Dell iDRAC" section for additional details.
+====
+
+[discrete]
+== Redfish network boot
+
+To enable Redfish, use `redfish://` or `redfish+http://` to disable TLS. The installer requires both the hostname or the IP address and the path to the system ID. The following example demonstrates a Redfish configuration within the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: redfish://<out-of-band-ip>/redfish/v1/Systems/1
+          username: <user>
+          password: <password>
+----
+
+While it is recommended to have a certificate of authority for the out-of-band management addresses, you must include `disableCertificateVerification: True` in the `bmc` configuration if using self-signed certificates. The following example demonstrates a Redfish configuration using the `disableCertificateVerification: True` configuration parameter within the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: redfish://<out-of-band-ip>/redfish/v1/Systems/1
+          username: <user>
+          password: <password>
+          disableCertificateVerification: True
+----
+[discrete]
+== Redfish APIs
+
+Several redfish API endpoints are called onto your BCM when using the bare-metal installer-provisioned infrastructure.
+
+[IMPORTANT]
+====
+You need to ensure that your BMC supports all of the redfish APIs before installation.
+====
+
+List of redfish APIs::
+* Power on
++
+[source,terminal]
+----
+curl -u $USER:$PASS -X POST -H'Content-Type: application/json' -H'Accept: application/json' -d '{"Action": "Reset", "ResetType": "On"}' https://$SERVER/redfish/v1/Systems/$SystemID/Actions/ComputerSystem.Reset
+----
+* Power off
++
+[source,terminal]
+----
+curl -u $USER:$PASS -X POST -H'Content-Type: application/json' -H'Accept: application/json' -d '{"Action": "Reset", "ResetType": "ForceOff"}' https://$SERVER/redfish/v1/Systems/$SystemID/Actions/ComputerSystem.Reset
+----
+* Temporary boot using `pxe`
++
+[source,terminal]
+----
+curl -u $USER:$PASS -X PATCH -H "Content-Type: application/json"  https://$Server/redfish/v1/Systems/$SystemID/ -d '{"Boot": {"BootSourceOverrideTarget": "pxe", "BootSourceOverrideEnabled": "Once"}}
+----
+* Set BIOS boot mode using `Legacy` or `UEFI`
++
+[source,terminal]
+----
+curl -u $USER:$PASS -X PATCH -H "Content-Type: application/json"  https://$Server/redfish/v1/Systems/$SystemID/ -d '{"Boot": {"BootSourceOverrideMode":"UEFI"}}
+----
+
+List of redfish-virtualmedia APIs::
+* Set temporary boot device using `cd` or `dvd`
++
+[source,terminal]
+----
+curl -u $USER:$PASS -X PATCH -H "Content-Type: application/json" https://$Server/redfish/v1/Systems/$SystemID/ -d '{"Boot": {"BootSourceOverrideTarget": "cd", "BootSourceOverrideEnabled": "Once"}}'
+----
+* Mount virtual media
++
+[source,terminal]
+----
+curl -u $USER:$PASS -X PATCH -H "Content-Type: application/json" -H "If-Match: *" https://$Server/redfish/v1/Managers/$ManagerID/VirtualMedia/$VmediaId -d '{"Image": "https://example.com/test.iso", "TransferProtocolType": "HTTPS", "UserName": "", "Password":""}'
+----
+
+[NOTE]
+====
+The `PowerOn` and `PowerOff` commands for redfish APIs are the same for the redfish-virtualmedia APIs.
+====
+
+[IMPORTANT]
+====
+`HTTPS` and `HTTP` are the only supported parameter types for `TransferProtocolTypes`.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// installing/installing_bare_metal_ipi/ipi-install-configuration-files.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id='bmc-addressing-for-dell-idrac_{context}']
+= BMC addressing for Dell iDRAC
+
+The `address` field for each `bmc` entry is a URL for connecting to the {product-title} cluster nodes, including the type of controller in the URL scheme and its location on the network.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: <hostname>
+        role: <master | worker>
+        bmc:
+          address: <address> <1>
+          username: <user>
+          password: <password>
+----
+<1> The `address` configuration setting specifies the protocol.
+
+For Dell hardware, Red Hat supports integrated Dell Remote Access Controller (iDRAC) virtual media, Redfish network boot, and IPMI.
+
+[discrete]
+== BMC address formats for Dell iDRAC
+[width="100%", cols="1,3", options="header"]
+|====
+|Protocol|Address Format
+|iDRAC virtual media| `idrac-virtualmedia://<out-of-band-ip>/redfish/v1/Systems/System.Embedded.1`
+|Redfish network boot|`redfish://<out-of-band-ip>/redfish/v1/Systems/System.Embedded.1`
+|IPMI|`ipmi://<out-of-band-ip>`
+|====
+
+[IMPORTANT]
+====
+Use `idrac-virtualmedia` as the protocol for Redfish virtual media. `redfish-virtualmedia` will not work on Dell hardware. Dell's `idrac-virtualmedia` uses the Redfish standard with Dell's OEM extensions.
+====
+
+See the following sections for additional details.
+
+[discrete]
+== Redfish virtual media for Dell iDRAC
+
+For Redfish virtual media on Dell servers, use `idrac-virtualmedia://` in the `address` setting. Using `redfish-virtualmedia://` will not work.
+
+[NOTE]
+====
+Use `idrac-virtualmedia://` as the protocol for Redfish virtual media. Using `redfish-virtualmedia://` will not work on Dell hardware, because the `idrac-virtualmedia://` protocol corresponds to the `idrac` hardware type and the Redfish protocol in Ironic. Dell's `idrac-virtualmedia://` protocol uses the Redfish standard with Dell's OEM extensions. Ironic also supports the `idrac` type with the WSMAN protocol. Therefore, you must specify `idrac-virtualmedia://` to avoid unexpected behavior when electing to use Redfish with virtual media on Dell hardware.
+====
+
+The following example demonstrates using iDRAC virtual media within the  `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: idrac-virtualmedia://<out-of-band-ip>/redfish/v1/Systems/System.Embedded.1
+          username: <user>
+          password: <password>
+----
+
+While it is recommended to have a certificate of authority for the out-of-band management addresses, you must include `disableCertificateVerification: True` in the `bmc` configuration if using self-signed certificates.
+
+[NOTE]
+====
+Ensure the {product-title} cluster nodes have *AutoAttach* enabled through the iDRAC console. The menu path is: *Configuration* -> *Virtual Media* -> *Attach Mode* -> *AutoAttach*.
+====
+
+The following example demonstrates a Redfish configuration using the `disableCertificateVerification: True` configuration parameter within the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: idrac-virtualmedia://<out-of-band-ip>/redfish/v1/Systems/System.Embedded.1
+          username: <user>
+          password: <password>
+          disableCertificateVerification: True
+----
+
+[discrete]
+== Redfish network boot for iDRAC
+
+To enable Redfish, use `redfish://` or `redfish+http://` to disable transport layer security (TLS). The installer requires both the hostname or the IP address and the path to the system ID. The following example demonstrates a Redfish configuration within the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: redfish://<out-of-band-ip>/redfish/v1/Systems/System.Embedded.1
+          username: <user>
+          password: <password>
+----
+
+While it is recommended to have a certificate of authority for the out-of-band management addresses, you must include `disableCertificateVerification: True` in the `bmc` configuration if using self-signed certificates. The following example demonstrates a Redfish configuration using the `disableCertificateVerification: True` configuration parameter within the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: redfish://<out-of-band-ip>/redfish/v1/Systems/System.Embedded.1
+          username: <user>
+          password: <password>
+          disableCertificateVerification: True
+----
+
+[NOTE]
+====
+There is a known issue on Dell iDRAC 9 with firmware version `04.40.00.00` and all releases up to including the `5.xx` series for installer-provisioned installations on bare metal deployments. The virtual console plugin defaults to eHTML5, an enhanced version of HTML5, which causes problems with the *InsertVirtualMedia* workflow. Set the plugin to use HTML5 to avoid this issue. The menu path is *Configuration* -> *Virtual console* -> *Plug-in Type* -> *HTML5* .
+
+Ensure the {product-title} cluster nodes have *AutoAttach* enabled through the iDRAC console. The menu path is: *Configuration* -> *Virtual Media* -> *Attach Mode* -> *AutoAttach* .
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// installing/installing_bare_metal_ipi/ipi-install-configuration-files.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id='bmc-addressing-for-hpe-ilo_{context}']
+= BMC addressing for HPE iLO
+
+The `address` field for each `bmc` entry is a URL for connecting to the {product-title} cluster nodes, including the type of controller in the URL scheme and its location on the network.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: <hostname>
+        role: <master | worker>
+        bmc:
+          address: <address> <1>
+          username: <user>
+          password: <password>
+----
+<1> The `address` configuration setting specifies the protocol.
+
+For HPE integrated Lights Out (iLO), Red Hat supports Redfish virtual media, Redfish network boot, and IPMI.
+
+.BMC address formats for HPE iLO
+[width="100%", cols="1,3", options="header"]
+|====
+|Protocol|Address Format
+|Redfish virtual media| `redfish-virtualmedia://<out-of-band-ip>/redfish/v1/Systems/1`
+|Redfish network boot| `redfish://<out-of-band-ip>/redfish/v1/Systems/1`
+|IPMI| `ipmi://<out-of-band-ip>`
+|====
+
+See the following sections for additional details.
+
+[discrete]
+== Redfish virtual media for HPE iLO
+
+To enable Redfish virtual media for HPE servers, use `redfish-virtualmedia://` in the `address` setting. The following example demonstrates using Redfish virtual media within the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: redfish-virtualmedia://<out-of-band-ip>/redfish/v1/Systems/1
+          username: <user>
+          password: <password>
+----
+
+While it is recommended to have a certificate of authority for the out-of-band management addresses, you must include `disableCertificateVerification: True` in the `bmc` configuration if using self-signed certificates. The following example demonstrates a Redfish configuration using the `disableCertificateVerification: True` configuration parameter within the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: redfish-virtualmedia://<out-of-band-ip>/redfish/v1/Systems/1
+          username: <user>
+          password: <password>
+          disableCertificateVerification: True
+----
+
+[NOTE]
+====
+Redfish virtual media is not supported on 9th generation systems running iLO4, because Ironic does not support iLO4 with virtual media.
+====
+
+
+[discrete]
+== Redfish network boot for HPE iLO
+
+To enable Redfish, use `redfish://` or `redfish+http://` to disable TLS. The installer requires both the hostname or the IP address and the path to the system ID. The following example demonstrates a Redfish configuration within the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: redfish://<out-of-band-ip>/redfish/v1/Systems/1
+          username: <user>
+          password: <password>
+----
+
+While it is recommended to have a certificate of authority for the out-of-band management addresses, you must include `disableCertificateVerification: True` in the `bmc` configuration if using self-signed certificates. The following example demonstrates a Redfish configuration using the `disableCertificateVerification: True` configuration parameter within the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: redfish://<out-of-band-ip>/redfish/v1/Systems/1
+          username: <user>
+          password: <password>
+          disableCertificateVerification: True
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// installing/installing_bare_metal_ipi/ipi-install-configuration-files.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id='bmc-addressing-for-fujitsu-irmc_{context}']
+= BMC addressing for Fujitsu iRMC
+
+The `address` field for each `bmc` entry is a URL for connecting to the {product-title} cluster nodes, including the type of controller in the URL scheme and its location on the network.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: <hostname>
+        role: <master | worker>
+        bmc:
+          address: <address> <1>
+          username: <user>
+          password: <password>
+----
+<1> The `address` configuration setting specifies the protocol.
+
+For Fujitsu hardware, Red Hat supports integrated Remote Management Controller (iRMC) and IPMI.
+
+.BMC address formats for Fujitsu iRMC
+[options="header"]
+|====
+|Protocol|Address Format
+|iRMC| `irmc://<out-of-band-ip>`
+|IPMI| `ipmi://<out-of-band-ip>`
+|====
+
+.iRMC
+
+Fujitsu nodes can use `irmc://<out-of-band-ip>` and defaults to port `443`. The following example demonstrates an iRMC configuration within the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: irmc://<out-of-band-ip>
+          username: <user>
+          password: <password>
+----
+
+[NOTE]
+====
+Currently Fujitsu supports iRMC S5 firmware version 3.05P and above for installer-provisioned installation on bare metal.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// ipi-install-configuration-files.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id='root-device-hints_{context}']
+= Root device hints
+
+The `rootDeviceHints` parameter enables the installer to provision the {op-system-first} image to a particular device. The installer examines the devices in the order it discovers them, and compares the discovered values with the hint values. The installer uses the first discovered device that matches the hint value. The configuration can combine multiple hints, but a device must match all hints for the installer to select it.
+
+.Subfields
+
+|===
+| Subfield | Description
+
+| `deviceName` | A string containing a Linux device name such as `/dev/vda` or `/dev/disk/by-path/`. It is recommended to use the `/dev/disk/by-path/<device_path>` link to the storage location. The hint must match the actual value exactly.
+
+| `hctl` | A string containing a SCSI bus address like `0:0:0:0`. The hint must match the actual value exactly.
+
+| `model` | A string containing a vendor-specific device identifier. The hint can be a substring of the actual value.
+
+| `vendor` | A string containing the name of the vendor or manufacturer of the device. The hint can be a sub-string of the actual value.
+
+| `serialNumber` | A string containing the device serial number. The hint must match the actual value exactly.
+
+| `minSizeGigabytes` | An integer representing the minimum size of the device in gigabytes.
+
+| `wwn` | A string containing the unique storage identifier. The hint must match the actual value exactly.
+
+| `wwnWithExtension` | A string containing the unique storage identifier with the vendor extension appended. The hint must match the actual value exactly.
+
+| `wwnVendorExtension` | A string containing the unique vendor storage identifier. The hint must match the actual value exactly.
+
+| `rotational` | A boolean indicating whether the device should be a rotating disk (true) or not (false).
+
+|===
+
+.Example usage
+
+[source,yaml]
+----
+     - name: master-0
+       role: master
+       bmc:
+         address: ipmi://10.10.0.3:6203
+         username: admin
+         password: redhat
+       bootMACAddress: de:ad:be:ef:00:40
+       rootDeviceHints:
+         deviceName: "/dev/sda"
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// ipi-install-configuration-files.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id='ipi-install-setting-proxy-settings-within-install-config_{context}']
+= Optional: Setting proxy settings
+
+To deploy an {product-title} cluster using a proxy, make the following changes to the `install-config.yaml` file.
+
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: <domain>
+proxy:
+  httpProxy: http://USERNAME:PASSWORD@proxy.example.com:PORT
+  httpsProxy: https://USERNAME:PASSWORD@proxy.example.com:PORT
+  noProxy: <WILDCARD_OF_DOMAIN>,<PROVISIONING_NETWORK/CIDR>,<BMC_ADDRESS_RANGE/CIDR>
+----
+
+The following is an example of `noProxy` with values.
+
+[source,yaml]
+----
+noProxy: .example.com,172.22.0.0/24,10.10.0.0/24
+----
+
+With a proxy enabled, set the appropriate values of the proxy in the corresponding key/value pair.
+
+Key considerations:
+
+* If the proxy does not have an HTTPS proxy, change the value of `httpsProxy` from `https://` to `http://`.
+* If using a provisioning network, include it in the `noProxy` setting, otherwise the installer will fail.
+* Set all of the proxy settings as environment variables within the provisioner node. For example, `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY`.
+
+[NOTE]
+====
+When provisioning with IPv6, you cannot define a CIDR address block in the `noProxy` settings. You must define each address separately.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// ipi-install-configuration-files.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id='modifying-install-config-for-no-provisioning-network_{context}']
+= Optional: Deploying with no provisioning network
+
+To deploy an {product-title} cluster without a `provisioning` network, make the following changes to the `install-config.yaml` file.
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    apiVIPs:
+      - <api_VIP>
+    ingressVIPs:
+      - <ingress_VIP>
+    provisioningNetwork: "Disabled" <1>
+----
+
+<1> Add the `provisioningNetwork` configuration setting, if needed, and set it to `Disabled`.
+
+[IMPORTANT]
+====
+The `provisioning` network is required for PXE booting. If you deploy without a `provisioning` network, you must use a virtual media BMC addressing option such as `redfish-virtualmedia` or `idrac-virtualmedia`. See "Redfish virtual media for HPE iLO" in the "BMC addressing for HPE iLO" section or "Redfish virtual media for Dell iDRAC" in the "BMC addressing for Dell iDRAC" section for additional details.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// ipi-install-configuration-files.adoc
+// installing-vsphere-installer-provisioned-network-customizations.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id='modifying-install-config-for-dual-stack-network_{context}']
+= Optional: Deploying with dual-stack networking
+
+For dual-stack networking in {product-title} clusters, you can configure IPv4 and IPv6 address endpoints for cluster nodes. To configure IPv4 and IPv6 address endpoints for cluster nodes, edit the `machineNetwork`, `clusterNetwork`, and `serviceNetwork` configuration settings in the `install-config.yaml` file. Each setting must have two CIDR entries each. For a cluster with the IPv4 family as the primary address family, specify the IPv4 setting first. For a cluster with the IPv6 family as the primary address family, specify the IPv6 setting first.
+
+[source,yaml]
+----
+machineNetwork:
+- cidr: {{ extcidrnet }}
+- cidr: {{ extcidrnet6 }}
+clusterNetwork:
+- cidr: 10.128.0.0/14
+  hostPrefix: 23
+- cidr: fd02::/48
+  hostPrefix: 64
+serviceNetwork:
+- 172.30.0.0/16
+- fd03::/112
+----
+
+To provide an interface to the cluster for applications that use IPv4 and IPv6 addresses, configure IPv4 and IPv6 virtual IP (VIP) address endpoints for the Ingress VIP and API VIP services. To configure IPv4 and IPv6 address endpoints, edit the `apiVIPs` and `ingressVIPs` configuration settings in the `install-config.yaml` file . The `apiVIPs` and `ingressVIPs` configuration settings use a list format. The order of the list indicates the primary and secondary VIP address for each service.
+
+
+[source,yaml]
+----
+platform:
+  baremetal:
+    apiVIPs:
+      - <api_ipv4>
+      - <api_ipv6>
+    ingressVIPs:
+      - <wildcard_ipv4>
+      - <wildcard_ipv6>
+----
+
+[NOTE]
+====
+For a cluster with dual-stack networking configuration, you must assign both IPv4 and IPv6 addresses to the same interface.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-host-network-interfaces-in-the-install-config-yaml-file_{context}"]
+= Optional: Configuring host network interfaces
+
+Before installation, you can set the `networkConfig` configuration setting in the `install-config.yaml` file to configure host network interfaces using NMState.
+
+The most common use case for this functionality is to specify a static IP address on the bare-metal network, but you can also configure other networks such as a storage network. This functionality supports other NMState features such as VLAN, VXLAN, bridges, bonds, routes, MTU, and DNS resolver settings.
+
+.Prerequisites
+
+* Configure a `PTR` DNS record with a valid hostname for each node with a static IP address.
+* Install the NMState CLI (`nmstate`).
+
+.Procedure
+
+. Optional: Consider testing the NMState syntax with `nmstatectl gc` before including it in the `install-config.yaml` file, because the installer will not check the NMState YAML syntax.
++
+[NOTE]
+====
+Errors in the YAML syntax might result in a failure to apply the network configuration. Additionally, maintaining the validated YAML syntax is useful when applying changes using Kubernetes NMState after deployment or when expanding the cluster.
+====
+
+
+.. Create an NMState YAML file:
++
+[source,yaml]
+----
+interfaces:
+- name: <nic1_name> <1>
+  type: ethernet
+  state: up
+  ipv4:
+    address:
+    - ip: <ip_address> <1>
+      prefix-length: 24
+    enabled: true
+dns-resolver:
+  config:
+    server:
+    - <dns_ip_address> <1>
+routes:
+  config:
+  - destination: 0.0.0.0/0
+    next-hop-address: <next_hop_ip_address> <1>
+    next-hop-interface: <next_hop_nic1_name> <1>
+----
++
+<1> Replace `<nic1_name>`, `<ip_address>`, `<dns_ip_address>`, `<next_hop_ip_address>` and `<next_hop_nic1_name>` with appropriate values.
+
+.. Test the configuration file by running the following command:
++
+[source,terminal]
+----
+$ nmstatectl gc <nmstate_yaml_file>
+----
++
+Replace `<nmstate_yaml_file>` with the configuration file name.
+
+. Use the `networkConfig` configuration setting by adding the NMState configuration to hosts within the `install-config.yaml` file:
++
+[source,yaml]
+----
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: redfish+http://<out_of_band_ip>/redfish/v1/Systems/
+          username: <user>
+          password: <password>
+          disableCertificateVerification: null
+        bootMACAddress: <NIC1_mac_address>
+        bootMode: UEFI
+        rootDeviceHints:
+          deviceName: "/dev/sda"
+        networkConfig: <1>
+          interfaces:
+          - name: <nic1_name> <2>
+            type: ethernet
+            state: up
+            ipv4:
+              address:
+              - ip: <ip_address> <2>
+                prefix-length: 24
+              enabled: true
+          dns-resolver:
+            config:
+              server:
+              - <dns_ip_address> <2>
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-address: <next_hop_ip_address> <2>
+              next-hop-interface: <next_hop_nic1_name> <2>
+----
+<1> Add the NMState YAML syntax to configure the host interfaces.
+<2> Replace `<nic1_name>`, `<ip_address>`, `<dns_ip_address>`, `<next_hop_ip_address>` and `<next_hop_nic1_name>` with appropriate values.
++
+[IMPORTANT]
+====
+After deploying the cluster, you cannot modify the `networkConfig` configuration setting of `install-config.yaml` file to make changes to the host network interface. Use the Kubernetes NMState Operator to make changes to the host network interface after deployment.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This module is included in the following assemblies:
+//
+// installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ipi-install-configuring-host-network-interfaces-for-subnets_{context}"]
+= Configuring host network interfaces for subnets
+
+For edge computing scenarios, it can be beneficial to locate worker nodes closer to the edge. To locate remote worker nodes in subnets, you might use different network segments or subnets for the remote worker nodes than you used for the control plane subnet and local worker nodes. You can reduce latency for the edge and allow for enhanced scalability by setting up subnets for edge computing scenarios.
+
+If you have established different network segments or subnets for remote worker nodes as described in the section on "Establishing communication between subnets", you must specify the subnets in the `machineNetwork` configuration setting if the workers are using static IP addresses, bonds or other advanced networking. When setting the node IP address in the `networkConfig` parameter for each remote worker node, you must also specify the gateway and the DNS server for the subnet containing the control plane nodes when using static IP addresses. This ensures the remote worker nodes can reach the subnet containing the control plane nodes and that they can receive network traffic from the control plane.
+
+[IMPORTANT]
+====
+All control plane nodes must run in the same subnet. When using more than one subnet, you can also configure the Ingress VIP to run on the control plane nodes by using a manifest. See "Configuring network components to run on the control plane" for details.
+
+Deploying a cluster with multiple subnets requires using virtual media, such as `redfish-virtualmedia` and `idrac-virtualmedia`.
+====
+
+.Procedure
+
+. Add the subnets to the `machineNetwork` in the `install-config.yaml` file when using static IP addresses:
++
+[source,yaml]
+----
+networking:
+  machineNetwork:
+  - cidr: 10.0.0.0/24
+  - cidr: 192.168.0.0/24
+  networkType: OVNKubernetes
+----
+
+. Add the gateway and DNS configuration to the `networkConfig` parameter of each edge worker node using NMState syntax when using a static IP address or advanced networking such as bonds:
++
+[source,yaml]
+----
+networkConfig:
+  nmstate:
+    interfaces:
+    - name: <interface_name> <1>
+      type: ethernet
+      state: up
+      ipv4:
+        enabled: true
+        dhcp: false
+        address:
+        - ip: <node_ip> <2>
+          prefix-length: 24
+        gateway: <gateway_ip> <3>
+        dns-resolver:
+          config:
+            server:
+            - <dns_ip> <4>
+----
++
+<1> Replace `<interface_name>` with the interface name.
+<2> Replace `<node_ip>` with the IP address of the node.
+<3> Replace `<gateway_ip>` with the IP address of the gateway.
+<4> Replace `<dns_ip>` with the IP address of the DNS server.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// ipi-install-configuration-files.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id='ipi-install-modifying-install-config-for-slaac-dual-stack-network_{context}']
+= Optional: Configuring address generation modes for SLAAC in dual-stack networks
+
+For dual-stack clusters that use Stateless Address AutoConfiguration (SLAAC), you must specify a global value for the `ipv6.addr-gen-mode` network setting. You can set this value using NMState to configure the ramdisk and the cluster configuration files. If you don't configure a consistent `ipv6.addr-gen-mode` in these locations, IPv6 address mismatches can occur between CSR resources and `BareMetalHost` resources in the cluster.
+
+.Prerequisites
+
+* Install the NMState CLI (`nmstate`).
+
+.Procedure
+
+. Optional: Consider testing the NMState YAML syntax with the `nmstatectl gc` command before including it in the `install-config.yaml` file because the installation program will not check the NMState YAML syntax.
+
+.. Create an NMState YAML file:
++
+[source,yaml]
+----
+interfaces:
+- name: eth0
+  ipv6:
+    addr-gen-mode: <address_mode> <1>
+----
+<1> Replace `<address_mode>` with the type of address generation mode required for IPv6 addresses in the cluster. Valid values are `eui64`, `stable-privacy`, or `random`.
+
+.. Test the configuration file by running the following command:
++
+[source,terminal]
+----
+$ nmstatectl gc <nmstate_yaml_file> <1>
+----
+<1> Replace `<nmstate_yaml_file>` with the name of the test configuration file.
+
+. Add the NMState configuration to the `hosts.networkConfig` section within the install-config.yaml file:
++
+[source,yaml]
+----
+    hosts:
+      - name: openshift-master-0
+        role: master
+        bmc:
+          address: redfish+http://<out_of_band_ip>/redfish/v1/Systems/
+          username: <user>
+          password: <password>
+          disableCertificateVerification: null
+        bootMACAddress: <NIC1_mac_address>
+        bootMode: UEFI
+        rootDeviceHints:
+          deviceName: "/dev/sda"
+        networkConfig:
+          interfaces:
+          - name: eth0
+            ipv6:
+              addr-gen-mode: <address_mode> <1>
+...
+
+----
+<1> Replace `<address_mode>` with the type of address generation mode required for IPv6 addresses in the cluster. Valid values are `eui64`, `stable-privacy`, or `random`.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-host-dual-network-interfaces-in-the-install-config-yaml-file_{context}"]
+= Optional: Configuring host network interfaces for dual port NIC
+
+:FeatureName: Support for Day 1 operations associated with enabling NIC partitioning for SR-IOV devices
+:leveloffset: +1
+
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+:leveloffset: 2
+
+Before installation, you can set the `networkConfig` configuration setting in the `install-config.yaml` file to configure host network interfaces using NMState to support dual port NIC.
+
+.Prequisites
+
+* Configure a `PTR` DNS record with a valid hostname for each node with a static IP address.
+* Install the NMState CLI (`nmstate`).
+
+[NOTE]
+====
+Errors in the YAML syntax might result in a failure to apply the network configuration. Additionally, maintaining the validated YAML syntax is useful when applying changes using Kubernetes NMState after deployment or when expanding the cluster.
+====
+
+.Procedure
+
+. Add the NMState configuration to the `networkConfig` field to hosts within the `install-config.yaml` file:
++
+[source,yaml]
+----
+hosts:
+  - hostname: worker-1
+    interfaces:
+      - name: eno1
+        macAddress: 0c:42:a1:55:f3:06
+      - name: eno2
+        macAddress: 0c:42:a1:55:f3:07
+    networkConfig: <1>
+      interfaces: <2>
+        - name: eno1 <3>
+          type: ethernet <4>
+          state: up
+          mac-address: 0c:42:a1:55:f3:06
+          ipv4:
+            enabled: true
+            dhcp: false <5>
+          ethernet:
+            sr-iov:
+              total-vfs: 2 <6>
+          ipv6:
+            enabled: false
+            dhcp: false
+        - name: sriov:eno1:0
+          type: ethernet
+          state: up <7>
+          ipv4:
+            enabled: false <8>
+          ipv6:
+            enabled: false
+        - name: sriov:eno1:1
+          type: ethernet
+          state: down
+        - name: eno2
+          type: ethernet
+          state: up
+          mac-address: 0c:42:a1:55:f3:07
+          ipv4:
+            enabled: true
+          ethernet:
+            sr-iov:
+              total-vfs: 2
+          ipv6:
+            enabled: false
+        - name: sriov:eno2:0
+          type: ethernet
+          state: up
+          ipv4:
+            enabled: false
+          ipv6:
+            enabled: false
+        - name: sriov:eno2:1
+          type: ethernet
+          state: down
+        - name: bond0
+          type: bond
+          state: up
+          min-tx-rate: 100 <9>
+          max-tx-rate: 200 <10>
+          link-aggregation:
+            mode: active-backup <11>
+            options:
+              primary: sriov:eno1:0 <12>
+            port:
+              - sriov:eno1:0
+              - sriov:eno2:0
+          ipv4:
+            address:
+              - ip: 10.19.16.57 <13>
+                prefix-length: 23
+            dhcp: false
+            enabled: true
+          ipv6:
+            enabled: false
+          dns-resolver:
+            config:
+              server:
+                - 10.11.5.160
+                - 10.2.70.215
+          routes:
+            config:
+              - destination: 0.0.0.0/0
+                next-hop-address: 10.19.17.254
+                next-hop-interface: bond0 <14>
+                table-id: 254
+----
+<1> The `networkConfig` field contains information about the network configuration of the host, with subfields including `interfaces`, `dns-resolver`, and `routes`.
+<2> The `interfaces` field is an array of network interfaces defined for the host.
+<3> The name of the interface.
+<4> The type of interface. This example creates a ethernet interface.
+<5> Set this to `false to disable DHCP for the physical function (PF) if it is not strictly required.
+<6> Set to the number of SR-IOV virtual functions (VFs) to instantiate.
+<7> Set this to `up`.
+<8> Set this to `false` to disable IPv4 addressing for the VF attached to the bond.
+<9> Sets a minimum transmission rate, in Mbps, for the VF. This sample value sets a rate of 100 Mbps.
+    * This value must be less than or equal to the maximum transmission rate.
+    * Intel NICs do not support the `min-tx-rate` parameter. For more information, see link:https://bugzilla.redhat.com/show_bug.cgi?id=1772847[*BZ#1772847*].
+<10> Sets a maximum transmission rate, in Mbps, for the VF. This sample value sets a rate of 200 Mbps.
+<11> Sets the desired bond mode.
+<12> Sets the preferred port of the bonding interface. The primary device is the first of the bonding interfaces to be used and is not abandoned unless it fails. This setting is particularly useful when one NIC in the bonding interface is faster and, therefore, able to handle a bigger load. This setting is only valid when the bonding interface is in active-backup mode (mode 1) and balance-tlb (mode 5).
+<13> Sets a static IP address for the bond interface. This is the node IP address.
+<14> Sets `bond0` as the gateway for the default route.
++
+[IMPORTANT]
+====
+After deploying the cluster, you cannot modify the `networkConfig` configuration setting of `install-config.yaml` file to make changes to the host network interface. Use the Kubernetes NMState Operator to make changes to the host network interface after deployment.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/configuring_and_managing_networking/configuring-network-bonding_configuring-and-managing-networking[Configuring network bonding]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="ipi-install-configure-multiple-cluster-nodes_{context}"]
+= Configuring multiple cluster nodes
+
+You can simultaneously configure {product-title} cluster nodes with identical settings. Configuring multiple cluster nodes avoids adding redundant information for each node to the `install-config.yaml` file. This file contains specific parameters to apply an identical configuration to multiple nodes in the cluster.
+
+Compute nodes are configured separately from the controller node. However, configurations for both node types use the highlighted parameters in the `install-config.yaml` file to enable multi-node configuration. Set the `networkConfig` parameters to `BOND`, as shown in the following example:
+
+[source,yaml]
+----
+hosts:
+- name: ostest-master-0
+ [...]
+ networkConfig: &BOND
+   interfaces:
+   - name: bond0
+     type: bond
+     state: up
+     ipv4:
+       dhcp: true
+       enabled: true
+     link-aggregation:
+       mode: active-backup
+       port:
+       - enp2s0
+       - enp3s0
+- name: ostest-master-1
+ [...]
+ networkConfig: *BOND
+- name: ostest-master-2
+ [...]
+ networkConfig: *BOND
+----
+
+[NOTE]
+====
+Configuration of multiple cluster nodes is only available for initial deployments on installer-provisioned infrastructure.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// installing/installing_bare_metal_ipi/ipi-install-configuration-files.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-managed-secure-boot-in-the-install-config-file_{context}"]
+= Optional: Configuring managed Secure Boot
+
+You can enable managed Secure Boot when deploying an installer-provisioned cluster using Redfish BMC addressing, such as `redfish`, `redfish-virtualmedia`, or `idrac-virtualmedia`. To enable managed Secure Boot, add the `bootMode` configuration setting to each node:
+
+[source,yaml]
+.Example
+----
+hosts:
+  - name: openshift-master-0
+    role: master
+    bmc:
+      address: redfish://<out_of_band_ip> <1>
+      username: <username>
+      password: <password>
+    bootMACAddress: <NIC1_mac_address>
+    rootDeviceHints:
+     deviceName: "/dev/sda"
+    bootMode: UEFISecureBoot <2>
+----
+
+<1> Ensure the `bmc.address` setting uses `redfish`, `redfish-virtualmedia`, or `idrac-virtualmedia` as the protocol. See "BMC addressing for HPE iLO" or "BMC addressing for Dell iDRAC" for additional details.
+
+<2> The `bootMode` setting is `UEFI` by default. Change it to `UEFISecureBoot` to enable managed Secure Boot.
+
+[NOTE]
+====
+See "Configuring nodes" in the "Prerequisites" to ensure the nodes can support managed Secure Boot. If the nodes do not support managed Secure Boot, see "Configuring nodes for Secure Boot manually" in the "Configuring nodes" section. Configuring Secure Boot manually requires Redfish virtual media.
+====
+
+[NOTE]
+====
+Red Hat does not support Secure Boot with IPMI, because IPMI does not provide Secure Boot management facilities.
+====
+
+:leveloffset!:
+
+[id="ipi-install-manifest-configuration-files"]
+== Manifest configuration files
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="creating-the-openshift-manifests_{context}"]
+= Creating the {product-title} manifests
+
+. Create the {product-title} manifests.
++
+[source,terminal]
+----
+$ ./openshift-baremetal-install --dir ~/clusterconfigs create manifests
+----
++
+[source,terminal]
+----
+INFO Consuming Install Config from target directory
+WARNING Making control-plane schedulable by setting MastersSchedulable to true for Scheduler cluster settings
+WARNING Discarding the OpenShift Manifest that was provided in the target directory because its dependencies are dirty and it needs to be regenerated
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// installing/installing_bare_metal_ipi/ipi-install-configuration-files
+// installing/installing_bare_metal_ipi/ipi-install-post-installation-configuration.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-ntp-for-disconnected-clusters_{context}"]
+= Optional: Configuring NTP for disconnected clusters
+
+//This procedure can be executed as a day 1 or day 2 operation with minor differences.
+//The conditional text picks up the context and displays the appropriate alternate steps.
+
+{product-title} installs the `chrony` Network Time Protocol (NTP) service on the cluster nodes.
+
+image::152_OpenShift_Config_NTP_0421.png[Configuring NTP for disconnected clusters]
+
+{product-title} nodes must agree on a date and time to run properly. When worker nodes retrieve the date and time from the NTP servers on the control plane nodes, it enables the installation and operation of clusters that are not connected to a routable network and thereby do not have access to a higher stratum NTP server.
+
+.Procedure
+
+. Create a Butane config, `99-master-chrony-conf-override.bu`, including the contents of the `chrony.conf` file for the control plane nodes.
++
+[NOTE]
+====
+See "Creating machine configs with Butane" for information about Butane.
+====
++
+[source,yaml,subs="attributes+"]
+.Butane config example
+----
+variant: openshift
+version: {product-version}.0
+metadata:
+  name: 99-master-chrony-conf-override
+  labels:
+    machineconfiguration.openshift.io/role: master
+storage:
+  files:
+    - path: /etc/chrony.conf
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          # Use public servers from the pool.ntp.org project.
+          # Please consider joining the pool (https://www.pool.ntp.org/join.html).
+
+          # The Machine Config Operator manages this file
+          server openshift-master-0.<cluster-name>.<domain> iburst <1>
+          server openshift-master-1.<cluster-name>.<domain> iburst
+          server openshift-master-2.<cluster-name>.<domain> iburst
+
+          stratumweight 0
+          driftfile /var/lib/chrony/drift
+          rtcsync
+          makestep 10 3
+          bindcmdaddress 127.0.0.1
+          bindcmdaddress ::1
+          keyfile /etc/chrony.keys
+          commandkey 1
+          generatecommandkey
+          noclientlog
+          logchange 0.5
+          logdir /var/log/chrony
+
+          # Configure the control plane nodes to serve as local NTP servers
+          # for all worker nodes, even if they are not in sync with an
+          # upstream NTP server.
+
+          # Allow NTP client access from the local network.
+          allow all
+          # Serve time even if not synchronized to a time source.
+          local stratum 3 orphan
+----
++
+<1> You must replace `<cluster-name>` with the name of the cluster and replace `<domain>` with the fully qualified domain name.
+
+. Use Butane to generate a `MachineConfig` object file, `99-master-chrony-conf-override.yaml`, containing the configuration to be delivered to the control plane nodes:
++
+[source,terminal]
+----
+$ butane 99-master-chrony-conf-override.bu -o 99-master-chrony-conf-override.yaml
+----
+
+. Create a Butane config, `99-worker-chrony-conf-override.bu`, including the contents of the `chrony.conf` file for the worker nodes that references the NTP servers on the control plane nodes.
++
+[source,yaml,subs="attributes+"]
+.Butane config example
+----
+variant: openshift
+version: {product-version}.0
+metadata:
+  name: 99-worker-chrony-conf-override
+  labels:
+    machineconfiguration.openshift.io/role: worker
+storage:
+  files:
+    - path: /etc/chrony.conf
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          # The Machine Config Operator manages this file.
+          server openshift-master-0.<cluster-name>.<domain> iburst <1>
+          server openshift-master-1.<cluster-name>.<domain> iburst
+          server openshift-master-2.<cluster-name>.<domain> iburst
+
+          stratumweight 0
+          driftfile /var/lib/chrony/drift
+          rtcsync
+          makestep 10 3
+          bindcmdaddress 127.0.0.1
+          bindcmdaddress ::1
+          keyfile /etc/chrony.keys
+          commandkey 1
+          generatecommandkey
+          noclientlog
+          logchange 0.5
+          logdir /var/log/chrony
+----
++
+<1> You must replace `<cluster-name>` with the name of the cluster and replace `<domain>` with the fully qualified domain name.
+
+. Use Butane to generate a `MachineConfig` object file, `99-worker-chrony-conf-override.yaml`, containing the configuration to be delivered to the worker nodes:
++
+[source,terminal]
+----
+$ butane 99-worker-chrony-conf-override.bu -o 99-worker-chrony-conf-override.yaml
+----
+
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// ipi-install-configuration-files.adoc
+:bare:
+
+:_mod-docs-content-type: PROCEDURE
+[id='configure-network-components-to-run-on-the-control-plane_{context}']
+= Configuring network components to run on the control plane
+
+You can configure networking components to run exclusively on the control plane nodes. By default, {product-title} allows any node in the machine config pool to host the `ingressVIP` virtual IP address. However, some environments deploy worker nodes in separate subnets from the control plane nodes, which requires configuring the `ingressVIP` virtual IP address to run on the control plane nodes.
+
+
+[IMPORTANT]
+====
+When deploying remote workers in separate subnets, you must place the `ingressVIP` virtual IP address exclusively with the control plane nodes.
+====
+
+image::161_OpenShift_Baremetal_IPI_Deployment_updates_0521.png[Installer-provisioned networking]
+
+.Procedure
+
+. Change to the directory storing the `install-config.yaml` file:
++
+[source,terminal]
+----
+$ cd ~/clusterconfigs
+----
+
+. Switch to the `manifests` subdirectory:
++
+[source,terminal]
+----
+$ cd manifests
+----
+
+. Create a file named `cluster-network-avoid-workers-99-config.yaml`:
++
+[source,terminal]
+----
+$ touch cluster-network-avoid-workers-99-config.yaml
+----
+
+. Open the `cluster-network-avoid-workers-99-config.yaml` file in an editor and enter a custom resource (CR) that describes the Operator configuration:
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  name: 50-worker-fix-ipi-rwn
+  labels:
+    machineconfiguration.openshift.io/role: worker
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      files:
+        - path: /etc/kubernetes/manifests/keepalived.yaml
+          mode: 0644
+          contents:
+            source: data:,
+----
++
+This manifest places the `ingressVIP` virtual IP address on the control plane nodes. Additionally, this manifest deploys the following processes on the control plane nodes only:
++
+* `openshift-ingress-operator`
++
+* `keepalived`
+
+. Save the `cluster-network-avoid-workers-99-config.yaml` file.
+
+. Create a `manifests/cluster-ingress-default-ingresscontroller.yaml` file:
++
+[source,yaml]
+----
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+  name: default
+  namespace: openshift-ingress-operator
+spec:
+  nodePlacement:
+    nodeSelector:
+      matchLabels:
+        node-role.kubernetes.io/master: ""
+----
+
+. Consider backing up the `manifests` directory. The installer deletes the `manifests/` directory when creating the cluster.
+
+. Modify the `cluster-scheduler-02-config.yml` manifest to make the control plane nodes schedulable by setting the `mastersSchedulable` field to `true`. Control plane nodes are not schedulable by default. For example:
++
+----
+$ sed -i "s;mastersSchedulable: false;mastersSchedulable: true;g" clusterconfigs/manifests/cluster-scheduler-02-config.yml
+----
++
+[NOTE]
+====
+If control plane nodes are not schedulable after completing this procedure, deploying the cluster will fail.
+====
+
+:!bare:
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * list of assemblies where this module is included
+// ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="deploying-routers-on-worker-nodes_{context}"]
+= Optional: Deploying routers on worker nodes
+
+During installation, the installer deploys router pods on worker nodes. By default, the installer installs two router pods. If a deployed cluster requires additional routers to handle external traffic loads destined for services within the {product-title} cluster, you can create a `yaml` file to set an appropriate number of router replicas.
+
+[IMPORTANT]
+====
+Deploying a cluster with only one worker node is not supported. While modifying the router replicas will address issues with the `degraded` state when deploying with one worker, the cluster loses high availability for the ingress API, which is not suitable for production environments.
+====
+
+[NOTE]
+====
+By default, the installer deploys two routers. If the cluster has no worker nodes, the installer deploys the two routers on the control plane nodes by default.
+====
+
+.Procedure
+
+. Create a `router-replicas.yaml` file:
++
+[source,yaml]
+----
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+  name: default
+  namespace: openshift-ingress-operator
+spec:
+  replicas: <num-of-router-pods>
+  endpointPublishingStrategy:
+    type: HostNetwork
+  nodePlacement:
+    nodeSelector:
+      matchLabels:
+        node-role.kubernetes.io/worker: ""
+----
++
+[NOTE]
+====
+Replace `<num-of-router-pods>` with an appropriate value. If working with just one worker node, set `replicas:` to `1`. If working with more than 3 worker nodes, you can increase `replicas:` from the default value `2` as appropriate.
+====
+
+. Save and copy the `router-replicas.yaml` file to the `clusterconfigs/openshift` directory:
++
+[source,terminal]
+----
+$ cp ~/router-replicas.yaml clusterconfigs/openshift/99_router-replicas.yaml
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-the-bios_{context}"]
+= Optional: Configuring the BIOS
+
+The following procedure configures the BIOS during the installation process.
+
+.Procedure
+. Create the manifests.
+
+. Modify the `BareMetalHost` resource file corresponding to the node:
++
+[source,terminal]
+----
+$ vim clusterconfigs/openshift/99_openshift-cluster-api_hosts-*.yaml
+----
+
+. Add the BIOS configuration to the `spec` section of the `BareMetalHost` resource:
++
+[source,yaml]
+----
+spec:
+  firmware:
+    simultaneousMultithreadingEnabled: true
+    sriovEnabled: true
+    virtualizationEnabled: true
+----
++
+[NOTE]
+====
+Red Hat supports three BIOS configurations. Only servers with BMC type `irmc` are supported. Other types of servers are currently not supported.
+====
+
+. Create the cluster.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_bare_metal_config"]
+.Additional resources
+
+* xref:../../post_installation_configuration/bare-metal-configuration.adoc#post-install-bare-metal-configuration[Bare metal configuration]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-the-raid_{context}"]
+= Optional: Configuring the RAID
+
+The following procedure configures a redundant array of independent disks (RAID) during the installation process.
+
+[NOTE]
+====
+. {product-title} supports hardware RAID for baseboard management controllers (BMCs) using the iRMC protocol only. {product-title} {product-version} does not support software RAID.
+. If you want to configure a hardware RAID for the node, verify that the node has a RAID controller.
+====
+
+.Procedure
+
+. Create the manifests.
+
+. Modify the `BareMetalHost` resource corresponding to the node:
++
+[source,terminal]
+----
+$ vim clusterconfigs/openshift/99_openshift-cluster-api_hosts-*.yaml
+----
++
+[NOTE]
+====
+The following example uses a hardware RAID configuration because {product-title} {product-version} does not support software RAID.
+====
++
+.. If you added a specific RAID configuration to the `spec` section, this causes the node to delete the original RAID configuration in the `preparing` phase and perform a specified configuration on the RAID. For example:
++
+[source,yaml]
+----
+spec:
+  raid:
+    hardwareRAIDVolumes:
+    - level: "0" <1>
+      name: "sda"
+      numberOfPhysicalDisks: 1
+      rotational: true
+      sizeGibibytes: 0
+----
+<1> `level` is a required field, and the others are optional fields.
++
+.. If you added an empty RAID configuration to the `spec` section, the empty configuration causes the node to delete the original RAID configuration during the `preparing` phase, but does not perform a new configuration. For example:
++
+[source,yaml]
+----
+spec:
+  raid:
+    hardwareRAIDVolumes: []
+----
++
+.. If you do not add a `raid` field in the `spec` section, the original RAID configuration is not deleted, and no new configuration will be performed.
+
+. Create the cluster.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * list of assemblies where this module is included
+// ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-storage-on-nodes_{context}"]
+= Optional: Configuring storage on nodes
+
+You can make changes to operating systems on {product-title} nodes by creating `MachineConfig` objects that are managed by the Machine Config Operator (MCO).
+
+The `MachineConfig` specification includes an ignition config for configuring the machines at first boot. This config object can be used to modify files, systemd services, and other operating system features running on {product-title} machines.
+
+.Procedure
+
+Use the ignition config to configure storage on nodes. The following `MachineSet` manifest example demonstrates how to add a partition to a device on a primary node. In this example, apply the manifest before installation to have a partition named `recovery` with a size of 16 GiB on the primary node.
+
+. Create a `custom-partitions.yaml` file and include a `MachineConfig` object that contains your partition layout:
++
+[source,terminal]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: primary
+  name: 10_primary_storage_config
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      disks:
+        - device: </dev/xxyN>
+          partitions:
+            - label: recovery
+              startMiB: 32768
+              sizeMiB: 16384
+      filesystems:
+        - device: /dev/disk/by-partlabel/recovery
+          label: recovery
+          format: xfs
+----
++
+. Save and copy the `custom-partitions.yaml` file to the `clusterconfigs/openshift` directory:
++
+[source,terminal]
+----
+$ cp ~/<MachineConfig_manifest> ~/clusterconfigs/openshift
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_raid_config"]
+.Additional resources
+
+* xref:../../post_installation_configuration/bare-metal-configuration.adoc#post-install-bare-metal-configuration[Bare metal configuration]
+
+* link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/managing_storage_devices/index#partition-naming-scheme_disk-partitions[Partition naming scheme]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * list of assemblies where this module is included
+// install/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="ipi-install-creating-a-disconnected-registry_{context}"]
+= Creating a disconnected registry
+
+In some cases, you might want to install an {product-title} cluster using a local copy of the installation registry. This could be for enhancing network efficiency because the cluster nodes are on a network that does not have access to the internet.
+
+A local, or mirrored, copy of the registry requires the following:
+
+* A certificate for the registry node. This can be a self-signed certificate.
+* A web server that a container on a system will serve.
+* An updated pull secret that contains the certificate and local repository information.
+
+[NOTE]
+====
+Creating a disconnected registry on a registry node is optional. If you need to create a disconnected registry on a registry node, you must complete all of the following sub-sections.
+====
+
+:leveloffset!:
+
+[discrete]
+[id="prerequisites_ipi-disconnected-registry"]
+=== Prerequisites
+
+* If you have already prepared a mirror registry for xref:../../installing/disconnected_install/installing-mirroring-installation-images.adoc#prerequisites_installing-mirroring-installation-images[Mirroring images for a disconnected installation], you can skip directly to xref:../../installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc#ipi-modify-install-config-for-a-disconnected-registry_ipi-install-installation-workflow[Modify the install-config.yaml file to use the disconnected registry].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * list of assemblies where this module is included
+// install/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ipi-install-preparing-a-disconnected-registry_{context}"]
+= Preparing the registry node to host the mirrored registry
+
+The following steps must be completed prior to hosting a mirrored registry on bare metal.
+
+.Procedure
+
+. Open the firewall port on the registry node:
++
+[source,terminal]
+----
+$ sudo firewall-cmd --add-port=5000/tcp --zone=libvirt  --permanent
+----
++
+[source,terminal]
+----
+$ sudo firewall-cmd --add-port=5000/tcp --zone=public   --permanent
+----
++
+[source,terminal]
+----
+$ sudo firewall-cmd --reload
+----
+
+. Install the required packages for the registry node:
++
+[source,terminal]
+----
+$ sudo yum -y install python3 podman httpd httpd-tools jq
+----
+
+. Create the directory structure where the repository information will be held:
++
+[source,terminal]
+----
+$ sudo mkdir -p /opt/registry/{auth,certs,data}
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * list of assemblies where this module is included
+// install/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ipi-install-mirroring-for-disconnected-registry_{context}"]
+= Mirroring the {product-title} image repository for a disconnected registry
+
+Complete the following steps to mirror the {product-title} image repository for a disconnected registry.
+
+.Prerequisites
+
+* Your mirror host has access to the internet.
+* You configured a mirror registry to use in your restricted network and
+can access the certificate and credentials that you configured.
+* You downloaded the {cluster-manager-url-pull} and modified it to include authentication to your mirror repository.
+
+.Procedure
+
+. Review the
+link:https://access.redhat.com/downloads/content/290/[{product-title} downloads page]
+to determine the version of {product-title} that you want to install and determine the corresponding tag on the link:https://quay.io/repository/openshift-release-dev/ocp-release?tab=tags[Repository Tags] page.
+
+. Set the required environment variables:
+.. Export the release version:
++
+[source,terminal]
+----
+$ OCP_RELEASE=<release_version>
+----
++
+For `<release_version>`, specify the tag that corresponds to the version of {product-title} to
+install, such as `4.5.4`.
+
+.. Export the local registry name and host port:
++
+[source,terminal]
+----
+$ LOCAL_REGISTRY='<local_registry_host_name>:<local_registry_host_port>'
+----
++
+For `<local_registry_host_name>`, specify the registry domain name for your mirror
+repository, and for `<local_registry_host_port>`, specify the port that it
+serves content on.
+
+.. Export the local repository name:
++
+[source,terminal]
+----
+$ LOCAL_REPOSITORY='<local_repository_name>'
+----
++
+For `<local_repository_name>`, specify the name of the repository to create in your
+registry, such as `ocp4/openshift4`.
+
+.. Export the name of the repository to mirror:
++
+[source,terminal]
+----
+$ PRODUCT_REPO='openshift-release-dev'
+----
++
+For a production release, you must specify `openshift-release-dev`.
+
+.. Export the path to your registry pull secret:
++
+[source,terminal]
+----
+$ LOCAL_SECRET_JSON='<path_to_pull_secret>'
+----
++
+For `<path_to_pull_secret>`, specify the absolute path to and file name of the pull secret for your mirror registry that you created.
+
+.. Export the release mirror:
++
+[source,terminal]
+----
+$ RELEASE_NAME="ocp-release"
+----
++
+For a production release, you must specify `ocp-release`.
+
+.. Export the type of architecture for your cluster:
++
+[source,terminal]
+----
+$ ARCHITECTURE=<cluster_architecture> <1>
+----
+<1> Specify the architecture of the cluster, such as `x86_64`, `aarch64`, `s390x`, or `ppc64le`.
+
+
+.. Export the path to the directory to host the mirrored images:
++
+[source,terminal]
+----
+$ REMOVABLE_MEDIA_PATH=<path> <1>
+----
+<1> Specify the full path, including the initial forward slash (/) character.
+
+. Mirror the version images to the mirror registry:
+** If your mirror host does not have internet access, take the following actions:
+... Connect the removable media to a system that is connected to the internet.
+... Review the images and configuration manifests to mirror:
++
+[source,terminal]
+----
+$ oc adm release mirror -a ${LOCAL_SECRET_JSON}  \
+     --from=quay.io/${PRODUCT_REPO}/${RELEASE_NAME}:${OCP_RELEASE}-${ARCHITECTURE} \
+     --to=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY} \
+     --to-release-image=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}:${OCP_RELEASE}-${ARCHITECTURE} --dry-run
+----
+
+... Record the entire `imageContentSources` section from the output of the previous
+command. The information about your mirrors is unique to your mirrored repository, and you must add the `imageContentSources` section to the `install-config.yaml` file during installation.
+... Mirror the images to a directory on the removable media:
++
+[source,terminal]
+----
+$ oc adm release mirror -a ${LOCAL_SECRET_JSON} --to-dir=${REMOVABLE_MEDIA_PATH}/mirror quay.io/${PRODUCT_REPO}/${RELEASE_NAME}:${OCP_RELEASE}-${ARCHITECTURE}
+----
+
+... Take the media to the restricted network environment and upload the images to the local container registry.
++
+[source,terminal]
+----
+$ oc image mirror -a ${LOCAL_SECRET_JSON} --from-dir=${REMOVABLE_MEDIA_PATH}/mirror "file://openshift/release:${OCP_RELEASE}*" ${LOCAL_REGISTRY}/${LOCAL_REPOSITORY} <1>
+----
++
+<1> For `REMOVABLE_MEDIA_PATH`, you must use the same path that you specified when you mirrored the images.
+
+** If the local container registry is connected to the mirror host, take the following actions:
+... Directly push the release images to the local registry by using following command:
++
+[source,terminal]
+----
+$ oc adm release mirror -a ${LOCAL_SECRET_JSON}  \
+     --from=quay.io/${PRODUCT_REPO}/${RELEASE_NAME}:${OCP_RELEASE}-${ARCHITECTURE} \
+     --to=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY} \
+     --to-release-image=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}:${OCP_RELEASE}-${ARCHITECTURE}
+----
++
+This command pulls the release information as a digest, and its output includes
+the `imageContentSources` data that you require when you install your cluster.
+
+... Record the entire `imageContentSources` section from the output of the previous
+command. The information about your mirrors is unique to your mirrored repository, and you must add the `imageContentSources` section to the `install-config.yaml` file during installation.
++
+[NOTE]
+====
+The image name gets patched to Quay.io during the mirroring process, and the podman images will show Quay.io in the registry on the bootstrap virtual machine.
+====
+
+. To create the installation program that is based on the content that you
+mirrored, extract it and pin it to the release:
+** If your mirror host does not have internet access, run the following command:
++
+[source,terminal]
+----
+$ oc adm release extract -a ${LOCAL_SECRET_JSON} --command=openshift-baremetal-install "${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}:${OCP_RELEASE}"
+----
+** If the local container registry is connected to the mirror host, run the following command:
++
+[source,terminal]
+----
+$ oc adm release extract -a ${LOCAL_SECRET_JSON} --command=openshift-baremetal-install "${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}:${OCP_RELEASE}-${ARCHITECTURE}"
+----
++
+[IMPORTANT]
+====
+To ensure that you use the correct images for the version of {product-title}
+that you selected, you must extract the installation program from the mirrored
+content.
+
+You must perform this step on a machine with an active internet connection.
+
+If you are in a disconnected environment, use the `--image` flag as part of must-gather and point to the payload image.
+====
++
+. For clusters using installer-provisioned infrastructure, run the following command:
++
+[source,terminal]
+----
+$ openshift-baremetal-install
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * list of assemblies where this module is included
+// install/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="ipi-modify-install-config-for-a-disconnected-registry_{context}"]
+= Modify the install-config.yaml file to use the disconnected registry
+
+On the provisioner node, the `install-config.yaml` file should use the newly created pull-secret from the `pull-secret-update.txt` file. The `install-config.yaml` file must also contain the disconnected registry node's certificate and registry information.
+
+.Procedure
+
+. Add the disconnected registry node's certificate to the `install-config.yaml` file:
++
+[source,terminal]
+----
+$ echo "additionalTrustBundle: |" >> install-config.yaml
+----
++
+The certificate should follow the `"additionalTrustBundle: |"` line and be properly indented, usually by two spaces.
++
+[source,terminal]
+----
+$ sed -e 's/^/  /' /opt/registry/certs/domain.crt >> install-config.yaml
+----
+
+. Add the mirror information for the registry to the `install-config.yaml` file:
++
+[source,terminal]
+----
+$ echo "imageContentSources:" >> install-config.yaml
+----
++
+[source,terminal]
+----
+$ echo "- mirrors:" >> install-config.yaml
+----
++
+[source,terminal]
+----
+$ echo "  - registry.example.com:5000/ocp4/openshift4" >> install-config.yaml
+----
++
+Replace `registry.example.com` with the registry's fully qualified domain name.
++
+[source,terminal]
+----
+$ echo "  source: quay.io/openshift-release-dev/ocp-release" >> install-config.yaml
+----
++
+[source,terminal]
+----
+$ echo "- mirrors:" >> install-config.yaml
+----
++
+[source,terminal]
+----
+$ echo "  - registry.example.com:5000/ocp4/openshift4" >> install-config.yaml
+----
++
+Replace `registry.example.com` with the registry's fully qualified domain name.
++
+[source,terminal]
+----
+$ echo "  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev" >> install-config.yaml
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+
+[id="validation-checklist-for-installation_{context}"]
+= Validation checklist for installation
+
+* [ ] {product-title} installer has been retrieved.
+* [ ] {product-title} installer has been extracted.
+* [ ] Required parameters for the `install-config.yaml` have been configured.
+* [ ] The `hosts` parameter for the `install-config.yaml` has been configured.
+* [ ] The `bmc` parameter for the `install-config.yaml` has been configured.
+* [ ] Conventions for the values configured in the `bmc` `address` field have been applied.
+* [ ] Created the {product-title} manifests.
+* [ ] (Optional) Deployed routers on worker nodes.
+* [ ] (Optional) Created a disconnected registry.
+* [ ] (Optional) Validate disconnected registry settings if in use.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id='deploying-the-cluster-via-the-openshift-installer_{context}']
+= Deploying the cluster via the {product-title} installer
+
+Run the {product-title} installer:
+
+[source,terminal]
+----
+$ ./openshift-baremetal-install --dir ~/clusterconfigs --log-level debug create cluster
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+//installing/installing_bare_metal_ipi/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ipi-install-troubleshooting-following-the-installation_{context}"]
+= Following the installation
+
+During the deployment process, you can check the installation's overall status by issuing the `tail` command to the `.openshift_install.log` log file in the install directory folder:
+
+[source,terminal]
+----
+$ tail -f /path/to/install-dir/.openshift_install.log
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// This is included in the following assemblies:
+//
+// installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="verifying-static-ip-address-configuration_{context}"]
+= Verifying static IP address configuration
+
+If the DHCP reservation for a cluster node specifies an infinite lease, after the installer successfully provisions the node, the dispatcher script checks the node's network configuration. If the script determines that the network configuration contains an infinite DHCP lease, it creates a new connection using the IP address of the DHCP lease as a static IP address.
+
+[NOTE]
+====
+The dispatcher script might run on successfully provisioned nodes while the provisioning of other nodes in the cluster is ongoing.
+====
+
+Verify the network configuration is working properly.
+
+.Procedure
+
+. Check the network interface configuration on the node.
+
+. Turn off the DHCP server and reboot the {product-title} node and ensure that the network configuration works properly.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// //installing/installing_bare_metal_ipi/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc
+
+[id="ipi-preparing-reinstall-cluster-bare-metal_{context}"]
+
+= Preparing to reinstall a cluster on bare metal
+Before you reinstall a cluster on bare metal, you must perform cleanup operations.
+
+.Procedure
+. Remove or reformat the disks for the bootstrap, control plane node, and worker nodes. If you are working in a hypervisor environment, you must add any disks you removed.
+. Delete the artifacts that the previous installation generated:
++
+[source,terminal]
+----
+$ cd ; /bin/rm -rf auth/ bootstrap.ign master.ign worker.ign metadata.json \
+.openshift_install.log .openshift_install_state.json
+----
+. Generate new manifests and Ignition config files. See “Creating the Kubernetes manifest and Ignition config files" for more information.
+. Upload the new bootstrap, control plane, and compute node Ignition config files that the installation program created to your HTTP server. This will overwrite the previous Ignition files.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_creating_manifest_ignition"]
+== Additional resources
+* xref:../../installing/installing_bare_metal/installing-bare-metal.adoc#installation-user-infra-generate-k8s-manifest-ignition_installing-bare-metal[{product-title} Creating the Kubernetes manifest and Ignition config files]
+* xref:../../updating/understanding_updates/understanding-update-channels-release.adoc#understanding-update-channels-releases[Understanding update channels and releases]
+
+//# includes=_attributes/common-attributes,modules/ipi-install-installing-rhel-on-the-provisioner-node,modules/ipi-install-preparing-the-provisioner-node-for-openshift-install,modules/ipi-install-checking-ntp-sync,modules/ipi-install-configuring-networking,modules/ipi-install-establishing-communication-between-subnets,modules/ipi-install-retrieving-the-openshift-installer,modules/ipi-install-extracting-the-openshift-installer,modules/ipi-install-creating-an-rhcos-images-cache,modules/ipi-install-configuring-the-install-config-file,modules/ipi-install-additional-install-config-parameters,modules/ipi-install-bmc-addressing,modules/ipi-install-bmc-addressing-for-dell-idrac,modules/ipi-install-bmc-addressing-for-hpe-ilo,modules/ipi-install-bmc-addressing-for-fujitsu-irmc,modules/ipi-install-root-device-hints,modules/ipi-install-setting-proxy-settings-within-install-config,modules/ipi-install-modifying-install-config-for-no-provisioning-network,modules/ipi-install-modifying-install-config-for-dual-stack-network,modules/ipi-install-configuring-host-network-interfaces-in-the-install-config.yaml-file,modules/ipi-install-configuring-host-network-interfaces-for-subnets,modules/ipi-install-modifying-install-config-for-slaac-dual-stack-network,modules/ipi-install-configuring-host-dual-network-interfaces-in-the-install-config.yaml-file,modules/snippets/technology-preview,modules/ipi-install-configure-multiple-cluster-nodes,modules/ipi-install-configuring-managed-secure-boot-in-the-install-config-file,modules/ipi-install-creating-the-openshift-manifests,modules/ipi-install-configuring-ntp-for-disconnected-clusters,modules/ipi-install-configure-network-components-to-run-on-the-control-plane,modules/ipi-install-deploying-routers-on-worker-nodes,modules/ipi-install-configuring-the-bios,modules/ipi-install-configuring-the-raid,modules/ipi-install-configuring-storage-on-nodes,modules/ipi-install-creating-a-disconnected-registry,modules/ipi-install-preparing-a-disconnected-registry,modules/ipi-install-mirroring-for-disconnected-registry,modules/ipi-modify-install-config-for-a-disconnected-registry,modules/ipi-install-validation-checklist-for-installation,modules/ipi-install-deploying-the-cluster-via-the-openshift-installer,modules/ipi-install-following-the-installation,modules/ipi-install-verifying-static-ip-address-configuration,modules/ipi-preparing-reinstall-cluster-bare-metal

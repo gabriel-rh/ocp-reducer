@@ -1,0 +1,461 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="troubleshooting-windows-container-workload-issues"]
+= Troubleshooting Windows container workload issues
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: troubleshooting-windows-container-workload-issues
+
+toc::[]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * support/troubleshooting/troubleshooting-windows-container-workload-issues.adoc
+
+[id="wmco-does-not-install_{context}"]
+= Windows Machine Config Operator does not install
+
+If you have completed the process of installing the Windows Machine Config Operator (WMCO), but the Operator is stuck in the `InstallWaiting` phase, your issue is likely caused by a networking issue.
+
+The WMCO requires your {product-title} cluster to be configured with hybrid networking using OVN-Kubernetes; the WMCO cannot complete the installation process without hybrid networking available. This is necessary to manage nodes on multiple operating systems (OS) and OS variants. This must be completed during the installation of your cluster.
+
+:leveloffset!:
+
+For more information, see xref:../../networking/ovn_kubernetes_network_provider/configuring-hybrid-networking.adoc#configuring-hybrid-ovnkubernetes[Configuring hybrid networking].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * support/troubleshooting/troubleshooting-windows-container-workload-issues.adoc
+
+[id="investigating-why-windows-machine-compute-node_{context}"]
+= Investigating why Windows Machine does not become compute node
+
+There are various reasons why a Windows Machine does not become a compute node. The best way to investigate this problem is to collect the Windows Machine Config Operator (WMCO) logs.
+
+.Prerequisites
+
+* You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).
+* You have created a Windows compute machine set.
+
+.Procedure
+
+* Run the following command to collect the WMCO logs:
++
+[source,terminal]
+----
+$ oc logs -f deployment/windows-machine-config-operator -n openshift-windows-machine-config-operator
+----
+
+:leveloffset!:
+
+[id="accessing-windows-node"]
+== Accessing a Windows node
+
+Windows nodes cannot be accessed using the `oc debug node` command; the command requires running a privileged pod on the node, which is not yet supported for Windows. Instead, a Windows node can be accessed using a secure shell (SSH) or Remote Desktop Protocol (RDP). An SSH bastion is required for both methods.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * support/troubleshooting/troubleshooting-windows-container-workload-issues.adoc
+
+[id="accessing-windows-node-using-ssh_{context}"]
+= Accessing a Windows node using SSH
+
+You can access a Windows node by using a secure shell (SSH).
+
+.Prerequisites
+
+* You have installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).
+* You have created a Windows compute machine set.
+* You have added the key used in the `cloud-private-key` secret and the key used when creating the cluster to the ssh-agent. For security reasons, remember to remove the keys from the ssh-agent after use.
+* You have connected to the Windows node link:https://access.redhat.com/solutions/4073041[using an `ssh-bastion` pod].
+
+.Procedure
+
+* Access the Windows node by running the following command:
++
+[source,terminal]
+----
+$ ssh -t -o StrictHostKeyChecking=no -o ProxyCommand='ssh -A -o StrictHostKeyChecking=no \
+    -o ServerAliveInterval=30 -W %h:%p core@$(oc get service --all-namespaces -l run=ssh-bastion \
+    -o go-template="{{ with (index (index .items 0).status.loadBalancer.ingress 0) }}{{ or .hostname .ip }}{{end}}")' <username>@<windows_node_internal_ip> <1> <2>
+----
+<1> Specify the cloud provider username, such as `Administrator` for Amazon Web Services (AWS) or `capi` for Microsoft Azure.
+<2> Specify the internal IP address of the node, which can be discovered by running the following command:
++
+[source,terminal]
+----
+$ oc get nodes <node_name> -o jsonpath={.status.addresses[?\(@.type==\"InternalIP\"\)].address}
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * support/troubleshooting/troubleshooting-windows-container-workload-issues.adoc
+
+[id="accessing-windows-node-using-rdp_{context}"]
+= Accessing a Windows node using RDP
+
+You can access a Windows node by using a Remote Desktop Protocol (RDP).
+
+.Prerequisites
+
+* You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).
+* You have created a Windows compute machine set.
+* You have added the key used in the `cloud-private-key` secret and the key used when creating the cluster to the ssh-agent. For security reasons, remember to remove the keys from the ssh-agent after use.
+* You have connected to the Windows node link:https://access.redhat.com/solutions/4073041[using an `ssh-bastion` pod].
+
+.Procedure
+
+. Run the following command to set up an SSH tunnel:
++
+[source,terminal]
+----
+$ ssh -L 2020:<windows_node_internal_ip>:3389 \ <1>
+    core@$(oc get service --all-namespaces -l run=ssh-bastion -o go-template="{{ with (index (index .items 0).status.loadBalancer.ingress 0) }}{{ or .hostname .ip }}{{end}}")
+----
+<1> Specify the internal IP address of the node, which can be discovered by running the following command:
++
+[source,terminal]
+----
+$ oc get nodes <node_name> -o jsonpath={.status.addresses[?\(@.type==\"InternalIP\"\)].address}
+----
+
+. From within the resulting shell, SSH into the Windows node and run the following command to create a password for the user:
++
+[source,terminal]
+----
+C:\> net user <username> * <1>
+----
+<1> Specify the cloud provider user name, such as `Administrator` for AWS or `capi` for Azure.
+
+You can now remotely access the Windows node at `localhost:2020` using an RDP client.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * support/troubleshooting/troubleshooting-windows-container-workload-issues.adoc
+
+[id="collecting-kube-node-logs-windows_{context}"]
+= Collecting Kubernetes node logs for Windows containers
+
+Windows container logging works differently from Linux container logging; the Kubernetes node logs for Windows workloads are streamed to the `C:\var\logs` directory by default. Therefore, you must gather the Windows node logs from that directory.
+
+.Prerequisites
+
+* You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).
+* You have created a Windows compute machine set.
+
+.Procedure
+
+. To view the logs under all directories in `C:\var\logs`, run the following command:
++
+[source,terminal]
+----
+$ oc adm node-logs -l kubernetes.io/os=windows --path= \
+    /ip-10-0-138-252.us-east-2.compute.internal containers \
+    /ip-10-0-138-252.us-east-2.compute.internal hybrid-overlay \
+    /ip-10-0-138-252.us-east-2.compute.internal kube-proxy \
+    /ip-10-0-138-252.us-east-2.compute.internal kubelet \
+    /ip-10-0-138-252.us-east-2.compute.internal pods
+----
+
+. You can now list files in the directories using the same command and view the individual log files. For example, to view the kubelet logs, run the following command:
++
+[source,terminal]
+----
+$ oc adm node-logs -l kubernetes.io/os=windows --path=/kubelet/kubelet.log
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * support/troubleshooting/troubleshooting-windows-container-workload-issues.adoc
+
+[id="collecting-windows-application-event-logs_{context}"]
+= Collecting Windows application event logs
+
+The `Get-WinEvent` shim on the kubelet `logs` endpoint can be used to collect application event logs from Windows machines.
+
+.Prerequisites
+
+* You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).
+* You have created a Windows compute machine set.
+
+.Procedure
+
+* To view logs from all applications logging to the event logs on the Windows machine, run:
++
+[source,terminal]
+----
+$ oc adm node-logs -l kubernetes.io/os=windows --path=journal
+----
++
+The same command is executed when collecting logs with `oc adm must-gather`.
++
+Other Windows application logs from the event log can also be collected by specifying the respective service with a `-u` flag. For example, you can run the following command to collect logs for the docker runtime service:
++
+[source,terminal]
+----
+$ oc adm node-logs -l kubernetes.io/os=windows --path=journal -u docker
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * support/troubleshooting/troubleshooting-windows-container-workload-issues.adoc
+
+[id="collecting-docker-logs-windows_{context}"]
+= Collecting Docker logs for Windows containers
+
+The Windows Docker service does not stream its logs to stdout, but instead, logs to the event log for Windows. You can view the Docker event logs to investigate issues you think might be caused by the Windows Docker service.
+
+.Prerequisites
+
+* You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).
+* You have created a Windows compute machine set.
+
+.Procedure
+
+. SSH into the Windows node and enter PowerShell:
++
+[source,terminal]
+----
+C:\> powershell
+----
+
+. View the Docker logs by running the following command:
++
+[source,terminal]
+----
+C:\> Get-EventLog -LogName Application -Source Docker
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+== Additional resources
+
+* link:https://docs.microsoft.com/en-us/virtualization/windowscontainers/troubleshooting[Containers on Windows troubleshooting]
+* link:https://docs.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/update-containers#troubleshoot-host-and-container-image-mismatches[Troubleshoot host and container image mismatches]
+* link:https://docs.docker.com/docker-for-windows/troubleshoot/[Docker for Windows troubleshooting]
+* link:https://docs.microsoft.com/en-us/virtualization/windowscontainers/kubernetes/common-problems[Common Kubernetes problems with Windows]
+
+//# includes=_attributes/common-attributes,modules/wmco-does-not-install,modules/investigating-why-windows-machine-compute-node,modules/accessing-windows-node-using-ssh,modules/accessing-windows-node-using-rdp,modules/collecting-kube-node-logs-windows,modules/collecting-windows-application-event-logs,modules/collecting-docker-logs-windows

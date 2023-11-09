@@ -1,0 +1,1112 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="using-rfhe"]
+= Monitoring bare-metal events with the {redfish-operator}
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: using-rfhe
+
+toc::[]
+
+:FeatureName: Bare Metal Event Relay
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+[id="about-using-redfish-hardware-events"]
+== About bare-metal events
+
+Use the {redfish-operator} to subscribe applications that run in your {product-title} cluster to events that are generated on the underlying bare-metal host. The Redfish service publishes events on a node and transmits them on an advanced message queue to subscribed applications.
+
+Bare-metal events are based on the open Redfish standard that is developed under the guidance of the Distributed Management Task Force (DMTF). Redfish provides a secure industry-standard protocol with a REST API. The protocol is used for the management of distributed, converged or software-defined resources and infrastructure.
+
+Hardware-related events published through Redfish includes:
+
+* Breaches of temperature limits
+* Server status
+* Fan status
+
+Begin using bare-metal events by deploying the {redfish-operator} Operator and subscribing your application to the service. The {redfish-operator} Operator installs and manages the lifecycle of the Redfish bare-metal event service.
+
+[NOTE]
+====
+The {redfish-operator} works only with Redfish-capable devices on single-node clusters provisioned on bare-metal infrastructure.
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * monitoring/using-rfhe.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-rfhe-introduction_{context}"]
+= How bare-metal events work
+
+The {redfish-operator} enables applications running on bare-metal clusters to respond quickly to Redfish hardware changes and failures such as breaches of temperature thresholds, fan failure, disk loss, power outages, and memory failure. These hardware events are delivered over a reliable low-latency transport channel based on Advanced Message Queuing Protocol (AMQP). The latency of the messaging service is between 10 to 20 milliseconds.
+
+The {redfish-operator} provides a publish-subscribe service for the hardware events. Applications can use a REST API to subscribe to the events. The {redfish-operator} supports hardware that complies with Redfish OpenAPI v1.8 or later.
+
+[id="rfhe-elements_{context}"]
+== {redfish-operator} data flow
+
+The following figure illustrates an example bare-metal events data flow:
+
+.{redfish-operator} data flow
+image::319_OpenShift_redfish_bare-metal_OCP_nodes_0323.png[Bare-metal events data flow]
+
+=== Operator-managed pod
+
+The Operator uses custom resources to manage the pod containing the {redfish-operator} and its components using the `HardwareEvent` CR.
+
+=== {redfish-operator}
+
+At startup, the {redfish-operator} queries the Redfish API and downloads all the message registries, including custom registries. The {redfish-operator} then begins to receive subscribed events from the Redfish hardware.
+
+The {redfish-operator} enables applications running on bare-metal clusters to respond quickly to Redfish hardware changes and failures such as breaches of temperature thresholds, fan failure, disk loss, power outages, and memory failure. The events are reported using the `HardwareEvent` CR.
+
+=== Cloud native event
+
+Cloud native events (CNE) is a REST API specification for defining the format of event data.
+
+=== CNCF CloudEvents
+
+link:https://cloudevents.io/[CloudEvents] is a vendor-neutral specification developed by the Cloud Native Computing Foundation (CNCF) for defining the format of event data.
+
+=== HTTP transport or AMQP dispatch router
+
+The HTTP transport or AMQP dispatch router is responsible for the message delivery service between publisher and subscriber.
+
+[NOTE]
+====
+Use HTTP transport instead of AMQP for PTP and bare-metal events where possible.
+AMQ Interconnect is EOL from 30 June 2024.
+Extended life cycle support (ELS) for AMQ Interconnect ends 29 November 2029.
+For more information see, link:https://access.redhat.com/support/policy/updates/jboss_notes#p_Interconnect[Red Hat AMQ Interconnect support status].
+====
+
+=== Cloud event proxy sidecar
+
+The cloud event proxy sidecar container image is based on the O-RAN API specification and provides a publish-subscribe event framework for hardware events.
+
+[id="rfhe-data-flow_{context}"]
+== Redfish message parsing service
+
+In addition to handling Redfish events, the {redfish-operator} provides message parsing for events without a `Message` property. The proxy downloads all the Redfish message registries including vendor specific registries from the hardware when it starts. If an event does not contain a `Message` property, the proxy uses the Redfish message registries to construct the `Message` and `Resolution` properties and add them to the event before passing the event to the cloud events framework. This service allows Redfish events to have smaller message size and lower transmission latency.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * monitoring/using-rfhe.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-rfhe-installing-operator-cli_{context}"]
+= Installing the {redfish-operator} using the CLI
+
+As a cluster administrator, you can install the {redfish-operator} Operator by using the CLI.
+
+.Prerequisites
+
+* A cluster that is installed on bare-metal hardware with nodes that have a RedFish-enabled Baseboard Management Controller (BMC).
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create a namespace for the {redfish-operator}.
+
+.. Save the following YAML in the `bare-metal-events-namespace.yaml` file:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-bare-metal-events
+  labels:
+    name: openshift-bare-metal-events
+    openshift.io/cluster-monitoring: "true"
+----
+
+.. Create the `Namespace` CR:
++
+[source,terminal]
+----
+$ oc create -f bare-metal-events-namespace.yaml
+----
+
+. Create an Operator group for the {redfish-operator} Operator.
+
+.. Save the following YAML in the `bare-metal-events-operatorgroup.yaml` file:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: bare-metal-event-relay-group
+  namespace: openshift-bare-metal-events
+spec:
+  targetNamespaces:
+  - openshift-bare-metal-events
+----
+
+.. Create the `OperatorGroup` CR:
++
+[source,terminal]
+----
+$ oc create -f bare-metal-events-operatorgroup.yaml
+----
+
+. Subscribe to the {redfish-operator}.
+
+.. Save the following YAML in the `bare-metal-events-sub.yaml` file:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: bare-metal-event-relay-subscription
+  namespace: openshift-bare-metal-events
+spec:
+  channel: "stable"
+  name: bare-metal-event-relay
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+----
+
+.. Create the `Subscription` CR:
++
+[source,terminal]
+----
+$ oc create -f bare-metal-events-sub.yaml
+----
+
+.Verification
+
+To verify that the {redfish-operator} Operator is installed, run the following command:
+
+[source,terminal]
+----
+$ oc get csv -n openshift-bare-metal-events -o custom-columns=Name:.metadata.name,Phase:.status.phase
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * monitoring/using-rfhe.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-rfhe-installing-operator-web-console_{context}"]
+= Installing the {redfish-operator} using the web console
+
+As a cluster administrator, you can install the {redfish-operator} Operator using the web console.
+
+.Prerequisites
+
+* A cluster that is installed on bare-metal hardware with nodes that have a RedFish-enabled Baseboard Management Controller (BMC).
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Install the {redfish-operator} using the {product-title} web console:
+
+.. In the {product-title} web console, click *Operators* -> *OperatorHub*.
+
+.. Choose  *{redfish-operator}* from the list of available Operators, and then click *Install*.
+
+.. On the *Install Operator* page, select or create a *Namespace*, select *openshift-bare-metal-events*, and then click *Install*.
+
+.Verification
+
+Optional: You can verify that the Operator installed successfully by performing the following check:
+
+. Switch to the *Operators* -> *Installed Operators* page.
+
+. Ensure that *{redfish-operator}* is listed in the project with a *Status* of *InstallSucceeded*.
++
+[NOTE]
+====
+During installation an Operator might display a *Failed* status. If the installation later succeeds with an *InstallSucceeded* message, you can ignore the *Failed* message.
+====
+
+If the Operator does not appear as installed, to troubleshoot further:
+
+* Go to the *Operators* -> *Installed Operators* page and inspect the *Operator Subscriptions* and *Install Plans* tabs for any failure or errors under *Status*.
+* Go to the *Workloads* -> *Pods* page and check the logs for pods in the project namespace.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * monitoring/using-rfhe.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="hw-installing-amq-interconnect-messaging-bus_{context}"]
+= Installing the AMQ messaging bus
+
+To pass Redfish bare-metal event notifications between publisher and subscriber on a node, you can install and configure an AMQ messaging bus to run locally on the node. You do this by installing the AMQ Interconnect Operator for use in the cluster.
+
+[NOTE]
+====
+Use HTTP transport instead of AMQP for PTP and bare-metal events where possible.
+AMQ Interconnect is EOL from 30 June 2024.
+Extended life cycle support (ELS) for AMQ Interconnect ends 29 November 2029.
+For more information see, link:https://access.redhat.com/support/policy/updates/jboss_notes#p_Interconnect[Red Hat AMQ Interconnect support status].
+====
+
+.Prerequisites
+
+* Install the {product-title} CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+* Install the AMQ Interconnect Operator to its own `amq-interconnect` namespace. See link:https://access.redhat.com/documentation/en-us/red_hat_amq/2021.q1/html/deploying_amq_interconnect_on_openshift/adding-operator-router-ocp[Installing the AMQ Interconnect Operator].
+
+.Verification
+
+. Verify that the AMQ Interconnect Operator is available and the required pods are running:
++
+[source,terminal]
+----
+$ oc get pods -n amq-interconnect
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                    READY   STATUS    RESTARTS   AGE
+amq-interconnect-645db76c76-k8ghs       1/1     Running   0          23h
+interconnect-operator-5cb5fc7cc-4v7qm   1/1     Running   0          23h
+----
+
+. Verify that the required `bare-metal-event-relay` bare-metal event producer pod is running in the `openshift-bare-metal-events` namespace:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-bare-metal-events
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                            READY   STATUS    RESTARTS   AGE
+hw-event-proxy-operator-controller-manager-74d5649b7c-dzgtl     2/2     Running   0          25s
+----
+
+
+
+
+:leveloffset!:
+
+[id="subscribing-hw-events"]
+== Subscribing to Redfish BMC bare-metal events for a cluster node
+
+You can subscribe to Redfish BMC events generated on a node in your cluster by creating a `BMCEventSubscription` custom resource (CR) for the node, creating a `HardwareEvent` CR for the event, and creating a `Secret` CR for the BMC.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * monitoring/using-rfhe.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-rfhe-creating-bmc-event-sub_{context}"]
+= Subscribing to bare-metal events
+
+You can configure the baseboard management controller (BMC) to send bare-metal events to subscribed applications running in an {product-title} cluster. Example Redfish bare-metal events include an increase in device temperature, or removal of a device. You subscribe applications to bare-metal events using a REST API.
+
+[IMPORTANT]
+====
+You can only create a `BMCEventSubscription` custom resource (CR) for physical hardware that supports Redfish and has a vendor interface set to `redfish` or `idrac-redfish`.
+====
+
+[NOTE]
+====
+Use the `BMCEventSubscription` CR to subscribe to predefined Redfish events. The Redfish standard does not provide an option to create specific alerts and thresholds. For example, to receive an alert event when an enclosure's temperature exceeds 40° Celsius, you must manually configure the event according to the vendor's recommendations.
+====
+
+Perform the following procedure to subscribe to bare-metal events for the node using a `BMCEventSubscription` CR.
+
+.Prerequisites
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+* Get the user name and password for the BMC.
+
+* Deploy a bare-metal node with a Redfish-enabled Baseboard Management Controller (BMC) in your cluster, and enable Redfish events on the BMC.
++
+[NOTE]
+====
+Enabling Redfish events on specific hardware is outside the scope of this information. For more information about enabling Redfish events for your specific hardware, consult the BMC manufacturer documentation.
+====
+
+.Procedure
+
+. Confirm that the node hardware has the Redfish `EventService` enabled by running the following `curl` command:
++
+[source,terminal]
+----
+$ curl https://<bmc_ip_address>/redfish/v1/EventService --insecure -H 'Content-Type: application/json' -u "<bmc_username>:<password>"
+----
++
+where:
++
+--
+bmc_ip_address:: is the IP address of the BMC where the Redfish events are generated.
+--
++
+.Example output
+[source,terminal]
+----
+{
+   "@odata.context": "/redfish/v1/$metadata#EventService.EventService",
+   "@odata.id": "/redfish/v1/EventService",
+   "@odata.type": "#EventService.v1_0_2.EventService",
+   "Actions": {
+      "#EventService.SubmitTestEvent": {
+         "EventType@Redfish.AllowableValues": ["StatusChange", "ResourceUpdated", "ResourceAdded", "ResourceRemoved", "Alert"],
+         "target": "/redfish/v1/EventService/Actions/EventService.SubmitTestEvent"
+      }
+   },
+   "DeliveryRetryAttempts": 3,
+   "DeliveryRetryIntervalSeconds": 30,
+   "Description": "Event Service represents the properties for the service",
+   "EventTypesForSubscription": ["StatusChange", "ResourceUpdated", "ResourceAdded", "ResourceRemoved", "Alert"],
+   "EventTypesForSubscription@odata.count": 5,
+   "Id": "EventService",
+   "Name": "Event Service",
+   "ServiceEnabled": true,
+   "Status": {
+      "Health": "OK",
+      "HealthRollup": "OK",
+      "State": "Enabled"
+   },
+   "Subscriptions": {
+      "@odata.id": "/redfish/v1/EventService/Subscriptions"
+   }
+}
+----
+
+. Get the {redfish-operator} service route for the cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get route -n openshift-bare-metal-events
+----
++
+.Example output
+[source,terminal]
+----
+NAME            HOST/PORT   PATH                                                                    SERVICES                 PORT   TERMINATION   WILDCARD
+hw-event-proxy              hw-event-proxy-openshift-bare-metal-events.apps.compute-1.example.com   hw-event-proxy-service   9087   edge          None
+----
+
+. Create a `BMCEventSubscription` resource to subscribe to the Redfish events:
+
+.. Save the following YAML in the `bmc_sub.yaml` file:
++
+[source,yaml]
+----
+apiVersion: metal3.io/v1alpha1
+kind: BMCEventSubscription
+metadata:
+  name: sub-01
+  namespace: openshift-machine-api
+spec:
+   hostName: <hostname> <1>
+   destination: <proxy_service_url> <2>
+   context: ''
+----
+<1> Specifies the name or UUID of the worker node where the Redfish events are generated.
+<2> Specifies the bare-metal event proxy service, for example, `https://hw-event-proxy-openshift-bare-metal-events.apps.compute-1.example.com/webhook`.
+
+.. Create the `BMCEventSubscription` CR:
++
+[source,terminal]
+----
+$ oc create -f bmc_sub.yaml
+----
+
+. Optional: To delete the BMC event subscription, run the following command:
++
+[source,terminal]
+----
+$ oc delete -f bmc_sub.yaml
+----
+
+. Optional: To manually create a Redfish event subscription without creating a `BMCEventSubscription` CR, run the following `curl` command, specifying the BMC username and password.
++
+[source,terminal]
+----
+$ curl -i -k -X POST -H "Content-Type: application/json"  -d '{"Destination": "https://<proxy_service_url>", "Protocol" : "Redfish", "EventTypes": ["Alert"], "Context": "root"}' -u <bmc_username>:<password> 'https://<bmc_ip_address>/redfish/v1/EventService/Subscriptions' –v
+----
++
+where:
++
+--
+proxy_service_url:: is the bare-metal event proxy service, for example, `https://hw-event-proxy-openshift-bare-metal-events.apps.compute-1.example.com/webhook`.
+--
++
+--
+bmc_ip_address:: is the IP address of the BMC where the Redfish events are generated.
+--
++
+.Example output
+[source,terminal]
+----
+HTTP/1.1 201 Created
+Server: AMI MegaRAC Redfish Service
+Location: /redfish/v1/EventService/Subscriptions/1
+Allow: GET, POST
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: X-Auth-Token
+Access-Control-Allow-Headers: X-Auth-Token
+Access-Control-Allow-Credentials: true
+Cache-Control: no-cache, must-revalidate
+Link: <http://redfish.dmtf.org/schemas/v1/EventDestination.v1_6_0.json>; rel=describedby
+Link: <http://redfish.dmtf.org/schemas/v1/EventDestination.v1_6_0.json>
+Link: </redfish/v1/EventService/Subscriptions>; path=
+ETag: "1651135676"
+Content-Type: application/json; charset=UTF-8
+OData-Version: 4.0
+Content-Length: 614
+Date: Thu, 28 Apr 2022 08:47:57 GMT
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * monitoring/using-rfhe.adoc
+
+:_module-type: PROCEDURE
+[id="nw-rfhe-querying-redfish-hardware-event-subs_{context}"]
+= Querying Redfish bare-metal event subscriptions with curl
+
+Some hardware vendors limit the amount of Redfish hardware event subscriptions. You can query the number of Redfish event subscriptions by using `curl`.
+
+.Prerequisites
+* Get the user name and password for the BMC.
+* Deploy a bare-metal node with a Redfish-enabled Baseboard Management Controller (BMC) in your cluster, and enable Redfish hardware events on the BMC.
+
+.Procedure
+
+. Check the current subscriptions for the BMC by running the following `curl` command:
++
+[source,terminal]
+----
+$ curl --globoff -H "Content-Type: application/json" -k -X GET --user <bmc_username>:<password> https://<bmc_ip_address>/redfish/v1/EventService/Subscriptions
+----
++
+where:
++
+--
+bmc_ip_address:: is the IP address of the BMC where the Redfish events are generated.
+--
++
+.Example output
+[source,terminal]
+----
+% Total % Received % Xferd Average Speed Time Time Time Current
+Dload Upload Total Spent Left Speed
+100 435 100 435 0 0 399 0 0:00:01 0:00:01 --:--:-- 399
+{
+  "@odata.context": "/redfish/v1/$metadata#EventDestinationCollection.EventDestinationCollection",
+  "@odata.etag": ""
+  1651137375 "",
+  "@odata.id": "/redfish/v1/EventService/Subscriptions",
+  "@odata.type": "#EventDestinationCollection.EventDestinationCollection",
+  "Description": "Collection for Event Subscriptions",
+  "Members": [
+  {
+    "@odata.id": "/redfish/v1/EventService/Subscriptions/1"
+  }],
+  "Members@odata.count": 1,
+  "Name": "Event Subscriptions Collection"
+}
+----
++
+In this example, a single subscription is configured: `/redfish/v1/EventService/Subscriptions/1`.
+
+. Optional: To remove the `/redfish/v1/EventService/Subscriptions/1` subscription with `curl`, run the following command, specifying the BMC username and password:
++
+[source,terminal]
+----
+$ curl --globoff -L -w "%{http_code} %{url_effective}\n" -k -u <bmc_username>:<password >-H "Content-Type: application/json" -d '{}' -X DELETE https://<bmc_ip_address>/redfish/v1/EventService/Subscriptions/1
+----
++
+where:
++
+--
+bmc_ip_address:: is the IP address of the BMC where the Redfish events are generated.
+--
+
+
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * monitoring/using-rfhe.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-rfhe-creating-hardware-event_{context}"]
+= Creating the bare-metal event and Secret CRs
+
+To start using bare-metal events, create the `HardwareEvent` custom resource (CR) for the host where the Redfish hardware is present. Hardware events and faults are reported in the `hw-event-proxy` logs.
+
+.Prerequisites
+
+* You have installed the {product-title} CLI (`oc`).
+
+* You have logged in as a user with `cluster-admin` privileges.
+
+* You have installed the {redfish-operator}.
+
+* You have created a `BMCEventSubscription` CR for the BMC Redfish hardware.
+
+.Procedure
+
+. Create the `HardwareEvent` custom resource (CR):
++
+[NOTE]
+====
+Multiple `HardwareEvent` resources are not permitted.
+====
+
+.. Save the following YAML in the `hw-event.yaml` file:
++
+[source,yaml]
+----
+apiVersion: "event.redhat-cne.org/v1alpha1"
+kind: "HardwareEvent"
+metadata:
+  name: "hardware-event"
+spec:
+  nodeSelector:
+    node-role.kubernetes.io/hw-event: "" <1>
+  logLevel: "debug" <2>
+  msgParserTimeout: "10" <3>
+----
++
+--
+<1> Required. Use the `nodeSelector` field to target nodes with the specified label, for example, `node-role.kubernetes.io/hw-event: ""`.
++
+[NOTE]
+====
+In {product-title} 4.13 or later, you do not need to set the `spec.transportHost` field in the `HardwareEvent` resource when you use HTTP transport for bare-metal events.
+Set `transportHost` only when you use AMQP transport for bare-metal events.
+====
+<2> Optional. The default value is `debug`. Sets the log level in `hw-event-proxy` logs. The following log levels are available: `fatal`, `error`, `warning`, `info`, `debug`, `trace`.
+<3> Optional. Sets the timeout value in milliseconds for the Message Parser. If a message parsing request is not responded to within the timeout duration, the original hardware event message is passed to the cloud native event framework. The default value is 10.
+--
+
+.. Apply the `HardwareEvent` CR in the cluster:
++
+[source,terminal]
+----
+$ oc create -f hardware-event.yaml
+----
+
+. Create a BMC username and password `Secret` CR that enables the hardware events proxy to access the Redfish message registry for the bare-metal host.
++
+.. Save the following YAML in the `hw-event-bmc-secret.yaml` file:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: redfish-basic-auth
+type: Opaque
+stringData: <1>
+  username: <bmc_username>
+  password: <bmc_password>
+  # BMC host DNS or IP address
+  hostaddr: <bmc_host_ip_address>
+----
+<1> Enter plain text values for the various items under `stringData`.
++
+.. Create the `Secret` CR:
++
+[source,terminal]
+----
+$ oc create -f hw-event-bmc-secret.yaml
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../storage/persistent_storage/persistent_storage_local/persistent-storage-local.adoc#persistent-storage-using-local-volume[Persistent storage using local volumes]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * monitoring/using-rfhe.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cnf-rfhe-notifications-api-refererence_{context}"]
+= Subscribing applications to bare-metal events REST API reference
+
+Use the bare-metal events REST API to subscribe an application to the bare-metal events that are generated on the parent node.
+
+Subscribe applications to Redfish events by using the resource address `/cluster/node/<node_name>/redfish/event`, where `<node_name>` is the cluster node running the application.
+
+Deploy your `cloud-event-consumer` application container and `cloud-event-proxy` sidecar container in a separate application pod. The `cloud-event-consumer` application subscribes to the `cloud-event-proxy` container in the application pod.
+
+Use the following API endpoints to subscribe the `cloud-event-consumer` application to Redfish events posted by the `cloud-event-proxy` container at [x-]`http://localhost:8089/api/ocloudNotifications/v1/` in the application pod:
+
+* `/api/ocloudNotifications/v1/subscriptions`
+- `POST`: Creates a new subscription
+- `GET`: Retrieves a list of subscriptions
+* `/api/ocloudNotifications/v1/subscriptions/<subscription_id>`
+- `GET`: Returns details for the specified subscription ID
+* `api/ocloudNotifications/v1/subscriptions/status/<subscription_id>`
+- `PUT`: Creates a new status ping request for the specified subscription ID
+* `/api/ocloudNotifications/v1/health`
+- `GET`: Returns the health status of `ocloudNotifications` API
+
+[NOTE]
+====
+`9089` is the default port for the `cloud-event-consumer` container deployed in the application pod. You can configure a different port for your application as required.
+====
+
+[discrete]
+== api/ocloudNotifications/v1/subscriptions
+
+[discrete]
+=== HTTP method
+
+`GET api/ocloudNotifications/v1/subscriptions`
+
+[discrete]
+==== Description
+
+Returns a list of subscriptions. If subscriptions exist, a `200 OK` status code is returned along with the list of subscriptions.
+
+.Example API response
+[source,json]
+----
+[
+ {
+  "id": "ca11ab76-86f9-428c-8d3a-666c24e34d32",
+  "endpointUri": "http://localhost:9089/api/ocloudNotifications/v1/dummy",
+  "uriLocation": "http://localhost:8089/api/ocloudNotifications/v1/subscriptions/ca11ab76-86f9-428c-8d3a-666c24e34d32",
+  "resource": "/cluster/node/openshift-worker-0.openshift.example.com/redfish/event"
+ }
+]
+----
+
+[discrete]
+=== HTTP method
+
+`POST api/ocloudNotifications/v1/subscriptions`
+
+[discrete]
+==== Description
+
+Creates a new subscription. If a subscription is successfully created, or if it already exists, a `201 Created` status code is returned.
+
+.Query parameters
+|===
+| Parameter | Type
+
+| subscription
+| data
+|===
+
+.Example payload
+[source,json]
+----
+{
+  "uriLocation": "http://localhost:8089/api/ocloudNotifications/v1/subscriptions",
+  "resource": "/cluster/node/openshift-worker-0.openshift.example.com/redfish/event"
+}
+----
+
+[discrete]
+== api/ocloudNotifications/v1/subscriptions/<subscription_id>
+
+[discrete]
+=== HTTP method
+
+`GET api/ocloudNotifications/v1/subscriptions/<subscription_id>`
+
+[discrete]
+==== Description
+
+Returns details for the subscription with ID `<subscription_id>`
+
+.Query parameters
+|===
+| Parameter | Type
+
+| `<subscription_id>`
+| string
+|===
+
+.Example API response
+[source,json]
+----
+{
+  "id":"ca11ab76-86f9-428c-8d3a-666c24e34d32",
+  "endpointUri":"http://localhost:9089/api/ocloudNotifications/v1/dummy",
+  "uriLocation":"http://localhost:8089/api/ocloudNotifications/v1/subscriptions/ca11ab76-86f9-428c-8d3a-666c24e34d32",
+  "resource":"/cluster/node/openshift-worker-0.openshift.example.com/redfish/event"
+}
+----
+
+[discrete]
+== api/ocloudNotifications/v1/subscriptions/status/<subscription_id>
+
+[discrete]
+=== HTTP method
+
+`PUT api/ocloudNotifications/v1/subscriptions/status/<subscription_id>`
+
+[discrete]
+==== Description
+
+Creates a new status ping request for subscription with ID `<subscription_id>`. If a subscription is present, the status request is successful and a `202 Accepted` status code is returned.
+
+.Query parameters
+|===
+| Parameter | Type
+
+| `<subscription_id>`
+| string
+|===
+
+.Example API response
+[source,json]
+----
+{"status":"ping sent"}
+----
+
+[discrete]
+== api/ocloudNotifications/v1/health/
+
+[discrete]
+=== HTTP method
+
+`GET api/ocloudNotifications/v1/health/`
+
+[discrete]
+==== Description
+
+Returns the health status for the `ocloudNotifications` REST API.
+
+.Example API response
+[source,terminal]
+----
+OK
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * monitoring/using-rfhe.adoc
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-migrating-from-amqp-to-http-transport_{context}"]
+= Migrating consumer applications to use HTTP transport for PTP or bare-metal events
+
+If you have previously deployed PTP or bare-metal events consumer applications, you need to update the applications to use HTTP message transport.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in as a user with `cluster-admin` privileges.
+
+* You have updated the PTP Operator or {redfish-operator} to version 4.13+ which uses HTTP transport by default.
+
+.Procedure
+
+. Update your events consumer application to use HTTP transport.
+Set the `http-event-publishers` variable for the cloud event sidecar deployment.
++
+For example, in a cluster with PTP events configured, the following YAML snippet illustrates a cloud event sidecar deployment:
++
+[source,yaml]
+----
+containers:
+  - name: cloud-event-sidecar
+    image: cloud-event-sidecar
+    args:
+      - "--metrics-addr=127.0.0.1:9091"
+      - "--store-path=/store"
+      - "--transport-host=consumer-events-subscription-service.cloud-events.svc.cluster.local:9043"
+      - "--http-event-publishers=ptp-event-publisher-service-NODE_NAME.openshift-ptp.svc.cluster.local:9043" <1>
+      - "--api-port=8089"
+----
+<1> The PTP Operator automatically resolves `NODE_NAME` to the host that is generating the PTP events.
+For example, `compute-1.example.com`.
++
+In a cluster with bare-metal events configured, set the `http-event-publishers` field to `hw-event-publisher-service.openshift-bare-metal-events.svc.cluster.local:9043` in the cloud event sidecar deployment CR.
+
+. Deploy the `consumer-events-subscription-service` service alongside the events consumer application.
+For example:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    service.alpha.openshift.io/serving-cert-secret-name: sidecar-consumer-secret
+  name: consumer-events-subscription-service
+  namespace: cloud-events
+  labels:
+    app: consumer-service
+spec:
+  ports:
+    - name: sub-port
+      port: 9043
+  selector:
+    app: consumer
+  clusterIP: None
+  sessionAffinity: None
+  type: ClusterIP
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,snippets/technology-preview,modules/nw-rfhe-introduction,modules/snippets/ptp-amq-interconnect-eol,modules/nw-rfhe-installing-operator-cli,modules/nw-rfhe-installing-operator-web-console,modules/hw-installing-amq-interconnect-messaging-bus,modules/nw-rfhe-creating-bmc-event-sub,modules/nw-rfhe-quering-redfish-hardware-event-subs,modules/nw-rfhe-creating-hardware-event,modules/cnf-rfhe-notifications-api-refererence,modules/cnf-migrating-from-amqp-to-http-transport

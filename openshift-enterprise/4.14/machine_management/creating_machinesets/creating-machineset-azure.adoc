@@ -1,0 +1,2084 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="creating-machineset-azure"]
+= Creating a compute machine set on Azure
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: creating-machineset-azure
+
+toc::[]
+
+You can create a different compute machine set to serve a specific purpose in your {product-title} cluster on Microsoft Azure. For example, you might create infrastructure machine sets and related machines so that you can move supporting workloads to the new machines.
+
+//[IMPORTANT] admonition for UPI
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-osp.adoc
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+// * machine_management/deploying-machine-health-checks.adoc
+// * machine_management/manually-scaling-machinesets.adoc
+// * post_installation_configuration/node-tasks.adoc
+// * nodes-nodes-creating-infrastructure-nodes.adoc
+
+[IMPORTANT]
+====
+You can use the advanced machine management and scaling capabilities only in clusters where the Machine API is operational. Clusters with user-provisioned infrastructure require additional validation and configuration to use the Machine API.
+
+Clusters with the infrastructure platform type `none` cannot use the Machine API. This limitation applies even if the compute machines that are attached to the cluster are installed on a platform that supports the feature. This parameter cannot be changed after installation.
+
+To view the platform type for your cluster, run the following command:
+
+[source,terminal]
+----
+$ oc get infrastructure cluster -o jsonpath='{.status.platform}'
+----
+====
+
+:leveloffset!:
+
+//Sample YAML for a compute machine set custom resource on Azure
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * machine_management/creating-machineset-azure.adoc
+
+
+:_mod-docs-content-type: REFERENCE
+[id="machineset-yaml-azure_{context}"]
+= Sample YAML for a compute machine set custom resource on Azure
+
+This sample YAML defines a compute machine set that runs in the `1` Microsoft Azure zone in a region and creates nodes that are labeled with
+`node-role.kubernetes.io/<role>: ""`.
+`node-role.kubernetes.io/infra: ""`.
+
+In this sample, `<infrastructure_id>` is the infrastructure ID label that is based on the cluster ID that you set when you provisioned the cluster, and
+`<role>`
+`<infra>`
+is the node label to add.
+
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+    machine.openshift.io/cluster-api-machine-role: <role> <2>
+    machine.openshift.io/cluster-api-machine-type: <role> <2>
+  name: <infrastructure_id>-<role>-<region> <3>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+      machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>-<region> <3>
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+        machine.openshift.io/cluster-api-machine-role: <role> <2>
+        machine.openshift.io/cluster-api-machine-type: <role> <2>
+        machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>-<region> <3>
+    spec:
+      metadata:
+        creationTimestamp: null
+        labels:
+          machine.openshift.io/cluster-api-machineset: <machineset_name> <4>
+          node-role.kubernetes.io/<role>: "" <2>
+      providerSpec:
+        value:
+          apiVersion: azureproviderconfig.openshift.io/v1beta1
+          credentialsSecret:
+            name: azure-cloud-credentials
+            namespace: openshift-machine-api
+          image: <5>
+            offer: ""
+            publisher: ""
+            resourceID: /resourceGroups/<infrastructure_id>-rg/providers/Microsoft.Compute/images/<infrastructure_id> <6>
+            sku: ""
+            version: ""
+          internalLoadBalancer: ""
+          kind: AzureMachineProviderSpec
+          location: <region> <7>
+          managedIdentity: <infrastructure_id>-identity <1>
+          metadata:
+            creationTimestamp: null
+          natRule: null
+          networkResourceGroup: ""
+          osDisk:
+            diskSizeGB: 128
+            managedDisk:
+              storageAccountType: Premium_LRS
+            osType: Linux
+          publicIP: false
+          publicLoadBalancer: ""
+          resourceGroup: <infrastructure_id>-rg <1>
+          sshPrivateKey: ""
+          sshPublicKey: ""
+          tags:
+            - name: <custom_tag_name> <9>
+              value: <custom_tag_value> <9>
+          subnet: <infrastructure_id>-<role>-subnet <1> <2>
+          userDataSecret:
+            name: worker-user-data <2>
+          vmSize: Standard_D4s_v3
+          vnet: <infrastructure_id>-vnet <1>
+          zone: "1" <8>
+----
+<1> Specify the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. If you have the OpenShift CLI installed, you can obtain the infrastructure ID by running the following command:
++
+[source,terminal]
+----
+$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster
+----
++
+You can obtain the subnet by running the following command:
++
+[source,terminal]
+----
+$  oc -n openshift-machine-api \
+    -o jsonpath='{.spec.template.spec.providerSpec.value.subnet}{"\n"}' \
+    get machineset/<infrastructure_id>-worker-centralus1
+----
+You can obtain the vnet by running the following command:
++
+[source,terminal]
+----
+$  oc -n openshift-machine-api \
+    -o jsonpath='{.spec.template.spec.providerSpec.value.vnet}{"\n"}' \
+    get machineset/<infrastructure_id>-worker-centralus1
+----
+<2> Specify the node label to add.
+<3> Specify the infrastructure ID, node label, and region.
+<4> Optional: Specify the compute machine set name to enable the use of availability sets. This setting only applies to new compute machines.
+<5> Specify the image details for your compute machine set. If you want to use an Azure Marketplace image, see "Selecting an Azure Marketplace image".
+<6> Specify an image that is compatible with your instance type. The Hyper-V generation V2 images created by the installation program have a `-gen2` suffix, while V1 images have the same name without the suffix.
+<7> Specify the region to place machines on.
+<8> Specify the zone within your region to place machines on. Be sure that your region supports the zone that you specify.
+<9> Optional: Specify custom tags in your machine set. Provide the tag name in `<custom_tag_name>` field and the corresponding tag value in `<custom_tag_value>` field.
+
+
+:leveloffset!:
+
+//Creating a compute machine set
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-osp.adoc
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-aws.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-azure.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-vsphere.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-gcp.adoc
+// * post_installation_configuration/cluster-tasks.adoc
+// * post_installation_configuration/installation-creating-aws-subnet-localzone.adoc
+// * post_installation_configuration/aws-compute-edge-tasks.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-creating_{context}"]
+= Creating a compute machine set
+
+In addition to the compute machine sets created by the installation program, you can create your own to dynamically manage the machine compute resources for specific workloads of your choice.
+
+
+.Prerequisites
+
+* Deploy an {product-title} cluster.
+* Install the OpenShift CLI (`oc`).
+* Log in to `oc` as a user with `cluster-admin` permission.
+
+.Procedure
+
+. Create a new YAML file that contains the compute machine set custom resource (CR) sample and is named `<file_name>.yaml`.
++
+Ensure that you set the `<clusterID>` and `<role>` parameter values.
+
+. Optional: If you are not sure which value to set for a specific field, you can check an existing compute machine set from your cluster.
+
+.. To list the compute machine sets in your cluster, run the following command:
++
+[source,terminal]
+----
+$ oc get machinesets -n openshift-machine-api
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m
+----
+
+.. To view values of a specific compute machine set custom resource (CR), run the following command:
++
+[source,terminal]
+----
+$ oc get machineset <machineset_name> \
+  -n openshift-machine-api -o yaml
+----
++
+--
+.Example output
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+  name: <infrastructure_id>-<role> <2>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: <infrastructure_id>
+      machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: <infrastructure_id>
+        machine.openshift.io/cluster-api-machine-role: <role>
+        machine.openshift.io/cluster-api-machine-type: <role>
+        machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>
+    spec:
+      providerSpec: <3>
+        ...
+----
+<1> The cluster infrastructure ID.
+<2> A default node label.
++
+[NOTE]
+====
+For clusters that have user-provisioned infrastructure, a compute machine set can only create `worker` and `infra` type machines.
+====
+<3> The values in the `<providerSpec>` section of the compute machine set CR are platform-specific. For more information about `<providerSpec>` parameters in the CR, see the sample compute machine set CR configuration for your provider.
+--
+
+
+. Create a `MachineSet` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <file_name>.yaml
+----
+
+
+.Verification
+
+* View the list of compute machine sets by running the following command:
++
+[source,terminal]
+----
+$ oc get machineset -n openshift-machine-api
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-infra-us-east-1a    1         1         1       1           11m
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m
+----
++
+When the new compute machine set is available, the `DESIRED` and `CURRENT` values match. If the compute machine set is not available, wait a few minutes and run the command again.
+
+
+
+:leveloffset!:
+
+//Selecting an Azure Marketplace image
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-azure-customizations.adoc
+// * installing/installing_aws/installing-azure-user-infra.adoc
+// * machine_management/creating-machineset-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:mapi:
+
+//mpytlak: The procedure differs depending on whether this module is used in an IPI or UPI assembly.
+//jrouth: Also some variations for when it appears in the machine management content (`mapi`).
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-azure-marketplace-subscribe_{context}"]
+= Using the Azure Marketplace offering
+You can create a machine set running on Azure that deploys machines that use the Azure Marketplace offering. To use this offering, you must first obtain the Azure Marketplace image. When obtaining your image, consider the following:
+
+* While the images are the same, the Azure Marketplace publisher is different depending on your region. If you are located in North America, specify `redhat` as the publisher. If you are located in EMEA, specify `redhat-limited` as the publisher.
+* The offer includes a `rh-ocp-worker` SKU and a `rh-ocp-worker-gen1` SKU. The `rh-ocp-worker` SKU represents a Hyper-V generation version 2 VM image. The default instance types used in {product-title} are version 2 compatible. If you plan to use an instance type that is only version 1 compatible, use the image associated with the `rh-ocp-worker-gen1` SKU. The `rh-ocp-worker-gen1` SKU represents a Hyper-V version 1 VM image.
+//What happens with control plane machines? "worker" SKU seems incorrect
+
+[IMPORTANT]
+====
+Installing images with the Azure marketplace is not supported on clusters with 64-bit ARM instances.
+====
+
+.Prerequisites
+
+* You have installed the Azure CLI client `(az)`.
+* Your Azure account is entitled for the offer and you have logged into this account with the Azure CLI client.
+
+.Procedure
+
+. Display all of the available {product-title} images by running one of the following commands:
++
+--
+** North America:
++
+[source,terminal]
+----
+$  az vm image list --all --offer rh-ocp-worker --publisher redhat -o table
+----
++
+.Example output
+[source,terminal]
+----
+Offer          Publisher       Sku                 Urn                                                             Version
+-------------  --------------  ------------------  --------------------------------------------------------------  -----------------
+rh-ocp-worker  RedHat          rh-ocp-worker       RedHat:rh-ocp-worker:rh-ocp-worker:413.92.2023101700            413.92.2023101700
+rh-ocp-worker  RedHat          rh-ocp-worker-gen1  RedHat:rh-ocp-worker:rh-ocp-worker-gen1:413.92.2023101700       413.92.2023101700
+----
+** EMEA:
++
+[source,terminal]
+----
+$  az vm image list --all --offer rh-ocp-worker --publisher redhat-limited -o table
+----
++
+.Example output
+[source,terminal]
+----
+Offer          Publisher       Sku                 Urn                                                                     Version
+-------------  --------------  ------------------  --------------------------------------------------------------          -----------------
+rh-ocp-worker  redhat-limited  rh-ocp-worker       redhat-limited:rh-ocp-worker:rh-ocp-worker:413.92.2023101700            413.92.2023101700
+rh-ocp-worker  redhat-limited  rh-ocp-worker-gen1  redhat-limited:rh-ocp-worker:rh-ocp-worker-gen1:413.92.2023101700       413.92.2023101700
+----
+--
++
+[NOTE]
+====
+Regardless of the version of {product-title} that you install, the correct version of the Azure Marketplace image to use is 4.13. If required, your VMs are automatically upgraded as part of the installation process.
+====
+. Inspect the image for your offer by running one of the following commands:
+** North America:
++
+[source,terminal]
+----
+$ az vm image show --urn redhat:rh-ocp-worker:rh-ocp-worker:<version>
+----
+** EMEA:
++
+[source,terminal]
+----
+$ az vm image show --urn redhat-limited:rh-ocp-worker:rh-ocp-worker:<version>
+----
+. Review the terms of the offer by running one of the following commands:
+** North America:
++
+[source,terminal]
+----
+$ az vm image terms show --urn redhat:rh-ocp-worker:rh-ocp-worker:<version>
+----
+** EMEA:
++
+[source,terminal]
+----
+$ az vm image terms show --urn redhat-limited:rh-ocp-worker:rh-ocp-worker:<version>
+----
+. Accept the terms of the offering by running one of the following commands:
+** North America:
++
+[source,terminal]
+----
+$ az vm image terms accept --urn redhat:rh-ocp-worker:rh-ocp-worker:<version>
+----
+** EMEA:
++
+[source,terminal]
+----
+$ az vm image terms accept --urn redhat-limited:rh-ocp-worker:rh-ocp-worker:<version>
+----
+. Record the image details of your offer, specifically the values for `publisher`, `offer`, `sku`, and `version`.
+
+. Add the following parameters to the `providerSpec` section of your machine set YAML file using the image details for your offer:
++
+.Sample `providerSpec` image values for Azure Marketplace machines
+[source,yaml]
+----
+providerSpec:
+  value:
+    image:
+      offer: rh-ocp-worker
+      publisher: redhat
+      resourceID: ""
+      sku: rh-ocp-worker
+      type: MarketplaceWithPlan
+      version: 413.92.2023101700
+----
+//offer also has "worker"
+
+:!mapi:
+
+:leveloffset!:
+
+//Enabling Azure boot diagnostics
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-azure-boot-diagnostics_{context}"]
+= Enabling Azure boot diagnostics
+
+You can enable boot diagnostics on Azure machines that your machine set creates.
+
+.Prerequisites
+
+* Have an existing Microsoft Azure
+Stack Hub
+cluster.
+
+.Procedure
+
+* Add the `diagnostics` configuration that is applicable to your storage type to the `providerSpec` field in your machine set YAML file:
+
+** For an Azure Managed storage account:
++
+[source,yaml]
+----
+providerSpec:
+  diagnostics:
+    boot:
+      storageAccountType: AzureManaged <1>
+----
++
+<1> Specifies an Azure Managed storage account.
+
+** For an Azure Unmanaged storage account:
++
+[source,yaml]
+----
+providerSpec:
+  diagnostics:
+    boot:
+      storageAccountType: CustomerManaged <1>
+      customerManaged:
+        storageAccountURI: https://<storage-account>.blob.core.windows.net <2>
+----
++
+<1> Specifies an Azure Unmanaged storage account.
+<2> Replace `<storage-account>` with the name of your storage account.
++
+[NOTE]
+====
+Only the Azure Blob Storage data service is supported.
+====
+
+.Verification
+
+* On the Microsoft Azure portal, review the *Boot diagnostics* page for a machine deployed by the machine set, and verify that you can see the serial logs for the machine.
+
+
+:leveloffset!:
+
+//Machine sets that deploy machines as Spot VMs
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+
+:azure:
+
+[id="machineset-non-guaranteed-instance_{context}"]
+= Machine sets that deploy machines as Spot Instances
+= Machine sets that deploy machines as Spot VMs
+= Machine sets that deploy machines as preemptible VM instances
+You can save on costs by creating a compute machine set running on Azure that deploys machines as non-guaranteed Spot VMs. Spot VMs utilize unused Azure capacity and are less expensive than standard VMs. You can use Spot VMs for workloads that can tolerate interruptions, such as batch or stateless, horizontally scalable workloads.
+
+Azure can terminate a Spot VM at any time. Azure gives a 30-second warning to the user when an interruption occurs. {product-title} begins to remove the workloads from the affected instances when Azure issues the termination warning.
+
+Interruptions can occur when using Spot VMs for the following reasons:
+
+* The instance price exceeds your maximum price
+* The supply of Spot VMs decreases
+* Azure needs capacity back
+
+
+When Azure terminates an instance, a termination handler running on the Spot VM node deletes the machine resource. To satisfy the compute machine set `replicas` quantity, the compute machine set creates a machine that requests a Spot VM.
+
+:!azure:
+
+:leveloffset!:
+
+//Creating Spot VMs by using compute machine sets
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+
+:azure:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-creating-non-guaranteed-instance_{context}"]
+= Creating Spot Instances by using compute machine sets
+= Creating Spot VMs by using compute machine sets
+= Creating preemptible VM instances by using compute machine sets
+
+You can launch a Spot Instance on AWS by adding `spotMarketOptions` to your compute machine set YAML file.
+You can launch a Spot VM on Azure by adding `spotVMOptions` to your compute machine set YAML file.
+You can launch a preemptible VM instance on GCP by adding `preemptible` to your compute machine set YAML file.
+
+.Procedure
+* Add the following line under the `providerSpec` field:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+    spotVMOptions: {}
+----
++
+You can optionally set the `spotVMOptions.maxPrice` field to limit the cost of the Spot VM. For example you can set `maxPrice: '0.98765'`. If the `maxPrice` is set, this value is used as the hourly maximum spot price. If it is not set, the maximum price defaults to `-1` and charges up to the standard VM price.
++
+Azure caps Spot VM prices at the standard price. Azure will not evict an instance due to pricing if the instance is set with the default `maxPrice`. However, an instance can still be evicted due to capacity restrictions.
+
+[NOTE]
+====
+It is strongly recommended to use the default standard VM price as the `maxPrice` value and to not set the maximum price for Spot VMs.
+====
+
+:!azure:
+
+:leveloffset!:
+
+//Machine sets that deploy machines on Ephemeral OS disks
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+
+[id="machineset-azure-ephemeral-os_{context}"]
+= Machine sets that deploy machines on Ephemeral OS disks
+
+You can create a compute machine set running on Azure that deploys machines on Ephemeral OS disks. Ephemeral OS disks use local VM capacity rather than remote Azure Storage. This configuration therefore incurs no additional cost and provides lower latency for reading, writing, and reimaging.
+
+[role="_additional-resources"]
+.Additional resources
+
+* For more information, see the Microsoft Azure documentation about link:https://docs.microsoft.com/en-us/azure/virtual-machines/ephemeral-os-disks[Ephemeral OS disks for Azure VMs].
+
+:leveloffset!:
+
+//Creating machines on Ephemeral OS disks by using compute machine sets
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-creating-azure-ephemeral-os_{context}"]
+= Creating machines on Ephemeral OS disks by using compute machine sets
+
+You can launch machines on Ephemeral OS disks on Azure by editing your compute machine set YAML file.
+
+.Prerequisites
+
+* Have an existing Microsoft Azure cluster.
+
+.Procedure
+
+. Edit the custom resource (CR) by running the following command:
++
+[source,terminal]
+----
+$ oc edit machineset <machine-set-name>
+----
++
+where `<machine-set-name>` is the compute machine set that you want to provision machines on Ephemeral OS disks.
+
+. Add the following to the `providerSpec` field:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+    ...
+    osDisk:
+       ...
+       diskSettings: <1>
+         ephemeralStorageLocation: Local <1>
+       cachingType: ReadOnly <1>
+       managedDisk:
+         storageAccountType: Standard_LRS <2>
+       ...
+----
++
+<1> These lines enable the use of Ephemeral OS disks.
+<2> Ephemeral OS disks are only supported for VMs or scale set instances that use the Standard LRS storage account type.
++
+[IMPORTANT]
+====
+The implementation of Ephemeral OS disk support in {product-title} only supports the `CacheDisk` placement type. Do not change the `placement` configuration setting.
+====
+
+. Create a compute machine set using the updated configuration:
++
+[source,terminal]
+----
+$ oc create -f <machine-set-config>.yaml
+----
+
+.Verification
+
+* On the Microsoft Azure portal, review the *Overview* page for a machine deployed by the compute machine set, and verify that the `Ephemeral OS disk` field is set to `OS cache placement`.
+
+:leveloffset!:
+
+//Machine sets that deploy machines on ultra disks as data disks
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * storage/persistent_storage/persistent-storage-azure.adoc
+// * storage/persistent_storage/persistent-storage-csi-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:mapi:
+
+:_mod-docs-content-type: CONCEPT
+[id="machineset-azure-ultra-disk_{context}"]
+= Machine sets that deploy machines with ultra disks as data disks
+= Machine sets that deploy machines with ultra disks using PVCs
+
+You can create a machine set running on Azure that deploys machines with ultra disks. Ultra disks are high-performance storage that are intended for use with the most demanding data workloads.
+
+You can also create a persistent volume claim (PVC) that dynamically binds to a storage class backed by Azure ultra disks and mounts them to pods.
+
+[NOTE]
+====
+Data disks do not support the ability to specify disk throughput or disk IOPS. You can configure these properties by using PVCs.
+====
+
+
+:!mapi:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* link:https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types#ultra-disks[Microsoft Azure ultra disks documentation]
+* xref:../../storage/container_storage_interface/persistent-storage-csi-azure.adoc#machineset-azure-ultra-disk_persistent-storage-csi-azure[Machine sets that deploy machines on ultra disks using CSI PVCs]
+* xref:../../storage/persistent_storage/persistent-storage-azure.adoc#machineset-azure-ultra-disk_persistent-storage-azure[Machine sets that deploy machines on ultra disks using in-tree PVCs]
+
+//Creating machines on ultra disks by using machine sets
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * storage/persistent_storage/persistent-storage-azure.adoc
+// * storage/persistent_storage/persistent-storage-csi-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:mapi:
+
+:machine-role: worker
+:machine-role: master
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-creating-azure-ultra-disk_{context}"]
+= Creating machines with ultra disks by using machine sets
+
+You can deploy machines with ultra disks on Azure by editing your machine set YAML file.
+
+.Prerequisites
+
+* Have an existing Microsoft Azure cluster.
+
+.Procedure
+
+. Create a custom secret in the `openshift-machine-api` namespace using the `{machine-role}` data secret by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-machine-api \
+get secret <role>-user-data \ <1>
+--template='{{index .data.userData | base64decode}}' | jq > userData.txt <2>
+----
+<1> Replace `<role>` with `{machine-role}`.
+<2> Specify `userData.txt` as the name of the new custom secret.
+
+. In a text editor, open the `userData.txt` file and locate the final `}` character in the file.
+
+.. On the immediately preceding line, add a `,`.
+
+.. Create a new line after the `,` and add the following configuration details:
++
+[source,json]
+----
+"storage": {
+  "disks": [ <1>
+    {
+      "device": "/dev/disk/azure/scsi1/lun0", <2>
+      "partitions": [ <3>
+        {
+          "label": "lun0p1", <4>
+          "sizeMiB": 1024, <5>
+          "startMiB": 0
+        }
+      ]
+    }
+  ],
+  "filesystems": [ <6>
+    {
+      "device": "/dev/disk/by-partlabel/lun0p1",
+      "format": "xfs",
+      "path": "/var/lib/lun0p1"
+    }
+  ]
+},
+"systemd": {
+  "units": [ <7>
+    {
+      "contents": "[Unit]\nBefore=local-fs.target\n[Mount]\nWhere=/var/lib/lun0p1\nWhat=/dev/disk/by-partlabel/lun0p1\nOptions=defaults,pquota\n[Install]\nWantedBy=local-fs.target\n", <8>
+      "enabled": true,
+      "name": "var-lib-lun0p1.mount"
+    }
+  ]
+}
+----
+<1> The configuration details for the disk that you want to attach to a node as an ultra disk.
+<2> Specify the `lun` value that is defined in the `dataDisks` stanza of the machine set you are using. For example, if the machine set contains `lun: 0`, specify `lun0`. You can initialize multiple data disks by specifying multiple `"disks"` entries in this configuration file. If you specify multiple `"disks"` entries, ensure that the `lun` value for each matches the value in the machine set.
+<3> The configuration details for a new partition on the disk.
+<4> Specify a label for the partition. You might find it helpful to use hierarchical names, such as `lun0p1` for the first partition of `lun0`.
+<5> Specify the total size in MiB of the partition.
+<6> Specify the filesystem to use when formatting a partition. Use the partition label to specify the partition.
+<7> Specify a `systemd` unit to mount the partition at boot. Use the partition label to specify the partition. You can create multiple partitions by specifying multiple `"partitions"` entries in this configuration file. If you specify multiple `"partitions"` entries, you must specify a `systemd` unit for each.
+<8> For `Where`, specify the value of `storage.filesystems.path`. For `What`, specify the value of `storage.filesystems.device`.
+
+. Extract the disabling template value to a file called `disableTemplating.txt` by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-machine-api get secret <role>-user-data \ <1>
+--template='{{index .data.disableTemplating | base64decode}}' | jq > disableTemplating.txt
+----
+<1> Replace `<role>` with `{machine-role}`.
+
+. Combine the `userData.txt` file and `disableTemplating.txt` file to create a data secret file by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-machine-api create secret generic <role>-user-data-x5 \ <1>
+--from-file=userData=userData.txt \
+--from-file=disableTemplating=disableTemplating.txt
+----
+<1> For `<role>-user-data-x5`, specify the name of the secret. Replace `<role>` with `{machine-role}`.
+
+. Copy an existing Azure `MachineSet` custom resource (CR) and edit it by running the following command:
++
+[source,terminal]
+----
+$ oc edit machineset <machine-set-name>
+----
++
+where `<machine-set-name>` is the machine set that you want to provision machines with ultra disks.
+
+. Add the following lines in the positions indicated:
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+spec:
+  template:
+    spec:
+      metadata:
+        labels:
+          disk: ultrassd <1>
+      providerSpec:
+        value:
+          ultraSSDCapability: Enabled <2>
+          dataDisks: <2>
+          - nameSuffix: ultrassd
+            lun: 0
+            diskSizeGB: 4
+            deletionPolicy: Delete
+            cachingType: None
+            managedDisk:
+              storageAccountType: UltraSSD_LRS
+          userDataSecret:
+            name: <role>-user-data-x5 <3>
+----
+<1> Specify a label to use to select a node that is created by this machine set. This procedure uses `disk.ultrassd` for this value.
+<2> These lines enable the use of ultra disks.
+For `dataDisks`, include the entire stanza.
+<3> Specify the user data secret created earlier. Replace `<role>` with `{machine-role}`.
+
+. Create a machine set using the updated configuration by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <machine-set-name>.yaml
+----
+
+
+
+.Verification
+
+. Validate that the machines are created by running the following command:
++
+[source,terminal]
+----
+$ oc get machines
+----
++
+The machines should be in the `Running` state.
+
+. For a machine that is running and has a node attached, validate the partition by running the following command:
++
+[source,terminal]
+----
+$ oc debug node/<node-name> -- chroot /host lsblk
+----
++
+In this command, `oc debug node/<node-name>` starts a debugging shell on the node `<node-name>` and passes a command with `--`. The passed command `chroot /host` provides access to the underlying host OS binaries, and `lsblk` shows the block devices that are attached to the host OS machine.
+
+.Next steps
+
+* To use an ultra disk from within a pod, create a workload that uses the mount point. Create a YAML file similar to the following example:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ssd-benchmark1
+spec:
+  containers:
+  - name: ssd-benchmark1
+    image: nginx
+    ports:
+      - containerPort: 80
+        name: "http-server"
+    volumeMounts:
+    - name: lun0p1
+      mountPath: "/tmp"
+  volumes:
+    - name: lun0p1
+      hostPath:
+        path: /var/lib/lun0p1
+        type: DirectoryOrCreate
+  nodeSelector:
+    disktype: ultrassd
+----
+
+
+:!mapi:
+
+:leveloffset!:
+
+//Troubleshooting resources for machine sets that enable ultra disks
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * storage/persistent_storage/persistent-storage-azure.adoc
+// * storage/persistent_storage/persistent-storage-csi-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:mapi:
+
+:_mod-docs-content-type: REFERENCE
+[id="machineset-troubleshooting-azure-ultra-disk_{context}"]
+= Troubleshooting resources for machine sets that enable ultra disks
+
+Use the information in this section to understand and recover from issues you might encounter.
+
+
+[id="ts-mapi-attach-misconfigure_{context}"]
+== Incorrect ultra disk configuration
+
+If an incorrect configuration of the `ultraSSDCapability` parameter is specified in the machine set, the machine provisioning fails.
+
+For example, if the `ultraSSDCapability` parameter is set to `Disabled`, but an ultra disk is specified in the `dataDisks` parameter, the following error message appears:
+
+[source,terminal]
+----
+StorageAccountType UltraSSD_LRS can be used only when additionalCapabilities.ultraSSDEnabled is set.
+----
+
+* To resolve this issue, verify that your machine set configuration is correct.
+
+[id="ts-mapi-attach-unsupported_{context}"]
+== Unsupported disk parameters
+
+If a region, availability zone, or instance size that is not compatible with ultra disks is specified in the machine set, the machine provisioning fails. Check the logs for the following error message:
+
+[source,terminal]
+----
+failed to create vm <machine_name>: failure sending request for machine <machine_name>: cannot create vm: compute.VirtualMachinesClient#CreateOrUpdate: Failure sending request: StatusCode=400 -- Original Error: Code="BadRequest" Message="Storage Account type 'UltraSSD_LRS' is not supported <more_information_about_why>."
+----
+
+* To resolve this issue, verify that you are using this feature in a supported environment and that your machine set configuration is correct.
+
+[id="ts-mapi-delete_{context}"]
+== Unable to delete disks
+
+If the deletion of ultra disks as data disks is not working as expected, the machines are deleted and the data disks are orphaned. You must delete the orphaned disks manually if desired.
+
+
+:!mapi:
+
+:leveloffset!:
+
+//Enabling customer-managed encryption keys for a machine set
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-enabling-customer-managed-encryption-azure_{context}"]
+= Enabling customer-managed encryption keys for a machine set
+
+You can supply an encryption key to Azure to encrypt data on managed disks at rest. You can enable server-side encryption with customer-managed keys by using the Machine API.
+
+An Azure Key Vault, a disk encryption set, and an encryption key are required to use a customer-managed key. The disk encryption set must be in a resource group where the Cloud Credential Operator (CCO) has granted permissions. If not, an additional reader role is required to be granted on the disk encryption set.
+
+.Prerequisites
+
+* link:https://docs.microsoft.com/en-us/azure/aks/azure-disk-customer-managed-keys#create-an-azure-key-vault-instance[Create an Azure Key Vault instance].
+* link:https://docs.microsoft.com/en-us/azure/aks/azure-disk-customer-managed-keys#create-an-instance-of-a-diskencryptionset[Create an instance of a disk encryption set].
+* link:https://docs.microsoft.com/en-us/azure/aks/azure-disk-customer-managed-keys#grant-the-diskencryptionset-access-to-key-vault[Grant the disk encryption set access to key vault].
+
+.Procedure
+
+* Configure the disk encryption set under the `providerSpec` field in your machine set YAML file. For example:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+    osDisk:
+      diskSizeGB: 128
+      managedDisk:
+        diskEncryptionSet:
+          id: /subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/providers/Microsoft.Compute/diskEncryptionSets/<disk_encryption_set_name>
+        storageAccountType: Premium_LRS
+----
+
+[role="_additional-resources"]
+.Additional resources
+* https://docs.microsoft.com/en-us/azure/virtual-machines/disk-encryption#customer-managed-keys[Azure documentation about customer-managed keys]
+
+:leveloffset!:
+
+//Configuring trusted launch for Azure virtual machines by using machine sets
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-azure-trusted-launch_{context}"]
+= Configuring trusted launch for Azure virtual machines by using machine sets
+
+:FeatureName: Using trusted launch for Azure virtual machines
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+{product-title} {product-version} supports trusted launch for Azure virtual machines (VMs). By editing the machine set YAML file, you can configure the trusted launch options that a machine set uses for machines that it deploys. For example, you can configure these machines to use UEFI security features such as Secure Boot or a dedicated virtual Trusted Platform Module (vTPM) instance.
+
+[NOTE]
+====
+Some feature combinations result in an invalid configuration.
+====
+
+.UEFI feature combination compatibility
+|====
+|Secure Boot^[1]^ |vTPM^[2]^ |Valid configuration
+
+|Enabled
+|Enabled
+|Yes
+
+|Enabled
+|Disabled
+|Yes
+
+|Enabled
+|Omitted
+|Yes
+
+|Disabled
+|Enabled
+|Yes
+
+|Omitted
+|Enabled
+|Yes
+
+|Disabled
+|Disabled
+|No
+
+|Omitted
+|Disabled
+|No
+
+|Omitted
+|Omitted
+|No
+|====
+[.small]
+--
+1. Using the `secureBoot` field.
+2. Using the `virtualizedTrustedPlatformModule` field.
+--
+
+For more information about related features and functionality, see the Microsoft Azure documentation about link:https://learn.microsoft.com/en-us/azure/virtual-machines/trusted-launch[Trusted launch for Azure virtual machines].
+
+.Procedure
+
+. In a text editor, open the YAML file for an existing machine set or create a new one.
+
+. Edit the following section under the `providerSpec` field to provide a valid configuration:
++
+.Sample valid configuration with UEFI Secure Boot and vTPM enabled
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+# ...
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          securityProfile:
+            settings:
+              securityType: TrustedLaunch # <1>
+              trustedLaunch:
+                uefiSettings: # <2>
+                  secureBoot: Enabled # <3>
+                  virtualizedTrustedPlatformModule: Enabled # <4>
+# ...
+----
+<1> Enables the use of trusted launch for Azure virtual machines. This value is required for all valid configurations.
+<2> Specifies which UEFI security features to use. This section is required for all valid configurations.
+<3> Enables UEFI Secure Boot.
+<4> Enables the use of a vTPM.
+
+.Verification
+
+* On the Azure portal, review the details for a machine deployed by the machine set and verify that the trusted launch options match the values that you configured.
+
+
+:leveloffset!:
+
+//Configuring Azure confidential virtual machines by using machine sets
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-azure-confidential-vms_{context}"]
+= Configuring Azure confidential virtual machines by using machine sets
+
+:FeatureName: Using Azure confidential virtual machines
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+{product-title} {product-version} supports Azure confidential virtual machines (VMs).
+
+[NOTE]
+====
+Confidential VMs are currently not supported on 64-bit ARM architectures.
+====
+
+By editing the machine set YAML file, you can configure the confidential VM options that a machine set uses for machines that it deploys. For example, you can configure these machines to use UEFI security features such as Secure Boot or a dedicated virtual Trusted Platform Module (vTPM) instance.
+
+
+For more information about related features and functionality, see the Microsoft Azure documentation about link:https://learn.microsoft.com/en-us/azure/confidential-computing/confidential-vm-overview[Confidential virtual machines].
+
+.Procedure
+
+. In a text editor, open the YAML file for an existing machine set or create a new one.
+
+. Edit the following section under the `providerSpec` field:
++
+--
+.Sample configuration
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+# ...
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          osDisk:
+            # ...
+            managedDisk:
+              securityProfile: # <1>
+                securityEncryptionType: VMGuestStateOnly # <2>
+            # ...
+          securityProfile: # <3>
+            settings:
+                securityType: ConfidentialVM # <4>
+                confidentialVM:
+                  uefiSettings: # <5>
+                    secureBoot: Disabled # <6>
+                    virtualizedTrustedPlatformModule: Enabled # <7>
+          vmSize: Standard_DC16ads_v5 # <8>
+# ...
+----
+<1> Specifies security profile settings for the managed disk when using a confidential VM.
+<2> Enables encryption of the Azure VM Guest State (VMGS) blob. This setting requires the use of vTPM.
+<3> Specifies security profile settings for the confidential VM.
+<4> Enables the use of confidential VMs. This value is required for all valid configurations.
+<5> Specifies which UEFI security features to use. This section is required for all valid configurations.
+<6> Disables UEFI Secure Boot.
+<7> Enables the use of a vTPM.
+<8> Specifies an instance type that supports confidential VMs.
+--
+
+.Verification
+
+* On the Azure portal, review the details for a machine deployed by the machine set and verify that the confidential VM options match the values that you configured.
+
+
+:leveloffset!:
+
+// Accelerated Networking for Microsoft Azure VMs
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:compute:
+
+[id="machineset-azure-accelerated-networking_{context}"]
+= Accelerated Networking for Microsoft Azure VMs
+
+Accelerated Networking uses single root I/O virtualization (SR-IOV) to provide Microsoft Azure VMs with a more direct path to the switch. This enhances network performance. This feature can be enabled
+during or 
+after installation.
+
+[id="machineset-azure-accelerated-networking-limits_{context}"]
+== Limitations
+
+Consider the following limitations when deciding whether to use Accelerated Networking:
+
+* Accelerated Networking is only supported on clusters where the Machine API is operational.
+
+* {empty}
++
+Although the minimum requirement for an Azure worker node is two vCPUs, 
+Accelerated Networking requires an Azure VM size that includes at least four vCPUs. To satisfy this requirement, you can change the value of `vmSize` in your machine set. For information about Azure VM sizes, see link:https://docs.microsoft.com/en-us/azure/virtual-machines/sizes[Microsoft Azure documentation].
+
+//iiuc, this is not true for control planes since the operator will roll out changes according to the update strategy
+* When this feature is enabled on an existing Azure cluster, only newly provisioned nodes are affected. Currently running nodes are not reconciled. To enable the feature on all nodes, you must replace each existing machine. This can be done for each machine individually, or by scaling the replicas down to zero, and then scaling back up to your desired number of replicas.
+
+:!compute:
+
+:leveloffset!:
+
+//Adding a GPU node to a machine set (stesmith)
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+//  * machine_management/creating-machinesets/creating-machineset-azure.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nvidia-gpu-aws-adding-a-gpu-node_{context}"]
+= Adding a GPU node to an existing {product-title} cluster
+
+You can copy and modify a default compute machine set configuration to create a GPU-enabled machine set and machines for the Azure cloud provider.
+
+The following table lists the validated instance types:
+
+[cols="1,1,1,1"]
+|===
+|vmSize |NVIDIA GPU accelerator |Maximum number of GPUs |Architecture
+
+|`Standard_NC24s_v3`
+|V100
+|4
+|x86
+
+|`Standard_NC4as_T4_v3`
+|T4
+|1
+|x86
+
+|`ND A100 v4`
+|A100
+|8
+|x86
+|===
+
+[NOTE]
+====
+By default, Azure subscriptions do not have a quota for the Azure instance types with GPU. Customers have to request a quota increase for the Azure instance families listed above.
+====
+
+.Procedure
+
+. View the machines and machine sets that exist in the `openshift-machine-api` namespace
+by running the following command. Each compute machine set is associated with a different availability zone within the Azure region.
+The installer automatically load balances compute machines across availability zones.
++
+[source,terminal]
+----
+$ oc get machineset -n openshift-machine-api
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME                              DESIRED   CURRENT   READY   AVAILABLE   AGE
+myclustername-worker-centralus1   1         1         1       1           6h9m
+myclustername-worker-centralus2   1         1         1       1           6h9m
+myclustername-worker-centralus3   1         1         1       1           6h9m
+----
+
+. Make a copy of one of the existing compute `MachineSet` definitions and output the result to a YAML file by running the following command.
+This will be the basis for the GPU-enabled compute machine set definition.
++
+[source,terminal]
+----
+$ oc get machineset -n openshift-machine-api myclustername-worker-centralus1 -o yaml > machineset-azure.yaml
+----
+
+. View the content of the machineset:
++
+[source,terminal]
+----
+$ cat machineset-azure.yaml
+----
++
+.Example `machineset-azure.yaml` file
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  annotations:
+    machine.openshift.io/GPU: "0"
+    machine.openshift.io/memoryMb: "16384"
+    machine.openshift.io/vCPU: "4"
+  creationTimestamp: "2023-02-06T14:08:19Z"
+  generation: 1
+  labels:
+    machine.openshift.io/cluster-api-cluster: myclustername
+    machine.openshift.io/cluster-api-machine-role: worker
+    machine.openshift.io/cluster-api-machine-type: worker
+  name: myclustername-worker-centralus1
+  namespace: openshift-machine-api
+  resourceVersion: "23601"
+  uid: acd56e0c-7612-473a-ae37-8704f34b80de
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: myclustername
+      machine.openshift.io/cluster-api-machineset: myclustername-worker-centralus1
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: myclustername
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: myclustername-worker-centralus1
+    spec:
+      lifecycleHooks: {}
+      metadata: {}
+      providerSpec:
+        value:
+          acceleratedNetworking: true
+          apiVersion: machine.openshift.io/v1beta1
+          credentialsSecret:
+            name: azure-cloud-credentials
+            namespace: openshift-machine-api
+          diagnostics: {}
+          image:
+            offer: ""
+            publisher: ""
+            resourceID: /resourceGroups/myclustername-rg/providers/Microsoft.Compute/galleries/gallery_myclustername_n6n4r/images/myclustername-gen2/versions/latest
+            sku: ""
+            version: ""
+          kind: AzureMachineProviderSpec
+          location: centralus
+          managedIdentity: myclustername-identity
+          metadata:
+            creationTimestamp: null
+          networkResourceGroup: myclustername-rg
+          osDisk:
+            diskSettings: {}
+            diskSizeGB: 128
+            managedDisk:
+              storageAccountType: Premium_LRS
+            osType: Linux
+          publicIP: false
+          publicLoadBalancer: myclustername
+          resourceGroup: myclustername-rg
+          spotVMOptions: {}
+          subnet: myclustername-worker-subnet
+          userDataSecret:
+            name: worker-user-data
+          vmSize: Standard_D4s_v3
+          vnet: myclustername-vnet
+          zone: "1"
+status:
+  availableReplicas: 1
+  fullyLabeledReplicas: 1
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+----
+
+. Make a copy of the `machineset-azure.yaml` file by running the following command:
++
+[source,terminal]
+----
+$ cp machineset-azure.yaml machineset-azure-gpu.yaml
+----
+
+. Update the following fields in `machineset-azure-gpu.yaml`:
++
+* Change `.metadata.name` to a name containing `gpu`.
+
+* Change `.spec.selector.matchLabels["machine.openshift.io/cluster-api-machineset"]` to match the new .metadata.name.
+
+* Change `.spec.template.metadata.labels["machine.openshift.io/cluster-api-machineset"]` to match the new `.metadata.name`.
+
+* Change `.spec.template.spec.providerSpec.value.vmSize` to `Standard_NC4as_T4_v3`.
++
+.Example `machineset-azure-gpu.yaml` file
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  annotations:
+    machine.openshift.io/GPU: "1"
+    machine.openshift.io/memoryMb: "28672"
+    machine.openshift.io/vCPU: "4"
+  creationTimestamp: "2023-02-06T20:27:12Z"
+  generation: 1
+  labels:
+    machine.openshift.io/cluster-api-cluster: myclustername
+    machine.openshift.io/cluster-api-machine-role: worker
+    machine.openshift.io/cluster-api-machine-type: worker
+  name: myclustername-nc4ast4-gpu-worker-centralus1
+  namespace: openshift-machine-api
+  resourceVersion: "166285"
+  uid: 4eedce7f-6a57-4abe-b529-031140f02ffa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: myclustername
+      machine.openshift.io/cluster-api-machineset: myclustername-nc4ast4-gpu-worker-centralus1
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: myclustername
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: myclustername-nc4ast4-gpu-worker-centralus1
+    spec:
+      lifecycleHooks: {}
+      metadata: {}
+      providerSpec:
+        value:
+          acceleratedNetworking: true
+          apiVersion: machine.openshift.io/v1beta1
+          credentialsSecret:
+            name: azure-cloud-credentials
+            namespace: openshift-machine-api
+          diagnostics: {}
+          image:
+            offer: ""
+            publisher: ""
+            resourceID: /resourceGroups/myclustername-rg/providers/Microsoft.Compute/galleries/gallery_myclustername_n6n4r/images/myclustername-gen2/versions/latest
+            sku: ""
+            version: ""
+          kind: AzureMachineProviderSpec
+          location: centralus
+          managedIdentity: myclustername-identity
+          metadata:
+            creationTimestamp: null
+          networkResourceGroup: myclustername-rg
+          osDisk:
+            diskSettings: {}
+            diskSizeGB: 128
+            managedDisk:
+              storageAccountType: Premium_LRS
+            osType: Linux
+          publicIP: false
+          publicLoadBalancer: myclustername
+          resourceGroup: myclustername-rg
+          spotVMOptions: {}
+          subnet: myclustername-worker-subnet
+          userDataSecret:
+            name: worker-user-data
+          vmSize: Standard_NC4as_T4_v3
+          vnet: myclustername-vnet
+          zone: "1"
+status:
+  availableReplicas: 1
+  fullyLabeledReplicas: 1
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+----
+
+. To verify your changes, perform a `diff` of the original compute definition and the new GPU-enabled node definition by running the following command:
++
+[source,terminal]
+----
+$ diff machineset-azure.yaml machineset-azure-gpu.yaml
+----
++
+.Example output
+[source,terminal]
+----
+14c14
+<   name: myclustername-worker-centralus1
+---
+>   name: myclustername-nc4ast4-gpu-worker-centralus1
+23c23
+<       machine.openshift.io/cluster-api-machineset: myclustername-worker-centralus1
+---
+>       machine.openshift.io/cluster-api-machineset: myclustername-nc4ast4-gpu-worker-centralus1
+30c30
+<         machine.openshift.io/cluster-api-machineset: myclustername-worker-centralus1
+---
+>         machine.openshift.io/cluster-api-machineset: myclustername-nc4ast4-gpu-worker-centralus1
+67c67
+<           vmSize: Standard_D4s_v3
+---
+>           vmSize: Standard_NC4as_T4_v3
+----
+
+. Create the GPU-enabled compute machine set from the definition file by running the following command:
++
+[source,terminal]
+----
+$ oc create -f machineset-azure-gpu.yaml
+----
++
+.Example output
++
+[source,terminal]
+----
+machineset.machine.openshift.io/myclustername-nc4ast4-gpu-worker-centralus1 created
+----
+
+. View the machines and machine sets that exist in the `openshift-machine-api` namespace
+by running the following command. Each compute machine set is associated with a
+different availability zone within the Azure region.
+The installer automatically load balances compute machines across availability zones.
++
+[source,terminal]
+----
+$ oc get machineset -n openshift-machine-api
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME                                               DESIRED   CURRENT   READY   AVAILABLE   AGE
+clustername-n6n4r-nc4ast4-gpu-worker-centralus1    1         1         1       1           122m
+clustername-n6n4r-worker-centralus1                1         1         1       1           8h
+clustername-n6n4r-worker-centralus2                1         1         1       1           8h
+clustername-n6n4r-worker-centralus3                1         1         1       1           8h
+----
+
+. View the machines that exist in the `openshift-machine-api` namespace by running the following command. You can only configure one compute machine per set, although you can scale a compute machine set to add a node in a particular region and zone.
++
+[source,terminal]
+----
+$ oc get machines -n openshift-machine-api
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME                                                PHASE     TYPE                   REGION      ZONE   AGE
+myclustername-master-0                              Running   Standard_D8s_v3        centralus   2      6h40m
+myclustername-master-1                              Running   Standard_D8s_v3        centralus   1      6h40m
+myclustername-master-2                              Running   Standard_D8s_v3        centralus   3      6h40m
+myclustername-nc4ast4-gpu-worker-centralus1-w9bqn   Running      centralus   1      21m
+myclustername-worker-centralus1-rbh6b               Running   Standard_D4s_v3        centralus   1      6h38m
+myclustername-worker-centralus2-dbz7w               Running   Standard_D4s_v3        centralus   2      6h38m
+myclustername-worker-centralus3-p9b8c               Running   Standard_D4s_v3        centralus   3      6h38m
+----
+
+. View the existing nodes, machines, and machine sets by running the following command. Note that each node is an instance of a machine definition with a specific Azure region and {product-title} role.
++
+[source,terminal]
+----
+$ oc get nodes
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME                                                STATUS   ROLES                  AGE     VERSION
+myclustername-master-0                              Ready    control-plane,master   6h39m   v1.27.3
+myclustername-master-1                              Ready    control-plane,master   6h41m   v1.27.3
+myclustername-master-2                              Ready    control-plane,master   6h39m   v1.27.3
+myclustername-nc4ast4-gpu-worker-centralus1-w9bqn   Ready    worker                 14m     v1.27.3
+myclustername-worker-centralus1-rbh6b               Ready    worker                 6h29m   v1.27.3
+myclustername-worker-centralus2-dbz7w               Ready    worker                 6h29m   v1.27.3
+myclustername-worker-centralus3-p9b8c               Ready    worker                 6h31m   v1.27.3
+----
+
+. View the list of compute machine sets:
++
+[source,terminal]
+----
+$ oc get machineset -n openshift-machine-api
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME                                   DESIRED   CURRENT   READY   AVAILABLE   AGE
+myclustername-worker-centralus1        1         1         1       1           8h
+myclustername-worker-centralus2        1         1         1       1           8h
+myclustername-worker-centralus3        1         1         1       1           8h
+----
+
+. Create the GPU-enabled compute machine set from the definition file by running the following command:
++
+[source,terminal]
+----
+$ oc create -f machineset-azure-gpu.yaml
+----
+
+. View the list of compute machine sets:
++
+[source,terminal]
+----
+oc get machineset -n openshift-machine-api
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME                                          DESIRED   CURRENT   READY   AVAILABLE   AGE
+myclustername-nc4ast4-gpu-worker-centralus1   1         1         1       1           121m
+myclustername-worker-centralus1               1         1         1       1           8h
+myclustername-worker-centralus2               1         1         1       1           8h
+myclustername-worker-centralus3               1         1         1       1           8h
+----
+
+.Verification
+
+. View the machine set you created by running the following command:
++
+[source,terminal]
+----
+$ oc get machineset -n openshift-machine-api | grep gpu
+----
++
+The MachineSet replica count is set to `1` so a new `Machine` object is created automatically.
++
+.Example output
++
+[source,terminal]
+----
+myclustername-nc4ast4-gpu-worker-centralus1   1         1         1       1           121m
+----
+
+. View the `Machine` object that the machine set created by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-machine-api get machines | grep gpu
+----
++
+.Example output
++
+[source,terminal]
+----
+myclustername-nc4ast4-gpu-worker-centralus1-w9bqn   Running   Standard_NC4as_T4_v3   centralus   1      21m
+----
+
+[NOTE]
+====
+There is no need to specify a namespace for the node. The node definition is cluster scoped.
+====
+
+:leveloffset!:
+
+//Deploying the Node Feature Discovery Operator (stesmith)
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+//  * machine_management/creating_machinesets/creating-machineset-aws.adoc
+//  * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+//  * machine_management/creating_machinesets/creating-machineset-azure.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nvidia-gpu-aws-deploying-the-node-feature-discovery-operator_{context}"]
+= Deploying the Node Feature Discovery Operator
+
+After the GPU-enabled node is created, you need to discover the GPU-enabled node so it can be scheduled. To do this, install the Node Feature Discovery (NFD) Operator. The NFD Operator identifies hardware device features in nodes. It solves the general problem of identifying and cataloging hardware resources in the infrastructure nodes so they can be made available to {product-title}.
+
+.Procedure
+
+. Install the Node Feature Discovery Operator from *OperatorHub* in the {product-title} console.
+
+. After installing the NFD Operator into *OperatorHub*, select *Node Feature Discovery* from the installed Operators list and select *Create instance*. This installs the `nfd-master` and `nfd-worker` pods, one `nfd-worker` pod for each compute node, in the `openshift-nfd` namespace.
+
+. Verify that the Operator is installed and running by running the following command:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-nfd
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME                                       READY    STATUS     RESTARTS   AGE
+
+nfd-controller-manager-8646fcbb65-x5qgk    2/2      Running 7  (8h ago)   1d
+----
+
+. Browse to the installed Oerator in the console and select *Create Node Feature Discovery*.
+
+. Select *Create* to build a NFD custom resource. This creates NFD pods in the `openshift-nfd` namespace that poll the {product-title} nodes for hardware resources and catalogue them.
+
+.Verification
+
+. After a successful build, verify that a NFD pod is running on each nodes by running the following command:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-nfd
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                       READY   STATUS      RESTARTS        AGE
+nfd-controller-manager-8646fcbb65-x5qgk    2/2     Running     7 (8h ago)      12d
+nfd-master-769656c4cb-w9vrv                1/1     Running     0               12d
+nfd-worker-qjxb2                           1/1     Running     3 (3d14h ago)   12d
+nfd-worker-xtz9b                           1/1     Running     5 (3d14h ago)   12d
+----
++
+The NFD Operator uses vendor PCI IDs to identify hardware in a node. NVIDIA uses the PCI ID `10de`.
+
+. View the NVIDIA GPU discovered by the NFD Operator by running the following command:
++
+[source,terminal]
+----
+$ oc describe node ip-10-0-132-138.us-east-2.compute.internal | egrep 'Roles|pci'
+----
++
+.Example output
+[source,terminal]
+----
+Roles: worker
+
+feature.node.kubernetes.io/pci-1013.present=true
+
+feature.node.kubernetes.io/pci-10de.present=true
+
+feature.node.kubernetes.io/pci-1d0f.present=true
+----
++
+`10de` appears in the node feature list for the GPU-enabled node. This mean the NFD Operator correctly identified the node from the GPU-enabled MachineSet.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../installing/installing_azure/installing-azure-customizations.adoc#machineset-azure-enabling-accelerated-networking-new-install_installing-azure-customizations[Enabling Accelerated Networking during installation]
+
+// Enabling Accelerated Networking on an existing Microsoft Azure cluster
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:compute:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-azure-enabling-accelerated-networking-existing_{context}"]
+= Enabling Accelerated Networking on an existing Microsoft Azure cluster
+
+You can enable Accelerated Networking on Azure by adding `acceleratedNetworking` to your machine set YAML file.
+
+.Prerequisites
+
+* Have an existing Microsoft Azure cluster where the Machine API is operational.
+
+.Procedure
+////
+//Trying to move towards a more streamlined approach, but leaving this in in case needed
+. List the compute machine sets in your cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get machinesets -n openshift-machine-api
+----
++
+The compute machine sets are listed in the form of `<cluster-id>-worker-<region>`.
++
+.Example output
+[source,terminal]
+----
+NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+jmywbfb-8zqpx-worker-centralus1     1         1         1       1           15m
+jmywbfb-8zqpx-worker-centralus2     1         1         1       1           15m
+jmywbfb-8zqpx-worker-centralus3     1         1         1       1           15m
+----
+
+. For each compute machine set:
+
+.. Edit the custom resource (CR) by running the following command:
++
+[source,terminal]
+----
+$ oc edit machineset <machine-set-name>
+----
+
+.. Add the following to the `providerSpec` field:
+////
+* Add the following to the `providerSpec` field:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+    acceleratedNetworking: true <1>
+    vmSize: <azure-vm-size> <2>
+----
++
+<1> This line enables Accelerated Networking.
+<2> Specify an Azure VM size that includes at least four vCPUs. For information about VM sizes, see link:https://docs.microsoft.com/en-us/azure/virtual-machines/sizes[Microsoft Azure documentation].
+
+.Next steps
+
+* To enable the feature on currently running nodes, you must replace each existing machine. This can be done for each machine individually, or by scaling the replicas down to zero, and then scaling back up to your desired number of replicas.
+
+.Verification
+
+* On the Microsoft Azure portal, review the *Networking* settings page for a machine provisioned by the machine set, and verify that the `Accelerated networking` field is set to `Enabled`.
+
+:!compute:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../machine_management/manually-scaling-machineset.adoc#manually-scaling-machineset[Manually scaling a compute machine set]
+
+//# includes=_attributes/common-attributes,modules/machine-user-provisioned-limitations,modules/machineset-yaml-azure,modules/machineset-creating,modules/installation-azure-marketplace-subscribe,modules/machineset-azure-boot-diagnostics,modules/machineset-non-guaranteed-instance,modules/machineset-creating-non-guaranteed-instances,modules/machineset-azure-ephemeral-os,modules/machineset-creating-azure-ephemeral-os,modules/machineset-azure-ultra-disk,modules/machineset-creating-azure-ultra-disk,modules/machineset-troubleshooting-azure-ultra-disk,modules/machineset-customer-managed-encryption-azure,modules/machineset-azure-trusted-launch,modules/snippets/technology-preview,modules/machineset-azure-confidential-vms,modules/machineset-azure-accelerated-networking,modules/nvidia-gpu-azure-adding-a-gpu-node,modules/nvidia-gpu-aws-deploying-the-node-feature-discovery-operator,modules/machineset-azure-enabling-accelerated-networking-existing

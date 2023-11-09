@@ -1,0 +1,740 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="osdk-token-auth"]
+= Token authentication for Operators on cloud providers
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: osdk-token-auth
+
+toc::[]
+
+Many cloud providers can enable authentication by using account tokens that provide short-term, limited-privilege security credentials.
+
+{product-title} includes the Cloud Credential Operator (CCO) to manage cloud provider credentials as custom resource definitions (CRDs). The CCO syncs on `CredentialsRequest` custom resources (CRs) to allow {product-title} components to request cloud provider credentials with any specific permissions required.
+
+Previously, on clusters where the CCO is in _manual mode_, Operators managed by Operator Lifecycle Manager (OLM) often provided detailed instructions in the OperatorHub for how users could manually provision any required cloud credentials.
+
+Starting in {product-title} 4.14, the CCO can detect when it is running on clusters enabled to use short-term credentials on certain cloud providers. It can then semi-automate provisioning certain credentials, provided that the Operator author has enabled their Operator to support the updated CCO.
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../authentication/managing_cloud_provider_credentials/about-cloud-credential-operator.adoc#about-cloud-credential-operator[About the Cloud Credential Operator]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-token-auth.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-cco-aws-sts_{context}"]
+= CCO-based workflow for OLM-managed Operators with AWS STS
+
+When an {product-title} cluster running on AWS is in Security Token Service (STS) mode, it means the cluster is utilizing features of AWS and {product-title} to use IAM roles at an application level. STS enables applications to provide a JSON Web Token (JWT) that can assume an IAM role.
+
+The JWT includes an Amazon Resource Name (ARN) for the `sts:AssumeRoleWithWebIdentity` IAM action to allow temporarily-granted permission for the service account. The JWT contains the signing keys for the `ProjectedServiceAccountToken` that AWS IAM can validate. The service account token itself, which is signed, is used as the JWT required for assuming the AWS role.
+
+The Cloud Credential Operator (CCO) is a cluster Operator installed by default in {product-title} clusters running on cloud providers. For the purposes of STS, the CCO provides the following functions:
+
+* Detects when it is running on an STS-enabled cluster
+* Checks for the presence of fields in the `CredentialsRequest` object that provide the required information for granting Operators access to AWS resources
+
+The CCO performs this detection even when in manual mode. When properly configured, the CCO projects a `Secret` object with the required access information into the Operator namespace.
+
+Starting in {product-title} 4.14, the CCO can semi-automate this task through an expanded use of `CredentialsRequest` objects, which can request the creation of `Secrets` that contain the information required for STS workflows. Users can provide a role ARN when installing the Operator from either the web console or CLI.
+
+[NOTE]
+====
+Subscriptions with automatic update approvals are not recommended because there might be permission changes to make prior to updating. Subscriptions with manual update approvals ensure that administrators have the opportunity to verify the permissions of the later version and take any necessary steps prior to update.
+====
+
+As an Operator author preparing an Operator for use alongside the updated CCO in {product-title} 4.14, you should instruct users and add code to handle the divergence from earlier CCO versions, in addition to handling STS token authentication (if your Operator is not already STS-enabled). The recommended method is to provide a `CredentialsRequest` object with correctly filled STS-related fields and let the CCO create the `Secret` for you.
+
+[IMPORTANT]
+====
+If you plan to support {product-title} clusters earlier than version 4.14, consider providing users with instructions on how to manually create a secret with the STS-enabling information by using the CCO utility (`ccoctl`). Earlier CCO versions are unaware of STS mode on the cluster and cannot create secrets for you.
+
+Your code should check for secrets that never appear and warn users to follow the fallback instructions you have provided. For more information, see the "Alternative method" subsection.
+====
+
+:leveloffset!:
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../authentication/managing_cloud_provider_credentials/cco-short-term-creds.adoc#cco-short-term-creds-aws-olm_cco-short-term-creds[OLM-managed Operator support for authentication with AWS STS]
+* xref:../../operators/admin/olm-adding-operators-to-cluster.adoc#olm-installing-from-operatorhub-using-web-console_olm-adding-operators-to-a-cluster[Installing from OperatorHub using the web console]
+* xref:../../operators/admin/olm-adding-operators-to-cluster.adoc#olm-installing-operator-from-operatorhub-using-cli_olm-adding-operators-to-a-cluster[Installing from OperatorHub using the CLI]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-token-auth.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-cco-aws-sts-enabling_{context}"]
+= Enabling Operators to support CCO-based workflows with AWS STS
+
+As an Operator author designing your project to run on Operator Lifecycle Manager (OLM), you can enable your Operator to authenticate against AWS on STS-enabled {product-title} clusters by customizing your project to support the Cloud Credential Operator (CCO).
+
+With this method, the Operator is responsible for creating the `CredentialsRequest` object, which means the Operator requires RBAC permission to create these objects. Then, the Operator must be able to read the resulting `Secret` object.
+
+[NOTE]
+====
+By default, pods related to the Operator deployment mount a `serviceAccountToken` volume so that the service account token can be referenced in the resulting `Secret` object.
+====
+
+.Prerequisities
+
+* {product-title} 4.14 or later
+* Cluster in STS mode
+* OLM-based Operator project
+
+.Procedure
+
+. Update your Operator project's `ClusterServiceVersion` (CSV) object:
+
+.. Ensure your Operator has RBAC permission to create `CredentialsRequests` objects:
++
+.Example `clusterPermissions` list
+[%collapsible]
+====
+[source,yaml]
+----
+# ...
+install:
+  spec:
+    clusterPermissions:
+    - rules:
+      - apiGroups:
+        - "cloudcredential.openshift.io"
+        resources:
+        - credentialsrequests
+        verbs:
+        - create
+        - delete
+        - get
+        - list
+        - patch
+        - update
+        - watch
+----
+====
+
+.. Add the following annotation to claim support for this method of CCO-based workflow with AWS STS:
++
+[source,yaml]
+----
+# ...
+metadata:
+ annotations:
+   features.operators.openshift.io/token-auth-aws: "true"
+----
+
+. Update your Operator project code:
+
+.. Get the role ARN from the environment variable set on the pod by the `Subscription` object. For example:
++
+[source,go]
+----
+// Get ENV var
+roleARN := os.Getenv("ROLEARN")
+setupLog.Info("getting role ARN", "role ARN = ", roleARN)
+webIdentityTokenPath := "/var/run/secrets/openshift/serviceaccount/token"
+----
+
+.. Ensure you have a `CredentialsRequest` object ready to be patched and applied. For example:
++
+.Example `CredentialsRequest` object creation
+[%collapsible]
+====
+[source,go]
+----
+import (
+   minterv1 "github.com/openshift/cloud-credential-operator/pkg/apis/cloudcredential/v1"
+   corev1 "k8s.io/api/core/v1"
+   metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+var in = minterv1.AWSProviderSpec{
+   StatementEntries: []minterv1.StatementEntry{
+      {
+         Action: []string{
+            "s3:*",
+         },
+         Effect:   "Allow",
+         Resource: "arn:aws:s3:*:*:*",
+      },
+   },
+	STSIAMRoleARN: "<role_arn>",
+}
+
+var codec = minterv1.Codec
+var ProviderSpec, _ = codec.EncodeProviderSpec(in.DeepCopyObject())
+
+const (
+   name      = "<credential_request_name>"
+   namespace = "<namespace_name>"
+)
+
+var CredentialsRequestTemplate = &minterv1.CredentialsRequest{
+   ObjectMeta: metav1.ObjectMeta{
+       Name:      name,
+       Namespace: "openshift-cloud-credential-operator",
+   },
+   Spec: minterv1.CredentialsRequestSpec{
+      ProviderSpec: ProviderSpec,
+      SecretRef: corev1.ObjectReference{
+         Name:      "<secret_name>",
+         Namespace: namespace,
+      },
+      ServiceAccountNames: []string{
+         "<service_account_name>",
+      },
+      CloudTokenPath:   "",
+   },
+}
+----
+====
++
+Alternatively, if you are starting from a `CredentialsRequest` object in YAML form (for example, as part of your Operator project code), you can handle it differently:
++
+.Example `CredentialsRequest` object creation in YAML form
+[%collapsible]
+====
+[source,go]
+----
+// CredentialsRequest is a struct that represents a request for credentials
+type CredentialsRequest struct {
+  APIVersion string `yaml:"apiVersion"`
+  Kind       string `yaml:"kind"`
+  Metadata   struct {
+     Name      string `yaml:"name"`
+     Namespace string `yaml:"namespace"`
+  } `yaml:"metadata"`
+  Spec struct {
+     SecretRef struct {
+        Name      string `yaml:"name"`
+        Namespace string `yaml:"namespace"`
+     } `yaml:"secretRef"`
+     ProviderSpec struct {
+        APIVersion     string `yaml:"apiVersion"`
+        Kind           string `yaml:"kind"`
+        StatementEntries []struct {
+           Effect   string   `yaml:"effect"`
+           Action   []string `yaml:"action"`
+           Resource string   `yaml:"resource"`
+        } `yaml:"statementEntries"`
+        STSIAMRoleARN   string `yaml:"stsIAMRoleARN"`
+     } `yaml:"providerSpec"`
+
+     // added new field
+      CloudTokenPath   string `yaml:"cloudTokenPath"`
+  } `yaml:"spec"`
+}
+
+// ConsumeCredsRequestAddingTokenInfo is a function that takes a YAML filename and two strings as arguments
+// It unmarshals the YAML file to a CredentialsRequest object and adds the token information.
+func ConsumeCredsRequestAddingTokenInfo(fileName, tokenString, tokenPath string) (*CredentialsRequest, error) {
+  // open a file containing YAML form of a CredentialsRequest
+  file, err := os.Open(fileName)
+  if err != nil {
+     return nil, err
+  }
+  defer file.Close()
+
+  // create a new CredentialsRequest object
+  cr := &CredentialsRequest{}
+
+  // decode the yaml file to the object
+  decoder := yaml.NewDecoder(file)
+  err = decoder.Decode(cr)
+  if err != nil {
+     return nil, err
+  }
+
+  // assign the string to the existing field in the object
+  cr.Spec.CloudTokenPath = tokenPath
+
+  // return the modified object
+  return cr, nil
+}
+----
+====
++
+[NOTE]
+====
+Adding a `CredentialsRequest` object to the Operator bundle is not currently supported.
+====
+
+.. Add the role ARN and web identity token path to the credentials request and apply it during Operator initialization:
++
+.Example applying `CredentialsRequest` object during Operator initialization
+[%collapsible]
+====
+[source,go]
+----
+// apply credentialsRequest on install
+credReq := credreq.CredentialsRequestTemplate
+credReq.Spec.CloudTokenPath = webIdentityTokenPath
+
+c := mgr.GetClient()
+if err := c.Create(context.TODO(), credReq); err != nil {
+   if !errors.IsAlreadyExists(err) {
+      setupLog.Error(err, "unable to create CredRequest")
+      os.Exit(1)
+   }
+}
+----
+====
+
+.. Ensure your Operator can wait for a `Secret` object to show up from the CCO, as shown in the following example, which is called along with the other items you are reconciling in your Operator:
++
+.Example wait for `Secret` object
+[%collapsible]
+====
+[source,go]
+----
+// WaitForSecret is a function that takes a Kubernetes client, a namespace, and a v1 "k8s.io/api/core/v1" name as arguments
+// It waits until the secret object with the given name exists in the given namespace
+// It returns the secret object or an error if the timeout is exceeded
+func WaitForSecret(client kubernetes.Interface, namespace, name string) (*v1.Secret, error) {
+  // set a timeout of 10 minutes
+  timeout := time.After(10 * time.Minute) <1>
+
+  // set a polling interval of 10 seconds
+  ticker := time.NewTicker(10 * time.Second)
+
+  // loop until the timeout or the secret is found
+  for {
+     select {
+     case <-timeout:
+        // timeout is exceeded, return an error
+        return nil, fmt.Errorf("timed out waiting for secret %s in namespace %s", name, namespace)
+           // add to this error with a pointer to instructions for following a manual path to a Secret that will work on STS
+     case <-ticker.C:
+        // polling interval is reached, try to get the secret
+        secret, err := client.CoreV1().Secrets(namespace).Get(context.Background(), name, metav1.GetOptions{})
+        if err != nil {
+           if errors.IsNotFound(err) {
+              // secret does not exist yet, continue waiting
+              continue
+           } else {
+              // some other error occurred, return it
+              return nil, err
+           }
+        } else {
+           // secret is found, return it
+           return secret, nil
+        }
+     }
+  }
+}
+----
+<1> The `timeout` value is based on an estimate of how fast the CCO might detect an added `CredentialsRequest` object and generate a `Secret` object. You might consider lowering the time or creating custom feedback for cluster administrators that could be wondering why the Operator is not yet accessing the cloud resources.
+====
+
+.. Set up the AWS configuration by reading the secret created by the CCO from the credentials request and creating the AWS config file containing the data from that secret:
++
+.Example AWS configuration creation
+[%collapsible]
+====
+[source,go]
+----
+func SharedCredentialsFileFromSecret(secret *corev1.Secret) (string, error) {
+   var data []byte
+   switch {
+   case len(secret.Data["credentials"]) > 0:
+       data = secret.Data["credentials"]
+   default:
+       return "", errors.New("invalid secret for aws credentials")
+   }
+
+
+   f, err := ioutil.TempFile("", "aws-shared-credentials")
+   if err != nil {
+       return "", errors.Wrap(err, "failed to create file for shared credentials")
+   }
+   defer f.Close()
+   if _, err := f.Write(data); err != nil {
+       return "", errors.Wrapf(err, "failed to write credentials to %s", f.Name())
+   }
+   return f.Name(), nil
+}
+----
+====
++
+[IMPORTANT]
+====
+The secret is assumed to exist, but your Operator code should wait and retry when using this secret to give time to the CCO to create the secret.
+
+Additionally, the wait period should eventually time out and warn users that the {product-title} cluster version, and therefore the CCO, might be an earlier version that does not support the `CredentialsRequest` object workflow with STS detection. In such cases, instruct users that they must add a secret by using another method.
+====
+
+.. Configure the AWS SDK session, for example:
++
+.Example AWS SDK session configuration
+[%collapsible]
+====
+[source,go]
+----
+sharedCredentialsFile, err := SharedCredentialsFileFromSecret(secret)
+if err != nil {
+   // handle error
+}
+options := session.Options{
+   SharedConfigState: session.SharedConfigEnable,
+   SharedConfigFiles: []string{sharedCredentialsFile},
+}
+----
+====
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-token-auth.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="osdk-cco-aws-sts-role_{context}"]
+= Role specification
+
+The Operator description should contain the specifics of the role required to be created before installation, ideally in the form of a script that the administrator can run. For example:
+
+.Example role creation script
+[%collapsible]
+====
+[source,bash]
+----
+#!/bin/bash
+set -x
+
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+OIDC_PROVIDER=$(oc get authentication cluster -ojson | jq -r .spec.serviceAccountIssuer | sed -e "s/^https:\/\///")
+NAMESPACE=my-namespace
+SERVICE_ACCOUNT_NAME="my-service-account"
+POLICY_ARN_STRINGS="arn:aws:iam::aws:policy/AmazonS3FullAccess"
+
+
+read -r -d '' TRUST_RELATIONSHIP <<EOF
+{
+ "Version": "2012-10-17",
+ "Statement": [
+   {
+     "Effect": "Allow",
+     "Principal": {
+       "Federated": "arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_PROVIDER}"
+     },
+     "Action": "sts:AssumeRoleWithWebIdentity",
+     "Condition": {
+       "StringEquals": {
+         "${OIDC_PROVIDER}:sub": "system:serviceaccount:${NAMESPACE}:${SERVICE_ACCOUNT_NAME}"
+       }
+     }
+   }
+ ]
+}
+EOF
+
+echo "${TRUST_RELATIONSHIP}" > trust.json
+
+aws iam create-role --role-name "$SERVICE_ACCOUNT_NAME" --assume-role-policy-document file://trust.json --description "role for demo"
+
+while IFS= read -r POLICY_ARN; do
+   echo -n "Attaching $POLICY_ARN ... "
+   aws iam attach-role-policy \
+       --role-name "$SERVICE_ACCOUNT_NAME" \
+       --policy-arn "${POLICY_ARN}"
+   echo "ok."
+done <<< "$POLICY_ARN_STRINGS"
+----
+====
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-token-auth.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-cco-aws-sts-tshooting_{context}"]
+= Troubleshooting
+
+[id="osdk-cco-aws-sts-tshooting-auth-fail_{context}"]
+== Authentication failure
+
+If authentication was not successful, ensure you can assume the role with web identity by using the token provided to the Operator.
+
+.Procedure
+
+. Extract the token from the pod:
++
+[source,terminal]
+----
+$ oc exec operator-pod -n <namespace_name> \
+    -- cat /var/run/secrets/openshift/serviceaccount/token
+----
+
+. Extract the role ARN from the pod:
++
+[source,terminal]
+----
+$ oc exec operator-pod -n <namespace_name> \
+    -- cat /<path>/<to>/<secret_name> <1>
+----
+<1> Do not use root for the path.
+
+. Try assuming the role with the web identity token:
++
+[source,terminal]
+----
+$ aws sts assume-role-with-web-identity \
+    --role-arn $ROLEARN \
+    --role-session-name <session_name> \
+    --web-identity-token $TOKEN
+----
+
+[id="osdk-cco-aws-sts-tshooting-mounting_{context}"]
+== Secret not mounting correctly
+
+Pods that run as non-root users cannot write to the `/root` directory where the AWS shared credentials file is expected to exist by default. If the secret is not mounting correctly to the AWS credentials file path, consider mounting the secret to a different location and enabling the shared credentials file option in the AWS SDK.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-token-auth.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-cco-aws-sts-alt_{context}"]
+= Alternative method
+
+As an alternative method for Operator authors, you can indicate that the user is responsible for creating the `CredentialsRequest` object for the Cloud Credential Operator (CCO) before installing the Operator.
+
+The Operator instructions must indicate the following to users:
+
+* Provide a YAML version of a `CredentialsRequest` object, either by providing the YAML inline in the instructions or pointing users to a download location
+* Instruct the user to create the `CredentialsRequest` object
+
+In {product-title} 4.14 and later, after the `CredentialsRequest` object appears on the cluster with the appropriate STS information added, the Operator can then read the CCO-generated `Secret` or mount it, having defined the mount in the cluster service version (CSV).
+
+For earlier versions of {product-title}, the Operator instructions must also indicate the following to users:
+
+* Use the CCO utility (`ccoctl`) to generate the `Secret` YAML object from the `CredentialsRequest` object
+* Apply the `Secret` object to the cluster in the appropriate namespace
+
+The Operator still must be able to consume the resulting secret to communicate with cloud APIs. Because in this case the secret is created by the user before the Operator is installed, the Operator can do either of the following:
+
+* Define an explicit mount in the `Deployment` object within the CSV
+* Programmatically read the `Secret` object from the API server, as shown in the recommended "Enabling Operators to support CCO-based workflows with AWS STS" method
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/osdk-cco-aws-sts,modules/osdk-cco-aws-sts-enabling,modules/osdk-cco-aws-sts-role,modules/osdk-cco-aws-sts-tshooting,modules/osdk-cco-aws-sts-alt

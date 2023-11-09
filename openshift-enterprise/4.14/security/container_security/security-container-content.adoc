@@ -1,0 +1,618 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="security-container-content"]
+= Securing container content
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: security-container-content
+
+toc::[]
+
+To ensure the security of the content inside your containers
+you need to start with trusted base images, such as Red Hat
+Universal Base Images, and add trusted software. To check the
+ongoing security of your container images, there are both
+Red Hat and third-party tools for scanning images.
+
+// Security inside the container
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-container-content.adoc
+
+[id="security-container-content-inside_{context}"]
+= Securing inside the container
+
+Applications and infrastructures are composed of readily available components,
+many of which are open source packages such as, the Linux operating system,
+JBoss Web Server, PostgreSQL, and Node.js.
+
+Containerized versions of these packages are also available. However, you need
+to know where the packages originally came from, what versions are used, who built them, and whether
+there is any malicious code inside them.
+
+Some questions to answer include:
+
+* Will what is inside the containers compromise your infrastructure?
+* Are there known vulnerabilities in the application layer?
+* Are the runtime and operating system layers current?
+
+By building your containers from Red Hat
+link:https://access.redhat.com/articles/4238681[Universal Base Images] (UBI) you are
+assured of a foundation for your container images that consists of
+the same RPM-packaged software that is included in Red Hat Enterprise Linux.
+No subscriptions are required to either use or redistribute UBI images.
+
+To assure ongoing security of the containers themselves, security
+scanning features, used directly from {op-system-base} or added to {product-title},
+can alert you when
+an image you are using has vulnerabilities. OpenSCAP image scanning is
+available in {op-system-base} and the
+link:https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/manage_red_hat_quay/index#container-security-operator-setup[{rhq-cso}] can be added
+to check container images used in {product-title}.
+
+:leveloffset!:
+
+// Red Hat Universal Base Images
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-container-content.adoc
+
+[id="security-container-content-universal_{context}"]
+= Creating redistributable images with UBI
+
+To create containerized applications, you typically start with a trusted base
+image that offers the components that are usually provided by the operating system.
+These include the libraries, utilities, and other features the application
+expects to see in the operating system's file system.
+
+Red Hat Universal Base Images (UBI) were created to encourage anyone building their
+own containers to start with one that is made entirely from Red Hat Enterprise
+Linux rpm packages and other content. These UBI images are updated regularly
+to keep up with security patches and free to use and redistribute with
+container images built to include your own software.
+
+Search the
+link:https://catalog.redhat.com/software/containers/explore[Red Hat Ecosystem Catalog]
+to both find and check the health of different UBI images.
+As someone creating secure container images, you might
+be interested in these two general types of UBI images:
+
+* **UBI**: There are standard UBI images for RHEL 7, 8, and 9 (`ubi7/ubi`,
+`ubi8/ubi`, and `ubi9/ubi`), as well as minimal images based on those systems (`ubi7/ubi-minimal`, `ubi8/ubi-mimimal`, and ubi9/ubi-minimal). All of these images are preconfigured to point to free
+repositories of {op-system-base} software that you can add to the container images you build,
+using standard `yum` and `dnf` commands.
+Red Hat encourages people to use these images on other distributions,
+such as Fedora and Ubuntu.
+
+* **Red Hat Software Collections**: Search the Red Hat Ecosystem Catalog
+for `rhscl/` to find images created to use as base images for specific types
+of applications. For example, there are Apache httpd ([x-]`rhscl/httpd-*`),
+Python ([x-]`rhscl/python-*`), Ruby ([x-]`rhscl/ruby-*`), Node.js
+([x-]`rhscl/nodejs-*`) and Perl ([x-]`rhscl/perl-*`) rhscl images.
+
+Keep in mind that while UBI images are freely available and redistributable,
+Red Hat support for these images is only available through Red Hat
+product subscriptions.
+
+See
+link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/building_running_and_managing_containers/index#using_red_hat_universal_base_images_standard_minimal_and_runtimes[Using Red Hat Universal Base Images]
+in the Red Hat Enterprise Linux documentation for information on how to use and build on
+standard, minimal and init UBI images.
+
+:leveloffset!:
+
+// Container content scanning
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-container-content.adoc
+
+[id="security-container-content-scanning_{context}"]
+= Security scanning in {op-system-base}
+
+For {op-system-base-full} systems, OpenSCAP scanning is available
+from the `openscap-utils` package. In {op-system-base}, you can use the `openscap-podman`
+command to scan images for vulnerabilities. See
+link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/security_hardening/index#scanning-the-system-for-configuration-compliance-and-vulnerabilities_security-hardening[Scanning containers and container images for vulnerabilities] in the Red Hat Enterprise Linux documentation.
+
+{product-title} enables you to leverage {op-system-base} scanners with your CI/CD process.
+For example, you can integrate static code analysis tools that test for security
+flaws in your source code and software composition analysis tools that identify
+open source libraries to provide metadata on those libraries such as
+known vulnerabilities.
+
+[id="quay-security-scan_{context}"]
+== Scanning OpenShift images
+
+For the container images that are running in {product-title}
+and are pulled from Red Hat Quay registries, you can use an Operator to list the
+vulnerabilities of those images. The
+link:https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/manage_red_hat_quay/index#container-security-operator-setup[{rhq-cso}]
+can be added to {product-title} to provide vulnerability reporting
+for images added to selected namespaces.
+
+Container image scanning for Red Hat Quay is performed by the
+link:https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/manage_red_hat_quay/index#quay-security-scanner[Clair security scanner].
+In Red Hat Quay, Clair can search for and report vulnerabilities in
+images built from {op-system-base}, CentOS, Oracle, Alpine, Debian, and Ubuntu
+operating system software.
+
+:leveloffset!:
+
+// Integrating external scanning tools with OpenShift
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-container-content.adoc
+
+[id="security-container-content-external-scanning_{context}"]
+= Integrating external scanning
+
+{product-title} makes use of link:https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/[object annotations]
+to extend functionality. External tools, such as vulnerability scanners, can
+annotate image objects with metadata to summarize results and control pod
+execution. This section describes the recognized format of this annotation so it
+can be reliably used in consoles to display useful data to users.
+
+[id="security-image-metadata_{context}"]
+== Image metadata
+
+There are different types of image quality data, including package
+vulnerabilities and open source software (OSS) license compliance. Additionally,
+there may be more than one provider of this metadata. To that end, the following
+annotation format has been reserved:
+
+----
+quality.images.openshift.io/<qualityType>.<providerId>: {}
+----
+
+.Annotation key format
+[option="header"]
+|===
+|Component |Description |Acceptable values
+
+|`qualityType`
+|Metadata type
+|`vulnerability` +
+`license` +
+`operations` +
+`policy`
+
+|`providerId`
+|Provider ID string
+|`openscap` +
+`redhatcatalog` +
+`redhatinsights` +
+`blackduck` +
+`jfrog`
+|===
+
+[id="security-example-annotation-keys_{context}"]
+=== Example annotation keys
+
+----
+quality.images.openshift.io/vulnerability.blackduck: {}
+quality.images.openshift.io/vulnerability.jfrog: {}
+quality.images.openshift.io/license.blackduck: {}
+quality.images.openshift.io/vulnerability.openscap: {}
+----
+
+The value of the image quality annotation is structured data that must adhere to
+the following format:
+
+.Annotation value format
+[option="header"]
+|===
+|Field |Required? |Description |Type
+
+|`name`
+|Yes
+|Provider display name
+|String
+
+|`timestamp`
+|Yes
+|Scan timestamp
+|String
+
+|`description`
+|No
+|Short description
+|String
+|`reference`
+|Yes
+|URL of information source or more details. Required so user may validate the data.
+|String
+
+|`scannerVersion`
+|No
+|Scanner version
+|String
+
+|`compliant`
+|No
+|Compliance pass or fail
+|Boolean
+
+|`summary`
+|No
+|Summary of issues found
+|List (see table below)
+|===
+
+The `summary` field must adhere to the following format:
+
+.Summary field value format
+[option="header"]
+|===
+|Field |Description |Type
+
+|`label`
+|Display label for component (for example, "critical," "important," "moderate,"
+"low," or "health")
+|String
+
+|`data`
+|Data for this component (for example, count of vulnerabilities found or score)
+|String
+
+|`severityIndex`
+|Component index allowing for ordering and assigning graphical
+representation. The value is range `0..3` where `0` = low.
+|Integer
+
+|`reference`
+|URL of information source or more details. Optional.
+|String
+|===
+
+[id="security-example-annotation-values_{context}"]
+=== Example annotation values
+
+This example shows an OpenSCAP annotation for an image with
+vulnerability summary data and a compliance boolean:
+
+.OpenSCAP annotation
+[source,json]
+----
+{
+  "name": "OpenSCAP",
+  "description": "OpenSCAP vulnerability score",
+  "timestamp": "2016-09-08T05:04:46Z",
+  "reference": "https://www.open-scap.org/930492",
+  "compliant": true,
+  "scannerVersion": "1.2",
+  "summary": [
+    { "label": "critical", "data": "4", "severityIndex": 3, "reference": null },
+    { "label": "important", "data": "12", "severityIndex": 2, "reference": null },
+    { "label": "moderate", "data": "8", "severityIndex": 1, "reference": null },
+    { "label": "low", "data": "26", "severityIndex": 0, "reference": null }
+  ]
+}
+----
+
+This example shows the
+link:https://catalog.redhat.com/software/containers/explore[Container images section of the Red Hat Ecosystem Catalog]
+annotation for an image with health index data
+with an external URL for additional details:
+
+.Red Hat Ecosystem Catalog annotation
+[source,json]
+----
+{
+  "name": "Red Hat Ecosystem Catalog",
+  "description": "Container health index",
+  "timestamp": "2016-09-08T05:04:46Z",
+  "reference": "https://access.redhat.com/errata/RHBA-2016:1566",
+  "compliant": null,
+  "scannerVersion": "1.2",
+  "summary": [
+    { "label": "Health index", "data": "B", "severityIndex": 1, "reference": null }
+  ]
+}
+----
+
+[id="security-annotating-image-objects_{context}"]
+== Annotating image objects
+
+While image stream objects
+are what an end user of {product-title} operates against,
+image objects are annotated with
+security metadata. Image objects are cluster-scoped, pointing to a single image
+that may be referenced by many image streams and tags.
+
+[id="security-example-annotate-CLI_{context}"]
+=== Example annotate CLI command
+
+Replace `<image>` with an image digest, for example
+`sha256:401e359e0f45bfdcf004e258b72e253fd07fba8cc5c6f2ed4f4608fb119ecc2`:
+
+[source,terminal]
+----
+$ oc annotate image <image> \
+    quality.images.openshift.io/vulnerability.redhatcatalog='{ \
+    "name": "Red Hat Ecosystem Catalog", \
+    "description": "Container health index", \
+    "timestamp": "2020-06-01T05:04:46Z", \
+    "compliant": null, \
+    "scannerVersion": "1.2", \
+    "reference": "https://access.redhat.com/errata/RHBA-2020:2347", \
+    "summary": "[ \
+      { "label": "Health index", "data": "B", "severityIndex": 1, "reference": null } ]" }'
+----
+
+[id="controlling-pod-execution_{context}"]
+== Controlling pod execution
+
+Use the `images.openshift.io/deny-execution` image policy
+to programmatically control if an image can be run.
+
+[id="security-controlling-pod-execution-example-annotation_{context}"]
+=== Example annotation
+
+[source,yaml]
+----
+annotations:
+  images.openshift.io/deny-execution: true
+----
+
+[id="security-integration-reference_{context}"]
+== Integration reference
+
+In most cases, external tools such as vulnerability scanners develop a
+script or plugin that watches for image updates, performs scanning, and
+annotates the associated image object with the results. Typically this
+automation calls the {product-title} {product-version} REST APIs to write the annotation. See
+{product-title} REST APIs for general
+information on the REST APIs.
+
+[id="security-integration-reference-example-api-call_{context}"]
+=== Example REST API call
+
+The following example call using `curl` overrides the value of the
+annotation. Be sure to replace the values for `<token>`, `<openshift_server>`,
+`<image_id>`, and `<image_annotation>`.
+
+.Patch API call
+[source,terminal]
+----
+$ curl -X PATCH \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/merge-patch+json" \
+  https://<openshift_server>:6443/apis/image.openshift.io/v1/images/<image_id> \
+  --data '{ <image_annotation> }'
+----
+
+The following is an example of `PATCH` payload data:
+
+.Patch call data
+[source,terminal]
+----
+{
+"metadata": {
+  "annotations": {
+    "quality.images.openshift.io/vulnerability.redhatcatalog":
+       "{ 'name': 'Red Hat Ecosystem Catalog', 'description': 'Container health index', 'timestamp': '2020-06-01T05:04:46Z', 'compliant': null, 'reference': 'https://access.redhat.com/errata/RHBA-2020:2347', 'summary': [{'label': 'Health index', 'data': '4', 'severityIndex': 1, 'reference': null}] }"
+    }
+  }
+}
+----
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../openshift_images/index.adoc#overview-of-images[Image stream objects]
+// * xref::../../rest_api/index.adoc#rest-api[{product-title} {product-version} REST APIs]
+
+//# includes=_attributes/common-attributes,modules/security-container-content-inside,modules/security-container-content-universal,modules/security-container-content-scanning,modules/security-container-content-external-scanning

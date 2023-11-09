@@ -1,0 +1,1159 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="k8s-nmstate-updating-node-network-config"]
+= Updating node network configuration
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:VirtProductName: OpenShift Container Platform
+:context: k8s_nmstate-updating-node-network-config
+
+toc::[]
+
+You can update the node network configuration, such as adding or removing interfaces from nodes, by applying `NodeNetworkConfigurationPolicy` manifests to the cluster.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-observing-node-network-state.adoc
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="virt-about-nmstate_{context}"]
+= About nmstate
+
+{VirtProductName} uses link:https://nmstate.github.io/[`nmstate`] to report on and configure the state of the node network. This makes it possible to modify network policy configuration, such as by creating a Linux bridge on all nodes, by applying a single configuration manifest to the cluster.
+
+Node networking is monitored and updated by the following objects:
+
+`NodeNetworkState`:: Reports the state of the network on that node.
+`NodeNetworkConfigurationPolicy`:: Describes the requested network configuration on nodes. You update the node network configuration, including adding and removing interfaces, by applying a `NodeNetworkConfigurationPolicy` manifest to the cluster.
+`NodeNetworkConfigurationEnactment`:: Reports the network policies enacted upon each node.
+
+{VirtProductName} supports the use of the following nmstate interface types:
+
+* Linux Bridge
+
+* VLAN
+
+* Bond
+
+* Ethernet
+
+[NOTE]
+====
+If your {product-title} cluster uses OVN-Kubernetes as the network plugin, you cannot attach a Linux bridge or bonding to the default interface of a host because of a change in the host network topology of OVN-Kubernetes. As a workaround, use a secondary network interface connected to your host or switch to the OpenShift SDN network plugin.
+====
+
+:leveloffset!:
+
+
+:leveloffset: +1
+
+:_mod-docs-content-type: CONCEPT
+[id="virt-node-network-config-console_{context}"]
+= Managing policy from the web console
+You can manage the policy from the web console by accessing the list of created policies in *NodeNetworkConfigurationPolicy* page under *Networking* menu. This page enables you to create, update, monitor, and delete the policies.
+
+
+:leveloffset!:
+:leveloffset: +2
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-monitor-node-network-config-console_{context}"]
+= Monitoring the policy status
+
+You can monitor the policy status from the *NodeNetworkConfigurationPolicy* page. This page displays all the policies created in the cluster in a tabular format, with the following columns:
+
+Name:: The name of the policy created.
+
+Matched nodes:: The count of nodes where the policies are applied. This could be either a subset of nodes based on the node selector or all the nodes on the cluster.
+
+Node network state:: The enactment state of the matched nodes. You can click on the enactment state and view detailed information on the status.
+
+To find the desired policy, you can filter the list either based on enactment state by using the *Filter* option, or by using the search option.
+
+:leveloffset!:
+:leveloffset: +2
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-create-node-network-config-console_{context}"]
+= Creating a policy
+
+You can create a policy by using either a form or YAML in the web console.
+
+.Procedure
+. Navigate to *Networking* → *NodeNetworkConfigurationPolicy*.
+
+. In the *NodeNetworkConfigurationPolicy* page, click *Create*, and select *From Form* option.
++
+In case there are no existing policies, you can alternatively click *Create NodeNetworkConfigurationPolicy* to createa policy using form.
++
+[NOTE]
+====
+To create policy using YAML, click *Create*, and select *With YAML* option. The following steps are applicable to create a policy only by using form.
+====
+
+. Optional: Check the *Apply this NodeNetworkConfigurationPolicy only to specific subsets of nodes using the node selector* checkbox to specify the nodes where the policy must be applied.
+
+. Enter the policy name in the *Policy name* field.
+
+. Optional: Enter the description of the policy in the *Description* field.
+
+. Optional: In the *Policy Interface(s)* section, a bridge interface is added by default with preset values in editable fields. Edit the values by executing the following steps:
+
+.. Enter the name of the interface in *Interface name* field.
+
+.. Select the network state from *Network state* dropdown. The default selected value is *Up*.
+
+.. Select the type of interface from *Type* dropdown. The available values are *Bridge*, *Bonding*, and *Ethernet*. The default selected value is *Bridge*.
++
+[NOTE]
+====
+Addition of a VLAN interface by using the form is not supported. To add a VLAN interface, you must use YAML to create the policy. Once added, you cannot edit the policy by using form.
+====
+
+.. Optional: In the IP configuration section, check *IPv4* checkbox to assign an IPv4 address to the interface, and configure the IP address assignment details:
+
+... Click *IP address* to configure the interface with a static IP address, or *DHCP* to auto-assign an IP address.
+
+... If you have selected *IP address* option, enter the IPv4 address in *IPV4 address* field, and enter the prefix length in *Prefix length* field.
++
+If you have selected *DHCP* option, uncheck the options that you want to disable. The available options are *Auto-DNS*, *Auto-routes*, and *Auto-gateway*. All the options are selected by default.
+
+.. Optional: Enter the port number in *Port* field.
+
+.. Optional: Check the checkbox *Enable STP* to enable STP.
+
+.. Optional: To add an interface to the policy, click *Add another interface to the policy*.
+
+.. Optional: To remove an interface from the policy, click image:fa-minus-circle.svg[minus] icon next to the interface.
+
++
+[NOTE]
+====
+Alternatively, you can click *Edit YAML* on the top of the page to continue editing the form using YAML.
+====
+
+. Click *Create* to complete policy creation.
+
+:leveloffset!:
+
+=== Updating the policy
+:leveloffset: +3
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-update-node-network-config-form_{context}"]
+= Updating the policy by using form
+
+.Procedure
+. Navigate to *Networking* → *NodeNetworkConfigurationPolicy*.
+
+. In the *NodeNetworkConfigurationPolicy* page, click the {kebab} icon placed next to the policy you want to edit, and click *Edit*.
+
+. Edit the fields that you want to update.
+
+. Click *Save*.
+
+[NOTE]
+====
+Addition of a VLAN interface using the form is not supported. To add a VLAN interface, you must use YAML to create the policy. Once added, you cannot edit the policy using form.
+====
+
+:leveloffset!:
+:leveloffset: +3
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-update-node-network-config-yaml_{context}"]
+= Updating the policy by using YAML
+
+.Procedure
+. Navigate to *Networking* → *NodeNetworkConfigurationPolicy*.
+
+. In the *NodeNetworkConfigurationPolicy* page, click the policy name under the *Name* column for the policy you want to edit.
+
+. Click the *YAML* tab, and edit the YAML.
+
+. Click *Save*.
+
+:leveloffset!:
+:leveloffset: +2
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-delete-node-network-config_{context}"]
+= Deleting the policy
+
+.Procedure
+. Navigate to *Networking* → *NodeNetworkConfigurationPolicy*.
+
+. In the *NodeNetworkConfigurationPolicy* page, click the {kebab} icon placed next to the policy you want to delete, and click *Delete*.
+
+. In the pop-up window, enter the policy name to confirm deletion, and click *Delete*.
+
+:leveloffset!:
+
+[id="virt-manage-nncp-cli"]
+== Managing policy by using the CLI
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-interface-on-nodes_{context}"]
+= Creating an interface on nodes
+
+Create an interface on nodes in the cluster by applying a `NodeNetworkConfigurationPolicy` manifest to the cluster. The manifest details the requested configuration for the interface.
+
+By default, the manifest applies to all nodes in the cluster. To add the interface to specific nodes, add the `spec: nodeSelector` parameter and the appropriate `<key>:<value>` for your node selector.
+
+You can configure multiple nmstate-enabled nodes concurrently. The configuration applies to 50% of the nodes in parallel. This strategy prevents the entire cluster from being unavailable if the network connection fails. To apply the policy configuration in parallel to a specific portion of the cluster, use the `maxUnavailable` field.
+
+.Procedure
+
+. Create the `NodeNetworkConfigurationPolicy` manifest. The following example configures a Linux bridge on all worker nodes and configures the DNS resolver:
++
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: br1-eth1-policy <1>
+spec:
+  nodeSelector: <2>
+    node-role.kubernetes.io/worker: "" <3>
+  maxUnavailable: 3 <4>
+  desiredState:
+    interfaces:
+      - name: br1
+        description: Linux bridge with eth1 as a port <5>
+        type: linux-bridge
+        state: up
+        ipv4:
+          dhcp: true
+          enabled: true
+          auto-dns: false
+        bridge:
+          options:
+            stp:
+              enabled: false
+          port:
+            - name: eth1
+    dns-resolver: <6>
+      config:
+        search:
+        - example.com
+        - example.org
+        server:
+        - 8.8.8.8
+----
+<1> Name of the policy.
+<2> Optional: If you do not include the `nodeSelector` parameter, the policy applies to all nodes in the cluster.
+<3> This example uses the `node-role.kubernetes.io/worker: ""` node selector to select all worker nodes in the cluster.
+<4> Optional: Specifies the maximum number of nmstate-enabled nodes that the policy configuration can be applied to concurrently. This parameter can be set to either a percentage value (string), for example, `"10%"`, or an absolute value (number), such as `3`.
+<5> Optional: Human-readable description for the interface.
+<6> Optional: Specifies the search and server settings for the DNS server.
+
+. Create the node network policy:
++
+[source,terminal]
+----
+$ oc apply -f br1-eth1-policy.yaml <1>
+----
+<1> File name of the node network configuration policy manifest.
+
+:leveloffset!:
+
+[discrete]
+[role="_additional-resources"]
+== Additional resources
+* xref:../../networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc#virt-example-nmstate-multiple-interfaces_{context}[Example for creating multiple interfaces in the same policy]
+* xref:../../networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc#virt-example-nmstate-IP-management_{context}[Examples of different IP management methods in policies]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-confirming-policy-updates-on-nodes_{context}"]
+= Confirming node network policy updates on nodes
+
+A `NodeNetworkConfigurationPolicy` manifest describes your requested network configuration for nodes in the cluster.
+The node network policy includes your requested network configuration and the status of execution of the policy on the cluster as a whole.
+
+
+When you apply a node network policy, a `NodeNetworkConfigurationEnactment` object is created for every node in the cluster. The node network configuration enactment is a read-only object that represents the status of execution of the policy on that node.
+If the policy fails to be applied on the node, the enactment for that node includes a traceback for troubleshooting.
+
+.Procedure
+
+. To confirm that a policy has been applied to the cluster, list the policies and their status:
++
+[source,terminal]
+----
+$ oc get nncp
+----
+
+. Optional: If a policy is taking longer than expected to successfully configure, you can inspect the requested state and status conditions of a particular policy:
++
+[source,terminal]
+----
+$ oc get nncp <policy> -o yaml
+----
+
+. Optional: If a policy is taking longer than expected to successfully configure on all nodes, you can list the status of the enactments on the cluster:
++
+[source,terminal]
+----
+$ oc get nnce
+----
+
+. Optional: To view the configuration of a particular enactment, including any error reporting for a failed configuration:
++
+[source,terminal]
+----
+$ oc get nnce <node>.<policy> -o yaml
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-removing-interface-from-nodes_{context}"]
+= Removing an interface from nodes
+
+You can remove an interface from one or more nodes in the cluster by editing the `NodeNetworkConfigurationPolicy` object and setting the `state` of the interface to `absent`.
+
+Removing an interface from a node does not automatically restore the node network configuration to a previous state. If you want to restore the previous state, you will need to define that node network configuration in the policy.
+
+If you remove a bridge or bonding interface, any node NICs in the cluster that were previously attached or subordinate to that bridge or bonding interface are placed in a `down` state and become unreachable. To avoid losing connectivity, configure the node NIC in the same policy so that it has a status of `up` and either DHCP or a static IP address.
+
+[NOTE]
+====
+Deleting the node network policy that added an interface does not change the configuration of the policy on the node.
+Although a `NodeNetworkConfigurationPolicy` is an object in the cluster, it only represents the requested configuration. +
+Similarly, removing an interface does not delete the policy.
+====
+
+.Procedure
+
+. Update the `NodeNetworkConfigurationPolicy` manifest used to create the interface. The following example removes a Linux bridge and configures the `eth1` NIC with DHCP to avoid losing connectivity:
++
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: <br1-eth1-policy> <1>
+spec:
+  nodeSelector: <2>
+    node-role.kubernetes.io/worker: "" <3>
+  desiredState:
+    interfaces:
+    - name: br1
+      type: linux-bridge
+      state: absent <4>
+    - name: eth1 <5>
+      type: ethernet <6>
+      state: up <7>
+      ipv4:
+        dhcp: true <8>
+        enabled: true <9>
+----
+<1> Name of the policy.
+<2> Optional: If you do not include the `nodeSelector` parameter, the policy applies to all nodes in the cluster.
+<3> This example uses the `node-role.kubernetes.io/worker: ""` node selector to select all worker nodes in the cluster.
+<4> Changing the state to `absent` removes the interface.
+<5> The name of the interface that is to be unattached from the bridge interface.
+<6> The type of interface. This example creates an Ethernet networking interface.
+<7> The requested state for the interface.
+<8> Optional: If you do not use `dhcp`, you can either set a static IP or leave the interface without an IP address.
+<9> Enables `ipv4` in this example.
+
+. Update the policy on the node and remove the interface:
++
+[source,terminal]
+----
+$ oc apply -f <br1-eth1-policy.yaml> <1>
+----
+<1> File name of the policy manifest.
+
+:leveloffset!:
+
+[id="virt-nmstate-example-policy-configurations"]
+== Example policy configurations for different interfaces
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+[id="virt-example-bridge-nncp_{context}"]
+= Example: Linux bridge interface node network configuration policy
+
+Create a Linux bridge interface on nodes in the cluster by applying a `NodeNetworkConfigurationPolicy` manifest
+to the cluster.
+
+The following YAML file is an example of a manifest for a Linux bridge interface.
+It includes samples values that you must replace with your own information.
+
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: br1-eth1-policy <1>
+spec:
+  nodeSelector: <2>
+    kubernetes.io/hostname: <node01> <3>
+  desiredState:
+    interfaces:
+      - name: br1 <4>
+        description: Linux bridge with eth1 as a port <5>
+        type: linux-bridge <6>
+        state: up <7>
+        ipv4:
+          dhcp: true <8>
+          enabled: true <9>
+        bridge:
+          options:
+            stp:
+              enabled: false <10>
+          port:
+            - name: eth1 <11>
+----
+<1> Name of the policy.
+<2> Optional: If you do not include the `nodeSelector` parameter, the policy applies to all nodes in the cluster.
+<3> This example uses a `hostname` node selector.
+<4> Name of the interface.
+<5> Optional: Human-readable description of the interface.
+<6> The type of interface. This example creates a bridge.
+<7> The requested state for the interface after creation.
+<8> Optional: If you do not use `dhcp`, you can either set a static IP or leave the interface without an IP address.
+<9> Enables `ipv4` in this example.
+<10> Disables `stp` in this example.
+<11> The node NIC to which the bridge attaches.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+[id="virt-example-vlan-nncp_{context}"]
+= Example: VLAN interface node network configuration policy
+
+Create a VLAN interface on nodes in the cluster by applying a `NodeNetworkConfigurationPolicy` manifest
+to the cluster.
+
+The following YAML file is an example of a manifest for a VLAN interface.
+It includes samples values that you must replace with your own information.
+
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: vlan-eth1-policy <1>
+spec:
+  nodeSelector: <2>
+    kubernetes.io/hostname: <node01> <3>
+  desiredState:
+    interfaces:
+    - name: eth1.102 <4>
+      description: VLAN using eth1 <5>
+      type: vlan <6>
+      state: up <7>
+      vlan:
+        base-iface: eth1 <8>
+        id: 102 <9>
+----
+<1> Name of the policy.
+<2> Optional: If you do not include the `nodeSelector` parameter, the policy applies to all nodes in the cluster.
+<3> This example uses a `hostname` node selector.
+<4> Name of the interface.
+<5> Optional: Human-readable description of the interface.
+<6> The type of interface. This example creates a VLAN.
+<7> The requested state for the interface after creation.
+<8> The node NIC to which the VLAN is attached.
+<9> The VLAN tag.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+[id="virt-example-bond-nncp_{context}"]
+= Example: Bond interface node network configuration policy
+
+Create a bond interface on nodes in the cluster by applying a `NodeNetworkConfigurationPolicy` manifest
+to the cluster.
+
+[NOTE]
+====
+{VirtProductName} only supports the following bond modes:
+
+* mode=1 active-backup +
+* mode=2 balance-xor +
+* mode=4 802.3ad +
+* mode=5 balance-tlb +
+* mode=6 balance-alb
+====
+
+The following YAML file is an example of a manifest for a bond interface.
+It includes samples values that you must replace with your own information.
+
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: bond0-eth1-eth2-policy <1>
+spec:
+  nodeSelector: <2>
+    kubernetes.io/hostname: <node01> <3>
+  desiredState:
+    interfaces:
+    - name: bond0 <4>
+      description: Bond with ports eth1 and eth2 <5>
+      type: bond <6>
+      state: up <7>
+      ipv4:
+        dhcp: true <8>
+        enabled: true <9>
+      link-aggregation:
+        mode: active-backup <10>
+        options:
+          miimon: '140' <11>
+        port: <12>
+        - eth1
+        - eth2
+      mtu: 1450 <13>
+----
+<1> Name of the policy.
+<2> Optional: If you do not include the `nodeSelector` parameter, the policy applies to all nodes in the cluster.
+<3> This example uses a `hostname` node selector.
+<4> Name of the interface.
+<5> Optional: Human-readable description of the interface.
+<6> The type of interface. This example creates a bond.
+<7> The requested state for the interface after creation.
+<8> Optional: If you do not use `dhcp`, you can either set a static IP or leave the interface without an IP address.
+<9> Enables `ipv4` in this example.
+<10> The driver mode for the bond. This example uses an active backup mode.
+<11> Optional: This example uses miimon to inspect the bond link every 140ms.
+<12> The subordinate node NICs in the bond.
+<13> Optional: The maximum transmission unit (MTU) for the bond. If not specified, this value is set to `1500` by default.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+[id="virt-example-ethernet-nncp_{context}"]
+= Example: Ethernet interface node network configuration policy
+
+Configure an Ethernet interface on nodes in the cluster by applying a `NodeNetworkConfigurationPolicy` manifest to the cluster.
+
+The following YAML file is an example of a manifest for an Ethernet interface.
+It includes sample values that you must replace with your own information.
+
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: eth1-policy <1>
+spec:
+  nodeSelector: <2>
+    kubernetes.io/hostname: <node01> <3>
+  desiredState:
+    interfaces:
+    - name: eth1 <4>
+      description: Configuring eth1 on node01 <5>
+      type: ethernet <6>
+      state: up <7>
+      ipv4:
+        dhcp: true <8>
+        enabled: true <9>
+----
+<1> Name of the policy.
+<2> Optional: If you do not include the `nodeSelector` parameter, the policy applies to all nodes in the cluster.
+<3> This example uses a `hostname` node selector.
+<4> Name of the interface.
+<5> Optional: Human-readable description of the interface.
+<6> The type of interface. This example creates an Ethernet networking interface.
+<7> The requested state for the interface after creation.
+<8> Optional: If you do not use `dhcp`, you can either set a static IP or leave the interface without an IP address.
+<9> Enables `ipv4` in this example.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+[id="virt-example-nmstate-multiple-interfaces_{context}"]
+= Example: Multiple interfaces in the same node network configuration policy
+
+You can create multiple interfaces in the same node network configuration policy. These interfaces can reference each other, allowing you to build and deploy a network configuration by using a single policy manifest.
+
+The following example YAML file creates a bond that is named `bond10` across two NICs and VLAN that is named `bond10.103` that connects to the bond.
+
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: bond-vlan <1>
+spec:
+  nodeSelector: <2>
+    kubernetes.io/hostname: <node01> <3>
+  desiredState:
+    interfaces:
+    - name: bond10 <4>
+      description: Bonding eth2 and eth3 <5>
+      type: bond <6>
+      state: up <7>
+      link-aggregation:
+        mode: balance-rr <8>
+        options:
+          miimon: '140' <9>
+        port: <10>
+        - eth2
+        - eth3
+    - name: bond10.103 <4>
+      description: vlan using bond10 <5>
+      type: vlan <6>
+      state: up <7>
+      vlan:
+         base-iface: bond10 <11>
+         id: 103 <12>
+      ipv4:
+        dhcp: true <13>
+        enabled: true <14>
+----
+<1> Name of the policy.
+<2> Optional: If you do not include the `nodeSelector` parameter, the policy applies to all nodes in the cluster.
+<3> This example uses `hostname` node selector.
+<4> Name of the interface.
+<5> Optional: Human-readable description of the interface.
+<6> The type of interface.
+<7> The requested state for the interface after creation.
+<8> The driver mode for the bond.
+<9> Optional: This example uses miimon to inspect the bond link every 140ms.
+<10> The subordinate node NICs in the bond.
+<11> The node NIC to which the VLAN is attached.
+<12> The VLAN tag.
+<13> Optional: If you do not use dhcp, you can either set a static IP or leave the interface without an IP address.
+<14> Enables ipv4 in this example.
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+[id="virt-example-host-vrf_{context}"]
+= Example: Network interface with a VRF instance node network configuration policy
+
+Associate a Virtual Routing and Forwarding (VRF) instance with a network interface by applying a `NodeNetworkConfigurationPolicy` custom resource (CR).
+
+:FeatureName: Associating a VRF instance with a network interface
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+By associating a VRF instance with a network interface, you can support traffic isolation, independent routing decisions, and the logical separation of network resources.
+
+In a bare-metal environment, you can announce load balancer services through interfaces belonging to a VRF instance by using MetalLB. For more information, see the _Additional resources_ section.
+
+The following YAML file is an example of associating a VRF instance to a network interface.
+It includes samples values that you must replace with your own information.
+
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: vrfpolicy <1>
+spec:
+  nodeSelector:
+    vrf: "true" <2>
+  maxUnavailable: 3
+  desiredState:
+    interfaces:
+      - name: ens4vrf <3>
+        type: vrf <4>
+        state: up
+        vrf:
+          port:
+            - ens4 <5>
+          route-table-id: 2 <6>
+----
+<1> The name of the policy.
+<2> This example applies the policy to all nodes with the label `vrf:true`.
+<3> The name of the interface.
+<4> The type of interface. This example creates a VRF instance.
+<5> The node interface to which the VRF attaches.
+<6> The name of the route table ID for the VRF.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../networking/multiple_networks/about-virtual-routing-and-forwarding.adoc#cnf-about-virtual-routing-and-forwarding_about-virtual-routing-and-forwarding[About virtual routing and forwarding]
+* xref:../../networking/metallb/metallb-configure-bgp-peers.adoc#nw-metallb-bgp-peer-vrf_configure-metallb-bgp-peers[Exposing a service through a network VRF]
+
+[id="capturing-nic-static-ip_k8s-nmstate-updating-node-network-config"]
+== Capturing the static IP of a NIC attached to a bridge
+
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-example-inherit-static-ip-from-nic_{context}"]
+= Example: Linux bridge interface node network configuration policy to inherit static IP address from the NIC attached to the bridge
+
+Create a Linux bridge interface on nodes in the cluster and transfer the static IP configuration of the NIC to the bridge by applying a single `NodeNetworkConfigurationPolicy` manifest to the cluster.
+
+The following YAML file is an example of a manifest for a Linux bridge interface. It includes sample values that you must replace with your own information.
+
+
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: br1-eth1-copy-ipv4-policy <1>
+spec:
+  nodeSelector: <2>
+    node-role.kubernetes.io/worker: ""
+  capture:
+    eth1-nic: interfaces.name=="eth1" <3>
+    eth1-routes: routes.running.next-hop-interface=="eth1"
+    br1-routes: capture.eth1-routes | routes.running.next-hop-interface := "br1"
+  desiredState:
+    interfaces:
+      - name: br1
+        description: Linux bridge with eth1 as a port
+        type: linux-bridge <4>
+        state: up
+        ipv4: "{{ capture.eth1-nic.interfaces.0.ipv4 }}" <5>
+        bridge:
+          options:
+            stp:
+              enabled: false
+          port:
+            - name: eth1 <6>
+     routes:
+        config: "{{ capture.br1-routes.routes.running }}"
+----
+<1> The name of the policy.
+<2> Optional: If you do not include the `nodeSelector` parameter, the policy applies to all nodes in the cluster. This example uses the `node-role.kubernetes.io/worker: ""` node selector to select all worker nodes in the cluster.
+<3> The reference to the node NIC to which the bridge attaches.
+<4> The type of interface. This example creates a bridge.
+<5> The IP address of the bridge interface. This value matches the IP address of the NIC which is referenced by the `spec.capture.eth1-nic` entry.
+<6> The node NIC to which the bridge attaches.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* link:https://nmstate.io/nmpolicy/user-guide/102-policy-syntax.html[The NMPolicy project - Policy syntax]
+
+// Dropping offset by one again
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-example-nmstate-IP-management_{context}"]
+= Examples: IP management
+
+The following example configuration snippets demonstrate different methods of IP management.
+
+These examples use the `ethernet` interface type to simplify the example while showing the related context in the policy configuration. These IP management examples can be used with the other interface types.
+
+[id="virt-example-nmstate-IP-management-static_{context}"]
+== Static
+
+The following snippet statically configures an IP address on the Ethernet interface:
+
+[source,yaml]
+----
+# ...
+    interfaces:
+    - name: eth1
+      description: static IP on eth1
+      type: ethernet
+      state: up
+      ipv4:
+        dhcp: false
+        address:
+        - ip: 192.168.122.250 <1>
+          prefix-length: 24
+        enabled: true
+# ...
+----
+<1> Replace this value with the static IP address for the interface.
+
+[id="virt-example-nmstate-IP-management-no-ip_{context}"]
+== No IP address
+
+The following snippet ensures that the interface has no IP address:
+
+[source,yaml]
+----
+# ...
+    interfaces:
+    - name: eth1
+      description: No IP on eth1
+      type: ethernet
+      state: up
+      ipv4:
+        enabled: false
+# ...
+----
+
+[id="virt-example-nmstate-IP-management-dhcp_{context}"]
+== Dynamic host configuration
+
+The following snippet configures an Ethernet interface that uses a dynamic IP address, gateway address, and DNS:
+
+[source,yaml]
+----
+# ...
+    interfaces:
+    - name: eth1
+      description: DHCP on eth1
+      type: ethernet
+      state: up
+      ipv4:
+        dhcp: true
+        enabled: true
+# ...
+----
+
+The following snippet configures an Ethernet interface that uses a dynamic IP address but does not use a dynamic gateway address or DNS:
+
+[source,yaml]
+----
+# ...
+    interfaces:
+    - name: eth1
+      description: DHCP without gateway or DNS on eth1
+      type: ethernet
+      state: up
+      ipv4:
+        dhcp: true
+        auto-gateway: false
+        auto-dns: false
+        enabled: true
+# ...
+----
+
+[id="virt-example-nmstate-IP-management-dns_{context}"]
+== DNS
+
+Setting the DNS configuration is analagous to modifying the `/etc/resolv.conf` file. The following snippet sets the DNS configuration on the host.
+
+[source,yaml]
+----
+# ...
+    interfaces: <1>
+       ...
+       ipv4:
+         ...
+         auto-dns: false
+         ...
+    dns-resolver:
+      config:
+        search:
+        - example.com
+        - example.org
+        server:
+        - 8.8.8.8
+# ...
+----
+<1> You must configure an interface with `auto-dns: false` or you must use static IP configuration on an interface in order for Kubernetes NMState to store custom DNS settings.
+
+[IMPORTANT]
+====
+You cannot use `br-ex`, an OVNKubernetes-managed Open vSwitch bridge, as the interface when configuring DNS resolvers.
+====
+
+[id="virt-example-nmstate-IP-management-static-routing_{context}"]
+== Static routing
+
+The following snippet configures a static route and a static IP on interface `eth1`.
+
+[source,yaml]
+----
+# ...
+    interfaces:
+    - name: eth1
+      description: Static routing on eth1
+      type: ethernet
+      state: up
+      ipv4:
+        dhcp: false
+        address:
+        - ip: 192.0.2.251 <1>
+          prefix-length: 24
+        enabled: true
+    routes:
+      config:
+      - destination: 198.51.100.0/24
+        metric: 150
+        next-hop-address: 192.0.2.1 <2>
+        next-hop-interface: eth1
+        table-id: 254
+# ...
+----
+<1> The static IP address for the Ethernet interface.
+<2> Next hop address for the node traffic. This must be in the same subnet as the IP address set for the Ethernet interface.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/virt-about-nmstate,modules/virt-node-network-config-console,modules/virt-monitor-node-network-config-console,modules/virt-create-node-network-config-console,modules/virt-update-node-network-config-form,modules/virt-update-node-network-config-yaml,modules/virt-delete-node-network-config,modules/virt-creating-interface-on-nodes,modules/virt-confirming-policy-updates-on-nodes,modules/virt-removing-interface-from-nodes,modules/virt-example-bridge-nncp,modules/virt-example-vlan-nncp,modules/virt-example-bond-nncp,modules/virt-example-ethernet-nncp,modules/virt-example-nmstate-multiple-interfaces,modules/virt-example-host-vrf,modules/snippets/technology-preview,modules/virt-example-inherit-static-ip-from-nic,modules/virt-example-nmstate-IP-management

@@ -1,0 +1,4194 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="installing-ibm-z"]
+= Installing a cluster with z/VM on IBM Z(R) and {linuxoneProductName}
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: installing-ibm-z
+
+toc::[]
+
+[role="_abstract"]
+In {product-title} version {product-version}, you can install a cluster on
+{ibmzProductName} or {linuxoneProductName} infrastructure that you provision.
+
+[NOTE]
+====
+While this document refers only to {ibmzProductName}, all information in it also applies to {linuxoneProductName}.
+====
+
+[IMPORTANT]
+====
+Additional considerations exist for non-bare metal platforms. Review the information in the
+link:https://access.redhat.com/articles/4207611[guidelines for deploying {product-title} on non-tested platforms] before you install an {product-title} cluster.
+====
+
+== Prerequisites
+
+* You reviewed details about the xref:../../architecture/architecture-installation.adoc#architecture-installation[{product-title} installation and update] processes.
+* You read the documentation on xref:../../installing/installing-preparing.adoc#installing-preparing[selecting a cluster installation method and preparing it for users].
+* Before you begin the installation process, you must clean the installation directory. This ensures that the required installation files are created and updated during the installation process.
+* You provisioned xref:../../storage/persistent_storage/persistent-storage-ocs.adoc#persistent-storage-ocs[persistent storage using {rh-storage}] or other supported storage protocols for your cluster. To deploy a private image registry, you must set up persistent storage with `ReadWriteMany` access.
+* If you use a firewall, you xref:../../installing/install_config/configuring-firewall.adoc#configuring-firewall[configured it to allow the sites] that your cluster requires access to.
+
+[NOTE]
+====
+Be sure to also review this site list if you are configuring a proxy.
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-china-region.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-user-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_openstack/installing-openstack-installer-sr-iov.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-network-customizations.adoc
+// * architecture/architecture.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-installer-provisioned.adoc
+
+
+
+:_mod-docs-content-type: CONCEPT
+[id="cluster-entitlements_{context}"]
+= Internet access for {product-title}
+
+In {product-title} {product-version}, you require access to the internet to
+install
+your cluster.
+
+You must have internet access to:
+
+* Access {cluster-manager-url} to download the installation program and perform subscription management. If the cluster has internet access and you do not disable Telemetry, that service automatically entitles your cluster.
+* Access link:http://quay.io[Quay.io] to obtain the packages that are required to install your cluster.
+* Obtain the packages that are required to perform cluster updates.
+
+
+:leveloffset!:
+
+[id="installation-requirements-user-infra_{context}"]
+== Requirements for a cluster with user-provisioned infrastructure
+
+For a cluster that contains user-provisioned infrastructure, you must deploy all
+of the required machines.
+
+This section describes the requirements for deploying {product-title} on user-provisioned infrastructure.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:ibm-z:
+
+:_mod-docs-content-type: REFERENCE
+[id="installation-machine-requirements_{context}"]
+= Required machines for cluster installation
+
+The smallest {product-title} clusters require the following hosts:
+
+.Minimum required hosts
+[options="header"]
+|===
+
+|Hosts |Description
+
+|One temporary bootstrap machine
+|The cluster requires the bootstrap machine to deploy the {product-title} cluster
+on the three control plane machines. You can remove the bootstrap machine after
+you install the cluster.
+
+|Three control plane machines
+|The control plane machines run the Kubernetes and {product-title} services that form the control plane.
+
+|At least two compute machines, which are also known as worker machines.
+|The workloads requested by {product-title} users run on the compute machines.
+
+|===
+
+
+[IMPORTANT]
+====
+To improve high availability of your cluster, distribute the control plane machines over different z/VM instances on at least two physical machines.
+====
+
+The bootstrap, control plane, and compute machines must use {op-system-first} as the operating system.
+
+Note that {op-system} is based on {op-system-base-full} 9.2 and inherits all of its hardware certifications and requirements.
+See link:https://access.redhat.com/articles/rhel-limits[Red Hat Enterprise Linux technology capabilities and limits].
+
+:!ibm-z:
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:ibm-z:
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-minimum-resource-requirements_{context}"]
+= Minimum resource requirements for cluster installation
+
+Each cluster machine must meet the following minimum requirements:
+
+.Minimum resource requirements
+[cols="2,2,2,2,2,2",options="header"]
+|===
+
+|Machine
+|Operating System
+|vCPU ^[1]^
+|Virtual RAM
+|Storage
+|Input/Output Per Second (IOPS)
+
+|Bootstrap
+|{op-system}
+|2
+|4
+|16 GB
+|100 GB
+|N/A
+
+
+|Control plane
+|{op-system}
+|2
+|4
+|16 GB
+|100 GB
+|N/A
+
+|Compute
+|{op-system}
+|{op-system}, {op-system-base} 8.6, {op-system-base} 8.7, or {op-system-base} 8.8 ^[3]^
+|2
+|8 GB
+|100 GB
+|N/A
+
+|===
+[.small]
+--
+1. One physical core (IFL) provides two logical cores (threads) when SMT-2 is enabled. The hypervisor can provide two or more vCPUs.
+--
+
+
+If an instance type for your platform meets the minimum requirements for cluster machines, it is supported to use in {product-title}.
+
+:!ibm-z:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../scalability_and_performance/optimization/optimizing-storage.adoc#optimizing-storage[Optimizing storage]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="minimum-ibm-z-system-requirements_{context}"]
+= Minimum {ibmzProductName} system environment
+
+You can install {product-title} version {product-version} on the following IBM hardware:
+
+* IBM z16 (all models), IBM z15 (all models), IBM z14 (all models)
+* {linuxoneProductName} 4 (all models), {linuxoneProductName} III (all models), {linuxoneProductName} Emperor II, {linuxoneProductName} Rockhopper II
+
+[discrete]
+== Hardware requirements
+
+* The equivalent of six Integrated Facilities for Linux (IFL), which are SMT2 enabled, for each cluster.
+* At least one network connection to both connect to the `LoadBalancer` service and to serve data for traffic outside the cluster.
+
+[NOTE]
+====
+You can use dedicated or shared IFLs to assign sufficient compute resources. Resource sharing is one of the key strengths of {ibmzProductName}. However, you must adjust capacity correctly on each hypervisor layer and ensure sufficient resources for every {product-title} cluster.
+====
+
+[IMPORTANT]
+====
+Since the overall performance of the cluster can be impacted, the LPARs that are used to set up the {product-title} clusters must provide sufficient compute capacity. In this context, LPAR weight management, entitlements, and CPU shares on the hypervisor level play an important role.
+====
+
+[discrete]
+== Operating system requirements
+
+* One instance of z/VM 7.2 or later
+
+On your z/VM instance, set up:
+
+* Three guest virtual machines for {product-title} control plane machines
+* Two guest virtual machines for {product-title} compute machines
+* One guest virtual machine for the temporary {product-title} bootstrap machine
+
+[discrete]
+== {ibmzProductName} network connectivity requirements
+
+To install on {ibmzProductName} under z/VM, you require a single z/VM virtual NIC in layer 2 mode. You also need:
+
+*   A direct-attached OSA or RoCE network adapter
+*   A z/VM VSwitch set up. For a preferred setup, use OSA link aggregation.
+
+[discrete]
+=== Disk storage for the z/VM guest virtual machines
+
+* FICON attached disk storage (DASDs). These can be z/VM minidisks, fullpack minidisks, or dedicated DASDs, all of which must be formatted as CDL, which is the default. To reach the minimum required DASD size for {op-system-first} installations, you need extended address volumes (EAV). If available, use HyperPAV to ensure optimal performance.
+* FCP attached disk storage
+
+[discrete]
+=== Storage / Main Memory
+
+* 16 GB for {product-title} control plane machines
+* 8 GB for {product-title} compute machines
+* 16 GB for the temporary {product-title} bootstrap machine
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="preferred-ibm-z-system-requirements_{context}"]
+= Preferred {ibmzProductName} system environment
+
+[discrete]
+== Hardware requirements
+
+* Three LPARS that each have the equivalent of six IFLs, which are SMT2 enabled, for each cluster.
+* Two network connections to both connect to the `LoadBalancer` service and to serve data for traffic outside the cluster.
+* HiperSockets, which are attached to a node either directly as a device or by bridging with one z/VM VSWITCH to be transparent to the z/VM guest. To directly connect HiperSockets to a node, you must set up a gateway to the external network via a {op-system-base} 8 guest to bridge to the HiperSockets network.
+
+[discrete]
+== Operating system requirements
+
+* Two or three instances of z/VM 7.2 or later for high availability
+
+On your z/VM instances, set up:
+
+* Three guest virtual machines for {product-title} control plane machines, one per z/VM instance.
+* At least six guest virtual machines for {product-title} compute machines, distributed across the z/VM instances.
+* One guest virtual machine for the temporary {product-title} bootstrap machine.
+* To ensure the availability of integral components in an overcommitted environment, increase the priority of the control plane by using the CP command `SET SHARE`. Do the same for infrastructure nodes, if they exist. See link:https://www.ibm.com/docs/en/zvm/latest?topic=commands-set-share[SET SHARE] in IBM Documentation.
+
+[discrete]
+== {ibmzProductName} network connectivity requirements
+
+To install on {ibmzProductName} under z/VM, you require a single z/VM virtual NIC in layer 2 mode. You also need:
+
+*   A direct-attached OSA or RoCE network adapter
+*   A z/VM VSwitch set up. For a preferred setup, use OSA link aggregation.
+
+[discrete]
+=== Disk storage for the z/VM guest virtual machines
+
+* FICON attached disk storage (DASDs). These can be z/VM minidisks, fullpack minidisks, or dedicated DASDs, all of which must be formatted as CDL, which is the default. To reach the minimum required DASD size for {op-system-first} installations, you need extended address volumes (EAV). If available, use HyperPAV and High Performance FICON (zHPF) to ensure optimal performance.
+* FCP attached disk storage
+
+[discrete]
+=== Storage / Main Memory
+
+* 16 GB for {product-title} control plane machines
+* 8 GB for {product-title} compute machines
+* 16 GB for the temporary {product-title} bootstrap machine
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// installing/installing_aws/installing-aws-user-infra.adoc
+// installing/installing_aws/installing-restricted-networks-aws.adoc
+// installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// installing/installing_azure/installing-azure-user-infra.adoc
+// installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// installing/installing_bare_metal/installing-bare-metal.adoc
+// installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// installing/installing_gcp/installing-gcp-user-infra.adoc
+// installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// installing/installing_ibm_power/installing-ibm-power.adoc
+// installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// installing/installing_ibm_z/installing-ibm-z.adoc
+// installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// installing/installing_vsphere/installing-vsphere.adoc
+// machine_management/adding-rhel-compute.adoc
+// machine_management/more-rhel-compute.adoc
+// post_installation_configuration/node-tasks.adoc
+// installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="csr-management_{context}"]
+= Certificate signing requests management
+
+Because your cluster has limited access to automatic machine management when you use infrastructure that you provision, you must provide a mechanism for approving cluster certificate signing requests (CSRs) after installation. The `kube-controller-manager` only approves the kubelet client CSRs. The `machine-approver` cannot guarantee the validity of a serving certificate that is requested by using kubelet credentials because it cannot confirm that the correct machine issued the request. You must determine and implement a method of verifying the validity of the kubelet serving certificate requests and approving them.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_ibmz-requirements"]
+.Additional resources
+
+* See link:https://www.ibm.com/docs/en/zvm/latest?topic=networks-bridging-hipersockets-lan-zvm-virtual-switch[Bridging a HiperSockets LAN with a z/VM Virtual Switch] in IBM Documentation.
+
+* See link:https://public.dhe.ibm.com/software/dw/linux390/perf/zvm_hpav00.pdf[Scaling HyperPAV alias devices on Linux guests on z/VM] for performance optimization.
+
+* See link:https://www.vm.ibm.com/library/presentations/lparperf.pdf[Topics in LPAR performance] for LPAR weight management and entitlements.
+
+* xref:../../scalability_and_performance/ibm-z-recommended-host-practices.adoc#ibm-z-recommended-host-practices[Recommended host practices for {ibmzProductName} & {linuxoneProductName} environments]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-power.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+:ibm-z:
+
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-network-user-infra_{context}"]
+= Networking requirements for user-provisioned infrastructure
+
+All the {op-system-first} machines require networking to be configured in `initramfs` during boot
+to fetch their Ignition config files.
+
+During the initial boot, the machines require an HTTP or HTTPS server to
+establish a network connection to download their Ignition config files.
+
+The machines are configured with static IP addresses. No DHCP server is required. Ensure that the machines have persistent IP addresses and hostnames.
+
+The Kubernetes API server must be able to resolve the node names of the cluster
+machines. If the API servers and worker nodes are in different zones, you can
+configure a default DNS search zone to allow the API server to resolve the
+node names. Another supported approach is to always refer to hosts by their
+fully-qualified domain names in both the node objects and all DNS requests.
+
+
+[id="installation-network-connectivity-user-infra_{context}"]
+== Network connectivity requirements
+
+You must configure the network connectivity between machines to allow {product-title} cluster
+components to communicate. Each machine must be able to resolve the hostnames
+of all other machines in the cluster.
+
+This section provides details about the ports that are required.
+
+[IMPORTANT]
+====
+In connected {product-title} environments, all nodes are required to have internet access to pull images
+for platform containers and provide telemetry data to Red Hat.
+====
+
+
+
+.Ports used for all-machine to all-machine communications
+[cols="2a,2a,5a",options="header"]
+|===
+
+|Protocol
+|Port
+|Description
+
+|ICMP
+|N/A
+|Network reachability tests
+
+.4+|TCP
+|`1936`
+|Metrics
+
+|`9000`-`9999`
+|Host level services, including the node exporter on ports `9100`-`9101` and
+the Cluster Version Operator on port `9099`.
+
+|`10250`-`10259`
+|The default ports that Kubernetes reserves
+
+|`10256`
+|openshift-sdn
+
+.5+|UDP
+|`4789`
+|VXLAN
+
+|`6081`
+|Geneve
+
+|`9000`-`9999`
+|Host level services, including the node exporter on ports `9100`-`9101`.
+
+|`500`
+|IPsec IKE packets
+
+|`4500`
+|IPsec NAT-T packets
+
+|TCP/UDP
+|`30000`-`32767`
+|Kubernetes node port
+
+|ESP
+|N/A
+|IPsec Encapsulating Security Payload (ESP)
+
+|===
+
+.Ports used for all-machine to control plane communications
+[cols="2a,2a,5a",options="header"]
+|===
+
+|Protocol
+|Port
+|Description
+
+|TCP
+|`6443`
+|Kubernetes API
+
+|===
+
+.Ports used for control plane machine to control plane machine communications
+[cols="2a,2a,5a",options="header"]
+|===
+
+|Protocol
+|Port
+|Description
+
+|TCP
+|`2379`-`2380`
+|etcd server and peer ports
+
+|===
+
+
+
+[discrete]
+== NTP configuration for user-provisioned infrastructure
+
+{product-title} clusters are configured to use a public Network Time Protocol (NTP) server by default. If you want to use a local enterprise NTP server, or if your cluster is being deployed in a disconnected network, you can configure the cluster to use a specific time server. For more information, see the documentation for _Configuring chrony time service_.
+
+
+:!ibm-z:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_ibmz-chrony-time-service"]
+.Additional resources
+
+* xref:../../installing/install_config/installing-customizing.adoc#installation-special-config-chrony_installing-customizing[Configuring chrony time service]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vmc/installing-restricted-networks-vmc-user-infra.adoc
+// * installing/installing_vmc/installing-vmc-user-infra.adoc
+// * installing/installing_vmc/installing-vmc-network-customizations-user-infra.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+
+:ibm-z:
+
+:prewrap!:
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-dns-user-infra_{context}"]
+= User-provisioned DNS requirements
+
+In {product-title} deployments, DNS name resolution is required for the following components:
+
+* The Kubernetes API
+* The {product-title} application wildcard
+* The bootstrap, control plane, and compute machines
+
+Reverse DNS resolution is also required for the Kubernetes API, the bootstrap machine, the control plane machines, and the compute machines.
+
+DNS A/AAAA or CNAME records are used for name resolution and PTR records are used for reverse name resolution. The reverse records are important because {op-system-first} uses the reverse records to set the hostnames for all the nodes, unless the hostnames are provided by DHCP. Additionally, the reverse records are used to generate the certificate signing requests (CSR) that {product-title} needs to operate.
+
+
+The following DNS records are required for a user-provisioned {product-title} cluster and they must be in place before installation. In each record, `<cluster_name>` is the cluster name and `<base_domain>` is the base domain that you specify in the `install-config.yaml` file. A complete DNS record takes the form: `<component>.<cluster_name>.<base_domain>.`.
+
+.Required DNS records
+[cols="1a,3a,5a",options="header"]
+|===
+
+|Component
+|Record
+|Description
+
+.2+a|Kubernetes API
+|`api.<cluster_name>.<base_domain>.`
+|A DNS A/AAAA or CNAME record, and a DNS PTR record, to identify the API load balancer. These records must be resolvable by both clients external to the cluster and from all the nodes within the cluster.
+
+|`api-int.<cluster_name>.<base_domain>.`
+|A DNS A/AAAA or CNAME record, and a DNS PTR record, to internally identify the API load balancer. These records must be resolvable from all the nodes within the cluster.
+[IMPORTANT]
+====
+The API server must be able to resolve the worker nodes by the hostnames
+that are recorded in Kubernetes. If the API server cannot resolve the node
+names, then proxied API calls can fail, and you cannot retrieve logs from pods.
+====
+
+|Routes
+|`*.apps.<cluster_name>.<base_domain>.`
+|A wildcard DNS A/AAAA or CNAME record that refers to the application ingress load balancer. The application ingress load balancer targets the machines that run the Ingress Controller pods. The Ingress Controller pods run on the compute machines by default. These records must be resolvable by both clients external to the cluster and from all the nodes within the cluster.
+
+For example, `console-openshift-console.apps.<cluster_name>.<base_domain>` is used as a wildcard route to the {product-title} console.
+
+|Bootstrap machine
+|`bootstrap.<cluster_name>.<base_domain>.`
+|A DNS A/AAAA or CNAME record, and a DNS PTR record, to identify the bootstrap
+machine. These records must be resolvable by the nodes within the cluster.
+
+|Control plane machines
+|`<master><n>.<cluster_name>.<base_domain>.`
+|DNS A/AAAA or CNAME records and DNS PTR records to identify each machine
+for the control plane nodes. These records must be resolvable by the nodes within the cluster.
+
+|Compute machines
+|`<worker><n>.<cluster_name>.<base_domain>.`
+|DNS A/AAAA or CNAME records and DNS PTR records to identify each machine
+for the worker nodes. These records must be resolvable by the nodes within the cluster.
+
+|===
+
+[NOTE]
+====
+In {product-title} 4.4 and later, you do not need to specify etcd host and SRV records in your DNS configuration.
+====
+
+[TIP]
+====
+You can use the `dig` command to verify name and reverse name resolution. See the section on _Validating DNS resolution for user-provisioned infrastructure_ for detailed validation steps.
+====
+
+[id="installation-dns-user-infra-example_{context}"]
+== Example DNS configuration for user-provisioned clusters
+
+This section provides A and PTR record configuration samples that meet the DNS requirements for deploying {product-title} on user-provisioned infrastructure. The samples are not meant to provide advice for choosing one DNS solution over another.
+
+In the examples, the cluster name is `ocp4` and the base domain is `example.com`.
+
+.Example DNS A record configuration for a user-provisioned cluster
+
+The following example is a BIND zone file that shows sample A records for name resolution in a user-provisioned cluster.
+
+.Sample DNS zone database
+[%collapsible]
+====
+[source,text]
+----
+$TTL 1W
+@	IN	SOA	ns1.example.com.	root (
+			2019070700	; serial
+			3H		; refresh (3 hours)
+			30M		; retry (30 minutes)
+			2W		; expiry (2 weeks)
+			1W )		; minimum (1 week)
+	IN	NS	ns1.example.com.
+	IN	MX 10	smtp.example.com.
+;
+;
+ns1.example.com.		IN	A	192.168.1.5
+smtp.example.com.		IN	A	192.168.1.5
+;
+helper.example.com.		IN	A	192.168.1.5
+helper.ocp4.example.com.	IN	A	192.168.1.5
+;
+api.ocp4.example.com.		IN	A	192.168.1.5 <1>
+api-int.ocp4.example.com.	IN	A	192.168.1.5 <2>
+;
+*.apps.ocp4.example.com.	IN	A	192.168.1.5 <3>
+;
+bootstrap.ocp4.example.com.	IN	A	192.168.1.96 <4>
+;
+master0.ocp4.example.com.	IN	A	192.168.1.97 <5>
+master1.ocp4.example.com.	IN	A	192.168.1.98 <5>
+master2.ocp4.example.com.	IN	A	192.168.1.99 <5>
+;
+worker0.ocp4.example.com.	IN	A	192.168.1.11 <6>
+worker1.ocp4.example.com.	IN	A	192.168.1.7 <6>
+;
+;EOF
+----
+
+<1> Provides name resolution for the Kubernetes API. The record refers to the IP address of the API load balancer.
+<2> Provides name resolution for the Kubernetes API. The record refers to the IP address of the API load balancer and is used for internal cluster communications.
+<3> Provides name resolution for the wildcard routes. The record refers to the IP address of the application ingress load balancer. The application ingress load balancer targets the machines that run the Ingress Controller pods. The Ingress Controller pods run on the compute machines by default.
++
+[NOTE]
+=====
+In the example, the same load balancer is used for the Kubernetes API and application ingress traffic. In production scenarios, you can deploy the API and application ingress load balancers separately so that you can scale the load balancer infrastructure for each in isolation.
+=====
++
+<4> Provides name resolution for the bootstrap machine.
+<5> Provides name resolution for the control plane machines.
+<6> Provides name resolution for the compute machines.
+====
+
+.Example DNS PTR record configuration for a user-provisioned cluster
+
+The following example BIND zone file shows sample PTR records for reverse name resolution in a user-provisioned cluster.
+
+.Sample DNS zone database for reverse records
+[%collapsible]
+====
+[source,text]
+----
+$TTL 1W
+@	IN	SOA	ns1.example.com.	root (
+			2019070700	; serial
+			3H		; refresh (3 hours)
+			30M		; retry (30 minutes)
+			2W		; expiry (2 weeks)
+			1W )		; minimum (1 week)
+	IN	NS	ns1.example.com.
+;
+5.1.168.192.in-addr.arpa.	IN	PTR	api.ocp4.example.com. <1>
+5.1.168.192.in-addr.arpa.	IN	PTR	api-int.ocp4.example.com. <2>
+;
+96.1.168.192.in-addr.arpa.	IN	PTR	bootstrap.ocp4.example.com. <3>
+;
+97.1.168.192.in-addr.arpa.	IN	PTR	master0.ocp4.example.com. <4>
+98.1.168.192.in-addr.arpa.	IN	PTR	master1.ocp4.example.com. <4>
+99.1.168.192.in-addr.arpa.	IN	PTR	master2.ocp4.example.com. <4>
+;
+11.1.168.192.in-addr.arpa.	IN	PTR	worker0.ocp4.example.com. <5>
+7.1.168.192.in-addr.arpa.	IN	PTR	worker1.ocp4.example.com. <5>
+;
+;EOF
+----
+
+<1> Provides reverse DNS resolution for the Kubernetes API. The PTR record refers to the record name of the API load balancer.
+<2> Provides reverse DNS resolution for the Kubernetes API. The PTR record refers to the record name of the API load balancer and is used for internal cluster communications.
+<3> Provides reverse DNS resolution for the bootstrap machine.
+<4> Provides reverse DNS resolution for the control plane machines.
+<5> Provides reverse DNS resolution for the compute machines.
+====
+
+[NOTE]
+====
+A PTR record is not required for the {product-title} application wildcard.
+====
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-power.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+
+
+
+
+:ibm-z:
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-load-balancing-user-infra_{context}"]
+= Load balancing requirements for user-provisioned infrastructure
+
+Before you install {product-title}, you must provision the API and application Ingress load balancing infrastructure. In production scenarios, you can deploy the API and application Ingress load balancers separately so that you can scale the load balancer infrastructure for each in isolation.
+
+
+[NOTE]
+====
+If you want to deploy the API and application Ingress load balancers with a {op-system-base-full} instance, you must purchase the {op-system-base} subscription separately.
+====
+
+The load balancing infrastructure must meet the following requirements:
+
+. *API load balancer*: Provides a common endpoint for users, both human and machine, to interact with and configure the platform. Configure the following conditions:
++
+--
+  ** Layer 4 load balancing only. This can be referred to as Raw TCP, SSL Passthrough, or SSL Bridge mode. If you use SSL Bridge mode, you must enable Server Name Indication (SNI) for the API routes.
+  ** A stateless load balancing algorithm. The options vary based on the load balancer implementation.
+--
++
+[IMPORTANT]
+====
+Do not configure session persistence for an API load balancer. Configuring session persistence for a Kubernetes API server might cause performance issues from excess application traffic for your {product-title} cluster and the Kubernetes API that runs inside the cluster.
+====
++
+Configure the following ports on both the front and back of the load balancers:
++
+.API load balancer
+[cols="2,5,^2,^2,2",options="header"]
+|===
+
+|Port
+|Back-end machines (pool members)
+|Internal
+|External
+|Description
+
+|`6443`
+|Bootstrap and control plane. You remove the bootstrap machine from the load
+balancer after the bootstrap machine initializes the cluster control plane. You
+must configure the `/readyz` endpoint for the API server health check probe.
+|X
+|X
+|Kubernetes API server
+
+|`22623`
+|Bootstrap and control plane. You remove the bootstrap machine from the load
+balancer after the bootstrap machine initializes the cluster control plane.
+|X
+|
+|Machine config server
+
+|===
++
+[NOTE]
+====
+The load balancer must be configured to take a maximum of 30 seconds from the
+time the API server turns off the `/readyz` endpoint to the removal of the API
+server instance from the pool. Within the time frame after `/readyz` returns an
+error or becomes healthy, the endpoint must have been removed or added. Probing
+every 5 or 10 seconds, with two successful requests to become healthy and three
+to become unhealthy, are well-tested values.
+====
++
+. *Application Ingress load balancer*: Provides an ingress point for application traffic flowing in from outside the cluster. A working configuration for the Ingress router is required for an {product-title} cluster.
++
+Configure the following conditions:
++
+--
+  ** Layer 4 load balancing only. This can be referred to as Raw TCP, SSL Passthrough, or SSL Bridge mode. If you use SSL Bridge mode, you must enable Server Name Indication (SNI) for the ingress routes.
+  ** A connection-based or session-based persistence is recommended, based on the options available and types of applications that will be hosted on the platform.
+--
++
+[TIP]
+====
+If the true IP address of the client can be seen by the application Ingress load balancer, enabling source IP-based session persistence can improve performance for applications that use end-to-end TLS encryption.
+====
++
+Configure the following ports on both the front and back of the load balancers:
++
+.Application Ingress load balancer
+[cols="2,5,^2,^2,2",options="header"]
+|===
+
+|Port
+|Back-end machines (pool members)
+|Internal
+|External
+|Description
+
+|`443`
+|The machines that run the Ingress Controller pods, compute, or worker, by default.
+|X
+|X
+|HTTPS traffic
+
+|`80`
+|The machines that run the Ingress Controller pods, compute, or worker, by default.
+|X
+|X
+|HTTP traffic
+
+|===
++
+[NOTE]
+====
+If you are deploying a three-node cluster with zero compute nodes, the Ingress Controller pods run on the control plane nodes. In three-node cluster deployments, you must configure your application Ingress load balancer to route HTTP and HTTPS traffic to the control plane nodes.
+====
+
+[id="installation-load-balancing-user-infra-example_{context}"]
+== Example load balancer configuration for user-provisioned clusters
+
+This section provides an example API and application Ingress load balancer configuration that meets the load balancing requirements for user-provisioned clusters. The sample is an `/etc/haproxy/haproxy.cfg` configuration for an HAProxy load balancer. The example is not meant to provide advice for choosing one load balancing solution over another.
+
+
+In the example, the same load balancer is used for the Kubernetes API and application ingress traffic. In production scenarios, you can deploy the API and application ingress load balancers separately so that you can scale the load balancer infrastructure for each in isolation.
+
+[NOTE]
+====
+If you are using HAProxy as a load balancer and SELinux is set to `enforcing`, you must ensure that the HAProxy service can bind to the configured TCP port by running `setsebool -P haproxy_connect_any=1`.
+====
+
+.Sample API and application Ingress load balancer configuration
+[%collapsible]
+====
+[source,text]
+----
+global
+  log         127.0.0.1 local2
+  pidfile     /var/run/haproxy.pid
+  maxconn     4000
+  daemon
+defaults
+  mode                    http
+  log                     global
+  option                  dontlognull
+  option http-server-close
+  option                  redispatch
+  retries                 3
+  timeout http-request    10s
+  timeout queue           1m
+  timeout connect         10s
+  timeout client          1m
+  timeout server          1m
+  timeout http-keep-alive 10s
+  timeout check           10s
+  maxconn                 3000
+listen api-server-6443 <1>
+  bind *:6443
+  mode tcp
+  server bootstrap bootstrap.ocp4.example.com:6443 check inter 1s backup <2>
+  server master0 master0.ocp4.example.com:6443 check inter 1s
+  server master1 master1.ocp4.example.com:6443 check inter 1s
+  server master2 master2.ocp4.example.com:6443 check inter 1s
+listen machine-config-server-22623 <3>
+  bind *:22623
+  mode tcp
+  server bootstrap bootstrap.ocp4.example.com:22623 check inter 1s backup <2>
+  server master0 master0.ocp4.example.com:22623 check inter 1s
+  server master1 master1.ocp4.example.com:22623 check inter 1s
+  server master2 master2.ocp4.example.com:22623 check inter 1s
+listen ingress-router-443 <4>
+  bind *:443
+  mode tcp
+  balance source
+  server worker0 worker0.ocp4.example.com:443 check inter 1s
+  server worker1 worker1.ocp4.example.com:443 check inter 1s
+listen ingress-router-80 <5>
+  bind *:80
+  mode tcp
+  balance source
+  server worker0 worker0.ocp4.example.com:80 check inter 1s
+  server worker1 worker1.ocp4.example.com:80 check inter 1s
+----
+
+<1> Port `6443` handles the Kubernetes API traffic and points to the control plane machines.
+<2> The bootstrap entries must be in place before the {product-title} cluster installation and they must be removed after the bootstrap process is complete.
+<3> Port `22623` handles the machine config server traffic and points to the control plane machines.
+<4> Port `443` handles the HTTPS traffic and points to the machines that run the Ingress Controller pods. The Ingress Controller pods run on the compute machines by default.
+<5> Port `80` handles the HTTP traffic and points to the machines that run the Ingress Controller pods. The Ingress Controller pods run on the compute machines by default.
++
+[NOTE]
+=====
+If you are deploying a three-node cluster with zero compute nodes, the Ingress Controller pods run on the control plane nodes. In three-node cluster deployments, you must configure your application Ingress load balancer to route HTTP and HTTPS traffic to the control plane nodes.
+=====
+====
+
+[TIP]
+====
+If you are using HAProxy as a load balancer, you can check that the `haproxy` process is listening on ports `6443`, `22623`, `443`, and `80` by running `netstat -nltupe` on the HAProxy node.
+====
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-power.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-power.adoc
+
+:ibm-z:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-infrastructure-user-infra_{context}"]
+= Preparing the user-provisioned infrastructure
+
+Before you install {product-title} on user-provisioned infrastructure, you must prepare the underlying infrastructure.
+
+This section provides details about the high-level steps required to set up your cluster infrastructure in preparation for an {product-title} installation. This includes configuring IP networking and network connectivity for your cluster nodes,
+preparing a web server for the Ignition files,
+enabling the required ports through your firewall, and setting up the required DNS and load balancing infrastructure.
+
+After preparation, your cluster infrastructure must meet the requirements outlined in the _Requirements for a cluster with user-provisioned infrastructure_ section.
+
+.Prerequisites
+
+* You have reviewed the link:https://access.redhat.com/articles/4128421[{product-title} 4.x Tested Integrations] page.
+* You have reviewed the infrastructure requirements detailed in the _Requirements for a cluster with user-provisioned infrastructure_ section.
+
+.Procedure
+
+. Set up static IP addresses.
+. Set up an HTTP or HTTPS server to provide Ignition files to the cluster nodes.
+
+. Ensure that your network infrastructure provides the required network connectivity between the cluster components. See the _Networking requirements for user-provisioned infrastructure_ section for details about the requirements.
+
+. Configure your firewall to enable the ports required for the {product-title} cluster components to communicate. See _Networking requirements for user-provisioned infrastructure_ section for details about the ports that are required.
++
+[IMPORTANT]
+====
+By default, port `1936` is accessible for an {product-title} cluster, because each control plane node needs access to this port.
+
+Avoid using the Ingress load balancer to expose this port, because doing so might result in the exposure of sensitive information, such as statistics and metrics, related to Ingress Controllers.
+====
+
+. Setup the required DNS infrastructure for your cluster.
+.. Configure DNS name resolution for the Kubernetes API, the application wildcard, the bootstrap machine, the control plane machines, and the compute machines.
+.. Configure reverse DNS resolution for the Kubernetes API, the bootstrap machine, the control plane machines, and the compute machines.
++
+See the _User-provisioned DNS requirements_ section for more information about the {product-title} DNS requirements.
+
+. Validate your DNS configuration.
+.. From your installation node, run DNS lookups against the record names of the Kubernetes API, the wildcard routes, and the cluster nodes. Validate that the IP addresses in the responses correspond to the correct components.
+.. From your installation node, run reverse DNS lookups against the IP addresses of the load balancer and the cluster nodes. Validate that the record names in the responses correspond to the correct components.
++
+See the _Validating DNS resolution for user-provisioned infrastructure_ section for detailed DNS validation steps.
+
+. Provision the required API and application ingress load balancing infrastructure. See the _Load balancing requirements for user-provisioned infrastructure_ section for more information about the requirements.
+
+[NOTE]
+====
+Some load balancing solutions require the DNS name resolution for the cluster nodes to be in place before the load balancing is initialized.
+====
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vmc/installing-restricted-networks-vmc-user-infra.adoc
+// * installing/installing_vmc/installing-vmc-network-customizations-user-infra.adoc
+// * installing/installing_vmc/installing-vmc-user-infra.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-user-provisioned-validating-dns_{context}"]
+= Validating DNS resolution for user-provisioned infrastructure
+
+You can validate your DNS configuration before installing {product-title} on user-provisioned infrastructure.
+
+[IMPORTANT]
+====
+The validation steps detailed in this section must succeed before you install your cluster.
+====
+
+.Prerequisites
+
+* You have configured the required DNS records for your user-provisioned infrastructure.
+
+.Procedure
+
+. From your installation node, run DNS lookups against the record names of the Kubernetes API, the wildcard routes, and the cluster nodes. Validate that the IP addresses contained in the responses correspond to the correct components.
+
+.. Perform a lookup against the Kubernetes API record name. Check that the result points to the IP address of the API load balancer:
++
+[source,terminal]
+----
+$ dig +noall +answer @<nameserver_ip> api.<cluster_name>.<base_domain> <1>
+----
++
+<1> Replace `<nameserver_ip>` with the IP address of the nameserver, `<cluster_name>` with your cluster name, and `<base_domain>` with your base domain name.
++
+.Example output
+[source,terminal]
+----
+api.ocp4.example.com.		604800	IN	A	192.168.1.5
+----
+
+.. Perform a lookup against the Kubernetes internal API record name. Check that the result points to the IP address of the API load balancer:
++
+[source,terminal]
+----
+$ dig +noall +answer @<nameserver_ip> api-int.<cluster_name>.<base_domain>
+----
++
+.Example output
+[source,terminal]
+----
+api-int.ocp4.example.com.		604800	IN	A	192.168.1.5
+----
+
+.. Test an example `*.apps.<cluster_name>.<base_domain>` DNS wildcard lookup. All of the application wildcard lookups must resolve to the IP address of the application ingress load balancer:
++
+[source,terminal]
+----
+$ dig +noall +answer @<nameserver_ip> random.apps.<cluster_name>.<base_domain>
+----
++
+.Example output
+[source,terminal]
+----
+random.apps.ocp4.example.com.		604800	IN	A	192.168.1.5
+----
++
+[NOTE]
+====
+In the example outputs, the same load balancer is used for the Kubernetes API and application ingress traffic. In production scenarios, you can deploy the API and application ingress load balancers separately so that you can scale the load balancer infrastructure for each in isolation.
+====
++
+You can replace `random` with another wildcard value. For example, you can query the route to the {product-title} console:
++
+[source,terminal]
+----
+$ dig +noall +answer @<nameserver_ip> console-openshift-console.apps.<cluster_name>.<base_domain>
+----
++
+.Example output
+[source,terminal]
+----
+console-openshift-console.apps.ocp4.example.com. 604800 IN	A 192.168.1.5
+----
+
+.. Run a lookup against the bootstrap DNS record name. Check that the result points to the IP address of the bootstrap node:
++
+[source,terminal]
+----
+$ dig +noall +answer @<nameserver_ip> bootstrap.<cluster_name>.<base_domain>
+----
++
+.Example output
+[source,terminal]
+----
+bootstrap.ocp4.example.com.		604800	IN	A	192.168.1.96
+----
+
+.. Use this method to perform lookups against the DNS record names for the control plane and compute nodes. Check that the results correspond to the IP addresses of each node.
+
+. From your installation node, run reverse DNS lookups against the IP addresses of the load balancer and the cluster nodes. Validate that the record names contained in the responses correspond to the correct components.
+
+.. Perform a reverse lookup against the IP address of the API load balancer. Check that the response includes the record names for the Kubernetes API and the Kubernetes internal API:
++
+[source,terminal]
+----
+$ dig +noall +answer @<nameserver_ip> -x 192.168.1.5
+----
++
+.Example output
+[source,terminal]
+----
+5.1.168.192.in-addr.arpa. 604800	IN	PTR	api-int.ocp4.example.com. <1>
+5.1.168.192.in-addr.arpa. 604800	IN	PTR	api.ocp4.example.com. <2>
+----
++
+<1> Provides the record name for the Kubernetes internal API.
+<2> Provides the record name for the Kubernetes API.
++
+[NOTE]
+====
+A PTR record is not required for the {product-title} application wildcard. No validation step is needed for reverse DNS resolution against the IP address of the application ingress load balancer.
+====
+
+.. Perform a reverse lookup against the IP address of the bootstrap node. Check that the result points to the DNS record name of the bootstrap node:
++
+[source,terminal]
+----
+$ dig +noall +answer @<nameserver_ip> -x 192.168.1.96
+----
++
+.Example output
+[source,terminal]
+----
+96.1.168.192.in-addr.arpa. 604800	IN	PTR	bootstrap.ocp4.example.com.
+----
+
+.. Use this method to perform reverse lookups against the IP addresses for the control plane and compute nodes. Check that the results correspond to the DNS record names of each node.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-customizations.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-power.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+:ibm-z:
+
+:_mod-docs-content-type: PROCEDURE
+[id="ssh-agent-using_{context}"]
+= Generating a key pair for cluster node SSH access
+
+During an {product-title} installation, you can provide an SSH public key to the installation program. The key is passed to the {op-system-first} nodes through their Ignition config files and is used to authenticate SSH access to the nodes. The key is added to the `~/.ssh/authorized_keys` list for the `core` user on each node, which enables password-less authentication.
+
+After the key is passed to the nodes, you can use the key pair to SSH in to the {op-system} nodes as the user `core`. To access the nodes through SSH, the private key identity must be managed by SSH for your local user.
+
+If you want to SSH in to your cluster nodes to perform installation debugging or disaster recovery, you must provide the SSH public key during the installation process. The `./openshift-install gather` command also requires the SSH public key to be in place on the cluster nodes.
+
+[IMPORTANT]
+====
+Do not skip this procedure in production environments, where disaster recovery and debugging is required.
+====
+
+
+
+.Procedure
+
+. If you do not have an existing SSH key pair on your local machine to use for authentication onto your cluster nodes, create one. For example, on a computer that uses a Linux operating system, run the following command:
++
+[source,terminal]
+----
+$ ssh-keygen -t ed25519 -N '' -f <path>/<file_name> <1>
+----
+<1> Specify the path and file name, such as `~/.ssh/id_ed25519`, of the new SSH key. If you have an existing key pair, ensure your public key is in the your `~/.ssh` directory.
++
+[NOTE]
+====
+If you plan to install an {product-title} cluster that uses the {op-system-base} cryptographic libraries that have been submitted to NIST for FIPS 140-2/140-3 Validation on only the `x86_64`, `ppc64le`, and `s390x` architectures, do not create a key that uses the `ed25519` algorithm. Instead, create a key that uses the `rsa` or `ecdsa` algorithm.
+====
+
+. View the public SSH key:
++
+[source,terminal]
+----
+$ cat <path>/<file_name>.pub
+----
++
+For example, run the following to view the `~/.ssh/id_ed25519.pub` public key:
++
+[source,termanal]
+----
+$ cat ~/.ssh/id_ed25519.pub
+----
+
+. Add the SSH private key identity to the SSH agent for your local user, if it has not already been added. SSH agent management of the key is required for password-less SSH authentication onto your cluster nodes, or if you want to use the `./openshift-install gather` command.
++
+[NOTE]
+====
+On some distributions, default SSH private key identities such as `~/.ssh/id_rsa` and `~/.ssh/id_dsa` are managed automatically.
+====
++
+.. If the `ssh-agent` process is not already running for your local user, start it as a background task:
++
+[source,terminal]
+----
+$ eval "$(ssh-agent -s)"
+----
++
+.Example output
+[source,terminal]
+----
+Agent pid 31874
+----
++
+[NOTE]
+====
+If your cluster is in FIPS mode, only use FIPS-compliant algorithms to generate the SSH key. The key must be either RSA or ECDSA.
+====
+
+. Add your SSH private key to the `ssh-agent`:
++
+[source,terminal]
+----
+$ ssh-add <path>/<file_name> <1>
+----
+<1> Specify the path and file name for your SSH private key, such as `~/.ssh/id_ed25519`
++
+.Example output
+[source,terminal]
+----
+Identity added: /home/<you>/<path>/<file_name> (<computer_name>)
+----
+
+.Next steps
+
+* When you install {product-title}, provide the SSH public key to the installation program.
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+:ibm-z:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-obtaining-installer_{context}"]
+= Obtaining the installation program
+
+Before you install {product-title}, download the installation file on
+ your provisioning machine.
+ the host you are using for installation.
+//mpytlak: Added "private" in the context of a review for the IBM Cloud VPC private work. In an effort to keep updates to other platforms separate, I will open a doc story for each platform that supports a private install.
+
+.Prerequisites
+
+* You have a machine that runs Linux, for example Red Hat Enterprise Linux 8, with 500 MB of local disk space.
+* You have a computer that runs Linux or macOS, with 500 MB of local disk space.
+
+.Procedure
+
+. Access the link:https://console.redhat.com/openshift/install[Infrastructure Provider] page on the {cluster-manager} site. If you have a Red Hat account, log in with your credentials. If you do not, create an account.
+. Select your infrastructure provider.
+. Navigate to the page for your installation type, download the installation program that corresponds with your host operating system and architecture, and place the file in the directory where you will store the installation configuration files.
+
++
+[IMPORTANT]
+====
+The installation program creates several files on the computer that you use to install your cluster. You must keep the installation program and the files that the installation program creates after you finish installing the cluster. Both files are required to delete the cluster.
+====
++
+[IMPORTANT]
+====
+Deleting the files created by the installation program does not remove your cluster, even if the cluster failed during installation. To remove your cluster, complete the {product-title} uninstallation procedures for your specific cloud provider.
+====
+
+. Extract the installation program. For example, on a computer that uses a Linux
+operating system, run the following command:
++
+[source,terminal]
+----
+$ tar -xvf openshift-install-linux.tar.gz
+----
+
+. Download your installation {cluster-manager-url-pull}. This pull secret allows you to authenticate with the services that are provided by the included authorities, including Quay.io, which serves the container images for {product-title} components.
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * cli_reference/openshift_cli/getting-started.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adocs
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/install_config/installing-restricted-networks-preparations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * openshift_images/samples-operator-alt-registry.adoc
+// * updating/updating-restricted-network-cluster/mirroring-image-repository.adoc
+// * microshift_cli_ref/microshift-oc-cli-install.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/mirroring-image-repository.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+// AMQ docs link to this; do not change anchor
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="cli-installing-cli_{context}"]
+= Installing the OpenShift CLI by downloading the binary
+
+You can install the {oc-first} to interact with
+{product-title}
+from a command-line interface. You can install `oc` on Linux, Windows, or macOS.
+
+[IMPORTANT]
+====
+If you installed an earlier version of `oc`, you cannot use it to complete all of the commands in
+{product-title} {product-version}.
+Download and install the new version of `oc`.
+====
+
+[discrete]
+== Installing the OpenShift CLI on Linux
+
+You can install the OpenShift CLI (`oc`) binary on Linux by using the following procedure.
+
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the architecture from the *Product Variant* drop-down list.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} Linux Client* entry and save the file.
+. Unpack the archive:
++
+[source,terminal]
+----
+$ tar xvf <file>
+----
+. Place the `oc` binary in a directory that is on your `PATH`.
++
+To check your `PATH`, execute the following command:
++
+[source,terminal]
+----
+$ echo $PATH
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+$ oc <command>
+----
+
+[discrete]
+== Installing the OpenShift CLI on Windows
+
+You can install the OpenShift CLI (`oc`) binary on Windows by using the following procedure.
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} Windows Client* entry and save the file.
+. Unzip the archive with a ZIP program.
+. Move the `oc` binary to a directory that is on your `PATH`.
++
+To check your `PATH`, open the command prompt and execute the following command:
++
+[source,terminal]
+----
+C:\> path
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+C:\> oc <command>
+----
+
+[discrete]
+== Installing the OpenShift CLI on macOS
+
+You can install the OpenShift CLI (`oc`) binary on macOS by using the following procedure.
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} macOS Client* entry and save the file.
++
+[NOTE]
+====
+For macOS arm64, choose the *OpenShift v{product-version} macOS arm64 Client* entry.
+====
+. Unpack and unzip the archive.
+. Move the `oc` binary to a directory on your PATH.
++
+To check your `PATH`, open a terminal and execute the following command:
++
+[source,terminal]
+----
+$ echo $PATH
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+$ oc <command>
+----
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-shared-vpc.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-network-customizations.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-initializing-manual_{context}"]
+= Manually creating the installation configuration file
+
+
+.Prerequisites
+
+* You have an SSH public key on your local machine to provide to the installation program. The key will be used for SSH authentication onto your cluster nodes for debugging and disaster recovery.
+* You have obtained the {product-title} installation program and the pull secret for your
+cluster.
+
+.Procedure
+
+. Create an installation directory to store your required installation assets in:
++
+[source,terminal]
+----
+$ mkdir <installation_directory>
+----
++
+[IMPORTANT]
+====
+You must create a directory. Some installation assets, like bootstrap X.509
+certificates have short expiration intervals, so you must not reuse an
+installation directory. If you want to reuse individual files from another
+cluster installation, you can copy them into your directory. However, the file
+names for the installation assets might change between releases. Use caution
+when copying installation files from an earlier {product-title} version.
+====
+
+. Customize the sample `install-config.yaml` file template that is provided and save
+it in the `<installation_directory>`.
++
+[NOTE]
+====
+You must name this configuration file `install-config.yaml`.
+====
+
++
+[IMPORTANT]
+====
+** The `ImageContentSourcePolicy` file is generated as an output of `oc mirror` after the mirroring process is finished.
+** The `oc mirror` command generates an `ImageContentSourcePolicy` file which contains the YAML needed to define `ImageContentSourcePolicy`.
+Copy the text from this file and paste it into your `install-config.yaml` file.
+** You must run the 'oc mirror' command twice. The first time you run the `oc mirror` command, you get a full `ImageContentSourcePolicy` file. The second time you run the `oc mirror` command, you only get the difference between the first and second run.
+Because of this behavior, you must always keep a backup of these files in case you need to merge them into one complete `ImageContentSourcePolicy` file. Keeping a backup of these two output files ensures that you have a complete `ImageContentSourcePolicy` file.
+====
+
++
+[NOTE]
+====
+For some platform types, you can alternatively run `./openshift-install create install-config --dir <installation_directory>` to generate an `install-config.yaml` file. You can provide details about your cluster configuration at the prompts.
+====
+
+
+
+. Back up the `install-config.yaml` file so that you can use it to install
+multiple clusters.
++
+[IMPORTANT]
+====
+The `install-config.yaml` file is consumed during the next step of the
+installation process. You must back it up now.
+====
+
+:!platform:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../installing/installing_ibm_z/installation-config-parameters-ibm-z.adoc#installation-config-parameters-ibm-z[Installation configuration parameters for {ibmzProductName}]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+
+
+:ibm-z:
+
+:_mod-docs-content-type: CONCEPT
+// Assumption is that attribute once outside ifdef works for several level one headings.
+[id="installation-bare-metal-config-yaml_{context}"]
+= Sample install-config.yaml file for {ibmzProductName}
+
+You can customize the `install-config.yaml` file to specify more details about your {product-title} cluster's platform or modify the values of the required parameters.
+
+[source,yaml,subs="attributes+"]
+----
+apiVersion: v1
+baseDomain: example.com <1>
+compute: <2>
+- hyperthreading: Enabled <3>
+  name: worker
+  replicas: 0 <4>
+  architecture: s390x
+controlPlane: <2>
+  hyperthreading: Enabled <3>
+  name: master
+  replicas: 3 <5>
+  architecture: s390x
+metadata:
+  name: test <6>
+networking:
+  clusterNetwork:
+  - cidr: 10.128.0.0/14 <7>
+    hostPrefix: 23 <8>
+  networkType: OVNKubernetes <9>
+  serviceNetwork: <10>
+  - 172.30.0.0/16
+platform:
+  none: {} <11>
+fips: false <12>
+pullSecret: '{"auths": ...}' <13>
+sshKey: 'ssh-ed25519 AAAA...' <14>
+----
+<1> The base domain of the cluster. All DNS records must be sub-domains of this base and include the cluster name.
+<2> The `controlPlane` section is a single mapping, but the `compute` section is a sequence of mappings. To meet the requirements of the different data structures, the first line of the `compute` section must begin with a hyphen, `-`, and the first line of the `controlPlane` section must not. Only one control plane pool is used.
+<3> Specifies whether to enable or disable simultaneous multithreading (SMT), or hyperthreading. By default, SMT is enabled to increase the performance of the cores in your machines. You can disable it by setting the parameter value to `Disabled`. If you disable SMT, you must disable it in all cluster machines; this includes both control plane and compute machines.
++
+[NOTE]
+====
+Simultaneous multithreading (SMT) is enabled by default. If SMT is not available on your {product-title} nodes, the `hyperthreading` parameter has no effect.
+====
++
+[IMPORTANT]
+====
+If you disable `hyperthreading`, whether on your {product-title} nodes or in the `install-config.yaml` file, ensure that your capacity planning accounts for the dramatically decreased machine performance.
+====
+<4> You must set this value to `0` when you install {product-title} on user-provisioned infrastructure. In installer-provisioned installations, the parameter controls the number of compute machines that the cluster creates and manages for you. In user-provisioned installations, you must manually deploy the compute machines before you finish installing the cluster.
++
+[NOTE]
+====
+If you are installing a three-node cluster, do not deploy any compute machines when you install the {op-system-first} machines.
+====
++
+<5> The number of control plane machines that you add to the cluster. Because the cluster uses these values as the number of etcd endpoints in the cluster, the value must match the number of control plane machines that you deploy.
+<6> The cluster name that you specified in your DNS records.
+<7> A block of IP addresses from which pod IP addresses are allocated. This block must not overlap with existing physical networks. These IP addresses are used for the pod network. If you need to access the pods from an external network, you must configure load balancers and routers to manage the traffic.
++
+[NOTE]
+====
+Class E CIDR range is reserved for a future use. To use the Class E CIDR range, you must ensure your networking environment accepts the IP addresses within the Class E CIDR range.
+====
++
+<8> The subnet prefix length to assign to each individual node. For example, if `hostPrefix` is set to `23`, then each node is assigned a `/23` subnet out of the given `cidr`, which allows for 510 (2^(32 - 23) - 2) pod IP addresses. If you are required to provide access to nodes from an external network, configure load balancers and routers to manage the traffic.
+<9> The cluster network plugin to install. The supported values are `OVNKubernetes` and `OpenShiftSDN`. The default value is `OVNKubernetes`.
+<10> The IP address pool to use for service IP addresses. You can enter only one IP address pool. This block must not overlap with existing physical networks. If you need to access the services from an external network, configure load balancers and routers to manage the traffic.
+<11> You must set the platform to `none`. You cannot provide additional platform configuration variables for
+your platform.
+{ibmzProductName} infrastructure.
+{ibmpowerProductName} infrastructure.
++
+[IMPORTANT]
+====
+Clusters that are installed with the platform type `none` are unable to use some features, such as managing compute machines with the Machine API. This limitation applies even if the compute machines that are attached to the cluster are installed on a platform that would normally support the feature. This parameter cannot be changed after installation.
+====
+<12> Whether to enable or disable FIPS mode. By default, FIPS mode is not enabled. If FIPS mode is enabled, the {op-system-first} machines that {product-title} runs on bypass the default Kubernetes cryptography suite and use the cryptography modules that are provided with {op-system} instead.
++
+[IMPORTANT]
+====
+To enable FIPS mode for your cluster, you must run the installation program from a {op-system-base-full} computer configured to operate in FIPS mode. For more information about configuring FIPS mode on RHEL, see link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/assembly_installing-the-system-in-fips-mode_security-hardening[Installing the system in FIPS mode]. When running {op-system-base-full} or {op-system-first} booted in FIPS mode, {product-title} core components use the {op-system-base} cryptographic libraries that have been submitted to NIST for FIPS 140-2/140-3 Validation on only the x86_64, ppc64le, and s390x architectures.
+====
+<13> The {cluster-manager-url-pull}. This pull secret allows you to authenticate with the services that are provided by the included authorities, including Quay.io, which serves the container images for {product-title} components.
+<14> The SSH public key for the `core` user in {op-system-first}.
++
+[NOTE]
+====
+For production {product-title} clusters on which you want to perform installation debugging or disaster recovery, specify an SSH key that your `ssh-agent` process uses.
+====
+
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_aws/installing_aws-customizations.adoc
+// * installing/installing_aws/installing_aws-network-customizations.adoc
+// * installing/installing_aws/installing_aws-private.adoc
+// * installing/installing_aws/installing_aws-vpc.adoc
+// * installing/installing_aws/installing_aws-china.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-sr-iov.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-customizations.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * networking/configuring-a-custom-pki.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-configure-proxy_{context}"]
+= Configuring the cluster-wide proxy during installation
+
+Production environments can deny direct access to the internet and instead have
+an HTTP or HTTPS proxy available. You can configure a new {product-title}
+cluster to use a proxy by configuring the proxy settings in the
+`install-config.yaml` file.
+
+
+
+.Prerequisites
+
+* You have an existing `install-config.yaml` file.
+// TODO: xref (../../installing/install_config/configuring-firewall.adoc#configuring-firewall)
+* You reviewed the sites that your cluster requires access to and determined whether any of them need to bypass the proxy. By default, all cluster egress traffic is proxied, including calls to hosting cloud provider APIs. You added sites to the `Proxy` object's `spec.noProxy` field to bypass the proxy if necessary.
++
+[NOTE]
+====
+The `Proxy` object `status.noProxy` field is populated with the values of the `networking.machineNetwork[].cidr`, `networking.clusterNetwork[].cidr`, and `networking.serviceNetwork[]` fields from your installation configuration.
+
+For installations on Amazon Web Services (AWS), Google Cloud Platform (GCP), Microsoft Azure, and {rh-openstack-first}, the `Proxy` object `status.noProxy` field is also populated with the instance metadata endpoint (`169.254.169.254`).
+====
+
+.Procedure
+
+. Edit your `install-config.yaml` file and add the proxy settings. For example:
++
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: my.domain.com
+proxy:
+  httpProxy: http://<username>:<pswd>@<ip>:<port> <1>
+  httpsProxy: https://<username>:<pswd>@<ip>:<port> <2>
+  noProxy: example.com <3>
+additionalTrustBundle: | <4>
+    -----BEGIN CERTIFICATE-----
+    <MY_TRUSTED_CA_CERT>
+    -----END CERTIFICATE-----
+additionalTrustBundlePolicy: <policy_to_add_additionalTrustBundle> <5>
+----
+<1> A proxy URL to use for creating HTTP connections outside the cluster. The
+URL scheme must be `http`.
+<2> A proxy URL to use for creating HTTPS connections outside the cluster.
+<3> A comma-separated list of destination domain names, IP addresses, or other network CIDRs to exclude from proxying. Preface a domain with `.` to match subdomains only. For example, `.y.com` matches `x.y.com`, but not `y.com`. Use `*` to bypass the proxy for all destinations.
+<4> If provided, the installation program generates a config map that is named `user-ca-bundle` in
+the `openshift-config` namespace that contains one or more additional CA
+certificates that are required for proxying HTTPS connections. The Cluster Network
+Operator then creates a `trusted-ca-bundle` config map that merges these contents
+with the {op-system-first} trust bundle, and this config map is referenced in the `trustedCA` field of the `Proxy` object. The `additionalTrustBundle` field is required unless
+the proxy's identity certificate is signed by an authority from the {op-system} trust
+bundle.
+<5> Optional: The policy to determine the configuration of the `Proxy` object to reference the `user-ca-bundle` config map in the `trustedCA` field. The allowed values are `Proxyonly` and `Always`. Use `Proxyonly` to reference the `user-ca-bundle` config map only when `http/https` proxy is configured. Use `Always` to always reference the `user-ca-bundle` config map. The default value is `Proxyonly`.
++
+[NOTE]
+====
+The installation program does not support the proxy `readinessEndpoints` field.
+====
++
+[NOTE]
+====
+If the installer times out, restart and then complete the deployment by using the `wait-for` command of the installer. For example:
+
+[source,terminal]
+----
+$ ./openshift-install wait-for install-complete --log-level debug
+----
+====
+
+. Save the file and reference it when installing {product-title}.
+
+The installation program creates a cluster-wide proxy that is named `cluster` that uses the proxy
+settings in the provided `install-config.yaml` file. If no proxy settings are
+provided, a `cluster` `Proxy` object is still created, but it will have a nil
+`spec`.
+
+[NOTE]
+====
+Only the `Proxy` object named `cluster` is supported, and no additional
+proxies can be created.
+====
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc [Eventually]
+// * installing/installing_azure/installing-azure-user-infra.adoc [Eventually]
+// * installing/installing_gcp/installing-gcp-user-infra.adoc [Eventually]
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc [Eventually]
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc [Eventually]
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc [Eventually]
+// * installing/installing_vsphere/installing-vsphere.adoc [Eventually]
+// * installing/installing_ibm_z/installing-ibm-z.adoc [Eventually]
+
+:ibm-z:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-three-node-cluster_{context}"]
+= Configuring a three-node cluster
+
+Optionally, you can deploy zero compute machines in a minimal three node cluster that consists of three control plane machines only. This provides smaller, more resource efficient clusters for cluster administrators and developers to use for testing, development, and production.
+
+In three-node {product-title} environments, the three control plane machines are schedulable, which means that your application workloads are scheduled to run on them.
+
+.Prerequisites
+
+* You have an existing `install-config.yaml` file.
+
+.Procedure
+
+* Ensure that the number of compute replicas is set to `0` in your `install-config.yaml` file, as shown in the following `compute` stanza:
++
+[source,yaml]
+----
+compute:
+- name: worker
+  platform: {}
+  replicas: 0
+----
++
+[NOTE]
+====
+You must set the value of the `replicas` parameter for the compute machines to `0` when you install {product-title} on user-provisioned infrastructure, regardless of the number of compute machines you are deploying. In installer-provisioned installations, the parameter controls the number of compute machines that the cluster creates and manages for you. This does not apply to user-provisioned installations, where the compute machines are deployed manually.
+====
++
+[NOTE]
+====
+The preferred resource for control plane nodes is six vCPUs and 21 GB. For three control plane nodes this is the memory + vCPU equivalent of a minimum five-node cluster. You should back the three nodes, each installed on a 120 GB disk, with three IFLs that are SMT2 enabled. The minimum tested setup is three vCPUs and 10 GB on a 120 GB disk for each control plane node.
+====
+.Next steps
+
+For three-node cluster installations, follow these next steps:
+
+* If you are deploying a three-node cluster with zero compute nodes, the Ingress Controller pods run on the control plane nodes. In three-node cluster deployments, you must configure your application ingress load balancer to route HTTP and HTTPS traffic to the control plane nodes. See the _Load balancing requirements for user-provisioned infrastructure_ section for more information.
+
+* When you create the Kubernetes manifest files in the following procedure, ensure that the `mastersSchedulable` parameter in the `<installation_directory>/manifests/cluster-scheduler-02-config.yml` file is set to `true`. This enables your application workloads to run on the control plane nodes.
+
+* Do not deploy any compute nodes when you create the {op-system-first} machines.
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * networking/cluster-network-operator.adoc
+// * networking/network_policy/logging-network-policy.adoc
+// * post_installation_configuration/network-configuration.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-network-customizations.adoc
+
+// Installation assemblies need different details than the CNO operator does
+
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-operator-cr_{context}"]
+= Cluster Network Operator configuration
+
+The configuration for the cluster network is specified as part of the Cluster Network Operator (CNO) configuration and stored in a custom resource (CR) object that is named `cluster`. The CR specifies the fields for the `Network` API in the `operator.openshift.io` API group.
+
+The CNO configuration inherits the following fields during cluster installation from the `Network` API in the `Network.config.openshift.io` API group and these fields cannot be changed:
+
+`clusterNetwork`:: IP address pools from which pod IP addresses are allocated.
+`serviceNetwork`:: IP address pool for services.
+`defaultNetwork.type`:: Cluster network plugin, such as OpenShift SDN or OVN-Kubernetes.
+
+// For the post installation assembly, no further content is provided.
+You can specify the cluster network plugin configuration for your cluster by setting the fields for the `defaultNetwork` object in the CNO object named `cluster`.
+
+[id="nw-operator-cr-cno-object_{context}"]
+== Cluster Network Operator configuration object
+
+The fields for the Cluster Network Operator (CNO) are described in the following table:
+
+.Cluster Network Operator configuration object
+[cols=".^2,.^2,.^6a",options="header"]
+|====
+|Field|Type|Description
+
+|`metadata.name`
+|`string`
+|The name of the CNO object. This name is always `cluster`.
+
+|`spec.clusterNetwork`
+|`array`
+|A list specifying the blocks of IP addresses from which pod IP addresses are
+allocated and the subnet prefix length assigned to each individual node in the cluster. For example:
+
+[source,yaml]
+----
+spec:
+  clusterNetwork:
+  - cidr: 10.128.0.0/19
+    hostPrefix: 23
+  - cidr: 10.128.32.0/19
+    hostPrefix: 23
+----
+
+You can customize this field only in the `install-config.yaml` file before you create the manifests. The value is read-only in the manifest file.
+
+|`spec.serviceNetwork`
+|`array`
+|A block of IP addresses for services. The OpenShift SDN and OVN-Kubernetes network plugins support only a single IP address block for the service network. For example:
+
+[source,yaml]
+----
+spec:
+  serviceNetwork:
+  - 172.30.0.0/14
+----
+
+You can customize this field only in the `install-config.yaml` file before you create the manifests. The value is read-only in the manifest file.
+
+|`spec.defaultNetwork`
+|`object`
+|Configures the network plugin for the cluster network.
+
+|`spec.kubeProxyConfig`
+|`object`
+|
+The fields for this object specify the kube-proxy configuration.
+If you are using the OVN-Kubernetes cluster network plugin, the kube-proxy configuration has no effect.
+
+|====
+
+[discrete]
+[id="nw-operator-cr-defaultnetwork_{context}"]
+=== defaultNetwork object configuration
+
+The values for the `defaultNetwork` object are defined in the following table:
+
+.`defaultNetwork` object
+[cols=".^3,.^2,.^5a",options="header"]
+|====
+|Field|Type|Description
+
+|`type`
+|`string`
+|Either `OpenShiftSDN` or `OVNKubernetes`. The {openshift-networking} network plugin is selected during installation. This value cannot be changed after cluster installation.
+[NOTE]
+====
+{product-title} uses the OVN-Kubernetes network plugin by default.
+====
+
+|`openshiftSDNConfig`
+|`object`
+|This object is only valid for the OpenShift SDN network plugin.
+
+|`ovnKubernetesConfig`
+|`object`
+|This object is only valid for the OVN-Kubernetes network plugin.
+
+|====
+
+[discrete]
+[id="nw-operator-configuration-parameters-for-openshift-sdn_{context}"]
+==== Configuration for the OpenShift SDN network plugin
+
+The following table describes the configuration fields for the OpenShift SDN network plugin:
+
+.`openshiftSDNConfig` object
+[cols=".^2,.^2,.^6a",options="header"]
+|====
+|Field|Type|Description
+
+|`mode`
+|`string`
+|
+Configures the network isolation mode for OpenShift SDN. The default value is `NetworkPolicy`.
+
+The values `Multitenant` and `Subnet` are available for backwards compatibility with {product-title} 3.x but are not recommended. This value cannot be changed after cluster installation.
+
+|`mtu`
+|`integer`
+|
+The maximum transmission unit (MTU) for the VXLAN overlay network. This is detected automatically based on the MTU of the primary network interface. You do not normally need to override the detected MTU.
+
+If the auto-detected value is not what you expect it to be, confirm that the MTU on the primary network interface on your nodes is correct. You cannot use this option to change the MTU value of the primary network interface on the nodes.
+
+If your cluster requires different MTU values for different nodes, you must set this value to `50` less than the lowest MTU value in your cluster. For example, if some nodes in your cluster have an MTU of `9001`, and some have an MTU of `1500`, you must set this value to `1450`.
+
+This value cannot be changed after cluster installation.
+
+|`vxlanPort`
+|`integer`
+|
+The port to use for all VXLAN packets. The default value is `4789`. This value cannot be changed after cluster installation.
+
+If you are running in a virtualized environment with existing nodes that are part of another VXLAN network, then you might be required to change this. For example, when running an OpenShift SDN overlay on top of VMware NSX-T, you must select an alternate port for the VXLAN, because both SDNs use the same default VXLAN port number.
+
+On Amazon Web Services (AWS), you can select an alternate port for the VXLAN between port `9000` and port `9999`.
+
+|====
+
+
+.Example OpenShift SDN configuration
+[source,yaml]
+----
+defaultNetwork:
+  type: OpenShiftSDN
+  openshiftSDNConfig:
+    mode: NetworkPolicy
+    mtu: 1450
+    vxlanPort: 4789
+----
+
+[discrete]
+[id="nw-operator-configuration-parameters-for-ovn-sdn_{context}"]
+==== Configuration for the OVN-Kubernetes network plugin
+
+The following table describes the configuration fields for the OVN-Kubernetes network plugin:
+
+.`ovnKubernetesConfig` object
+[cols=".^2,.^2,.^6a",options="header"]
+|====
+|Field|Type|Description
+
+|`mtu`
+|`integer`
+|
+The maximum transmission unit (MTU) for the Geneve (Generic Network Virtualization Encapsulation) overlay network. This is detected automatically based on the MTU of the primary network interface. You do not normally need to override the detected MTU.
+
+If the auto-detected value is not what you expect it to be, confirm that the MTU on the primary network interface on your nodes is correct. You cannot use this option to change the MTU value of the primary network interface on the nodes.
+
+If your cluster requires different MTU values for different nodes, you must set this value to `100` less than the lowest MTU value in your cluster. For example, if some nodes in your cluster have an MTU of `9001`, and some have an MTU of `1500`, you must set this value to `1400`.
+
+|`genevePort`
+|`integer`
+|
+The port to use for all Geneve packets. The default value is `6081`. This value cannot be changed after cluster installation.
+
+|`ipsecConfig`
+|`object`
+|
+Specify an empty object to enable IPsec encryption.
+
+|`policyAuditConfig`
+|`object`
+|Specify a configuration object for customizing network policy audit logging. If unset, the defaults audit log settings are used.
+
+|`gatewayConfig`
+|`object`
+|Optional: Specify a configuration object for customizing how egress traffic is sent to the node gateway.
+
+[NOTE]
+====
+ While migrating egress traffic, you can expect some disruption to workloads and service traffic until the Cluster Network Operator (CNO) successfully rolls out the changes.
+====
+
+|`v4InternalSubnet`
+|
+If your existing network infrastructure overlaps with the `100.64.0.0/16` IPv4 subnet, you can specify a different IP address range for internal use by OVN-Kubernetes. You must ensure that the IP address range does not overlap with any other subnet used by your {product-title} installation. The IP address range must be larger than the maximum number of nodes that can be added to the cluster. For example, if the `clusterNetwork.cidr` value is `10.128.0.0/14` and the `clusterNetwork.hostPrefix` value is `/23`, then the maximum number of nodes is `2^(23-14)=512`.
+
+This field cannot be changed after installation.
+|The default value is `100.64.0.0/16`.
+
+|`v6InternalSubnet`
+|
+If your existing network infrastructure overlaps with the `fd98::/48` IPv6 subnet, you can specify a different IP address range for internal use by OVN-Kubernetes. You must ensure that the IP address range does not overlap with any other subnet used by your {product-title} installation. The IP address range must be larger than the maximum number of nodes that can be added to the cluster.
+
+This field cannot be changed after installation.
+| The default value is `fd98::/48`.
+|====
+
+// tag::policy-audit[]
+.`policyAuditConfig` object
+[cols=".^2,.^2,.^6a",options="header"]
+|====
+|Field|Type|Description
+
+|`rateLimit`
+|integer
+|The maximum number of messages to generate every second per node. The default value is `20` messages per second.
+
+|`maxFileSize`
+|integer
+|The maximum size for the audit log in bytes. The default value is `50000000` or 50 MB.
+
+|`destination`
+|string
+|
+One of the following additional audit log targets:
+
+`libc`:: The libc `syslog()` function of the journald process on the host.
+`udp:<host>:<port>`:: A syslog server. Replace `<host>:<port>` with the host and port of the syslog server.
+`unix:<file>`:: A Unix Domain Socket file specified by `<file>`.
+`null`:: Do not send the audit logs to any additional target.
+
+|`syslogFacility`
+|string
+|The syslog facility, such as `kern`, as defined by RFC5424. The default value is `local0`.
+
+|====
+// end::policy-audit[]
+
+[id="gatewayConfig-object_{context}"]
+.`gatewayConfig` object
+[cols=".^2,.^2,.^6a",options="header"]
+|====
+|Field|Type|Description
+
+|`routingViaHost`
+|`boolean`
+|Set this field to `true` to send egress traffic from pods to the host networking stack.
+For highly-specialized installations and applications that rely on manually configured routes in the kernel routing table, you might want to route egress traffic to the host networking stack.
+By default, egress traffic is processed in OVN to exit the cluster and is not affected by specialized routes in the kernel routing table.
+The default value is `false`.
+
+This field has an interaction with the Open vSwitch hardware offloading feature.
+If you set this field to `true`, you do not receive the performance benefits of the offloading because egress traffic is processed by the host networking stack.
+
+|`ipForwarding`
+|`object`
+|You can control IP forwarding for all traffic on OVN-Kubernetes managed interfaces by using the `ipForwarding` specification in the `Network` resource. Specify `Restricted` to only allow IP forwarding for Kubernetes related traffic. Specify `Global` to allow forwarding of all IP traffic. For new installations, the default is `Restricted`. For updates to {product-title} 4.14, the default is `Global`.
+
+|====
+
+
+.Example OVN-Kubernetes configuration with IPSec enabled
+[source,yaml]
+----
+defaultNetwork:
+  type: OVNKubernetes
+  ovnKubernetesConfig:
+    mtu: 1400
+    genevePort: 6081
+    ipsecConfig: {}
+----
+
+[discrete]
+[id="nw-operator-cr-kubeproxyconfig_{context}"]
+=== kubeProxyConfig object configuration
+
+The values for the `kubeProxyConfig` object are defined in the following table:
+
+.`kubeProxyConfig` object
+[cols=".^3,.^2,.^5a",options="header"]
+|====
+|Field|Type|Description
+
+|`iptablesSyncPeriod`
+|`string`
+|
+The refresh period for `iptables` rules. The default value is `30s`. Valid suffixes include `s`, `m`, and `h` and are described in the link:https://golang.org/pkg/time/#ParseDuration[Go `time` package] documentation.
+
+[NOTE]
+====
+Because of performance improvements introduced in {product-title} 4.3 and greater, adjusting the `iptablesSyncPeriod` parameter is no longer necessary.
+====
+
+|`proxyArguments.iptables-min-sync-period`
+|`array`
+|
+The minimum duration before refreshing `iptables` rules. This field ensures that the refresh does not happen too frequently. Valid suffixes include `s`, `m`, and `h` and are described in the link:https://golang.org/pkg/time/#ParseDuration[Go `time` package]. The default value is:
+
+[source,yaml]
+----
+kubeProxyConfig:
+  proxyArguments:
+    iptables-min-sync-period:
+    - 0s
+----
+|====
+
+
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+:ibm-z:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-user-infra-generate-k8s-manifest-ignition_{context}"]
+= Creating the Kubernetes manifest and Ignition config files
+
+Because you must modify some cluster definition files and manually start the cluster machines, you must generate the Kubernetes manifest and Ignition config files that the cluster needs to configure the machines.
+
+The installation configuration file transforms into the Kubernetes manifests. The manifests wrap into the Ignition configuration files, which are later used to configure the cluster machines.
+
+[IMPORTANT]
+====
+* The Ignition config files that the {product-title} installation program generates contain certificates that expire after 24 hours, which are then renewed at that time. If the cluster is shut down before renewing the certificates and the cluster is later restarted after the 24 hours have elapsed, the cluster automatically recovers the expired certificates. The exception is that you must manually approve the pending `node-bootstrapper` certificate signing requests (CSRs) to recover kubelet certificates. See the documentation for _Recovering from expired control plane certificates_ for more information.
+
+* It is recommended that you use Ignition config files within 12 hours after they are generated because the 24-hour certificate rotates from 16 to 22 hours after the cluster is installed. By using the Ignition config files within 12 hours, you can avoid installation failure if the certificate update runs during installation.
+====
+
+[NOTE]
+====
+The installation program that generates the manifest and Ignition files is architecture specific and can be obtained from the
+link:https://mirror.openshift.com/pub/openshift-v4/s390x/clients/ocp/latest/[client image mirror]. The Linux version of the installation program runs on s390x only. This installer program is also available as a Mac OS version.
+====
+
+.Prerequisites
+
+* You obtained the {product-title} installation program.
+* You created the `install-config.yaml` installation configuration file.
+
+.Procedure
+
+. Change to the directory that contains the {product-title} installation program and generate the Kubernetes manifests for the cluster:
++
+[source,terminal]
+----
+$ ./openshift-install create manifests --dir <installation_directory> <1>
+----
++
+<1> For `<installation_directory>`, specify the installation directory that
+contains the `install-config.yaml` file you created.
+
+
+
+
++
+[WARNING]
+====
+If you are installing a three-node cluster, skip the following step to allow the control plane nodes to be schedulable.
+====
++
+[IMPORTANT]
+====
+When you configure control plane nodes from the default unschedulable to schedulable, additional subscriptions are required. This is because control plane nodes then become compute nodes.
+====
+
+. Check that the `mastersSchedulable` parameter in the `<installation_directory>/manifests/cluster-scheduler-02-config.yml` Kubernetes manifest file is set to `false`. This setting prevents pods from being scheduled on the control plane machines:
++
+--
+.. Open the `<installation_directory>/manifests/cluster-scheduler-02-config.yml` file.
+.. Locate the `mastersSchedulable` parameter and ensure that it is set to `false`.
+.. Save and exit the file.
+--
+
+
+
+
+
+
+. To create the Ignition configuration files, run the following command from the directory that contains the installation program:
++
+[source,terminal]
+----
+$ ./openshift-install create ignition-configs --dir <installation_directory> <1>
+----
+<1> For `<installation_directory>`, specify the same installation directory.
++
+Ignition config files are created for the bootstrap, control plane, and compute nodes in the installation directory. The `kubeadmin-password` and `kubeconfig` files are created in the `./<installation_directory>/auth` directory:
++
+----
+.
+├── auth
+│   ├── kubeadmin-password
+│   └── kubeconfig
+├── bootstrap.ign
+├── master.ign
+├── metadata.json
+└── worker.ign
+----
+
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+
+:ibm-z:
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-nbde-static-ip-ibmz-linuxone-environment_{context}"]
+= Configuring NBDE with static IP in an {ibmzProductName} or {linuxoneProductName} environment
+
+Enabling NBDE disk encryption in an {ibmzProductName} or {linuxoneProductName} environment requires additional steps, which are described in detail in this section.
+
+.Prerequisites
+
+* You have set up the External Tang Server. See link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/configuring-automated-unlocking-of-encrypted-volumes-using-policy-based-decryption_security-hardening#network-bound-disk-encryption_configuring-automated-unlocking-of-encrypted-volumes-using-policy-based-decryption[Network-bound disk encryption] for instructions.
+* You have installed the `butane` utility.
+* You have reviewed the instructions for how to create machine configs with Butane.
+
+.Procedure
+
+. Create Butane configuration files for the control plane and compute nodes.
++
+The following example of a Butane configuration for a control plane node creates a file named `master-storage.bu` for disk encryption:
++
+[source,yaml,subs="attributes+"]
+----
+variant: openshift
+version: {product-version}.0
+metadata:
+  name: master-storage
+  labels:
+    machineconfiguration.openshift.io/role: master
+storage:
+  luks:
+    - clevis:
+        tang:
+          - thumbprint: QcPr_NHFJammnRCA3fFMVdNBwjs
+            url: http://clevis.example.com:7500
+        options: <1>
+           - --cipher
+           - aes-cbc-essiv:sha256
+      device: /dev/disk/by-partlabel/root <2>
+      label: luks-root
+      name: root
+      wipe_volume: true
+  filesystems:
+    - device: /dev/mapper/root
+      format: xfs
+      label: root
+      wipe_filesystem: true
+openshift:
+  fips: true <3>
+----
+<1>  The cipher option is only required if FIPS mode is enabled. Omit the entry if FIPS is disabled.
+<2> For installations on DASD-type disks, replace with `device: /dev/disk/by-label/root`.
+<3> Whether to enable or disable FIPS mode. By default, FIPS mode is not enabled. If FIPS mode is enabled, the {op-system-first} machines that {product-title} runs on bypass the default Kubernetes cryptography suite and use the cryptography modules that are provided with {op-system} instead.
+
+. Create a customized initramfs file to boot the machine, by running the following command:
++
+[source,terminal]
+----
+$ coreos-installer pxe customize \
+    /root/rhcos-bootfiles/rhcos-<release>-live-initramfs.s390x.img \
+    --dest-device /dev/disk/by-id/scsi-<serial-number> --dest-karg-append \
+    ip=<ip-address>::<gateway-ip>:<subnet-mask>::<network-device>:none \
+    --dest-karg-append nameserver=<nameserver-ip> \
+    --dest-karg-append rd.neednet=1 -o \
+    /root/rhcos-bootfiles/<Node-name>-initramfs.s390x.img
+----
++
+[NOTE]
+====
+Before first boot, you must customize the initramfs for each node in the cluster, and add PXE kernel parameters.
+====
+
+. Create a parameter file that includes `ignition.platform.id=metal` and `ignition.firstboot`.
++
+.Example kernel parameter file for the control plane machine:
++
+[source,terminal]
+----
+rd.neednet=1 \
+console=ttysclp0 \
+coreos.inst.install_dev=/dev/dasda \ <1>
+ignition.firstboot ignition.platform.id=metal \
+coreos.live.rootfs_url=http://10.19.17.25/redhat/ocp/rhcos-413.86.202302201445-0/rhcos-413.86.202302201445-0-live-rootfs.s390x.img \
+coreos.inst.ignition_url=http://bastion.ocp-cluster1.example.com:8080/ignition/master.ign \
+ip=10.19.17.2::10.19.17.1:255.255.255.0::enbdd0:none nameserver=10.19.17.1 \
+zfcp.allow_lun_scan=0 \ <2>
+rd.znet=qeth,0.0.bdd0,0.0.bdd1,0.0.bdd2,layer2=1 \
+rd.zfcp=0.0.5677,0x600606680g7f0056,0x034F000000000000 \ <3>
+zfcp.allow_lun_scan=0 \
+rd.znet=qeth,0.0.bdd0,0.0.bdd1,0.0.bdd2,layer2=1 \
+rd.zfcp=0.0.5677,0x600606680g7f0056,0x034F000000000000
+----
+<1> For installations on DASD-type disks, add `coreos.inst.install_dev=/dev/dasda`. Omit this value for FCP-type disks.
+<2> For installations on FCP-type disks, add `zfcp.allow_lun_scan=0`. Omit this value for DASD-type disks.
+<3> For installations on DASD-type disks, replace with `rd.dasd=0.0.3490` to specify the DASD device.
++
+[NOTE]
+====
+Write all options in the parameter file as a single line and make sure you have no newline characters.
+====
+
+:!ibm-z:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_configure-nbde-ibm-z"]
+.Additional resources
+
+* xref:../../installing/install_config/installing-customizing.adoc#installation-special-config-butane_installing-customizing[Creating machine configs with Butane]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-user-infra-machines-iso-ibm-z_{context}"]
+= Installing {op-system} and starting the {product-title} bootstrap process
+
+To install {product-title} on {ibmzProductName} infrastructure that you provision, you must install {op-system-first} on z/VM guest virtual machines. When you install {op-system}, you must provide the Ignition config file that was generated by the {product-title} installation program for the type of machine you are installing. If you have configured suitable networking, DNS, and load balancing infrastructure, the {product-title} bootstrap process begins automatically after the {op-system} z/VM guest virtual machines have rebooted.
+
+Complete the following steps to create the machines.
+
+.Prerequisites
+
+* An HTTP or HTTPS server running on your provisioning machine that is accessible to the machines you create.
+
+.Procedure
+
+. Log in to Linux on your provisioning machine.
+
+. Obtain the {op-system-first} kernel, initramfs, and rootfs files from the link:https://mirror.openshift.com/pub/openshift-v4/s390x/dependencies/rhcos/latest/[{op-system} image mirror].
++
+[IMPORTANT]
+====
+The {op-system} images might not change with every release of {product-title}.
+You must download images with the highest version that is less than or equal
+to the {product-title} version that you install. Only use the appropriate kernel, initramfs, and rootfs artifacts described in the following procedure.
+====
++
+The file names contain the {product-title} version number. They resemble the following examples:
+
+* kernel: `rhcos-<version>-live-kernel-<architecture>`
+* initramfs: `rhcos-<version>-live-initramfs.<architecture>.img`
+* rootfs: `rhcos-<version>-live-rootfs.<architecture>.img`
++
+[NOTE]
+====
+The rootfs image is the same for FCP and DASD.
+====
++
+. Create parameter files. The following parameters are specific for a particular virtual machine:
+** For `ip=`, specify the following seven entries:
+... The IP address for the machine.
+... An empty string.
+... The gateway.
+... The netmask.
+... The machine host and domain name in the form `hostname.domainname`. Omit this value to let {op-system} decide.
+... The network interface name. Omit this value to let {op-system} decide.
+... If you use static IP addresses, specify `none`.
+** For `coreos.inst.ignition_url=`, specify the Ignition file for the machine role. Use `bootstrap.ign`, `master.ign`, or `worker.ign`. Only HTTP and HTTPS protocols are supported.
+** For `coreos.live.rootfs_url=`, specify the matching rootfs artifact for the kernel and initramfs you are booting. Only HTTP and HTTPS protocols are supported.
+
+** For installations on DASD-type disks, complete the following tasks:
+... For `coreos.inst.install_dev=`, specify `/dev/dasda`.
+... Use `rd.dasd=` to specify the DASD where {op-system} is to be installed.
+... Leave all other parameters unchanged.
++
+Example parameter file, `bootstrap-0.parm`, for the bootstrap machine:
++
+[source,terminal]
+----
+rd.neednet=1 \
+console=ttysclp0 \
+coreos.inst.install_dev=/dev/dasda \
+coreos.live.rootfs_url=http://cl1.provide.example.com:8080/assets/rhcos-live-rootfs.s390x.img \
+coreos.inst.ignition_url=http://cl1.provide.example.com:8080/ignition/bootstrap.ign \
+ip=172.18.78.2::172.18.78.1:255.255.255.0:::none nameserver=172.18.78.1 \
+rd.znet=qeth,0.0.bdf0,0.0.bdf1,0.0.bdf2,layer2=1,portno=0 \
+zfcp.allow_lun_scan=0 \
+rd.dasd=0.0.3490
+----
++
+Write all options in the parameter file as a single line and make sure you have no newline characters.
+
+** For installations on FCP-type disks, complete the following tasks:
+... Use `rd.zfcp=<adapter>,<wwpn>,<lun>` to specify the FCP disk where {op-system} is to be installed. For multipathing repeat this step for each additional path.
++
+[NOTE]
+====
+When you install with multiple paths, you must enable multipathing directly after the installation, not at a later point in time, as this can cause problems.
+====
+... Set the install device as: `coreos.inst.install_dev=/dev/disk/by-id/scsi-<serial_number>`.
++
+[NOTE]
+====
+If additional LUNs are configured with NPIV, FCP requires `zfcp.allow_lun_scan=0`. If you must enable `zfcp.allow_lun_scan=1` because you use a CSI driver, for example, you must configure your NPIV so that each node cannot access the boot partition of another node.
+====
+... Leave all other parameters unchanged.
++
+[IMPORTANT]
+====
+Additional postinstallation steps are required to fully enable multipathing. For more information, see “Enabling multipathing with kernel arguments on {op-system}" in _Post-installation machine configuration tasks_.
+====
+// Add xref once it's allowed.
++
+The following is an example parameter file `worker-1.parm` for a worker node with multipathing:
++
+[source,terminal]
+----
+rd.neednet=1 \
+console=ttysclp0 \
+coreos.inst.install_dev=/dev/disk/by-id/scsi-<serial_number> \
+coreos.live.rootfs_url=http://cl1.provide.example.com:8080/assets/rhcos-live-rootfs.s390x.img \
+coreos.inst.ignition_url=http://cl1.provide.example.com:8080/ignition/worker.ign \
+ip=172.18.78.2::172.18.78.1:255.255.255.0:::none nameserver=172.18.78.1 \
+rd.znet=qeth,0.0.bdf0,0.0.bdf1,0.0.bdf2,layer2=1,portno=0 \
+zfcp.allow_lun_scan=0 \
+rd.zfcp=0.0.1987,0x50050763070bc5e3,0x4008400B00000000 \
+rd.zfcp=0.0.19C7,0x50050763070bc5e3,0x4008400B00000000 \
+rd.zfcp=0.0.1987,0x50050763071bc5e3,0x4008400B00000000 \
+rd.zfcp=0.0.19C7,0x50050763071bc5e3,0x4008400B00000000
+----
++
+Write all options in the parameter file as a single line and make sure you have no newline characters.
+
+. Transfer the initramfs, kernel, parameter files, and {op-system} images to z/VM, for example with FTP. For details about how to transfer the files with FTP and boot from the virtual reader, see link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/installation_guide/sect-installing-zvm-s390[Installing under Z/VM].
+. Punch the files to the virtual reader of the z/VM guest virtual machine that is to become your bootstrap node.
++
+See link:https://www.ibm.com/docs/en/zvm/latest?topic=commands-punch[PUNCH] in IBM Documentation.
++
+[TIP]
+====
+You can use the CP PUNCH command or, if you use Linux, the **vmur** command to transfer files between two z/VM guest virtual machines.
+====
++
+. Log in to CMS on the bootstrap machine.
+. IPL the bootstrap machine from the reader:
++
+----
+$ ipl c
+----
++
+See link:https://www.ibm.com/docs/en/zvm/latest?topic=commands-ipl[IPL] in IBM Documentation.
++
+. Repeat this procedure for the other machines in the cluster.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+
+:ibm-z:
+
+:_mod-docs-content-type: REFERENCE
+[id="installation-user-infra-machines-static-network_{context}"]
+= Advanced {op-system} installation reference
+
+This section illustrates the networking configuration and other advanced options that allow you to modify the {op-system-first} manual installation process. The following tables describe the kernel arguments and command-line options you can use with the {op-system} live installer and the `coreos-installer` command.
+
+[id="installation-user-infra-machines-routing-bonding_{context}"]
+== Networking and bonding options for ISO installations
+
+If you install {op-system} from an ISO image, you can add kernel arguments manually when you boot the image to configure networking for a node. If no networking arguments are specified, DHCP is activated in the initramfs when {op-system} detects that networking is required to fetch the Ignition config file.
+
+[IMPORTANT]
+====
+When adding networking arguments manually, you must also add the `rd.neednet=1` kernel argument to bring the network up in the initramfs.
+====
+The following information provides examples for configuring networking and bonding on your {op-system} nodes for ISO installations. The examples describe how to use the `ip=`, `nameserver=`, and `bond=` kernel arguments.
+
+[NOTE]
+====
+Ordering is important when adding the kernel arguments: `ip=`, `nameserver=`, and then `bond=`.
+====
+
+The networking options are passed to the `dracut` tool during system boot. For more information about the networking options supported by `dracut`, see the link:https://www.man7.org/linux/man-pages/man7/dracut.cmdline.7.html[`dracut.cmdline` manual page].
+
+
+The following examples are the networking options for ISO installation.
+
+[discrete]
+=== Configuring DHCP or static IP addresses
+
+To configure an IP address, either use DHCP (`ip=dhcp`) or set an individual static IP address (`ip=<host_ip>`). If setting a static IP, you must then identify the DNS server IP address (`nameserver=<dns_ip>`) on each node. The following example sets:
+
+* The node's IP address to `10.10.10.2`
+* The gateway address to `10.10.10.254`
+* The netmask to `255.255.255.0`
+* The hostname to `core0.example.com`
+* The DNS server address to `4.4.4.41`
+* The auto-configuration value to `none`. No auto-configuration is required when IP networking is configured statically.
+
+[source,terminal]
+----
+ip=10.10.10.2::10.10.10.254:255.255.255.0:core0.example.com:enp1s0:none
+nameserver=4.4.4.41
+----
+
+[NOTE]
+====
+When you use DHCP to configure IP addressing for the {op-system} machines, the machines also obtain the DNS server information through DHCP. For DHCP-based deployments, you can define the DNS server address that is used by the {op-system} nodes through your DHCP server configuration.
+====
+
+[discrete]
+=== Configuring an IP address without a static hostname
+
+You can configure an IP address without assigning a static hostname. If a static hostname is not set by the user, it will be picked up and automatically set by a reverse DNS lookup. To configure an IP address without a static hostname refer to the following example:
+
+* The node's IP address to `10.10.10.2`
+* The gateway address to `10.10.10.254`
+* The netmask to `255.255.255.0`
+* The DNS server address to `4.4.4.41`
+* The auto-configuration value to `none`. No auto-configuration is required when IP networking is configured statically.
+
+[source,terminal]
+----
+ip=10.10.10.2::10.10.10.254:255.255.255.0::enp1s0:none
+nameserver=4.4.4.41
+----
+
+[discrete]
+=== Specifying multiple network interfaces
+
+You can specify multiple network interfaces by setting multiple `ip=` entries.
+
+[source,terminal]
+----
+ip=10.10.10.2::10.10.10.254:255.255.255.0:core0.example.com:enp1s0:none
+ip=10.10.10.3::10.10.10.254:255.255.255.0:core0.example.com:enp2s0:none
+----
+
+[discrete]
+=== Configuring default gateway and route
+
+Optional: You can configure routes to additional networks by setting an `rd.route=` value.
+
+[NOTE]
+====
+When you configure one or multiple networks, one default gateway is required. If the additional network gateway is different from the primary network gateway, the default gateway must be the primary network gateway.
+====
+
+* Run the following command to configure the default gateway:
++
+[source,terminal]
+----
+ip=::10.10.10.254::::
+----
+
+* Enter the following command to configure the route for the additional network:
++
+[source,terminal]
+----
+rd.route=20.20.20.0/24:20.20.20.254:enp2s0
+----
+
+[discrete]
+=== Disabling DHCP on a single interface
+
+You can disable DHCP on a single interface, such as when there are two or more network interfaces and only one interface is being used. In the example, the `enp1s0` interface has a static networking configuration and DHCP is disabled for `enp2s0`, which is not used:
+
+[source,terminal]
+----
+ip=10.10.10.2::10.10.10.254:255.255.255.0:core0.example.com:enp1s0:none
+ip=::::core0.example.com:enp2s0:none
+----
+
+[discrete]
+=== Combining DHCP and static IP configurations
+
+You can combine DHCP and static IP configurations on systems with multiple network interfaces, for example:
+
+[source,terminal]
+----
+ip=enp1s0:dhcp
+ip=10.10.10.2::10.10.10.254:255.255.255.0:core0.example.com:enp2s0:none
+----
+
+[discrete]
+=== Configuring VLANs on individual interfaces
+
+Optional: You can configure VLANs on individual interfaces by using the `vlan=` parameter.
+
+* To configure a VLAN on a network interface and use a static IP address, run the following command:
++
+[source,terminal]
+----
+ip=10.10.10.2::10.10.10.254:255.255.255.0:core0.example.com:enp2s0.100:none
+vlan=enp2s0.100:enp2s0
+----
+
+* To configure a VLAN on a network interface and to use DHCP, run the following command:
++
+[source,terminal]
+----
+ip=enp2s0.100:dhcp
+vlan=enp2s0.100:enp2s0
+----
+
+[discrete]
+=== Providing multiple DNS servers
+
+You can provide multiple DNS servers by adding a `nameserver=` entry for each server, for example:
+
+[source,terminal]
+----
+nameserver=1.1.1.1
+nameserver=8.8.8.8
+----
+
+
+[discrete]
+=== Bonding multiple network interfaces to a single interface
+
+Optional: You can bond multiple network interfaces to a single interface by using the `bond=` option. Refer to the following examples:
+
+* The syntax for configuring a bonded interface is: `bond=<name>[:<network_interfaces>][:options]`
++
+`<name>` is the bonding device name (`bond0`), `<network_interfaces>` represents a comma-separated list of physical (ethernet) interfaces (`em1,em2`),
+and _options_ is a comma-separated list of bonding options. Enter `modinfo bonding` to see available options.
+
+* When you create a bonded interface using `bond=`, you must specify how the IP address is assigned and other
+information for the bonded interface.
+
+** To configure the bonded interface to use DHCP, set the bond's IP address to `dhcp`. For example:
++
+[source,terminal]
+----
+bond=bond0:em1,em2:mode=active-backup
+ip=bond0:dhcp
+----
+
+** To configure the bonded interface to use a static IP address, enter the specific IP address you want and related information. For example:
+
+[source,terminal]
+----
+bond=bond0:em1,em2:mode=active-backup,fail_over_mac=1
+ip=10.10.10.2::10.10.10.254:255.255.255.0:core0.example.com:bond0:none
+----
+
+Always set the `fail_over_mac=1` option in active-backup mode, to avoid problems when shared OSA/RoCE cards are used.
+
+[discrete]
+=== Bonding multiple network interfaces to a single interface
+
+Optional: You can configure VLANs on bonded interfaces by using the `vlan=` parameter and to use DHCP, for example:
+
+[source,terminal]
+----
+ip=bond0.100:dhcp
+bond=bond0:em1,em2:mode=active-backup
+vlan=bond0.100:bond0
+----
+
+Use the following example to configure the bonded interface with a VLAN and to use a static IP address:
+
+[source,terminal]
+----
+ip=10.10.10.2::10.10.10.254:255.255.255.0:core0.example.com:bond0.100:none
+bond=bond0:em1,em2:mode=active-backup
+vlan=bond0.100:bond0
+----
+
+
+[discrete]
+=== Using network teaming
+
+Optional: You can use a network teaming as an alternative to bonding by using the `team=` parameter:
+
+* The syntax for configuring a team interface is: `team=name[:network_interfaces]`
++
+_name_ is the team device name (`team0`) and _network_interfaces_ represents a comma-separated list of physical (ethernet) interfaces (`em1, em2`).
+
+[NOTE]
+====
+Teaming is planned to be deprecated when {op-system} switches to an upcoming version of {op-system-base}. For more information, see this https://access.redhat.com/solutions/6509691[Red Hat Knowledgebase Article].
+====
+
+Use the following example to configure a network team:
+
+[source,terminal]
+----
+team=team0:em1,em2
+ip=team0:dhcp
+----
+
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-installing-bare-metal_{context}"]
+= Waiting for the bootstrap process to complete
+
+The {product-title} bootstrap process begins after the cluster nodes first boot into the persistent {op-system} environment that has been installed to disk. The configuration information provided through the Ignition config files is used to initialize the bootstrap process and install {product-title} on the machines. You must wait for the bootstrap process to complete.
+
+.Prerequisites
+
+* You have created the Ignition config files for your cluster.
+* You have configured suitable network, DNS and load balancing infrastructure.
+* You have obtained the installation program and generated the Ignition config files for your cluster.
+* You installed {op-system} on your cluster machines and provided the Ignition config files that the {product-title} installation program generated.
+* Your machines have direct internet access or have an HTTP or HTTPS proxy available.
+
+.Procedure
+
+. Monitor the bootstrap process:
++
+[source,terminal]
+----
+$ ./openshift-install --dir <installation_directory> wait-for bootstrap-complete \ <1>
+    --log-level=info <2>
+----
+<1> For `<installation_directory>`, specify the path to the directory that you stored the installation files in.
+<2> To view different installation details, specify `warn`, `debug`, or `error` instead of `info`.
++
+.Example output
+[source,terminal]
+----
+INFO Waiting up to 30m0s for the Kubernetes API at https://api.test.example.com:6443...
+INFO API v1.27.3 up
+INFO Waiting up to 30m0s for bootstrapping to complete...
+INFO It is now safe to remove the bootstrap resources
+----
++
+The command succeeds when the Kubernetes API server signals that it has been
+bootstrapped on the control plane machines.
+
+. After the bootstrap process is complete, remove the bootstrap machine from the
+load balancer.
++
+[IMPORTANT]
+====
+You must remove the bootstrap machine from the load balancer at this point. You
+can also remove or reformat the bootstrap machine itself.
+====
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp_user_infra/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="cli-logging-in-kubeadmin_{context}"]
+= Logging in to the cluster by using the CLI
+
+You can log in to your cluster as a default system user by exporting the cluster `kubeconfig` file.
+The `kubeconfig` file contains information about the cluster that is used by the CLI to connect a client to the correct cluster and API server.
+The file is specific to a cluster and is created during {product-title} installation.
+
+.Prerequisites
+
+* You deployed an {product-title} cluster.
+* You installed the `oc` CLI.
+
+.Procedure
+
+. Export the `kubeadmin` credentials:
++
+[source,terminal]
+----
+$ export KUBECONFIG=<installation_directory>/auth/kubeconfig <1>
+----
+<1> For `<installation_directory>`, specify the path to the directory that you stored
+the installation files in.
+
+. Verify you can run `oc` commands successfully using the exported configuration:
++
+[source,terminal]
+----
+$ oc whoami
+----
++
+.Example output
+[source,terminal]
+----
+system:admin
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-restricted-networks.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * machine_management/adding-rhel-compute.adoc
+// * machine_management/more-rhel-compute.adoc
+// * machine_management/user_provisioned/adding-aws-compute-user-infra.adoc
+// * machine_management/user_provisioned/adding-bare-metal-compute-user-infra.adoc
+// * machine_management/user_provisioned/adding-vsphere-compute-user-infra.adoc
+// * post_installation_configuration/node-tasks.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-power.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+// * post_installation_configuration/configuring-multi-arch-compute-machines/creating-multi-arch-compute-nodes-ibm-power.adoc
+
+
+:ibm-z:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-approve-csrs_{context}"]
+= Approving the certificate signing requests for your machines
+
+When you add machines to a cluster, two pending certificate signing requests (CSRs) are generated for each machine that you added. You must confirm that these CSRs are approved or, if necessary, approve them yourself. The client requests must be approved first, followed by the server requests.
+
+.Prerequisites
+
+* You added machines to your cluster.
+
+.Procedure
+
+. Confirm that the cluster recognizes the machines:
++
+[source,terminal]
+----
+$ oc get nodes
+----
++
+.Example output
+[source,terminal]
+----
+NAME      STATUS    ROLES   AGE  VERSION
+master-0  Ready     master  63m  v1.27.3
+master-1  Ready     master  63m  v1.27.3
+master-2  Ready     master  64m  v1.27.3
+----
++
+The output lists all of the machines that you created.
++
+[NOTE]
+====
+The preceding output might not include the compute nodes, also known as worker nodes, until some CSRs are approved.
+====
+
+. Review the pending CSRs and ensure that you see the client requests with the `Pending` or `Approved` status for each machine that you added to the cluster:
++
+[source,terminal]
+----
+$ oc get csr
+----
++
+[source,terminal]
+.Example output
+----
+NAME        AGE   REQUESTOR                                   CONDITION
+csr-mddf5   20m   system:node:master-01.example.com   Approved,Issued
+csr-z5rln   16m   system:node:worker-21.example.com   Approved,Issued
+----
+
+. If the CSRs were not approved, after all of the pending CSRs for the machines you added are in `Pending` status, approve the CSRs for your cluster machines:
++
+[NOTE]
+====
+Because the CSRs rotate automatically, approve your CSRs within an hour of adding the machines to the cluster. If you do not approve them within an hour, the certificates will rotate, and more than two certificates will be present for each node. You must approve all of these certificates. After the client CSR is approved, the Kubelet creates a secondary CSR for the serving certificate, which requires manual approval. Then, subsequent serving certificate renewal requests are automatically approved by the `machine-approver` if the Kubelet requests a new certificate with identical parameters.
+====
++
+[NOTE]
+====
+For clusters running on platforms that are not machine API enabled, such as bare metal and other user-provisioned infrastructure, you must implement a method of automatically approving the kubelet serving certificate requests (CSRs). If a request is not approved, then the `oc exec`, `oc rsh`, and `oc logs` commands cannot succeed, because a serving certificate is required when the API server connects to the kubelet. Any operation that contacts the Kubelet endpoint requires this certificate approval to be in place. The method must watch for new CSRs, confirm that the CSR was submitted by the `node-bootstrapper` service account in the `system:node` or `system:admin` groups, and confirm the identity of the node.
+====
+
+** To approve them individually, run the following command for each valid CSR:
++
+[source,terminal]
+----
+$ oc adm certificate approve <csr_name> <1>
+----
+<1> `<csr_name>` is the name of a CSR from the list of current CSRs.
+
+** To approve all pending CSRs, run the following command:
++
+[source,terminal]
+----
+$ oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' | xargs --no-run-if-empty oc adm certificate approve
+----
++
+[NOTE]
+====
+Some Operators might not become available until some CSRs are approved.
+====
+
+. Now that your client requests are approved, you must review the server requests for each machine that you added to the cluster:
++
+[source,terminal]
+----
+$ oc get csr
+----
++
+.Example output
+[source,terminal]
+----
+NAME        AGE     REQUESTOR                                                                   CONDITION
+csr-bfd72   5m26s   system:node:ip-10-0-50-126.us-east-2.compute.internal                       Pending
+csr-c57lv   5m26s   system:node:ip-10-0-95-157.us-east-2.compute.internal                       Pending
+...
+----
+
+. If the remaining CSRs are not approved, and are in the `Pending` status, approve the CSRs for your cluster machines:
+
+** To approve them individually, run the following command for each valid CSR:
++
+[source,terminal]
+----
+$ oc adm certificate approve <csr_name> <1>
+----
+<1> `<csr_name>` is the name of a CSR from the list of current CSRs.
+
+** To approve all pending CSRs, run the following command:
++
+[source,terminal]
+----
+$ oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' | xargs oc adm certificate approve
+----
+
+. After all client and server CSRs have been approved, the machines have the `Ready` status. Verify this by running the following command:
++
+[source,terminal]
+----
+$ oc get nodes
+----
++
+.Example output
+[source,terminal]
+----
+NAME      STATUS    ROLES   AGE  VERSION
+master-0  Ready     master  73m  v1.27.3
+master-1  Ready     master  73m  v1.27.3
+master-2  Ready     master  74m  v1.27.3
+worker-0  Ready     worker  11m  v1.27.3
+worker-1  Ready     worker  11m  v1.27.3
+----
++
+[NOTE]
+====
+It can take a few minutes after approval of the server CSRs for the machines to transition to the `Ready` status.
+====
+
+.Additional information
+* For more information on CSRs, see link:https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/[Certificate Signing Requests].
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-operators-config_{context}"]
+= Initial Operator configuration
+
+After the control plane initializes, you must immediately configure some
+Operators so that they all become available.
+
+.Prerequisites
+
+* Your control plane has initialized.
+
+.Procedure
+
+. Watch the cluster components come online:
++
+[source,terminal]
+----
+$ watch -n5 oc get clusteroperators
+----
++
+.Example output
+[source,terminal,subs="attributes+"]
+----
+NAME                                       VERSION   AVAILABLE   PROGRESSING   DEGRADED   SINCE
+authentication                             {product-version}.0    True        False         False      19m
+baremetal                                  {product-version}.0    True        False         False      37m
+cloud-credential                           {product-version}.0    True        False         False      40m
+cluster-autoscaler                         {product-version}.0    True        False         False      37m
+config-operator                            {product-version}.0    True        False         False      38m
+console                                    {product-version}.0    True        False         False      26m
+csi-snapshot-controller                    {product-version}.0    True        False         False      37m
+dns                                        {product-version}.0    True        False         False      37m
+etcd                                       {product-version}.0    True        False         False      36m
+image-registry                             {product-version}.0    True        False         False      31m
+ingress                                    {product-version}.0    True        False         False      30m
+insights                                   {product-version}.0    True        False         False      31m
+kube-apiserver                             {product-version}.0    True        False         False      26m
+kube-controller-manager                    {product-version}.0    True        False         False      36m
+kube-scheduler                             {product-version}.0    True        False         False      36m
+kube-storage-version-migrator              {product-version}.0    True        False         False      37m
+machine-api                                {product-version}.0    True        False         False      29m
+machine-approver                           {product-version}.0    True        False         False      37m
+machine-config                             {product-version}.0    True        False         False      36m
+marketplace                                {product-version}.0    True        False         False      37m
+monitoring                                 {product-version}.0    True        False         False      29m
+network                                    {product-version}.0    True        False         False      38m
+node-tuning                                {product-version}.0    True        False         False      37m
+openshift-apiserver                        {product-version}.0    True        False         False      32m
+openshift-controller-manager               {product-version}.0    True        False         False      30m
+openshift-samples                          {product-version}.0    True        False         False      32m
+operator-lifecycle-manager                 {product-version}.0    True        False         False      37m
+operator-lifecycle-manager-catalog         {product-version}.0    True        False         False      37m
+operator-lifecycle-manager-packageserver   {product-version}.0    True        False         False      32m
+service-ca                                 {product-version}.0    True        False         False      38m
+storage                                    {product-version}.0    True        False         False      37m
+----
+. Configure the Operators that are not available.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-registry-storage-config_{context}"]
+= Image registry storage configuration
+
+The Image Registry Operator is not initially available for platforms that do
+not provide default storage. After installation, you must configure your
+registry to use storage so that the Registry Operator is made available.
+
+Instructions are shown for configuring a persistent volume, which is required for production clusters. Where applicable, instructions are shown for configuring an empty directory as the storage location, which is available for only non-production clusters.
+
+Additional instructions are provided for allowing the image registry to use block storage types by using the `Recreate` rollout strategy during upgrades.
+
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+
+
+:ibm-z:
+
+:_mod-docs-content-type: PROCEDURE
+[id="registry-configuring-storage-baremetal_{context}"]
+= Configuring registry storage for {ibmzProductName}
+
+As a cluster administrator, following installation you must configure your
+registry to use storage.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+* You have a cluster
+that uses manually-provisioned {op-system-first} nodes, such as bare metal.
+on {ibmzProductName}.
+on IBM Power.
+* You have provisioned persistent storage for your cluster, such as {rh-storage-first}.
++
+[IMPORTANT]
+====
+{product-title} supports `ReadWriteOnce` access for image registry storage when you have only one replica. `ReadWriteOnce` access also requires that the registry uses the `Recreate` rollout strategy. To deploy an image registry that supports high availability with two or more replicas, `ReadWriteMany` access is required.
+====
++
+* Must have 100Gi capacity.
+
+.Procedure
+
+. To configure your registry to use storage, change the `spec.storage.pvc` in
+the `configs.imageregistry/cluster` resource.
++
+[NOTE]
+====
+When you use shared storage, review your security settings to prevent outside access.
+====
+
+. Verify that you do not have a registry pod:
++
+[source,terminal]
+----
+$ oc get pod -n openshift-image-registry -l docker-registry=default
+----
++
+.Example output
+[source,terminal]
+----
+No resources found in openshift-image-registry namespace
+----
++
+[NOTE]
+=====
+If you do have a registry pod in your output, you do not need to continue with this procedure.
+=====
+. Check the registry configuration:
++
+[source,terminal]
+----
+$ oc edit configs.imageregistry.operator.openshift.io
+----
++
+.Example output
+[source,yaml]
+----
+storage:
+  pvc:
+    claim:
+----
++
+Leave the `claim` field blank to allow the automatic creation of an
+`image-registry-storage` PVC.
++
+. Check the `clusteroperator` status:
++
+[source,terminal]
+----
+$ oc get clusteroperator image-registry
+----
++
+.Example output
+[source,terminal,subs="attributes+"]
+----
+NAME             VERSION              AVAILABLE   PROGRESSING   DEGRADED   SINCE   MESSAGE
+image-registry   {product-version}                 True        False         False      6h50m
+----
++
+. Ensure that your registry is set to managed to enable building and pushing of images.
++
+* Run:
++
+----
+$ oc edit configs.imageregistry/cluster
+----
++
+Then, change the line
++
+----
+managementState: Removed
+----
++
+to
++
+----
+managementState: Managed
+----
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-registry-storage-non-production_{context}"]
+= Configuring storage for the image registry in non-production clusters
+
+You must configure storage for the Image Registry Operator. For non-production
+clusters, you can set the image registry to an empty directory. If you do so,
+all images are lost if you restart the registry.
+
+.Procedure
+
+* To set the image registry storage to an empty directory:
++
+[source,terminal]
+----
+$ oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
+----
++
+[WARNING]
+====
+Configure this option for only non-production clusters.
+====
++
+If you run this command before the Image Registry Operator initializes its
+components, the `oc patch` command fails with the following error:
++
+[source,terminal]
+----
+Error from server (NotFound): configs.imageregistry.operator.openshift.io "cluster" not found
+----
++
+Wait a few minutes and run the command again.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+
+:ibm-z:
+:_mod-docs-content-type: PROCEDURE
+[id="installation-complete-user-infra_{context}"]
+= Completing installation on user-provisioned infrastructure
+
+After you complete the Operator configuration, you can finish installing the
+cluster on infrastructure that you provide.
+
+.Prerequisites
+
+* Your control plane has initialized.
+* You have completed the initial Operator configuration.
+
+.Procedure
+
+. Confirm that all the cluster components are online with the following command:
++
+[source,terminal]
+----
+$ watch -n5 oc get clusteroperators
+----
++
+.Example output
+[source,terminal,subs="attributes+"]
+----
+NAME                                       VERSION   AVAILABLE   PROGRESSING   DEGRADED   SINCE
+authentication                             {product-version}.0    True        False         False      19m
+baremetal                                  {product-version}.0    True        False         False      37m
+cloud-credential                           {product-version}.0    True        False         False      40m
+cluster-autoscaler                         {product-version}.0    True        False         False      37m
+config-operator                            {product-version}.0    True        False         False      38m
+console                                    {product-version}.0    True        False         False      26m
+csi-snapshot-controller                    {product-version}.0    True        False         False      37m
+dns                                        {product-version}.0    True        False         False      37m
+etcd                                       {product-version}.0    True        False         False      36m
+image-registry                             {product-version}.0    True        False         False      31m
+ingress                                    {product-version}.0    True        False         False      30m
+insights                                   {product-version}.0    True        False         False      31m
+kube-apiserver                             {product-version}.0    True        False         False      26m
+kube-controller-manager                    {product-version}.0    True        False         False      36m
+kube-scheduler                             {product-version}.0    True        False         False      36m
+kube-storage-version-migrator              {product-version}.0    True        False         False      37m
+machine-api                                {product-version}.0    True        False         False      29m
+machine-approver                           {product-version}.0    True        False         False      37m
+machine-config                             {product-version}.0    True        False         False      36m
+marketplace                                {product-version}.0    True        False         False      37m
+monitoring                                 {product-version}.0    True        False         False      29m
+network                                    {product-version}.0    True        False         False      38m
+node-tuning                                {product-version}.0    True        False         False      37m
+openshift-apiserver                        {product-version}.0    True        False         False      32m
+openshift-controller-manager               {product-version}.0    True        False         False      30m
+openshift-samples                          {product-version}.0    True        False         False      32m
+operator-lifecycle-manager                 {product-version}.0    True        False         False      37m
+operator-lifecycle-manager-catalog         {product-version}.0    True        False         False      37m
+operator-lifecycle-manager-packageserver   {product-version}.0    True        False         False      32m
+service-ca                                 {product-version}.0    True        False         False      38m
+storage                                    {product-version}.0    True        False         False      37m
+----
++
+Alternatively, the following command notifies you when all of the clusters are available. It also retrieves and displays credentials:
++
+[source,terminal]
+----
+$ ./openshift-install --dir <installation_directory> wait-for install-complete <1>
+----
+<1> For `<installation_directory>`, specify the path to the directory that you
+stored the installation files in.
++
+.Example output
+[source,terminal]
+----
+INFO Waiting up to 30m0s for the cluster to initialize...
+----
++
+The command succeeds when the Cluster Version Operator finishes deploying the
+{product-title} cluster from Kubernetes API server.
++
+[IMPORTANT]
+====
+* The Ignition config files that the installation program generates contain certificates that expire after 24 hours, which are then renewed at that time. If the cluster is shut down before renewing the certificates and the cluster is later restarted after the 24 hours have elapsed, the cluster automatically recovers the expired certificates. The exception is that you must manually approve the pending `node-bootstrapper` certificate signing requests (CSRs) to recover kubelet certificates. See the documentation for _Recovering from expired control plane certificates_ for more information.
+
+* It is recommended that you use Ignition config files within 12 hours after they are generated because the 24-hour certificate rotates from 16 to 22 hours after the cluster is installed. By using the Ignition config files within 12 hours, you can avoid installation failure if the certificate update runs during installation.
+====
+
+. Confirm that the Kubernetes API server is communicating with the pods.
+.. To view a list of all pods, use the following command:
++
+[source,terminal]
+----
+$ oc get pods --all-namespaces
+----
++
+.Example output
+[source,terminal]
+----
+NAMESPACE                         NAME                                            READY   STATUS      RESTARTS   AGE
+openshift-apiserver-operator      openshift-apiserver-operator-85cb746d55-zqhs8   1/1     Running     1          9m
+openshift-apiserver               apiserver-67b9g                                 1/1     Running     0          3m
+openshift-apiserver               apiserver-ljcmx                                 1/1     Running     0          1m
+openshift-apiserver               apiserver-z25h4                                 1/1     Running     0          2m
+openshift-authentication-operator authentication-operator-69d5d8bf84-vh2n8        1/1     Running     0          5m
+...
+----
+
+.. View the logs for a pod that is listed in the output of the previous command
+by using the following command:
++
+[source,terminal]
+----
+$ oc logs <pod_name> -n <namespace> <1>
+----
+<1> Specify the pod name and namespace, as shown in the output of the previous
+command.
++
+If the pod logs display, the Kubernetes API server can communicate with the
+cluster machines.
+
+. For an installation with Fibre Channel Protocol (FCP), additional steps are required to enable multipathing. Do not enable multipathing during installation.
++
+See "Enabling multipathing with kernel arguments on {op-system}" in the _Post-installation machine configuration tasks_ documentation for more information.
+
+
+:!ibm-z:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-user-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_openstack/installing-openstack-installer-sr-iov.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cluster-telemetry_{context}"]
+= Telemetry access for {product-title}
+
+In {product-title} {product-version}, the Telemetry service, which runs by default to provide metrics about cluster health and the success of updates, requires internet access. If your cluster is connected to the internet, Telemetry runs automatically, and your cluster is registered to {cluster-manager-url}.
+
+After you confirm that your {cluster-manager-url} inventory is correct, either maintained automatically by Telemetry or manually by using {cluster-manager}, link:https://access.redhat.com/documentation/en-us/subscription_central/2020-04/html/getting_started_with_subscription_watch/con-how-to-select-datacollection-tool_assembly-requirements-and-your-responsibilities-ctxt#red_hat_openshift[use subscription watch] to track your {product-title} subscriptions at the account or multi-cluster level.
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_ibmz-remote-health-monitoring"]
+.Additional resources
+
+* See xref:../../support/remote_health_monitoring/about-remote-health-monitoring.adoc#about-remote-health-monitoring[About remote health monitoring] for more information about the Telemetry service
+
+* link:https://access.redhat.com/solutions/4387261[How to generate SOSREPORT within OpenShift4 nodes without SSH].
+
+[id="next-steps_ibmz-vm"]
+== Next steps
+
+* xref:../../post_installation_configuration/machine-configuration-tasks.adoc#rhcos-enabling-multipath_post-install-machine-configuration-tasks[Enabling multipathing with kernel arguments on {op-system}].
+
+* xref:../../post_installation_configuration/cluster-tasks.adoc#available_cluster_customizations[Customize your cluster].
+
+* If necessary, you can
+xref:../../support/remote_health_monitoring/opting-out-of-remote-health-reporting.adoc#opting-out-remote-health-reporting_opting-out-remote-health-reporting[opt out of remote health reporting].
+
+//# includes=_attributes/common-attributes,modules/cluster-entitlements,modules/installation-machine-requirements,modules/installation-minimum-resource-requirements,modules/minimum-ibm-z-system-requirements,modules/preferred-ibm-z-system-requirements,modules/csr-management,modules/installation-network-user-infra,modules/installation-dns-user-infra,modules/installation-load-balancing-user-infra,modules/installation-infrastructure-user-infra,modules/installation-user-provisioned-validating-dns,modules/ssh-agent-using,modules/installation-obtaining-installer,modules/cli-installing-cli,modules/installation-initializing-manual,modules/installation-bare-metal-config-yaml,modules/installation-configure-proxy,modules/installation-three-node-cluster,modules/nw-operator-cr,modules/installation-user-infra-generate-k8s-manifest-ignition,modules/ibmz-configure-nbde-with-static-ip,modules/installation-ibm-z-user-infra-machines-iso,modules/installation-user-infra-machines-static-network,modules/installation-installing-bare-metal,modules/cli-logging-in-kubeadmin,modules/installation-approve-csrs,modules/installation-operators-config,modules/installation-registry-storage-config,modules/registry-configuring-storage-baremetal,modules/installation-registry-storage-non-production,modules/installation-complete-user-infra,modules/cluster-telemetry

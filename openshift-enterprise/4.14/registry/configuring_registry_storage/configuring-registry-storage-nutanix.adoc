@@ -1,0 +1,806 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="configuring-registry-storage-nutanix"]
+= Configuring the registry for Nutanix
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: configuring-registry-storage-nutanix
+toc::[]
+
+By following the steps outlined in this documentation, users can optimize container image distribution, security, and access controls, enabling a robust foundation for Nutanix applications on {product-title}
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * registry/configuring-registry-operator.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+
+[id="registry-removed_{context}"]
+= Image registry removed during installation
+
+On platforms that do not provide shareable object storage, the OpenShift Image Registry Operator bootstraps itself as `Removed`. This allows `openshift-installer` to complete installations on these platform types.
+
+After installation, you must edit the Image Registry Operator configuration to switch the `managementState` from `Removed` to `Managed`.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="registry-change-management-state_{context}"]
+= Changing the image registry's management state
+
+To start the image registry, you must change the Image Registry Operator configuration's `managementState` from `Removed` to `Managed`.
+
+.Procedure
+
+* Change `managementState` Image Registry Operator configuration from `Removed` to `Managed`. For example:
++
+[source,terminal]
+----
+$ oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"managementState":"Managed"}}'
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-registry-storage-config_{context}"]
+= Image registry storage configuration
+
+The Image Registry Operator is not initially available for platforms that do
+not provide default storage. After installation, you must configure your
+registry to use storage so that the Registry Operator is made available.
+
+Instructions are shown for configuring a persistent volume, which is required for production clusters. Where applicable, instructions are shown for configuring an empty directory as the storage location, which is available for only non-production clusters.
+
+Additional instructions are provided for allowing the image registry to use block storage types by using the `Recreate` rollout strategy during upgrades.
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * registry/configuring_registry_storage/configuring-registry-storage-nutanix.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-registry-storage-nutanix_{context}"]
+= Configuring registry storage for Nutanix
+
+As a cluster administrator, following installation you must configure your registry to use storage.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+* You have a cluster on Nutanix.
+* You have provisioned persistent storage for your cluster, such as {rh-storage-first}.
++
+[IMPORTANT]
+====
+{product-title} supports `ReadWriteOnce` access for image registry storage when you have only one replica. `ReadWriteOnce` access also requires that the registry uses the `Recreate` rollout strategy. To deploy an image registry that supports high availability with two or more replicas, `ReadWriteMany` access is required.
+====
++
+* You must have 100 Gi capacity.
+
+.Procedure
+
+. To configure your registry to use storage, change the `spec.storage.pvc` in the `configs.imageregistry/cluster` resource.
++
+[NOTE]
+====
+When you use shared storage, review your security settings to prevent outside access.
+====
+
+. Verify that you do not have a registry pod:
++
+[source,terminal]
+----
+$ oc get pod -n openshift-image-registry -l docker-registry=default
+----
++
+.Example output
+[source,terminal]
+----
+No resourses found in openshift-image-registry namespace
+----
++
+[NOTE]
+=====
+If you do have a registry pod in your output, you do not need to continue with this procedure.
+=====
+
+. Check the registry configuration:
++
+[source,terminal]
+----
+$ oc edit configs.imageregistry.operator.openshift.io
+----
++
+.Example output
+[source,yaml]
+----
+storage:
+  pvc:
+    claim: <1>
+----
+<1> Leave the `claim` field blank to allow the automatic creation of an `image-registry-storage` persistent volume claim (PVC). The PVC is generated based on the default storage class. However, be aware that the default storage class might provide ReadWriteOnce (RWO) volumes, such as a RADOS Block Device (RBD), which can cause issues when you replicate to more than one replica.
+
+
+. Check the `clusteroperator` status:
++
+[source,terminal]
+----
+$ oc get clusteroperator image-registry
+----
++
+.Example output
+[source,terminal]
+----
+NAME             VERSION                              AVAILABLE   PROGRESSING   DEGRADED   SINCE   MESSAGE
+image-registry   4.13                                  True        False         False      6h50m
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-registry-storage-non-production_{context}"]
+= Configuring storage for the image registry in non-production clusters
+
+You must configure storage for the Image Registry Operator. For non-production
+clusters, you can set the image registry to an empty directory. If you do so,
+all images are lost if you restart the registry.
+
+.Procedure
+
+* To set the image registry storage to an empty directory:
++
+[source,terminal]
+----
+$ oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
+----
++
+[WARNING]
+====
+Configure this option for only non-production clusters.
+====
++
+If you run this command before the Image Registry Operator initializes its
+components, the `oc patch` command fails with the following error:
++
+[source,terminal]
+----
+Error from server (NotFound): configs.imageregistry.operator.openshift.io "cluster" not found
+----
++
+Wait a few minutes and run the command again.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_baremetal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_baremetal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-registry-storage-block-recreate-rollout-nutanix_{context}"]
+= Configuring block registry storage for Nutanix volumes
+
+To allow the image registry to use block storage types such as Nutanix volumes during upgrades as a cluster administrator, you can use the `Recreate` rollout strategy.
+
+[IMPORTANT]
+====
+Block storage volumes, or block persistent volumes, are supported but not recommended for use with the image registry on production clusters. An installation where the registry is configured on block storage is not highly available because the registry cannot have more than one replica.
+
+If you choose to use a block storage volume with the image registry, you must use a filesystem persistent volume claim (PVC).
+====
+
+.Procedure
+
+. To set the image registry storage as a block storage type, patch the registry so that it uses the `Recreate` rollout strategy and runs with only one (`1`) replica:
++
+[source,terminal]
+----
+$ oc patch config.imageregistry.operator.openshift.io/cluster --type=merge -p '{"spec":{"rolloutStrategy":"Recreate","replicas":1}}'
+----
+
+. Provision the PV for the block storage device, and create a PVC for that volume. The requested block volume uses the ReadWriteOnce (RWO) access mode.
+
+.. Create a `pvc.yaml` file with the following contents to define a Nutanix `PersistentVolumeClaim` object:
++
+[source,yaml]
+----
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: image-registry-storage <1>
+  namespace: openshift-image-registry <2>
+spec:
+  accessModes:
+  - ReadWriteOnce <3>
+  resources:
+    requests:
+      storage: 100Gi <4>
+----
+<1> A unique name that represents the `PersistentVolumeClaim` object.
+<2> The namespace for the `PersistentVolumeClaim` object, which is `openshift-image-registry`.
+<3> The access mode of the persistent volume claim. With `ReadWriteOnce`, the volume can be mounted with read and write permissions by a single node.
+<4> The size of the persistent volume claim.
+
+.. Create the `PersistentVolumeClaim` object from the file:
++
+[source,terminal]
+----
+$ oc create -f pvc.yaml -n openshift-image-registry
+----
+
+. Edit the registry configuration so that it references the correct PVC:
++
+[source,terminal]
+----
+$ oc edit config.imageregistry.operator.openshift.io -o yaml
+----
++
+.Example output
+[source,yaml]
+----
+storage:
+  pvc:
+    claim: <1>
+----
+<1> By creating a custom PVC, you can leave the `claim` field blank for the default automatic creation of an `image-registry-storage` PVC.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+//
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc
+//
+// * registry/configuring_registry_storage/Configuring-the-registry-for-rhodf.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="registry-configuring-registry-storage-rhodf-cephrgw_{context}"]
+= Configuring the Image Registry Operator to use Ceph RGW storage with Red Hat OpenShift Data Foundation
+
+{rh-storage-first} integrates multiple storage types that you can use with the {product-registry}:
+
+* Ceph, a shared and distributed file system and on-premises object storage
+* NooBaa, providing a Multicloud Object Gateway
+
+This document outlines the procedure to configure the image registry to use Ceph RGW storage.
+
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+* You have access to the {product-title} web console.
+* You installed the `oc` CLI.
+* You installed the link:https://access.redhat.com/documentation/en-us/red_hat_openshift_data_foundation/4.10[{rh-storage} Operator] to provide object storage and Ceph RGW object storage.
+
+.Procedure
+
+. Create the object bucket claim using the `ocs-storagecluster-ceph-rgw` storage class. For example:
++
+[source,terminal]
+----
+cat <<EOF | oc apply -f -
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: rgwtest
+  namespace: openshift-storage <1>
+spec:
+  storageClassName: ocs-storagecluster-ceph-rgw
+  generateBucketName: rgwtest
+EOF
+----
+<1> Alternatively, you can use the `openshift-image-registry` namespace.
+
+. Get the bucket name by entering the following command:
++
+[source,terminal]
+----
+$ bucket_name=$(oc get obc -n openshift-storage rgwtest -o jsonpath='{.spec.bucketName}')
+----
+
+. Get the AWS credentials by entering the following commands:
++
+[source,terminal]
+----
+$ AWS_ACCESS_KEY_ID=$(oc get secret -n openshift-storage rgwtest -o yaml | grep -w "AWS_ACCESS_KEY_ID:" | head -n1 | awk '{print $2}' | base64 --decode)
+----
++
+[source,terminal]
+----
+$ AWS_SECRET_ACCESS_KEY=$(oc get secret -n openshift-storage rgwtest -o yaml | grep -w "AWS_SECRET_ACCESS_KEY:" | head -n1 | awk '{print $2}' | base64 --decode)
+----
+
+. Create the secret `image-registry-private-configuration-user` with the AWS credentials for the new bucket under `openshift-image-registry project` by entering the following command:
++
+[source,terminal]
+----
+$ oc create secret generic image-registry-private-configuration-user --from-literal=REGISTRY_STORAGE_S3_ACCESSKEY=${AWS_ACCESS_KEY_ID} --from-literal=REGISTRY_STORAGE_S3_SECRETKEY=${AWS_SECRET_ACCESS_KEY} --namespace openshift-image-registry
+----
+
+. Create a encryption route for Ceph RGW by entering the following command:
++
+[source,terminal]
+----
+$ oc create route reencrypt <route_name> --service=rook-ceph-rgw-ocs-storagecluster-cephobjectstore --port=https -n openshift-storage
+----
++
+.. Get the route host by entering the following command:
++
+[source,terminal]
+----
+$ route_host=$(oc get route <route_name> -n openshift-storage -o=jsonpath='{.spec.host}')
+----
+. Create a config map that uses an ingress certificate by entering the following commands:
++
+[source,terminal]
+----
+$ oc extract secret/router-certs-default  -n openshift-ingress  --confirm
+----
++
+[source,terminal]
+----
+$ oc create configmap image-registry-s3-bundle --from-file=ca-bundle.crt=./tls.crt  -n openshift-config
+----
+
+. Configure the image registry to use the Ceph RGW object storage by entering the following command:
++
+[source,terminal]
+----
+$ oc patch config.image/cluster -p '{"spec":{"managementState":"Managed","replicas":2,"storage":{"managementState":"Unmanaged","s3":{"bucket":'\"${bucket_name}\"',"region":"us-east-1","regionEndpoint":'\"https://${route_host}\"',"virtualHostedStyle":false,"encrypt":false,"trustedCA":{"name":"image-registry-s3-bundle"}}}}}' --type=merge
+----
+
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+//
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc
+//
+// * registry/configuring_registry_storage/Configuring-the-registry-for-rhodf.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="registry-configuring-registry-storage-rhodf-nooba_{context}"]
+= Configuring the Image Registry Operator to use Noobaa storage with Red Hat OpenShift Data Foundation
+
+{rh-storage-first} integrates multiple storage types that you can use with the {product-registry}:
+
+* Ceph, a shared and distributed file system and on-premises object storage
+* NooBaa, providing a Multicloud Object Gateway
+
+This document outlines the procedure to configure the image registry to use Noobaa storage.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+* You have access to the {product-title} web console.
+* You installed the `oc` CLI.
+* You installed the link:https://access.redhat.com/documentation/en-us/red_hat_openshift_data_foundation/4.10[{rh-storage} Operator] to provide object storage and Noobaa object storage.
+
+.Procedure
+
+. Create the object bucket claim using the `openshift-storage.noobaa.io` storage class. For example:
++
+[source,terminal]
+----
+cat <<EOF | oc apply -f -
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: noobaatest
+  namespace: openshift-storage <1>
+spec:
+  storageClassName: openshift-storage.noobaa.io
+  generateBucketName: noobaatest
+EOF
+----
+<1> Alternatively, you can use the `openshift-image-registry` namespace.
+
+. Get the bucket name by entering the following command:
++
+[source,terminal]
+----
+$ bucket_name=$(oc get obc -n openshift-storage noobaatest -o jsonpath='{.spec.bucketName}')
+----
+
+. Get the AWS credentials by entering the following commands:
++
+[source,terminal]
+----
+$ AWS_ACCESS_KEY_ID=$(oc get secret -n openshift-storage noobaatest -o yaml | grep -w "AWS_ACCESS_KEY_ID:" | head -n1 | awk '{print $2}' | base64 --decode)
+----
++
+[source,terminal]
+----
+$ AWS_SECRET_ACCESS_KEY=$(oc get secret -n openshift-storage noobaatest -o yaml | grep -w "AWS_SECRET_ACCESS_KEY:" | head -n1 | awk '{print $2}' | base64 --decode)
+----
+
+. Create the secret `image-registry-private-configuration-user` with the AWS credentials for the new bucket under `openshift-image-registry project` by entering the following command:
++
+[source,terminal]
+----
+$ oc create secret generic image-registry-private-configuration-user --from-literal=REGISTRY_STORAGE_S3_ACCESSKEY=${AWS_ACCESS_KEY_ID} --from-literal=REGISTRY_STORAGE_S3_SECRETKEY=${AWS_SECRET_ACCESS_KEY} --namespace openshift-image-registry
+----
+
+. Get the route host by entering the following command:
++
+[source,terminal]
+----
+$ route_host=$(oc get route s3 -n openshift-storage -o=jsonpath='{.spec.host}')
+----
+. Create a config map that uses an ingress certificate by entering the following commands:
++
+[source,terminal]
+----
+$ oc extract secret/router-certs-default  -n openshift-ingress  --confirm
+----
++
+[source,terminal]
+----
+$ oc create configmap image-registry-s3-bundle --from-file=ca-bundle.crt=./tls.crt  -n openshift-config
+----
+
+. Configure the image registry to use the Nooba object storage by entering the following command:
++
+[source,terminal]
+----
+$ oc patch config.image/cluster -p '{"spec":{"managementState":"Managed","replicas":2,"storage":{"managementState":"Unmanaged","s3":{"bucket":'\"${bucket_name}\"',"region":"us-east-1","regionEndpoint":'\"https://${route_host}\"',"virtualHostedStyle":false,"encrypt":false,"trustedCA":{"name":"image-registry-s3-bundle"}}}}}' --type=merge
+----
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+//
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc
+//
+// * registry/configuring_registry_storage/Configuring-the-registry-for-rhodf.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="registry-configuring-registry-storage-rhodf-cephfs_{context}"]
+= Configuring the Image Registry Operator to use CephFS storage with Red Hat OpenShift Data Foundation
+
+{rh-storage-first} integrates multiple storage types that you can use with the {product-registry}:
+
+* Ceph, a shared and distributed file system and on-premises object storage
+* NooBaa, providing a Multicloud Object Gateway
+
+This document outlines the procedure to configure the image registry to use CephFS storage.
+
+[NOTE]
+====
+CephFS uses persistent volume claim (PVC) storage. It is not recommended to use PVCs for image registry storage if there are other options are available, such as Ceph RGW or Noobaa.
+====
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+* You have access to the {product-title} web console.
+* You installed the `oc` CLI.
+* You installed the link:https://access.redhat.com/documentation/en-us/red_hat_openshift_data_foundation/4.10[{rh-storage} Operator] to provide object storage and CephFS file storage.
+
+
+.Procedure
+
+. Create a PVC to use the `cephfs` storage class. For example:
++
+[source,terminal]
+----
+cat <<EOF | oc apply -f -
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: registry-storage-pvc
+ namespace: openshift-image-registry
+spec:
+ accessModes:
+ - ReadWriteMany
+ resources:
+   requests:
+     storage: 100Gi
+ storageClassName: ocs-storagecluster-cephfs
+EOF
+----
+
+. Configure the image registry to use the CephFS file system storage by entering the following command:
++
+[source,terminal]
+----
+$ oc patch config.image/cluster -p '{"spec":{"managementState":"Managed","replicas":2,"storage":{"managementState":"Unmanaged","pvc":{"claim":"registry-storage-pvc"}}}}' --type=merge
+----
+
+
+:leveloffset!:
+
+[id="configuring-registry-storage-nutanix-addtl-resources"]
+[role="_additional-resources"]
+== Additional resources
+
+* xref:../../scalability_and_performance/optimization/optimizing-storage.adoc#optimizing-storage[Recommended configurable storage technology]
+* link:https://access.redhat.com/documentation/en-us/red_hat_openshift_data_foundation/4.10/html-single/managing_and_allocating_storage_resources/index#configuring-image-registry-to-use-openshift-data-foundation_rhodf[Configuring Image Registry to use OpenShift Data Foundation]
+
+//# includes=_attributes/common-attributes,modules/registry-removed,modules/registry-change-management-state,modules/installation-registry-storage-config,modules/configuring-registry-storage-nutanix,modules/installation-registry-storage-non-production,modules/installation-registry-storage-block-recreate-rollout-nutanix,modules/registry-configuring-registry-storage-rhodf-cephrgw,modules/registry-configuring-registry-storage-rhodf-nooba,modules/registry-configuring-registry-storage-rhodf-cephfs

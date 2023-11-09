@@ -1,0 +1,2339 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="cnf-low-latency-tuning"]
+= Low latency tuning
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: cnf-master
+
+toc::[]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// Epic CNF-78 (4.4)
+// * scalability_and_performance/cnf-low-latency-tuning.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cnf-understanding-low-latency_{context}"]
+= Understanding low latency
+
+The emergence of Edge computing in the area of Telco / 5G plays a key role in reducing latency and congestion problems and improving application performance.
+
+Simply put, latency determines how fast data (packets) moves from the sender to receiver and returns to the sender after processing by the receiver. Maintaining a network architecture with the lowest possible delay of latency speeds is key for meeting the network performance requirements of 5G. Compared to 4G technology, with an average latency of 50 ms, 5G is targeted to reach latency numbers of 1 ms or less. This reduction in latency boosts wireless throughput by a factor of 10.
+
+Many of the deployed applications in the Telco space require low latency that can only tolerate zero packet loss. Tuning for zero packet loss helps mitigate the inherent issues that degrade network performance. For more information, see link:https://www.redhat.com/en/blog/tuning-zero-packet-loss-red-hat-openstack-platform-part-1[Tuning for Zero Packet Loss in {rh-openstack-first}].
+
+The Edge computing initiative also comes in to play for reducing latency rates. Think of it as being on the edge of the cloud and closer to the user. This greatly reduces the distance between the user and distant data centers, resulting in reduced application response times and performance latency.
+
+Administrators must be able to manage their many Edge sites and local services in a centralized way so that all of the deployments can run at the lowest possible management cost. They also need an easy way to deploy and configure certain nodes of their cluster for real-time low latency and high-performance purposes. Low latency nodes are useful for applications such as Cloud-native Network Functions (CNF) and Data Plane Development Kit (DPDK).
+
+{product-title} currently provides mechanisms to tune software on an {product-title} cluster for real-time running and low latency (around <20 microseconds reaction time). This includes tuning the kernel and {product-title} set values, installing a kernel, and reconfiguring the machine. But this method requires setting up four different Operators and performing many configurations that, when done manually, is complex and could be prone to mistakes.
+
+{product-title} uses the Node Tuning Operator to implement automatic tuning to achieve low latency performance for {product-title} applications. The cluster administrator uses this performance profile configuration that makes it easier to make these changes in a more reliable way. The administrator can specify whether to update the kernel to kernel-rt, reserve CPUs for cluster and operating system housekeeping duties, including pod infra containers, and isolate CPUs for application containers to run the workloads.
+
+[IMPORTANT]
+====
+In {product-title} 4.14, if you apply a performance profile to your cluster, all nodes in the cluster will reboot. This reboot includes control plane nodes and worker nodes that were not targeted by the performance profile. This is a known issue in {product-title} 4.14 because this release uses Linux control group version 2 (cgroup v2) in alignment with RHEL 9. The low latency tuning features associated with the performance profile do not support cgroup v2, therefore the nodes reboot to switch back to the cgroup v1 configuration.
+
+To revert all nodes in the cluster to the cgroups v2 configuration, you must edit the `Node` resource. (link:https://issues.redhat.com/browse/OCPBUGS-16976[*OCPBUGS-16976*])
+====
+
+[NOTE]
+====
+Currently, disabling CPU load balancing is not supported by cgroup v2. As a result, you might not get the desired behavior from performance profiles if you have cgroup v2 enabled. Enabling cgroup v2 is not recommended if you are using performance profiles.
+====
+
+{product-title} also supports workload hints for the Node Tuning Operator that can tune the `PerformanceProfile` to meet the demands of different industry environments. Workload hints are available for `highPowerConsumption` (very low latency at the cost of increased power consumption) and `realTime` (priority given to optimum latency). A combination of `true/false` settings for these hints can be used to deal with application-specific workload profiles and requirements.
+
+Workload hints simplify the fine-tuning of performance to industry sector settings. Instead of a “one size fits all” approach, workload hints can cater to usage patterns such as placing priority on:
+
+* Low latency
+* Real-time capability
+* Efficient use of power
+
+In an ideal world, all of those would be prioritized: in real life, some come at the expense of others. The Node Tuning Operator is now aware of the workload expectations and better able to meet the demands of the workload. The cluster admin can now specify into which use case that workload falls. The Node Tuning Operator uses the `PerformanceProfile` to fine tune the performance settings for the workload.
+
+The environment in which an application is operating influences its behavior. For a typical data center with no strict latency requirements, only minimal default tuning is needed that enables CPU partitioning for some high performance workload pods. For data centers and workloads where latency is a higher priority, measures are still taken to optimize power consumption. The most complicated cases are clusters close to latency-sensitive equipment such as manufacturing machinery and software-defined radios. This last class of deployment is often referred to as Far edge. For Far edge deployments, ultra-low latency is the ultimate priority, and is achieved at the expense of power management.
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// scalability_and_performance/cnf-low-latency-tuning.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="about_hyperthreading_for_low_latency_and_real_time_applications_{context}"]
+= About hyperthreading for low latency and real-time applications
+
+Hyperthreading is an Intel processor technology that allows a physical CPU processor core to function as two logical cores, executing two independent threads simultaneously. Hyperthreading allows for better system throughput for certain workload types where parallel processing is beneficial. The default {product-title} configuration expects hyperthreading to be enabled by default.
+
+For telecommunications applications, it is important to design your application infrastructure to minimize latency as much as possible. Hyperthreading can slow performance times and negatively affect throughput for compute intensive workloads that require low latency. Disabling hyperthreading ensures predictable performance and can decrease processing times for these workloads.
+
+[NOTE]
+====
+Hyperthreading implementation and configuration differs depending on the hardware you are running {product-title} on. Consult the relevant host hardware tuning information for more details of the hyperthreading implementation specific to that hardware. Disabling hyperthreading can increase the cost per core of the cluster.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../scalability_and_performance/cnf-low-latency-tuning.adoc#configuring_hyperthreading_for_a_cluster_{context}[Configuring hyperthreading for a cluster]
+
+:leveloffset: +1
+
+// CNF-489 Real time and low latency workload provisioning
+// Module included in the following assemblies:
+//
+// *cnf-low-latency-tuning.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-provisioning-real-time-and-low-latency-workloads_{context}"]
+= Provisioning real-time and low latency workloads
+
+Many industries and organizations need extremely high performance computing and might require low and predictable latency, especially in the financial and telecommunications industries. For these industries, with their unique requirements, {product-title} provides the Node Tuning Operator to implement automatic tuning to achieve low latency performance and consistent response time for {product-title} applications.
+
+The cluster administrator can use this performance profile configuration to make these changes in a more reliable way. The administrator can specify whether to update the kernel to kernel-rt (real-time), reserve CPUs for cluster and operating system housekeeping duties, including pod infra containers, isolate CPUs for application containers to run the workloads, and disable unused CPUs to reduce power consumption.
+
+[WARNING]
+====
+The usage of execution probes in conjunction with applications that require guaranteed CPUs can cause latency spikes. It is recommended to use other probes, such as a properly configured set of network probes, as an alternative.
+====
+
+[NOTE]
+====
+In earlier versions of {product-title}, the Performance Addon Operator was used to implement automatic tuning to achieve low latency performance for OpenShift applications. In {product-title} 4.11 and later, these functions are part of the Node Tuning Operator.
+====
+
+[id="node-tuning-operator-known-limitations-for-real-time_{context}"]
+== Known limitations for real-time
+
+[NOTE]
+====
+In most deployments, kernel-rt is supported only on worker nodes when you use a standard cluster with three control plane nodes and three worker nodes. There are exceptions for compact and single nodes on {product-title} deployments. For installations on a single node, kernel-rt is supported on the single control plane node.
+====
+
+To fully utilize the real-time mode, the containers must run with elevated privileges.
+See link:https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-capabilities-for-a-container[Set capabilities for a Container] for information on granting privileges.
+
+{product-title} restricts the allowed capabilities, so you might need to create a `SecurityContext` as well.
+
+[NOTE]
+====
+This procedure is fully supported with bare metal installations using {op-system-first} systems.
+====
+
+Establishing the right performance expectations refers to the fact that the real-time kernel is not a panacea. Its objective is consistent, low-latency determinism offering predictable response times. There is some additional kernel overhead associated with the real-time kernel. This is due primarily to handling hardware interruptions in separately scheduled threads. The increased overhead in some workloads results in some degradation in overall throughput. The exact amount of degradation is very workload dependent, ranging from 0% to 30%. However, it is the cost of determinism.
+
+[id="node-tuning-operator-provisioning-worker-with-real-time-capabilities_{context}"]
+== Provisioning a worker with real-time capabilities
+
+. Optional: Add a node to the {product-title} cluster.
+See link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/8/html/optimizing_rhel_8_for_real_time_for_low_latency_operation/setting-bios-parameters-for-system-tuning_optimizing-rhel8-for-real-time-for-low-latency-operation[Setting BIOS parameters for system tuning].
+
+. Add the label `worker-rt` to the worker nodes that require the real-time capability by using the `oc` command.
+
+. Create a new machine config pool for real-time nodes:
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  name: worker-rt
+  labels:
+    machineconfiguration.openshift.io/role: worker-rt
+spec:
+  machineConfigSelector:
+    matchExpressions:
+      - {
+           key: machineconfiguration.openshift.io/role,
+           operator: In,
+           values: [worker, worker-rt],
+        }
+  paused: false
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/worker-rt: ""
+----
+Note that a machine config pool worker-rt is created for group of nodes that have the label `worker-rt`.
+
+. Add the node to the proper machine config pool by using node role labels.
++
+[NOTE]
+====
+You must decide which nodes are configured with real-time workloads. You could configure all of the nodes in the cluster, or a subset of the nodes. The Node Tuning Operator that expects all of the nodes are part of a dedicated machine config pool. If you use all of the nodes, you must point the Node Tuning Operator to the worker node role label. If you use a subset, you must group the nodes into a new machine config pool.
+====
+. Create the `PerformanceProfile` with the proper set of housekeeping cores and `realTimeKernel: enabled: true`.
+
+. You must set `machineConfigPoolSelector` in `PerformanceProfile`:
++
+[source,yaml]
+----
+  apiVersion: performance.openshift.io/v2
+  kind: PerformanceProfile
+  metadata:
+   name: example-performanceprofile
+  spec:
+  ...
+    realTimeKernel:
+      enabled: true
+    nodeSelector:
+       node-role.kubernetes.io/worker-rt: ""
+    machineConfigPoolSelector:
+       machineconfiguration.openshift.io/role: worker-rt
+----
+. Verify that a matching machine config pool exists with a label:
++
+[source,terminal]
+----
+$ oc describe mcp/worker-rt
+----
++
+.Example output
+[source,yaml]
+----
+Name:         worker-rt
+Namespace:
+Labels:       machineconfiguration.openshift.io/role=worker-rt
+----
+
+. {product-title} will start configuring the nodes, which might involve multiple reboots. Wait for the nodes to settle. This can take a long time depending on the specific hardware you use, but 20 minutes per node is expected.
+
+. Verify everything is working as expected.
+
+[id="node-tuning-operator-verifying-real-time-kernel-installation_{context}"]
+== Verifying the real-time kernel installation
+
+Use this command to verify that the real-time kernel is installed:
+
+[source,terminal]
+----
+$ oc get node -o wide
+----
+
+Note the worker with the role `worker-rt` that contains the string `4.18.0-305.30.1.rt7.102.el8_4.x86_64   cri-o://1.27.3-99.rhaos4.10.gitc3131de.el8`:
+
+[source,terminal]
+----
+NAME                               	STATUS   ROLES           	AGE 	VERSION                  	INTERNAL-IP
+EXTERNAL-IP   OS-IMAGE                                       	KERNEL-VERSION
+CONTAINER-RUNTIME
+rt-worker-0.example.com	          Ready	 worker,worker-rt   5d17h   v1.27.3
+128.66.135.107   <none>    	        Red Hat Enterprise Linux CoreOS 46.82.202008252340-0 (Ootpa)
+4.18.0-305.30.1.rt7.102.el8_4.x86_64   cri-o://1.27.3-99.rhaos4.10.gitc3131de.el8
+[...]
+----
+
+[id="node-tuning-operator-creating-workload-that-works-in-real-time_{context}"]
+== Creating a workload that works in real-time
+
+Use the following procedures for preparing a workload that will use real-time capabilities.
+
+.Procedure
+
+. Create a pod with a QoS class of `Guaranteed`.
+. Optional: Disable CPU load balancing for DPDK.
+. Assign a proper node selector.
+
+When writing your applications, follow the general recommendations described in
+link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/8/html-single/tuning_guide/index#chap-Application_Tuning_and_Deployment[Application tuning and deployment].
+
+[id="node-tuning-operator-creating-pod-with-guaranteed-qos-class_{context}"]
+== Creating a pod with a QoS class of `Guaranteed`
+
+Keep the following in mind when you create a pod that is given a QoS class of `Guaranteed`:
+
+* Every container in the pod must have a memory limit and a memory request, and they must be the same.
+* Every container in the pod must have a CPU limit and a CPU request, and they must be the same.
+
+The following example shows the configuration file for a pod that has one container. The container has a memory limit and a memory request, both equal to 200 MiB. The container has a CPU limit and a CPU request, both equal to 1 CPU.
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: qos-demo
+  namespace: qos-example
+spec:
+  containers:
+  - name: qos-demo-ctr
+    image: <image-pull-spec>
+    resources:
+      limits:
+        memory: "200Mi"
+        cpu: "1"
+      requests:
+        memory: "200Mi"
+        cpu: "1"
+----
+
+. Create the pod:
++
+[source,terminal]
+----
+$ oc  apply -f qos-pod.yaml --namespace=qos-example
+----
+
+. View detailed information about the pod:
++
+[source,terminal]
+----
+$ oc get pod qos-demo --namespace=qos-example --output=yaml
+----
++
+.Example output
+[source,yaml]
+----
+spec:
+  containers:
+    ...
+status:
+  qosClass: Guaranteed
+----
++
+[NOTE]
+====
+If a container specifies its own memory limit, but does not specify a memory request, {product-title} automatically assigns a memory request that matches the limit. Similarly, if a container specifies its own CPU limit, but does not specify a CPU request, {product-title} automatically assigns a CPU request that matches the limit.
+====
+
+[id="node-tuning-operator-disabling-cpu-load-balancing-for-dpdk_{context}"]
+== Optional: Disabling CPU load balancing for DPDK
+
+Functionality to disable or enable CPU load balancing is implemented on the CRI-O level. The code under the CRI-O disables or enables CPU load balancing only when the following requirements are met.
+
+* The pod must use the `performance-<profile-name>` runtime class. You can get the proper name by looking at the status of the performance profile, as shown here:
++
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+...
+status:
+  ...
+  runtimeClass: performance-manual
+----
+
+[NOTE]
+====
+Currently, disabling CPU load balancing is not supported with cgroup v2.
+====
+
+The Node Tuning Operator is responsible for the creation of the high-performance runtime handler config snippet under relevant nodes and for creation of the high-performance runtime class under the cluster. It will have the same content as default runtime handler except it enables the CPU load balancing configuration functionality.
+
+To disable the CPU load balancing for the pod, the `Pod` specification must include the following fields:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  ...
+  annotations:
+    ...
+    cpu-load-balancing.crio.io: "disable"
+    ...
+  ...
+spec:
+  ...
+  runtimeClassName: performance-<profile_name>
+  ...
+----
+
+[NOTE]
+====
+Only disable CPU load balancing when the CPU manager static policy is enabled and for pods with guaranteed QoS that use whole CPUs. Otherwise, disabling CPU load balancing can affect the performance of other containers in the cluster.
+====
+
+[id="node-tuning-operator-assigning-proper-node-selector_{context}"]
+== Assigning a proper node selector
+
+The preferred way to assign a pod to nodes is to use the same node selector the performance profile used, as shown here:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example
+spec:
+  # ...
+  nodeSelector:
+    node-role.kubernetes.io/worker-rt: ""
+----
+
+For more information, see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html-single/nodes/index#nodes-scheduler-node-selectors[Placing pods on specific nodes using node selectors].
+
+[id="node-tuning-operator-scheduling-workload-onto-worker-with-real-time-capabilities_{context}"]
+== Scheduling a workload onto a worker with real-time capabilities
+
+Use label selectors that match the nodes attached to the machine config pool that was configured for low latency by the Node Tuning Operator. For more information, see link:https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/[Assigning pods to nodes].
+
+[id="node-tuning-operator-disabling-CPUs-for-power-consumption_{context}"]
+== Reducing power consumption by taking CPUs offline
+
+You can generally anticipate telecommunication workloads. When not all of the CPU resources are required, the Node Tuning Operator allows you take unused CPUs offline to reduce power consumption by manually updating the performance profile.
+
+To take unused CPUs offline, you must perform the following tasks:
+
+. Set the offline CPUs in the performance profile and save the contents of the YAML file:
++
+.Example performance profile with offlined CPUs
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: performance
+spec:
+  additionalKernelArgs:
+  - nmi_watchdog=0
+  - audit=0
+  - mce=off
+  - processor.max_cstate=1
+  - intel_idle.max_cstate=0
+  - idle=poll
+  cpu:
+    isolated: "2-23,26-47"
+    reserved: "0,1,24,25"
+    offlined: “48-59” <1>
+  nodeSelector:
+    node-role.kubernetes.io/worker-cnf: ""
+  numa:
+    topologyPolicy: single-numa-node
+  realTimeKernel:
+    enabled: true
+----
+<1> Optional. You can list CPUs in the `offlined` field to take the specified CPUs offline.
+
+. Apply the updated profile by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f my-performance-profile.yaml
+----
+
+[id="node-tuning-operator-pod-power-saving-config_{context}"]
+== Optional: Power saving configurations
+
+You can enable power savings for a node that has low priority workloads that are colocated with high priority workloads without impacting the latency or throughput of the high priority workloads. Power saving is possible without modifications to the workloads themselves.
+
+[IMPORTANT]
+====
+The feature is supported on Intel Ice Lake and later generations of Intel CPUs. The capabilities of the processor might impact the latency and throughput of the high priority workloads.
+====
+
+When you configure a node with a power saving configuration, you must configure high priority workloads with performance configuration at the pod level, which means that the configuration applies to all the cores used by the pod.
+
+By disabling P-states and C-states at the pod level, you can configure high priority workloads for best performance and lowest latency.
+
+.Configuration for high priority workloads
+[cols="1,2,3", options="header"]
+
+|===
+| Annotation | Possible Values | Description
+
+|`cpu-c-states.crio.io:` a|  * `"enable"`
+* `"disable"`
+* `"max_latency:microseconds"` | This annotation allows you to enable or disable C-states for each CPU. Alternatively, you can also specify a maximum latency in microseconds for the C-states. For example, enable C-states with a maximum latency of 10 microseconds with the setting `cpu-c-states.crio.io`: `"max_latency:10"`. Set the value to `"disable"` to provide the best performance for a pod.
+
+| `cpu-freq-governor.crio.io:` | Any supported `cpufreq governor`. | Sets the `cpufreq` governor for each CPU. The `"performance"` governor is recommended for high priority workloads.
+
+|===
+
+.Prerequisites
+
+* You enabled C-states and OS-controlled P-states in the BIOS
+
+.Procedure
+
+. Generate a `PerformanceProfile` with `per-pod-power-management` set to `true`:
++
+[source,terminal,subs="attributes+"]
+----
+$ podman run --entrypoint performance-profile-creator -v \
+/must-gather:/must-gather:z registry.redhat.io/openshift4/ose-cluster-node-tuning-operator:v{product-version} \
+--mcp-name=worker-cnf --reserved-cpu-count=20 --rt-kernel=true \
+--split-reserved-cpus-across-numa=false --topology-manager-policy=single-numa-node \
+--must-gather-dir-path /must-gather -power-consumption-mode=low-latency \ <1>
+--per-pod-power-management=true > my-performance-profile.yaml
+----
+<1> The `power-consumption-mode` must be `default` or `low-latency` when the `per-pod-power-management` is set to `true`.
+
++
+.Example `PerformanceProfile` with `perPodPowerManagement`
+
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+     name: performance
+spec:
+    [.....]
+    workloadHints:
+        realTime: true
+        highPowerConsumption: false
+        perPodPowerManagement: true
+----
+
+. Set the default `cpufreq` governor as an additional kernel argument in the `PerformanceProfile` custom resource (CR):
++
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+     name: performance
+spec:
+    ...
+    additionalKernelArgs:
+    - cpufreq.default_governor=schedutil <1>
+----
+<1> Using the `schedutil` governor is recommended, however, you can use other governors such as the `ondemand` or `powersave` governors.
+
+. Set the maximum CPU frequency in the `TunedPerformancePatch` CR:
++
+[source,yaml]
+----
+spec:
+  profile:
+  - data: |
+      [sysfs]
+      /sys/devices/system/cpu/intel_pstate/max_perf_pct = <x> <1>
+----
+<1> The `max_perf_pct` controls the maximum frequency the `cpufreq` driver is allowed to set as a percentage of the maximum supported cpu frequency. This value applies to all CPUs. You can check the maximum supported frequency in `/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq`. As a starting point, you can use a percentage that caps all CPUs at the `All Cores Turbo` frequency. The `All Cores Turbo` frequency is the frequency that all cores will run at when the cores are all fully occupied.
+
+. Add the desired annotations to your high priority workload pods. The annotations override the `default` settings.
++
+.Example high priority workload annotation
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  ...
+  annotations:
+    ...
+    cpu-c-states.crio.io: "disable"
+    cpu-freq-governor.crio.io: "performance"
+    ...
+  ...
+spec:
+  ...
+  runtimeClassName: performance-<profile_name>
+  ...
+----
+
+. Restart the pods.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For more information about recommended firmware configuration, see xref:../scalability_and_performance/ztp_far_edge/ztp-vdu-validating-cluster-tuning.adoc#ztp-du-firmware-config-reference_vdu-config-ref[Recommended firmware configuration for vDU cluster hosts].
+
+:leveloffset: +2
+
+// CNF-802 Infrastructure-provided interrupt processing for guaranteed pod CPUs
+// Module included in the following assemblies:
+//
+// *cnf-low-latency-tuning.adoc
+
+[id="managing-device-interrupt-processing-for-guaranteed-pod-isolated-cpus_{context}"]
+= Managing device interrupt processing for guaranteed pod isolated CPUs
+
+The Node Tuning Operator can manage host CPUs by dividing them into reserved CPUs for cluster and operating system housekeeping duties, including pod infra containers, and isolated CPUs for application containers to run the workloads. This allows you to set CPUs for low latency workloads as isolated.
+
+Device interrupts are load balanced between all isolated and reserved CPUs to avoid CPUs being overloaded, with the exception of CPUs where there is a guaranteed pod running. Guaranteed pod CPUs are prevented from processing device interrupts when the relevant annotations are set for the pod.
+
+In the performance profile, `globallyDisableIrqLoadBalancing` is used to manage whether device interrupts are processed or not. For certain workloads, the reserved CPUs are not always sufficient for dealing with device interrupts, and for this reason, device interrupts are not globally disabled on the isolated CPUs. By default, Node Tuning Operator does not disable device interrupts on isolated CPUs.
+
+To achieve low latency for workloads, some (but not all) pods require the CPUs they are running on to not process device interrupts. A pod annotation, `irq-load-balancing.crio.io`, is used to define whether device interrupts are processed or not. When configured, CRI-O disables device interrupts only as long as the pod is running.
+
+[id="disabling-cpu-cfs-quota_{context}"]
+== Disabling CPU CFS quota
+
+To reduce CPU throttling for individual guaranteed pods, create a pod specification with the annotation `cpu-quota.crio.io: "disable"`. This annotation disables the CPU completely fair scheduler (CFS) quota at the pod run time. The following pod specification contains this annotation:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+      cpu-quota.crio.io: "disable"
+spec:
+    runtimeClassName: performance-<profile_name>
+...
+----
+
+[NOTE]
+====
+Only disable CPU CFS quota when the CPU manager static policy is enabled and for pods with guaranteed QoS that use whole CPUs. Otherwise, disabling CPU CFS quota can affect the performance of other containers in the cluster.
+====
+
+[id="configuring-global-device-interrupts-handling-for-isolated-cpus_{context}"]
+== Disabling global device interrupts handling in Node Tuning Operator
+
+To configure Node Tuning Operator to disable global device interrupts for the isolated CPU set, set the `globallyDisableIrqLoadBalancing` field in the performance profile to `true`. When `true`, conflicting pod annotations are ignored. When `false`, IRQ loads are balanced across all CPUs.
+
+A performance profile snippet illustrates this setting:
+
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: manual
+spec:
+  globallyDisableIrqLoadBalancing: true
+...
+----
+
+[id="disabling_interrupt_processing_for_individual_pods_{context}"]
+== Disabling interrupt processing for individual pods
+
+To disable interrupt processing for individual pods, ensure that `globallyDisableIrqLoadBalancing` is set to `false` in the performance profile. Then, in the pod specification, set the `irq-load-balancing.crio.io` pod annotation to `disable`. The following pod specification contains this annotation:
+
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: Pod
+metadata:
+  annotations:
+      irq-load-balancing.crio.io: "disable"
+spec:
+    runtimeClassName: performance-<profile_name>
+...
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// CNF-802 Infrastructure-provided interrupt processing for guaranteed pod CPUs
+// Module included in the following assemblies:
+//
+// *cnf-low-latency-tuning.adoc
+
+[id="use-device-interrupt-processing-for-isolated-cpus_{context}"]
+= Upgrading the performance profile to use device interrupt processing
+
+When you upgrade the Node Tuning Operator performance profile custom resource definition (CRD) from v1 or v1alpha1 to v2, `globallyDisableIrqLoadBalancing` is set to `true` on existing profiles.
+
+[NOTE]
+====
+`globallyDisableIrqLoadBalancing` toggles whether IRQ load balancing will be disabled for the Isolated CPU set. When the option is set to `true` it disables IRQ load balancing for the Isolated CPU set. Setting the option to `false` allows the IRQs to be balanced across all CPUs.
+====
+
+[id="nto_supported_api_versions_{context}"]
+== Supported API Versions
+
+The Node Tuning Operator supports `v2`, `v1`, and `v1alpha1` for the performance profile `apiVersion` field. The v1 and v1alpha1 APIs are identical. The v2 API includes an optional boolean field `globallyDisableIrqLoadBalancing` with a default value of `false`.
+
+[id="upgrading_nto_api_from_v1alpha1_to_v1_{context}"]
+=== Upgrading Node Tuning Operator API from v1alpha1 to v1
+
+When upgrading Node Tuning Operator API version from v1alpha1 to v1, the v1alpha1 performance profiles are converted on-the-fly using a "None" Conversion strategy and served to the Node Tuning Operator with API version v1.
+
+[id="upgrading_nto_api_from_v1alpha1_to_v1_or_v2_{context}"]
+=== Upgrading Node Tuning Operator API from v1alpha1 or v1 to v2
+
+When upgrading from an older Node Tuning Operator API version, the existing v1 and v1alpha1 performance profiles are converted using a conversion webhook that injects the `globallyDisableIrqLoadBalancing` field with a value of `true`.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// Epic CNF-78 (4.4)
+// Epic CNF-422 (4.5)
+// scalability_and_performance/cnf-low-latency-tuning.adoc
+
+[id="cnf-tuning-nodes-for-low-latency-via-performanceprofile_{context}"]
+= Tuning nodes for low latency with the performance profile
+
+The performance profile lets you control latency tuning aspects of nodes that belong to a certain machine config pool. After you specify your settings, the `PerformanceProfile` object is compiled into multiple objects that perform the actual node level tuning:
+
+* A `MachineConfig` file that manipulates the nodes.
+* A `KubeletConfig` file that configures the Topology Manager, the CPU Manager, and the {product-title} nodes.
+* The Tuned profile that configures the Node Tuning Operator.
+
+You can use a performance profile to specify whether to update the kernel to kernel-rt, to allocate huge pages, and to partition the CPUs for performing housekeeping duties or running workloads.
+
+[IMPORTANT]
+====
+In {product-title} {product-version}, if you apply a performance profile to your cluster, all nodes in the cluster will reboot. This reboot includes control plane nodes and worker nodes that were not targeted by the performance profile. This is a known issue in {product-title} {product-version} because this release uses Linux control group version 2 (cgroup v2) in alignment with RHEL 9. The low latency tuning features associated with the performance profile do not support cgroup v2, therefore the nodes reboot to switch back to the cgroup v1 configuration.
+
+To revert all nodes in the cluster to the cgroups v2 configuration, you must edit the `Node` resource. (link:https://issues.redhat.com/browse/OCPBUGS-16976[*OCPBUGS-16976*])
+====
+
+[NOTE]
+====
+You can manually create the `PerformanceProfile` object or use the Performance Profile Creator (PPC) to generate a performance profile. See the additional resources below for more information on the PPC.
+====
+
+.Sample performance profile
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+ name: performance
+spec:
+ cpu:
+  isolated: "4-15" <1>
+  reserved: "0-3" <2>
+ hugepages:
+  defaultHugepagesSize: "1G"
+  pages:
+  - size: "1G"
+    count: 16
+    node: 0
+ realTimeKernel:
+  enabled: true  <3>
+ numa:  <4>
+  topologyPolicy: "best-effort"
+ nodeSelector:
+  node-role.kubernetes.io/worker-cnf: "" <5>
+----
+<1> Use this field to isolate specific CPUs to use with application containers for workloads. Set an even number of isolated CPUs to enable the pods to run without errors when hyperthreading is enabled.
+<2> Use this field to reserve specific CPUs to use with infra containers for housekeeping.
+<3> Use this field to install the real-time kernel on the node. Valid values are `true` or `false`. Setting the `true` value installs the real-time kernel.
+<4> Use this field to configure the topology manager policy. Valid values are `none` (default), `best-effort`, `restricted`, and `single-numa-node`. For more information, see link:https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/#topology-manager-policies[Topology Manager Policies].
+<5> Use this field to specify a node selector to apply the performance profile to specific nodes.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For information on using the Performance Profile Creator (PPC) to generate a performance profile, see xref:../scalability_and_performance/cnf-create-performance-profiles.adoc#cnf-create-performance-profiles[Creating a performance profile].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//CNF-78 (4.4)
+// * scalability_and_performance/cnf-low-latency-tuning.adoc
+
+[id="cnf-configuring-huge-pages_{context}"]
+= Configuring huge pages
+
+Nodes must pre-allocate huge pages used in an {product-title} cluster. Use the Node Tuning Operator to allocate huge pages on a specific node.
+
+{product-title} provides a method for creating and allocating huge pages. Node Tuning Operator provides an easier method for doing  this using the performance profile.
+
+For example, in the `hugepages` `pages` section of the performance profile, you can specify multiple blocks of `size`, `count`, and, optionally, `node`:
+
+[source,yaml]
+----
+hugepages:
+   defaultHugepagesSize: "1G"
+   pages:
+   - size:  "1G"
+     count:  4
+     node:  0 <1>
+----
+
+<1> `node` is the NUMA node in which the huge pages are allocated. If you omit `node`, the pages are evenly spread across all NUMA nodes.
+
+[NOTE]
+====
+Wait for the relevant machine config pool status that indicates the update is finished.
+====
+
+These are the only configuration steps you need to do to allocate huge pages.
+
+
+.Verification
+
+* To verify the configuration, see the `/proc/meminfo` file on the node:
++
+[source,terminal]
+----
+$ oc debug node/ip-10-0-141-105.ec2.internal
+----
++
+[source,terminal]
+----
+# grep -i huge /proc/meminfo
+----
++
+.Example output
+[source,terminal]
+----
+AnonHugePages:    ###### ##
+ShmemHugePages:        0 kB
+HugePages_Total:       2
+HugePages_Free:        2
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       #### ##
+Hugetlb:            #### ##
+----
+
+* Use `oc describe` to report the new size:
++
+[source,terminal]
+----
+$ oc describe node worker-0.ocp4poc.example.com | grep -i huge
+----
++
+.Example output
+[source,terminal]
+----
+                                   hugepages-1g=true
+ hugepages-###:  ###
+ hugepages-###:  ###
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// CNF-538 Promote Multiple Huge Pages Sizes for Pods and Containers to beta
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-low-latency-tuning.adoc
+
+[id="cnf-allocating-multiple-huge-page-sizes_{context}"]
+= Allocating multiple huge page sizes
+
+You can request huge pages with different sizes under the same container. This allows you to define more complicated pods consisting of containers with different huge page size needs.
+
+For example, you can define sizes `1G` and `2M` and the Node Tuning Operator will configure both sizes on the node, as shown here:
+
+[source,yaml]
+----
+spec:
+  hugepages:
+    defaultHugepagesSize: 1G
+    pages:
+    - count: 1024
+      node: 0
+      size: 2M
+    - count: 4
+      node: 1
+      size: 1G
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// scalability_and_performance/cnf-low-latency-tuning.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring_for_irq_dynamic_load_balancing_{context}"]
+= Configuring a node for IRQ dynamic load balancing
+
+Configure a cluster node for IRQ dynamic load balancing to control which cores can receive device interrupt requests (IRQ).
+
+.Prerequisites
+
+* For core isolation, all server hardware components must support IRQ affinity. To check if the hardware components of your server support IRQ affinity, view the server's hardware specifications or contact your hardware provider.
+
+.Procedure
+
+. Log in to the {product-title} cluster as a user with cluster-admin privileges.
+. Set the performance profile `apiVersion` to use `performance.openshift.io/v2`.
+. Remove the `globallyDisableIrqLoadBalancing` field or set it to `false`.
+. Set the appropriate isolated and reserved CPUs. The following snippet illustrates a profile that reserves 2 CPUs. IRQ load-balancing is enabled for pods running on the `isolated` CPU set:
++
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: dynamic-irq-profile
+spec:
+  cpu:
+    isolated: 2-5
+    reserved: 0-1
+...
+----
++
+[NOTE]
+====
+When you configure reserved and isolated CPUs, the infra containers in pods use the reserved CPUs and the application containers use the isolated CPUs.
+====
+
+. Create the pod that uses exclusive CPUs, and set `irq-load-balancing.crio.io` and `cpu-quota.crio.io` annotations to `disable`. For example:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dynamic-irq-pod
+  annotations:
+     irq-load-balancing.crio.io: "disable"
+     cpu-quota.crio.io: "disable"
+spec:
+  containers:
+  - name: dynamic-irq-pod
+    image: "registry.redhat.io/openshift4/cnf-tests-rhel8:v{product-version}"
+    command: ["sleep", "10h"]
+    resources:
+      requests:
+        cpu: 2
+        memory: "200M"
+      limits:
+        cpu: 2
+        memory: "200M"
+  nodeSelector:
+    node-role.kubernetes.io/worker-cnf: ""
+  runtimeClassName: performance-dynamic-irq-profile
+...
+----
+
+. Enter the pod `runtimeClassName` in the form performance-<profile_name>, where <profile_name> is the `name` from the `PerformanceProfile` YAML, in this example, `performance-dynamic-irq-profile`.
+. Set the node selector to target a cnf-worker.
+. Ensure the pod is running correctly. Status should be `running`, and the correct cnf-worker node should be set:
++
+[source,terminal]
+----
+$ oc get pod -o wide
+----
++
+.Expected output
++
+[source,terminal]
+----
+NAME              READY   STATUS    RESTARTS   AGE     IP             NODE          NOMINATED NODE   READINESS GATES
+dynamic-irq-pod   1/1     Running   0          5h33m   <ip-address>   <node-name>   <none>           <none>
+----
+. Get the CPUs that the pod configured for IRQ dynamic load balancing runs on:
++
+[source,terminal]
+----
+$ oc exec -it dynamic-irq-pod -- /bin/bash -c "grep Cpus_allowed_list /proc/self/status | awk '{print $2}'"
+----
++
+.Expected output
++
+[source,terminal]
+----
+Cpus_allowed_list:  2-3
+----
+. Ensure the node configuration is applied correctly. Log in to the node to verify the configuration.
++
+[source,terminal]
+----
+$ oc debug node/<node-name>
+----
++
+.Expected output
++
+[source,terminal]
+----
+Starting pod/<node-name>-debug ...
+To use host binaries, run `chroot /host`
+
+Pod IP: <ip-address>
+If you don't see a command prompt, try pressing enter.
+
+sh-4.4#
+----
+
+. Verify that you can use the node file system:
++
+[source,terminal]
+----
+sh-4.4# chroot /host
+----
++
+.Expected output
++
+[source,terminal]
+----
+sh-4.4#
+----
+
+. Ensure the default system CPU affinity mask does not include the `dynamic-irq-pod` CPUs, for example, CPUs 2 and 3.
++
+[source,terminal]
+----
+$ cat /proc/irq/default_smp_affinity
+----
++
+.Example output
++
+[source,terminal]
+----
+33
+----
+. Ensure the system IRQs are not configured to run on the `dynamic-irq-pod` CPUs:
++
+[source,terminal]
+----
+find /proc/irq/ -name smp_affinity_list -exec sh -c 'i="$1"; mask=$(cat $i); file=$(echo $i); echo $file: $mask' _ {} \;
+----
++
+.Example output
++
+[source,terminal]
+----
+/proc/irq/0/smp_affinity_list: 0-5
+/proc/irq/1/smp_affinity_list: 5
+/proc/irq/2/smp_affinity_list: 0-5
+/proc/irq/3/smp_affinity_list: 0-5
+/proc/irq/4/smp_affinity_list: 0
+/proc/irq/5/smp_affinity_list: 0-5
+/proc/irq/6/smp_affinity_list: 0-5
+/proc/irq/7/smp_affinity_list: 0-5
+/proc/irq/8/smp_affinity_list: 4
+/proc/irq/9/smp_affinity_list: 4
+/proc/irq/10/smp_affinity_list: 0-5
+/proc/irq/11/smp_affinity_list: 0
+/proc/irq/12/smp_affinity_list: 1
+/proc/irq/13/smp_affinity_list: 0-5
+/proc/irq/14/smp_affinity_list: 1
+/proc/irq/15/smp_affinity_list: 0
+/proc/irq/24/smp_affinity_list: 1
+/proc/irq/25/smp_affinity_list: 1
+/proc/irq/26/smp_affinity_list: 1
+/proc/irq/27/smp_affinity_list: 5
+/proc/irq/28/smp_affinity_list: 1
+/proc/irq/29/smp_affinity_list: 0
+/proc/irq/30/smp_affinity_list: 0-5
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// scalability_and_performance/cnf-low-latency-tuning.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="about_irq_affinity_setting_{context}"]
+= About support of IRQ affinity setting
+
+Some IRQ controllers lack support for IRQ affinity setting and will always expose all online CPUs as the IRQ mask. These IRQ controllers effectively run on CPU 0.
+
+The following are examples of drivers and hardware that Red Hat are aware lack support for IRQ affinity setting. The list is, by no means, exhaustive:
+
+* Some RAID controller drivers, such as `megaraid_sas`
+* Many non-volatile memory express (NVMe) drivers
+* Some LAN on motherboard (LOM) network controllers
+* The driver uses `managed_irqs`
+
+[NOTE]
+====
+The reason they do not support IRQ affinity setting might be associated with factors such as the type of processor, the IRQ controller, or the circuitry connections in the motherboard.
+====
+
+If the effective affinity of any IRQ is set to an isolated CPU, it might be a sign of some hardware or driver not supporting IRQ affinity setting. To find the effective affinity, log in to the host and run the following command:
+
+[source,terminal]
+----
+$ find /proc/irq/ -name effective_affinity -exec sh -c 'i="$1"; mask=$(cat $i); file=$(echo $i); echo $file: $mask' _ {} \;
+----
+
+.Example output
+
+[source,terminal]
+----
+/proc/irq/0/effective_affinity: 1
+/proc/irq/1/effective_affinity: 8
+/proc/irq/2/effective_affinity: 0
+/proc/irq/3/effective_affinity: 1
+/proc/irq/4/effective_affinity: 2
+/proc/irq/5/effective_affinity: 1
+/proc/irq/6/effective_affinity: 1
+/proc/irq/7/effective_affinity: 1
+/proc/irq/8/effective_affinity: 1
+/proc/irq/9/effective_affinity: 2
+/proc/irq/10/effective_affinity: 1
+/proc/irq/11/effective_affinity: 1
+/proc/irq/12/effective_affinity: 4
+/proc/irq/13/effective_affinity: 1
+/proc/irq/14/effective_affinity: 1
+/proc/irq/15/effective_affinity: 1
+/proc/irq/24/effective_affinity: 2
+/proc/irq/25/effective_affinity: 4
+/proc/irq/26/effective_affinity: 2
+/proc/irq/27/effective_affinity: 1
+/proc/irq/28/effective_affinity: 8
+/proc/irq/29/effective_affinity: 4
+/proc/irq/30/effective_affinity: 4
+/proc/irq/31/effective_affinity: 8
+/proc/irq/32/effective_affinity: 8
+/proc/irq/33/effective_affinity: 1
+/proc/irq/34/effective_affinity: 2
+----
+
+Some drivers use `managed_irqs`, whose affinity is managed internally by the kernel and userspace cannot change the affinity. In some cases, these IRQs might be assigned to isolated CPUs. For more information about `managed_irqs`, see link:https://access.redhat.com/solutions/4819541[Affinity of managed interrupts cannot be changed even if they target isolated CPU].
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// scalability_and_performance/cnf-low-latency-tuning.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring_hyperthreading_for_a_cluster_{context}"]
+= Configuring hyperthreading for a cluster
+
+To configure hyperthreading for an {product-title} cluster, set the CPU threads in the performance profile to the same cores that are configured for the reserved or isolated CPU pools.
+
+[NOTE]
+====
+If you configure a performance profile, and subsequently change the hyperthreading configuration for the host, ensure that you update the CPU `isolated` and `reserved` fields in the `PerformanceProfile` YAML to match the new configuration.
+====
+
+[WARNING]
+====
+Disabling a previously enabled host hyperthreading configuration can cause the CPU core IDs listed in the `PerformanceProfile` YAML to be incorrect. This incorrect configuration can cause the node to become unavailable because the listed CPUs can no longer be found.
+====
+
+.Prerequisites
+
+* Access to the cluster as a user with the `cluster-admin` role.
+* Install the OpenShift CLI (oc).
+
+.Procedure
+
+. Ascertain which threads are running on what CPUs for the host you want to configure.
++
+You can view which threads are running on the host CPUs by logging in to the cluster and running the following command:
++
+[source,terminal]
+----
+$ lscpu --all --extended
+----
++
+.Example output
++
+[source,terminal]
+----
+CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE MAXMHZ    MINMHZ
+0   0    0      0    0:0:0:0       yes    4800.0000 400.0000
+1   0    0      1    1:1:1:0       yes    4800.0000 400.0000
+2   0    0      2    2:2:2:0       yes    4800.0000 400.0000
+3   0    0      3    3:3:3:0       yes    4800.0000 400.0000
+4   0    0      0    0:0:0:0       yes    4800.0000 400.0000
+5   0    0      1    1:1:1:0       yes    4800.0000 400.0000
+6   0    0      2    2:2:2:0       yes    4800.0000 400.0000
+7   0    0      3    3:3:3:0       yes    4800.0000 400.0000
+----
++
+In this example, there are eight logical CPU cores running on four physical CPU cores. CPU0 and CPU4 are running on physical Core0, CPU1 and CPU5 are running on physical Core 1, and so on.
++
+Alternatively, to view the threads that are set for a particular physical CPU core (`cpu0` in the example below), open a command prompt and run the following:
++
+[source,terminal]
+----
+$ cat /sys/devices/system/cpu/cpu0/topology/thread_siblings_list
+----
++
+.Example output
++
+[source,terminal]
+----
+0-4
+----
+
+. Apply the isolated and reserved CPUs in the `PerformanceProfile` YAML. For example, you can set logical cores CPU0 and CPU4 as `isolated`, and logical cores CPU1 to CPU3 and CPU5 to CPU7 as `reserved`. When you configure reserved and isolated CPUs, the infra containers in pods use the reserved CPUs and the application containers use the isolated CPUs.
++
+[source,yaml]
+----
+...
+  cpu:
+    isolated: 0,4
+    reserved: 1-3,5-7
+...
+----
++
+[NOTE]
+====
+The reserved and isolated CPU pools must not overlap and together must span all available cores in the worker node.
+====
+
+[IMPORTANT]
+====
+Hyperthreading is enabled by default on most Intel processors. If you enable hyperthreading, all threads processed by a particular core must be isolated or processed on the same core.
+====
+
+[id="disabling_hyperthreading_for_low_latency_applications_{context}"]
+== Disabling hyperthreading for low latency applications
+
+When configuring clusters for low latency processing, consider whether you want to disable hyperthreading before you deploy the cluster. To disable hyperthreading, do the following:
+
+. Create a performance profile that is appropriate for your hardware and topology.
+. Set `nosmt` as an additional kernel argument. The following example performance profile illustrates this setting:
++
+[source,yaml]
+----
+﻿apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: example-performanceprofile
+spec:
+  additionalKernelArgs:
+    - nmi_watchdog=0
+    - audit=0
+    - mce=off
+    - processor.max_cstate=1
+    - idle=poll
+    - intel_idle.max_cstate=0
+    - nosmt
+  cpu:
+    isolated: 2-3
+    reserved: 0-1
+  hugepages:
+    defaultHugepagesSize: 1G
+    pages:
+      - count: 2
+        node: 0
+        size: 1G
+  nodeSelector:
+    node-role.kubernetes.io/performance: ''
+  realTimeKernel:
+    enabled: true
+----
++
+[NOTE]
+====
+When you configure reserved and isolated CPUs, the infra containers in pods use the reserved CPUs and the application containers use the isolated CPUs.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// scalability_and_performance/cnf-low-latency-tuning.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cnf-understanding-workload-hints_{context}"]
+= Understanding workload hints
+
+The following table describes how combinations of power consumption and real-time settings impact on latency.
+[NOTE]
+====
+The following workload hints can be configured manually. You can also work with workload hints using the Performance Profile Creator. For more information about the performance profile, see the "Creating a performance profile" section.
+If the workload hint is configured manually and the `realTime` workload hint is not explicitly set then it defaults to `true`.
+====
+
+[cols="1,1,1,1",options="header"]
+|===
+    | Performance Profile creator setting| Hint | Environment | Description
+
+    | Default
+    a|[source,terminal]
+----
+workloadHints:
+highPowerConsumption: false
+realTime: false
+----
+    | High throughput cluster without latency requirements
+    | Performance achieved through CPU partitioning only.
+
+
+
+    | Low-latency
+    a|[source,terminal]
+----
+workloadHints:
+highPowerConsumption: false
+realTime: true
+----
+    | Regional datacenters
+    | Both energy savings and low-latency are desirable: compromise between power management, latency and throughput.
+
+
+    | Ultra-low-latency
+    a|[source,terminal]
+----
+workloadHints:
+highPowerConsumption: true
+realTime: true
+----
+    | Far edge clusters, latency critical workloads
+    | Optimized for absolute minimal latency and maximum determinism at the cost of increased power consumption.
+
+    | Per-pod power management
+    a|[source,terminal]
+----
+workloadHints:
+realTime: true
+highPowerConsumption: false
+perPodPowerManagement: true
+----
+    | Critical and non-critical workloads
+    | Allows for power management per pod.
+
+|===
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For information about using the Performance Profile Creator (PPC) to generate a performance profile, see xref:../scalability_and_performance/cnf-create-performance-profiles.adoc#cnf-create-performance-profiles[Creating a performance profile].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// scalability_and_performance/cnf-low-latency-tuning.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="configuring-workload-hints_{context}"]
+= Configuring workload hints manually
+
+.Procedure
+
+. Create a `PerformanceProfile` appropriate for the environment's hardware and topology as described in the table in "Understanding workload hints". Adjust the profile to match the expected workload. In this example, we tune for the lowest possible latency.
+
+. Add the `highPowerConsumption` and `realTime` workload hints. Both are set to `true` here.
++
+[source,yaml]
+----
+    apiVersion: performance.openshift.io/v2
+    kind: PerformanceProfile
+    metadata:
+      name: workload-hints
+    spec:
+      ...
+      workloadHints:
+        highPowerConsumption: true <1>
+        realTime: true <2>
+----
+<1> If `highPowerConsumption` is `true`, the node is tuned for very low latency at the cost of increased power consumption.
+<2> Disables some debugging and monitoring features that can affect system latency.
+
+[NOTE]
+====
+When the `realTime` workload hint flag is set to `true` in a performance profile, add the `cpu-quota.crio.io: disable` annotation to every guaranteed pod with pinned CPUs. This annotation is necessary to prevent the degradation of the process performance within the pod. If the `realTime` workload hint is not explicitly set then it defaults to `true`.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For information about reducing CPU throttling for individual guaranteed pods, see xref:../scalability_and_performance/cnf-low-latency-tuning.adoc#disabling-cpu-cfs-quota_cnf-master[Disabling CPU CFS quota].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// scalability_and_performance/cnf-low-latency-tuning.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-cpu-infra-container_{context}"]
+= Restricting CPUs for infra and application containers
+
+Generic housekeeping and workload tasks use CPUs in a way that may impact latency-sensitive processes. By default, the container runtime uses all online CPUs to run all containers together, which can result in context switches and spikes in latency. Partitioning the CPUs prevents noisy processes from interfering with latency-sensitive processes by separating them from each other. The following table describes how processes run on a CPU after you have tuned the node using the Node Tuning Operator:
+
+.Process' CPU assignments
+[%header,cols=2*]
+|===
+|Process type
+|Details
+
+|`Burstable` and `BestEffort` pods
+|Runs on any CPU except where low latency workload is running
+
+|Infrastructure pods
+|Runs on any CPU except where low latency workload is running
+
+|Interrupts
+|Redirects to reserved CPUs (optional in {product-title} 4.7 and later)
+
+|Kernel processes
+|Pins to reserved CPUs
+
+|Latency-sensitive workload pods
+|Pins to a specific set of exclusive CPUs from the isolated pool
+
+|OS processes/systemd services
+|Pins to reserved CPUs
+|===
+
+The allocatable capacity of cores on a node for pods of all QoS process types, `Burstable`,  `BestEffort`, or `Guaranteed`, is equal to the capacity of the isolated pool. The capacity of the reserved pool is removed from the node's total core capacity for use by the cluster and operating system housekeeping duties.
+
+.Example 1
+A node features a capacity of 100 cores. Using a performance profile, the cluster administrator allocates 50 cores to the isolated pool and 50 cores to the reserved pool. The cluster administrator assigns 25 cores to QoS `Guaranteed` pods and 25 cores for `BestEffort` or `Burstable` pods. This matches the capacity of the isolated pool.
+
+.Example 2
+A node features a capacity of 100 cores. Using a performance profile, the cluster administrator allocates 50 cores to the isolated pool and 50 cores to the reserved pool. The cluster administrator assigns 50 cores to QoS `Guaranteed` pods and one core for `BestEffort` or `Burstable` pods. This exceeds the capacity of the isolated pool by one core. Pod scheduling fails because of insufficient CPU capacity.
+
+
+The exact partitioning pattern to use depends on many factors like hardware, workload characteristics and the expected system load. Some sample use cases are as follows:
+
+* If the latency-sensitive workload uses specific hardware, such as a network interface controller (NIC), ensure that the CPUs in the isolated pool are as close as possible to this hardware. At a minimum, you should place the workload in the same Non-Uniform Memory Access (NUMA) node.
+
+* The reserved pool is used for handling all interrupts. When depending on system networking, allocate a sufficiently-sized reserve pool to handle all the incoming packet interrupts. In {product-version} and later versions, workloads can optionally be labeled as sensitive.
+
+The decision regarding which specific CPUs should be used for reserved and isolated partitions requires detailed analysis and measurements. Factors like NUMA affinity of devices and memory play a role. The selection also depends on the workload architecture and the specific use case.
+
+[IMPORTANT]
+====
+The reserved and isolated CPU pools must not overlap and together must span all available cores in the worker node.
+====
+
+To ensure that housekeeping tasks and workloads do not interfere with each other, specify two groups of CPUs in the `spec` section of the performance profile.
+
+* `isolated` - Specifies the CPUs for the application container workloads. These CPUs have the lowest latency. Processes in this group have no interruptions and can, for example, reach much higher DPDK zero packet loss bandwidth.
+
+* `reserved` - Specifies the CPUs for the cluster and operating system housekeeping duties. Threads in the `reserved` group are often busy. Do not run latency-sensitive applications in the `reserved` group. Latency-sensitive applications run in the `isolated` group.
+
+.Procedure
+
+. Create a performance profile appropriate for the environment's hardware and topology.
+
+. Add the `reserved` and `isolated` parameters with the CPUs you want reserved and isolated for the infra and application containers:
++
+[source,yaml]
+----
+﻿apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: infra-cpus
+spec:
+  cpu:
+    reserved: "0-4,9" <1>
+    isolated: "5-8" <2>
+  nodeSelector: <3>
+    node-role.kubernetes.io/worker: ""
+----
+<1> Specify which CPUs are for infra containers to perform cluster and operating system housekeeping duties.
+<2> Specify which CPUs are for application containers to run workloads.
+<3> Optional: Specify a node selector to apply the performance profile to specific nodes.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../scalability_and_performance/cnf-low-latency-tuning.adoc#managing-device-interrupt-processing-for-guaranteed-pod-isolated-cpus_{context}[Managing device interrupt processing for guaranteed pod isolated CPUs]
+
+* link:https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed[Create a pod that gets assigned a QoS class of Guaranteed]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//CNF-1483 (4.8)
+// * scalability_and_performance/low-latency-tuning.adoc
+
+[id="reducing-nic-queues-using-the-node-tuning-operator_{context}"]
+= Reducing NIC queues using the Node Tuning Operator
+
+The Node Tuning Operator allows you to adjust the network interface controller (NIC) queue count for each network device by configuring the performance profile. Device network queues allows the distribution of packets among different physical queues and each queue gets a separate thread for packet processing.
+
+In real-time or low latency systems, all the unnecessary interrupt request lines (IRQs) pinned to the isolated CPUs must be moved to reserved or housekeeping CPUs.
+
+In deployments with applications that require system, {product-title} networking or in mixed deployments with Data Plane Development Kit (DPDK) workloads, multiple queues are needed to achieve good throughput and the number of NIC queues should be adjusted or remain unchanged. For example, to achieve low latency the number of NIC queues for DPDK based workloads should be reduced to just the number of reserved or housekeeping CPUs.
+
+Too many queues are created by default for each CPU and these do not fit into the interrupt tables for housekeeping CPUs when tuning for low latency. Reducing the number of queues makes proper tuning possible. Smaller number of queues means a smaller number of interrupts that then fit in the IRQ table.
+
+[NOTE]
+====
+In earlier versions of {product-title}, the Performance Addon Operator provided automatic, low latency performance tuning for applications. In {product-title} 4.11 and later, this functionality is part of the Node Tuning Operator.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//CNF-1483 (4.8)
+// * scalability_and_performance/low-latency-tuning.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="adjusting-nic-queues-with-the-performance-profile_{context}"]
+= Adjusting the NIC queues with the performance profile
+
+The performance profile lets you adjust the queue count for each network device.
+
+Supported network devices:
+
+* Non-virtual network devices
+
+* Network devices that support multiple queues (channels)
+
+Unsupported network devices:
+
+* Pure software network interfaces
+
+* Block devices
+
+* Intel DPDK virtual functions
+
+.Prerequisites
+
+* Access to the cluster as a user with the `cluster-admin` role.
+* Install the OpenShift CLI (`oc`).
+
+.Procedure
+
+. Log in to the {product-title} cluster running the Node Tuning Operator as a user with `cluster-admin` privileges.
+
+. Create and apply a performance profile appropriate for your hardware and topology. For guidance on creating a profile, see the "Creating a performance profile" section.
+
+. Edit this created performance profile:
++
+[source,terminal]
+----
+$ oc edit -f <your_profile_name>.yaml
+----
+
+. Populate the `spec` field with the `net` object. The object list can contain two fields:
+
+* `userLevelNetworking` is a required field specified as a boolean flag. If `userLevelNetworking` is `true`, the queue count is set to the reserved CPU count for all supported devices. The default is `false`.
+* `devices` is an optional field specifying a list of devices that will have the queues set to the reserved CPU count. If the device list is empty, the configuration applies to all network devices. The configuration is as follows:
+** `interfaceName`: This field specifies the interface name, and it supports shell-style wildcards, which can be positive or negative.
+*** Example wildcard syntax is as follows: `<string> .*`
+*** Negative rules are prefixed with an exclamation mark. To apply the net queue changes to all devices other than the excluded list, use  `!<device>`, for example, `!eno1`.
+** `vendorID`: The network device vendor ID represented as a 16-bit hexadecimal number with a `0x` prefix.
+** `deviceID`: The network device ID (model) represented as a 16-bit hexadecimal number with a `0x` prefix.
++
+[NOTE]
+====
+When a `deviceID` is specified, the `vendorID` must also be defined. A device that matches all of the device identifiers specified in a device entry `interfaceName`, `vendorID`, or a pair of `vendorID` plus `deviceID` qualifies as a network device. This network device then has its net queues count set to the reserved CPU count.
+
+When two or more devices are specified, the net queues count is set to any net device that matches one of them.
+====
+
+. Set the queue count to the reserved CPU count for all devices by using this example performance profile:
++
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: manual
+spec:
+  cpu:
+    isolated: 3-51,54-103
+    reserved: 0-2,52-54
+  net:
+    userLevelNetworking: true
+  nodeSelector:
+    node-role.kubernetes.io/worker-cnf: ""
+----
+
+. Set the queue count to the reserved CPU count for all devices matching any of the defined device identifiers by using this example performance profile:
++
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: manual
+spec:
+  cpu:
+    isolated: 3-51,54-103
+    reserved: 0-2,52-54
+  net:
+    userLevelNetworking: true
+    devices:
+    - interfaceName: “eth0”
+    - interfaceName: “eth1”
+    - vendorID: “0x1af4”
+    - deviceID: “0x1000”
+  nodeSelector:
+    node-role.kubernetes.io/worker-cnf: ""
+----
+
+. Set the queue count to the reserved CPU count for all devices starting with the interface name `eth` by using this example performance profile:
++
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: manual
+spec:
+  cpu:
+    isolated: 3-51,54-103
+    reserved: 0-2,52-54
+  net:
+    userLevelNetworking: true
+    devices:
+    - interfaceName: “eth*”
+  nodeSelector:
+    node-role.kubernetes.io/worker-cnf: ""
+----
+
+. Set the queue count to the reserved CPU count for all devices with an interface named anything other than `eno1` by using this example performance profile:
++
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: manual
+spec:
+  cpu:
+    isolated: 3-51,54-103
+    reserved: 0-2,52-54
+  net:
+    userLevelNetworking: true
+    devices:
+    - interfaceName: “!eno1”
+  nodeSelector:
+    node-role.kubernetes.io/worker-cnf: ""
+----
+
+. Set the queue count to the reserved CPU count for all devices that have an interface name `eth0`, `vendorID` of `0x1af4`, and `deviceID` of `0x1000` by using this example performance profile:
++
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: manual
+spec:
+  cpu:
+    isolated: 3-51,54-103
+    reserved: 0-2,52-54
+  net:
+    userLevelNetworking: true
+    devices:
+    - interfaceName: “eth0”
+    - vendorID: “0x1af4”
+    - deviceID: “0x1000”
+  nodeSelector:
+    node-role.kubernetes.io/worker-cnf: ""
+----
+
+. Apply the updated performance profile:
++
+[source,terminal]
+----
+$ oc apply -f <your_profile_name>.yaml
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../scalability_and_performance/cnf-create-performance-profiles.adoc#cnf-create-performance-profiles[Creating a performance profile].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//CNF-1483 (4.8)
+// * scalability_and_performance/cnf-low-latency-tuning.adoc
+
+[id="verifying-queue-status_{context}"]
+= Verifying the queue status
+
+In this section, a number of examples illustrate different performance profiles and how to verify the changes are applied.
+
+.Example 1
+
+In this example, the net queue count is set to the reserved CPU count (2) for _all_ supported devices.
+
+The relevant section from the performance profile is:
+
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+metadata:
+  name: performance
+spec:
+  kind: PerformanceProfile
+  spec:
+    cpu:
+      reserved: 0-1  #total = 2
+      isolated: 2-8
+    net:
+      userLevelNetworking: true
+# ...
+----
+
+* Display the status of the queues associated with a device using the following command:
++
+[NOTE]
+====
+Run this command on the node where the performance profile was applied.
+====
++
+[source,terminal]
+----
+$ ethtool -l <device>
+----
+
+* Verify the queue status before the profile is applied:
++
+[source,terminal]
+----
+$ ethtool -l ens4
+----
++
+.Example output
+[source,terminal]
+----
+Channel parameters for ens4:
+Pre-set maximums:
+RX:         0
+TX:         0
+Other:      0
+Combined:   4
+Current hardware settings:
+RX:         0
+TX:         0
+Other:      0
+Combined:   4
+----
+
+* Verify the queue status after the profile is applied:
++
+[source,terminal]
+----
+$ ethtool -l ens4
+----
++
+.Example output
+[source,terminal]
+----
+Channel parameters for ens4:
+Pre-set maximums:
+RX:         0
+TX:         0
+Other:      0
+Combined:   4
+Current hardware settings:
+RX:         0
+TX:         0
+Other:      0
+Combined:   2 <1>
+----
+
+<1> The combined channel shows that the total count of reserved CPUs for _all_ supported devices is 2. This matches what is configured in the performance profile.
+
+.Example 2
+
+In this example, the net queue count is set to the reserved CPU count (2) for _all_ supported network devices with a specific `vendorID`.
+
+The relevant section from the performance profile is:
+
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+metadata:
+  name: performance
+spec:
+  kind: PerformanceProfile
+  spec:
+    cpu:
+      reserved: 0-1  #total = 2
+      isolated: 2-8
+    net:
+      userLevelNetworking: true
+      devices:
+      - vendorID = 0x1af4
+# ...
+----
+
+* Display the status of the queues associated with a device using the following command:
++
+[NOTE]
+====
+Run this command on the node where the performance profile was applied.
+====
++
+[source,terminal]
+----
+$ ethtool -l <device>
+----
+
+* Verify the queue status after the profile is applied:
++
+[source,terminal]
+----
+$ ethtool -l ens4
+----
++
+.Example output
+[source,terminal]
+----
+Channel parameters for ens4:
+Pre-set maximums:
+RX:         0
+TX:         0
+Other:      0
+Combined:   4
+Current hardware settings:
+RX:         0
+TX:         0
+Other:      0
+Combined:   2 <1>
+----
+
+<1> The total count of reserved CPUs for all supported devices with `vendorID=0x1af4` is 2.
+For example, if there is another network device `ens2` with `vendorID=0x1af4` it will also have total net queues of 2. This matches what is configured in the performance profile.
+
+.Example 3
+
+In this example, the net queue count is set to the reserved CPU count (2) for _all_ supported network devices that match any of the defined device identifiers.
+
+The command `udevadm info` provides a detailed report on a device. In this example the devices are:
+
+[source,terminal]
+----
+# udevadm info -p /sys/class/net/ens4
+...
+E: ID_MODEL_ID=0x1000
+E: ID_VENDOR_ID=0x1af4
+E: INTERFACE=ens4
+...
+----
+
+[source,terminal]
+----
+# udevadm info -p /sys/class/net/eth0
+...
+E: ID_MODEL_ID=0x1002
+E: ID_VENDOR_ID=0x1001
+E: INTERFACE=eth0
+...
+----
+
+* Set the net queues to 2 for a device with `interfaceName` equal to `eth0` and any devices that have a `vendorID=0x1af4` with the following performance profile:
++
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+metadata:
+  name: performance
+spec:
+  kind: PerformanceProfile
+    spec:
+      cpu:
+        reserved: 0-1  #total = 2
+        isolated: 2-8
+      net:
+        userLevelNetworking: true
+        devices:
+        - interfaceName = eth0
+        - vendorID = 0x1af4
+...
+----
+
+* Verify the queue status after the profile is applied:
++
+[source,terminal]
+----
+$ ethtool -l ens4
+----
++
+.Example output
+[source,terminal]
+----
+Channel parameters for ens4:
+Pre-set maximums:
+RX:         0
+TX:         0
+Other:      0
+Combined:   4
+Current hardware settings:
+RX:         0
+TX:         0
+Other:      0
+Combined:   2 <1>
+----
++
+<1> The total count of reserved CPUs for all supported devices with `vendorID=0x1af4` is set to 2.
+For example, if there is another network device `ens2` with `vendorID=0x1af4`, it will also have the total net queues set to 2. Similarly, a device with `interfaceName` equal to `eth0` will have total net queues set to 2.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//CNF-1483 (4.8)
+// * scalability_and_performance/cnf-low-latency-tuning.adoc
+
+[id="logging-associated-with-adjusting-nic-queues_{context}"]
+= Logging associated with adjusting NIC queues
+
+Log messages detailing the assigned devices are recorded in the respective Tuned daemon logs. The following messages might be recorded to the `/var/log/tuned/tuned.log` file:
+
+* An `INFO` message is recorded detailing the successfully assigned devices:
++
+[source,terminal]
+----
+INFO tuned.plugins.base: instance net_test (net): assigning devices ens1, ens2, ens3
+----
+* A `WARNING` message is recorded if none of the devices can be assigned:
++
+[source,terminal]
+----
+WARNING  tuned.plugins.base: instance net_test: no matching devices available
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// Epic CNF-303 (4.5)
+// scalability_and_performance/cnf-low-latency-tuning.adoc
+//CNF-303 Performance add-ons status CNF-372
+//Performance Addon Operator Detailed Status
+//See: https://issues.redhat.com/browse/CNF-379  (Yanir Quinn)
+
+[id="cnf-debugging-low-latency-cnf-tuning-status_{context}"]
+= Debugging low latency CNF tuning status
+
+The `PerformanceProfile` custom resource (CR) contains status fields for reporting tuning status and debugging latency degradation issues. These fields report on conditions that describe the state of the operator's reconciliation functionality.
+
+A typical issue can arise when the status of machine config pools that are attached to the performance profile are in a degraded state, causing the `PerformanceProfile` status to degrade. In this case, the machine config pool issues a failure message.
+
+The Node Tuning Operator contains the `performanceProfile.spec.status.Conditions` status field:
+
+[source,bash]
+----
+Status:
+  Conditions:
+    Last Heartbeat Time:   2020-06-02T10:01:24Z
+    Last Transition Time:  2020-06-02T10:01:24Z
+    Status:                True
+    Type:                  Available
+    Last Heartbeat Time:   2020-06-02T10:01:24Z
+    Last Transition Time:  2020-06-02T10:01:24Z
+    Status:                True
+    Type:                  Upgradeable
+    Last Heartbeat Time:   2020-06-02T10:01:24Z
+    Last Transition Time:  2020-06-02T10:01:24Z
+    Status:                False
+    Type:                  Progressing
+    Last Heartbeat Time:   2020-06-02T10:01:24Z
+    Last Transition Time:  2020-06-02T10:01:24Z
+    Status:                False
+    Type:                  Degraded
+----
+
+The `Status` field contains `Conditions` that specify `Type` values that indicate the status of the performance profile:
+
+`Available`:: All machine configs and Tuned profiles have been created successfully and are available for cluster components are responsible to process them (NTO, MCO, Kubelet).
+
+`Upgradeable`:: Indicates whether the resources maintained by the Operator are in a state that is safe to upgrade.
+
+`Progressing`:: Indicates that the deployment process from the performance profile has started.
+
+`Degraded`:: Indicates an error if:
++
+* Validation of the performance profile has failed.
+* Creation of all relevant components did not complete successfully.
+
+Each of these types contain the following fields:
+
+`Status`:: The state for the specific type (`true` or `false`).
+`Timestamp`:: The transaction timestamp.
+`Reason string`:: The machine readable reason.
+`Message string`:: The human readable reason describing the state and error details, if any.
+
+[id="cnf-debugging-low-latency-cnf-tuning-status-machineconfigpools_{context}"]
+== Machine config pools
+
+A performance profile and its created products are applied to a node according to an associated machine config pool (MCP). The MCP holds valuable information about the progress of applying the machine configurations created by performance profiles that encompass kernel args, kube config, huge pages allocation, and deployment of rt-kernel. The Performance Profile controller monitors changes in the MCP and updates the performance profile status accordingly.
+
+The only conditions returned by the MCP to the performance profile status is when the MCP is `Degraded`, which leads to `performanceProfile.status.condition.Degraded = true`.
+
+.Example
+
+The following example is for a performance profile with an associated machine config pool (`worker-cnf`) that was created for it:
+
+. The associated machine config pool is in a degraded state:
++
+[source,terminal]
+----
+# oc get mcp
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME         CONFIG                                                 UPDATED   UPDATING   DEGRADED   MACHINECOUNT   READYMACHINECOUNT   UPDATEDMACHINECOUNT   DEGRADEDMACHINECOUNT   AGE
+master       rendered-master-2ee57a93fa6c9181b546ca46e1571d2d       True      False      False      3              3                   3                     0                      2d21h
+worker       rendered-worker-d6b2bdc07d9f5a59a6b68950acf25e5f       True      False      False      2              2                   2                     0                      2d21h
+worker-cnf   rendered-worker-cnf-6c838641b8a08fff08dbd8b02fb63f7c   False     True       True       2              1                   1                     1                      2d20h
+----
+
+. The `describe` section of the MCP shows the reason:
++
+[source,terminal]
+----
+# oc describe mcp worker-cnf
+----
++
+.Example output
++
+[source,terminal]
+----
+  Message:               Node node-worker-cnf is reporting: "prepping update:
+  machineconfig.machineconfiguration.openshift.io \"rendered-worker-cnf-40b9996919c08e335f3ff230ce1d170\" not
+  found"
+    Reason:                1 nodes are reporting degraded status on sync
+----
+
+. The degraded state should also appear under the performance profile `status` field marked as `degraded = true`:
++
+[source,terminal]
+----
+# oc describe performanceprofiles performance
+----
++
+.Example output
++
+[source,terminal]
+----
+Message: Machine config pool worker-cnf Degraded Reason: 1 nodes are reporting degraded status on sync.
+Machine config pool worker-cnf Degraded Message: Node yquinn-q8s5v-w-b-z5lqn.c.openshift-gce-devel.internal is
+reporting: "prepping update: machineconfig.machineconfiguration.openshift.io
+\"rendered-worker-cnf-40b9996919c08e335f3ff230ce1d170\" not found".    Reason:  MCPDegraded
+   Status:  True
+   Type:    Degraded
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// CNF-643 Support and debugging tools for CNF
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-low-latency-tuning.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-collecting-low-latency-tuning-debugging-data-for-red-hat-support_{context}"]
+= Collecting low latency tuning debugging data for Red Hat Support
+
+When opening a support case, it is helpful to provide debugging information about your cluster to Red Hat Support.
+
+The `must-gather` tool enables you to collect diagnostic information about your {product-title} cluster, including node tuning, NUMA topology, and other information needed to debug issues with low latency setup.
+
+For prompt support, supply diagnostic information for both {product-title} and low latency tuning.
+
+[id="cnf-about-must-gather_{context}"]
+== About the must-gather tool
+
+The `oc adm must-gather` CLI command collects the information from your cluster that is most likely needed for debugging issues, such as:
+
+* Resource definitions
+* Audit logs
+* Service logs
+
+You can specify one or more images when you run the command by including the `--image` argument. When you specify an image, the tool collects data related to that feature or product. When you run `oc adm must-gather`, a new pod is created on the cluster. The data is collected on that pod and saved in a new directory that starts with `must-gather.local`. This directory is created in your current working directory.
+
+[id="cnf-about-collecting-low-latency-data_{context}"]
+== Gathering low latency tuning data
+
+Use the `oc adm must-gather` CLI command to collect information about your cluster, including features and objects associated with low latency tuning, including:
+
+* The Node Tuning Operator namespaces and child objects.
+* `MachineConfigPool` and associated `MachineConfig` objects.
+* The Node Tuning Operator and associated Tuned objects.
+* Linux kernel command line options.
+* CPU and NUMA topology
+* Basic PCI device information and NUMA locality.
+
+.Prerequisites
+
+* Access to the cluster as a user with the `cluster-admin` role.
+* The {product-title} CLI (oc) installed.
+
+.Procedure
+
+. Navigate to the directory where you want to store the `must-gather` data.
+
+. Collect debugging information by running the following command:
++
+[source,terminal]
+----
+$ oc adm must-gather
+----
++
+.Example output
++
+[source,terminal]
+----
+[must-gather      ] OUT Using must-gather plug-in image: quay.io/openshift-release
+When opening a support case, bugzilla, or issue please include the following summary data along with any other requested information:
+ClusterID: 829er0fa-1ad8-4e59-a46e-2644921b7eb6
+ClusterVersion: Stable at "<cluster_version>"
+ClusterOperators:
+	All healthy and stable
+
+
+[must-gather      ] OUT namespace/openshift-must-gather-8fh4x created
+[must-gather      ] OUT clusterrolebinding.rbac.authorization.k8s.io/must-gather-rhlgc created
+[must-gather-5564g] POD 2023-07-17T10:17:37.610340849Z Gathering data for ns/openshift-cluster-version...
+[must-gather-5564g] POD 2023-07-17T10:17:38.786591298Z Gathering data for ns/default...
+[must-gather-5564g] POD 2023-07-17T10:17:39.117418660Z Gathering data for ns/openshift...
+[must-gather-5564g] POD 2023-07-17T10:17:39.447592859Z Gathering data for ns/kube-system...
+[must-gather-5564g] POD 2023-07-17T10:17:39.803381143Z Gathering data for ns/openshift-etcd...
+
+...
+
+Reprinting Cluster State:
+When opening a support case, bugzilla, or issue please include the following summary data along with any other requested information:
+ClusterID: 829er0fa-1ad8-4e59-a46e-2644921b7eb6
+ClusterVersion: Stable at "<cluster_version>"
+ClusterOperators:
+	All healthy and stable
+----
+
+. Create a compressed file from the `must-gather` directory that was created in your working directory. For example, on a computer that uses a Linux operating system, run the following command:
++
+[source,terminal]
+----
+$ tar cvaf must-gather.tar.gz must-gather-local.5421342344627712289// <1>
+----
++
+<1> Replace `must-gather-local.5421342344627712289//` with the directory name created by the `must-gather` tool.
++
+[NOTE]
+====
+Create a compressed file to attach the data to a support case or to use with the Performance Profile Creator wrapper script when you create a performance profile.
+====
+
+. Attach the compressed file to your support case on the link:https://access.redhat.com/[Red Hat Customer Portal].
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For more information about the `must-gather` tool, see xref:../support/gathering-cluster-data.adoc#gathering-cluster-data[Gathering data about your cluster]
+
+* For more information about MachineConfig and KubeletConfig,
+see xref:../nodes/nodes/nodes-nodes-managing.adoc#nodes-nodes-managing[Managing nodes].
+
+* For more information about the Node Tuning Operator,
+see xref:../scalability_and_performance/using-node-tuning-operator.adoc#using-node-tuning-operator[Using the Node Tuning Operator].
+
+* For more information about the PerformanceProfile,
+see xref:../scalability_and_performance/what-huge-pages-do-and-how-they-are-consumed-by-apps.adoc#configuring-huge-pages_huge-pages[Configuring huge pages].
+
+* For more information about consuming huge pages from your containers,
+see xref:../scalability_and_performance/what-huge-pages-do-and-how-they-are-consumed-by-apps.adoc#how-huge-pages-are-consumed-by-apps_huge-pages[How huge pages are consumed by apps].
+
+//# includes=_attributes/common-attributes,modules/cnf-understanding-low-latency,modules/cnf-about_hyperthreading_for_low_latency_and_real_time_applications,modules/cnf-provisioning-real-time-and-low-latency-workloads,modules/cnf-managing-device-interrupt-processing-for-guaranteed-pod-isolated-cpus,modules/cnf-use-device-interrupt-processing-for-isolated-cpus,modules/cnf-tuning-nodes-for-low-latency-via-performanceprofile,modules/cnf-configuring-huge-pages,modules/cnf-allocating-multiple-huge-page-sizes,modules/cnf-configure_for_irq_dynamic_load_balancing,modules/cnf-about-irq-affinity-setting,modules/configuring_hyperthreading_for_a_cluster,modules/cnf-understanding-workload-hints,modules/cnf-configuring-workload-hints,modules/cnf-cpu-infra-container,modules/cnf-reducing-netqueues-using-nto,modules/cnf-adjusting-nic-queues-with-the-performance-profile,modules/cnf-verifying-queue-status,modules/cnf-logging-associated-with-adjusting-nic-queues,modules/cnf-debugging-low-latency-cnf-tuning-status,modules/cnf-collecting-low-latency-tuning-debugging-data-for-red-hat-support

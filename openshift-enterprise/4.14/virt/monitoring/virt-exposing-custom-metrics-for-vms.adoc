@@ -1,0 +1,599 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="virt-exposing-custom-metrics-for-vms"]
+= Exposing custom metrics for virtual machines
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: virt-exposing-custom-metrics-for-vms
+
+toc::[]
+
+{product-title} includes a preconfigured, preinstalled, and self-updating monitoring stack that provides monitoring for core platform components. This monitoring stack is based on the Prometheus monitoring system. Prometheus is a time-series database and a rule evaluation engine for metrics.
+
+In addition to using the {product-title} monitoring stack, you can enable monitoring for user-defined projects by using the CLI and query custom metrics that are exposed for virtual machines through the `node-exporter` service.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/monitoring/virt-exposing-custom-metrics-for-vms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-configuring-node-exporter-service_{context}"]
+= Configuring the node exporter service
+
+The node-exporter agent is deployed on every virtual machine in the cluster from which you want to collect metrics. Configure the node-exporter agent as a service to expose internal metrics and processes that are associated with virtual machines.
+
+.Prerequisites
+
+* Install the {product-title} CLI `oc`.
+* Log in to the cluster as a user with `cluster-admin` privileges.
+* Create the `cluster-monitoring-config` `ConfigMap` object in the `openshift-monitoring` project.
+* Configure the `user-workload-monitoring-config` `ConfigMap` object in the `openshift-user-workload-monitoring` project by setting `enableUserWorkload` to `true`.
+
+.Procedure
+
+. Create the `Service` YAML file. In the following example, the file is called `node-exporter-service.yaml`.
++
+[source,yaml]
+----
+kind: Service
+apiVersion: v1
+metadata:
+  name: node-exporter-service <1>
+  namespace: dynamation <2>
+  labels:
+    servicetype: metrics <3>
+spec:
+  ports:
+    - name: exmet <4>
+      protocol: TCP
+      port: 9100 <5>
+      targetPort: 9100 <6>
+  type: ClusterIP
+  selector:
+    monitor: metrics <7>
+----
+<1> The node-exporter service that exposes the metrics from the virtual machines.
+<2> The namespace where the service is created.
+<3> The label for the service. The `ServiceMonitor` uses this label to match this service.
+<4> The name given to the port that exposes metrics on port 9100 for the `ClusterIP` service.
+<5> The target port used by `node-exporter-service` to listen for requests.
+<6> The TCP port number of the virtual machine that is configured with the `monitor` label.
+<7> The label used to match the virtual machine's pods. In this example, any virtual machine's pod with the label `monitor` and a value of `metrics` will be matched.
+
+. Create the node-exporter service:
++
+[source,terminal]
+----
+$ oc create -f node-exporter-service.yaml
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/monitoring/virt-exposing-custom-metrics-for-vms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-configuring-vm-with-node-exporter-service_{context}"]
+= Configuring a virtual machine with the node exporter service
+
+Download the `node-exporter` file on to the virtual machine. Then, create a `systemd` service that runs the node-exporter service when the virtual machine boots.
+
+.Prerequisites
+* The pods for the component are running in the `openshift-user-workload-monitoring` project.
+* Grant the `monitoring-edit` role to users who need to monitor this user-defined project.
+
+.Procedure
+
+. Log on to the virtual machine.
+
+. Download the `node-exporter` file on to the virtual machine by using the directory path that applies to the version of `node-exporter` file.
++
+[source,terminal]
+----
+$ wget https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz
+----
+
+. Extract the executable and place it in the `/usr/bin` directory.
++
+[source,terminal]
+----
+$ sudo tar xvf node_exporter-1.3.1.linux-amd64.tar.gz \
+    --directory /usr/bin --strip 1 "*/node_exporter"
+----
+
+. Create a `node_exporter.service` file in this directory path: `/etc/systemd/system`. This `systemd` service file runs the node-exporter service when the virtual machine reboots.
++
+[source,terminal]
+----
+[Unit]
+Description=Prometheus Metrics Exporter
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/usr/bin/node_exporter
+
+[Install]
+WantedBy=multi-user.target
+----
+
+. Enable and start the `systemd` service.
++
+[source,terminal]
+----
+$ sudo systemctl enable node_exporter.service
+$ sudo systemctl start node_exporter.service
+----
+
+.Verification
+* Verify that the node-exporter agent is reporting metrics from the virtual machine.
++
+[source,terminal]
+----
+$ curl http://localhost:9100/metrics
+----
++
+.Example output
+[source,terminal]
+----
+go_gc_duration_seconds{quantile="0"} 1.5244e-05
+go_gc_duration_seconds{quantile="0.25"} 3.0449e-05
+go_gc_duration_seconds{quantile="0.5"} 3.7913e-05
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/monitoring/virt-exposing-custom-metrics-for-vms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-custom-monitoring-label-for-vms_{context}"]
+= Creating a custom monitoring label for virtual machines
+
+To enable queries to multiple virtual machines from a single service, add a custom label in the virtual machine's YAML file.
+
+.Prerequisites
+
+* Install the {product-title} CLI `oc`.
+* Log in as a user with `cluster-admin` privileges.
+* Access to the web console for stop and restart a virtual machine.
+
+.Procedure
+. Edit the `template` spec of your virtual machine configuration file. In this example, the label `monitor` has the value `metrics`.
++
+[source,yaml]
+----
+spec:
+  template:
+    metadata:
+      labels:
+        monitor: metrics
+----
+
+. Stop and restart the virtual machine to create a new pod with the label name given to the `monitor` label.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/monitoring/virt-exposing-custom-metrics-for-vms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-querying-the-node-exporter-service-for-metrics-_{context}"]
+= Querying the node-exporter service for metrics
+
+Metrics are exposed for virtual machines through an HTTP service endpoint under the `/metrics` canonical name. When you query for metrics, Prometheus directly scrapes the metrics from the metrics endpoint exposed by the virtual machines and presents these metrics for viewing.
+
+.Prerequisites
+* You have access to the cluster as a user with `cluster-admin` privileges or the `monitoring-edit` role.
+* You have enabled monitoring for the user-defined project by configuring the node-exporter service.
+
+.Procedure
+. Obtain the HTTP service endpoint by specifying the namespace for the service:
++
+[source,terminal]
+----
+$ oc get service -n <namespace> <node-exporter-service>
+----
+
+. To list all available metrics for the node-exporter service, query the `metrics` resource.
++
+[source,terminal]
+----
+$ curl http://<172.30.226.162:9100>/metrics | grep -vE "^#|^$"
+----
++
+.Example output
+[source,terminal]
+----
+node_arp_entries{device="eth0"} 1
+node_boot_time_seconds 1.643153218e+09
+node_context_switches_total 4.4938158e+07
+node_cooling_device_cur_state{name="0",type="Processor"} 0
+node_cooling_device_max_state{name="0",type="Processor"} 0
+node_cpu_guest_seconds_total{cpu="0",mode="nice"} 0
+node_cpu_guest_seconds_total{cpu="0",mode="user"} 0
+node_cpu_seconds_total{cpu="0",mode="idle"} 1.10586485e+06
+node_cpu_seconds_total{cpu="0",mode="iowait"} 37.61
+node_cpu_seconds_total{cpu="0",mode="irq"} 233.91
+node_cpu_seconds_total{cpu="0",mode="nice"} 551.47
+node_cpu_seconds_total{cpu="0",mode="softirq"} 87.3
+node_cpu_seconds_total{cpu="0",mode="steal"} 86.12
+node_cpu_seconds_total{cpu="0",mode="system"} 464.15
+node_cpu_seconds_total{cpu="0",mode="user"} 1075.2
+node_disk_discard_time_seconds_total{device="vda"} 0
+node_disk_discard_time_seconds_total{device="vdb"} 0
+node_disk_discarded_sectors_total{device="vda"} 0
+node_disk_discarded_sectors_total{device="vdb"} 0
+node_disk_discards_completed_total{device="vda"} 0
+node_disk_discards_completed_total{device="vdb"} 0
+node_disk_discards_merged_total{device="vda"} 0
+node_disk_discards_merged_total{device="vdb"} 0
+node_disk_info{device="vda",major="252",minor="0"} 1
+node_disk_info{device="vdb",major="252",minor="16"} 1
+node_disk_io_now{device="vda"} 0
+node_disk_io_now{device="vdb"} 0
+node_disk_io_time_seconds_total{device="vda"} 174
+node_disk_io_time_seconds_total{device="vdb"} 0.054
+node_disk_io_time_weighted_seconds_total{device="vda"} 259.79200000000003
+node_disk_io_time_weighted_seconds_total{device="vdb"} 0.039
+node_disk_read_bytes_total{device="vda"} 3.71867136e+08
+node_disk_read_bytes_total{device="vdb"} 366592
+node_disk_read_time_seconds_total{device="vda"} 19.128
+node_disk_read_time_seconds_total{device="vdb"} 0.039
+node_disk_reads_completed_total{device="vda"} 5619
+node_disk_reads_completed_total{device="vdb"} 96
+node_disk_reads_merged_total{device="vda"} 5
+node_disk_reads_merged_total{device="vdb"} 0
+node_disk_write_time_seconds_total{device="vda"} 240.66400000000002
+node_disk_write_time_seconds_total{device="vdb"} 0
+node_disk_writes_completed_total{device="vda"} 71584
+node_disk_writes_completed_total{device="vdb"} 0
+node_disk_writes_merged_total{device="vda"} 19761
+node_disk_writes_merged_total{device="vdb"} 0
+node_disk_written_bytes_total{device="vda"} 2.007924224e+09
+node_disk_written_bytes_total{device="vdb"} 0
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/monitoring/virt-exposing-custom-metrics-for-vms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-servicemonitor-resource-for-node-exporter_{context}"]
+= Creating a ServiceMonitor resource for the node exporter service
+
+You can use a Prometheus client library and scrape metrics from the `/metrics` endpoint to access and view the metrics exposed by the node-exporter service. Use a `ServiceMonitor` custom resource definition (CRD) to monitor the node exporter service.
+
+.Prerequisites
+
+* You have access to the cluster as a user with `cluster-admin` privileges or the `monitoring-edit` role.
+* You have enabled monitoring for the user-defined project by configuring the node-exporter service.
+
+.Procedure
+. Create a YAML file for the `ServiceMonitor` resource configuration. In this example, the service monitor matches any service with the label `metrics` and queries the `exmet` port every 30 seconds.
+
++
+[source,yaml]
+----
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: node-exporter-metrics-monitor
+  name: node-exporter-metrics-monitor <1>
+  namespace: dynamation <2>
+spec:
+  endpoints:
+  - interval: 30s <3>
+    port: exmet <4>
+    scheme: http
+  selector:
+    matchLabels:
+      servicetype: metrics
+
+----
+<1> The name of the `ServiceMonitor`.
+<2> The namespace where the `ServiceMonitor` is created.
+<3> The interval at which the port will be queried.
+<4> The name of the port that is queried every 30 seconds
+
+. Create the `ServiceMonitor` configuration for the node-exporter service.
++
+[source,terminal]
+----
+$ oc create -f node-exporter-metrics-monitor.yaml
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/monitoring/virt-exposing-custom-metrics-for-vms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-accessing-node-exporter-outside-cluster_{context}"]
+= Accessing the node exporter service outside the cluster
+
+You can access the node-exporter service outside the cluster and view the exposed metrics.
+
+.Prerequisites
+* You have access to the cluster as a user with `cluster-admin` privileges or the `monitoring-edit` role.
+* You have enabled monitoring for the user-defined project by configuring the node-exporter service.
+
+.Procedure
+
+. Expose the node-exporter service.
++
+[source,terminal]
+----
+$ oc expose service -n <namespace> <node_exporter_service_name>
+----
+. Obtain the FQDN (Fully Qualified Domain Name) for the route.
++
+[source,terminal]
+----
+$ oc get route -o=custom-columns=NAME:.metadata.name,DNS:.spec.host
+----
++
+.Example output
+[source,terminal]
+----
+NAME                    DNS
+node-exporter-service   node-exporter-service-dynamation.apps.cluster.example.org
+----
+. Use the `curl` command to display metrics for the node-exporter service.
++
+[source,terminal]
+----
+$ curl -s http://node-exporter-service-dynamation.apps.cluster.example.org/metrics
+----
++
+.Example output
+[source,terminal]
+----
+go_gc_duration_seconds{quantile="0"} 1.5382e-05
+go_gc_duration_seconds{quantile="0.25"} 3.1163e-05
+go_gc_duration_seconds{quantile="0.5"} 3.8546e-05
+go_gc_duration_seconds{quantile="0.75"} 4.9139e-05
+go_gc_duration_seconds{quantile="1"} 0.000189423
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_virt-exposing-custom-metrics-for-vms"]
+== Additional resources
+* xref:../../monitoring/configuring-the-monitoring-stack.adoc#configuring-the-monitoring-stack[Configuring the monitoring stack]
+
+* xref:../../monitoring/enabling-monitoring-for-user-defined-projects.adoc#enabling-monitoring-for-user-defined-projects[Enabling monitoring for user-defined projects]
+
+* xref:../../monitoring/managing-metrics.adoc#managing-metrics[Managing metrics]
+
+* xref:../../monitoring/reviewing-monitoring-dashboards.adoc#reviewing-monitoring-dashboards[Reviewing monitoring dashboards]
+
+* xref:../../applications/application-health.adoc#application-health[Monitoring application health by using health checks]
+
+* xref:../../nodes/pods/nodes-pods-configmaps.adoc#nodes-pods-configmaps[Creating and using config maps]
+
+* xref:../../virt/virtual_machines/virt-controlling-vm-states.adoc#virt-controlling-vm-states[Controlling virtual machine states]
+
+//# includes=_attributes/common-attributes,modules/virt-configuring-node-exporter-service,modules/virt-configuring-vm-with-node-exporter-service,modules/virt-creating-custom-monitoring-label-for-vms,modules/virt-querying-the-node-exporter-service-for-metrics,modules/virt-creating-servicemonitor-resource-for-node-exporter,modules/virt-accessing-node-exporter-outside-cluster

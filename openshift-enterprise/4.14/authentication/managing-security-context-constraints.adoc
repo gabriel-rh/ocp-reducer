@@ -1,0 +1,1162 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="managing-pod-security-policies"]
+= Managing security context constraints
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: configuring-internal-oauth
+
+toc::[]
+
+In {product-title}, you can use security context constraints (SCCs) to control permissions for the pods in your cluster.
+
+Default SCCs are created during installation and when you install some Operators or other components. As a cluster administrator, you can also create your own SCCs by using the OpenShift CLI (`oc`).
+
+[IMPORTANT]
+====
+Do not modify the default SCCs. Customizing the default SCCs can lead to issues when some of the platform pods deploy or
+{product-title}
+is upgraded. Additionally, the default SCC values are reset to the defaults during some cluster upgrades, which discards all customizations to those SCCs.
+====
+
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/managing-security-context-constraints.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="security-context-constraints-about_{context}"]
+= About security context constraints
+
+Similar to the way that RBAC resources control user access, administrators can use security context constraints (SCCs) to control permissions for pods. These permissions determine the actions that a pod can perform and what resources it can access. You can use SCCs to define a set of conditions that a pod must run with to be accepted into the system.
+
+Security context constraints allow an administrator to control:
+
+* Whether a pod can run privileged containers with the `allowPrivilegedContainer` flag
+* Whether a pod is constrained with the `allowPrivilegeEscalation` flag
+* The capabilities that a container can request
+* The use of host directories as volumes
+* The SELinux context of the container
+* The container user ID
+* The use of host namespaces and networking
+* The allocation of an `FSGroup` that owns the pod volumes
+* The configuration of allowable supplemental groups
+* Whether a container requires write access to its root file system
+* The usage of volume types
+* The configuration of allowable `seccomp` profiles
+
+[IMPORTANT]
+====
+Do not set the `openshift.io/run-level` label on any namespaces in {product-title}. This label is for use by internal {product-title} components to manage the startup of major API groups, such as the Kubernetes API server and OpenShift API server. If the `openshift.io/run-level` label is set, no SCCs are applied to pods in that namespace, causing any workloads running in that namespace to be highly privileged.
+====
+
+[id="default-sccs_{context}"]
+== Default security context constraints
+
+The cluster contains several default security context constraints (SCCs) as described in the table below. Additional SCCs might be installed when you install Operators or other components to {product-title}.
+
+[IMPORTANT]
+====
+Do not modify the default SCCs. Customizing the default SCCs can lead to issues when some of the platform pods deploy or
+{product-title}
+is upgraded. Additionally, the default SCC values are reset to the defaults during some cluster upgrades, which discards all customizations to those SCCs.
+====
+
+.Default security context constraints
+[cols="1,3a",options="header"]
+|===
+|Security context constraint |Description
+
+|`anyuid`
+| Provides all features of the `restricted` SCC, but allows users to run with any UID and any GID.
+
+|`hostaccess`
+|Allows access to all host namespaces but still requires pods to be run with a UID and SELinux context that are allocated to the namespace.
+
+[WARNING]
+====
+This SCC allows host access to namespaces, file systems, and PIDs. It should only be used by trusted pods. Grant with caution.
+====
+
+|`hostmount-anyuid`
+|Provides all the features of the `restricted` SCC, but allows host mounts and running as any UID and any GID on the system.
+
+[WARNING]
+====
+This SCC allows host file system access as any UID, including UID 0. Grant with caution.
+====
+
+|`hostnetwork`
+|Allows using host networking and host ports but still requires pods to be run with a UID and SELinux context that are allocated to the namespace.
+
+[WARNING]
+====
+If additional workloads are run on control plane hosts, use caution when providing access to `hostnetwork`. A workload that runs `hostnetwork` on a control plane host is effectively root on the cluster and must be trusted accordingly.
+====
+
+|`hostnetwork-v2`
+| Like the `hostnetwork` SCC, but with the following differences:
+
+* `ALL` capabilities are dropped from containers.
+* The `NET_BIND_SERVICE` capability can be added explicitly.
+* `seccompProfile` is set to `runtime/default` by default.
+* `allowPrivilegeEscalation` must be unset or set to `false` in security contexts.
+
+|`node-exporter`
+|Used for the Prometheus node exporter.
+
+[WARNING]
+====
+This SCC allows host file system access as any UID, including UID 0. Grant with caution.
+====
+
+|`nonroot`
+|Provides all features of the `restricted` SCC, but allows users to run with any non-root UID. The user must specify the UID or it must be specified in the manifest of the container runtime.
+
+|`nonroot-v2`
+| Like the `nonroot` SCC, but with the following differences:
+
+* `ALL` capabilities are dropped from containers.
+* The `NET_BIND_SERVICE` capability can be added explicitly.
+* `seccompProfile` is set to `runtime/default` by default.
+* `allowPrivilegeEscalation` must be unset or set to `false` in security contexts.
+
+|`privileged`
+|Allows access to all privileged and host features and the ability to run as any user, any group, any FSGroup, and with any SELinux context.
+
+[WARNING]
+====
+This is the most relaxed SCC and should be used only for cluster administration. Grant with caution.
+====
+
+The `privileged` SCC allows:
+
+* Users to run privileged pods
+* Pods to mount host directories as volumes
+* Pods to run as any user
+* Pods to run with any MCS label
+* Pods to use the host's IPC namespace
+* Pods to use the host's PID namespace
+* Pods to use any FSGroup
+* Pods to use any supplemental group
+* Pods to use any seccomp profiles
+* Pods to request any capabilities
+
+[NOTE]
+====
+Setting `privileged: true` in the pod specification does not necessarily select the `privileged` SCC. The SCC that has `allowPrivilegedContainer: true` and has the highest prioritization will be chosen if the user has the permissions to use it.
+====
+
+|`restricted`
+|Denies access to all host features and requires pods to be run with a UID, and SELinux context that are allocated to the namespace.
+
+The `restricted` SCC:
+
+* Ensures that pods cannot run as privileged
+* Ensures that pods cannot mount host directory volumes
+* Requires that a pod is run as a user in a pre-allocated range of UIDs
+* Requires that a pod is run with a pre-allocated MCS label
+* Allows pods to use any FSGroup
+* Allows pods to use any supplemental group
+
+In clusters that were upgraded from {product-title} 4.10 or earlier, this SCC is available for use by any authenticated user. The `restricted` SCC is no longer available to users of new {product-title} 4.11 or later installations, unless the access is explicitly granted.
+
+|`restricted-v2`
+| Like the `restricted` SCC, but with the following differences:
+
+* `ALL` capabilities are dropped from containers.
+* The `NET_BIND_SERVICE` capability can be added explicitly.
+* `seccompProfile` is set to `runtime/default` by default.
+* `allowPrivilegeEscalation` must be unset or set to `false` in security contexts.
+
+This is the most restrictive SCC provided by a new installation and will be used by default for authenticated users.
+
+[NOTE]
+====
+The `restricted-v2` SCC is the most restrictive of the SCCs that is included by default with the system. However, you can create a custom SCC that is even more restrictive. For example, you can create an SCC that restricts `readOnlyRootFilesystem` to `true`.
+====
+
+|===
+
+[id="scc-settings_{context}"]
+== Security context constraints settings
+
+Security context constraints (SCCs) are composed of settings and strategies that control the security features
+a pod has access to. These settings fall into three categories:
+
+[cols="1,3",options="header"]
+|===
+|Category
+|Description
+
+|Controlled by a boolean
+|Fields of this type default to the most restrictive value. For example,
+`AllowPrivilegedContainer` is always set to `false` if unspecified.
+
+|Controlled by an allowable set
+|Fields of this type are checked against the set to ensure their value is
+allowed.
+
+|Controlled by a strategy
+a|Items that have a strategy to generate a value provide:
+
+* A mechanism to generate the value, and
+* A mechanism to ensure that a specified value falls into the set of allowable
+values.
+
+|===
+
+CRI-O has the following default list of capabilities that are allowed for each container of a pod:
+
+* `CHOWN`
+* `DAC_OVERRIDE`
+* `FSETID`
+* `FOWNER`
+* `SETGID`
+* `SETUID`
+* `SETPCAP`
+* `NET_BIND_SERVICE`
+* `KILL`
+
+The containers use the capabilities from this default list, but pod manifest authors can alter the list by requesting additional capabilities or removing some of the default behaviors. Use the `allowedCapabilities`, `defaultAddCapabilities`, and `requiredDropCapabilities` parameters to control such requests from the pods. With these parameters you can specify which capabilities can be requested, which ones must be added to each container, and which ones must be forbidden, or dropped, from each container.
+
+[NOTE]
+====
+You can drop all capabilites from containers by setting the `requiredDropCapabilities` parameter to `ALL`. This is what the `restricted-v2` SCC does.
+====
+
+[id="authorization-SCC-strategies_{context}"]
+== Security context constraints strategies
+
+.RunAsUser
+
+* `MustRunAs` - Requires a `runAsUser` to be configured. Uses the configured
+`runAsUser` as the default. Validates against the configured `runAsUser`.
+
++
+.Example `MustRunAs` snippet
+[source,yaml]
+----
+...
+runAsUser:
+  type: MustRunAs
+  uid: <id>
+...
+----
+
+* `MustRunAsRange` - Requires minimum and maximum values to be defined if not
+using pre-allocated values. Uses the minimum as the default. Validates against
+the entire allowable range.
+
++
+.Example `MustRunAsRange` snippet
+[source,yaml]
+----
+...
+runAsUser:
+  type: MustRunAsRange
+  uidRangeMax: <maxvalue>
+  uidRangeMin: <minvalue>
+...
+----
+
+* `MustRunAsNonRoot` - Requires that the pod be submitted with a non-zero
+`runAsUser` or have the `USER` directive defined in the image. No default
+provided.
+
++
+.Example `MustRunAsNonRoot` snippet
+[source,yaml]
+----
+...
+runAsUser:
+  type: MustRunAsNonRoot
+...
+----
+
+* `RunAsAny` - No default provided. Allows any `runAsUser` to be specified.
+
++
+.Example `RunAsAny` snippet
+[source,yaml]
+----
+...
+runAsUser:
+  type: RunAsAny
+...
+----
+
+.SELinuxContext
+
+* `MustRunAs` - Requires `seLinuxOptions` to be configured if not using
+pre-allocated values. Uses `seLinuxOptions` as the default. Validates against
+`seLinuxOptions`.
+* `RunAsAny` - No default provided. Allows any `seLinuxOptions` to be
+specified.
+
+.SupplementalGroups
+
+* `MustRunAs` - Requires at least one range to be specified if not using
+pre-allocated values. Uses the minimum value of the first range as the default.
+Validates against all ranges.
+* `RunAsAny` - No default provided. Allows any `supplementalGroups` to be
+specified.
+
+.FSGroup
+
+* `MustRunAs` - Requires at least one range to be specified if not using
+pre-allocated values. Uses the minimum value of the first range as the default.
+Validates against the first ID in the first range.
+* `RunAsAny` - No default provided. Allows any `fsGroup` ID to be specified.
+
+[id="authorization-controlling-volumes_{context}"]
+== Controlling volumes
+
+The usage of specific volume types
+can be controlled by setting the `volumes`
+field of the SCC.
+
+The allowable values of this field correspond to the volume
+sources that are defined when creating a volume:
+
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#awselasticblockstore[`awsElasticBlockStore`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#azuredisk[`azureDisk`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#azurefile[`azureFile`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#cephfs[`cephFS`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#cinder[`cinder`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#configmap[`configMap`]
+* link:https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#csi-ephemeral-volumes[`csi`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#downwardapi[`downwardAPI`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#emptydir[`emptyDir`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#fc[`fc`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#flexvolume[`flexVolume`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#flocker[`flocker`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#gcepersistentdisk[`gcePersistentDisk`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#gitrepo[`gitRepo`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#glusterfs[`glusterfs`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#hostpath[`hostPath`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#iscsi[`iscsi`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#nfs[`nfs`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#persistentvolumeclaim[`persistentVolumeClaim`]
+* `photonPersistentDisk`
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#portworxvolume[`portworxVolume`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#projected[`projected`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#quobyte[`quobyte`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#rbd[`rbd`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#scaleio[`scaleIO`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#secret[`secret`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#storageos[`storageos`]
+* link:https://kubernetes.io/docs/concepts/storage/volumes/#vspherevolume[`vsphereVolume`]
+* *** (A special value to allow the use of all volume types.)
+* `none` (A special value to disallow the use of all volumes types. Exists only for backwards compatibility.)
+
+The recommended minimum set of allowed volumes for new SCCs are `configMap`,
+`downwardAPI`, `emptyDir`, `persistentVolumeClaim`, `secret`, and `projected`.
+
+[NOTE]
+====
+This list of allowable volume types is not exhaustive because new types are
+added with each release of {product-title}.
+====
+
+[NOTE]
+====
+For backwards compatibility, the usage of `allowHostDirVolumePlugin` overrides
+settings in the `volumes` field. For example, if `allowHostDirVolumePlugin`
+is set to false but allowed in the `volumes` field, then the `hostPath`
+value will be removed from `volumes`.
+====
+
+[id="admission_{context}"]
+== Admission control
+_Admission control_ with SCCs allows for control over the creation of resources
+based on the capabilities granted to a user.
+
+In terms of the SCCs, this means that an admission controller can inspect the
+user information made available in the context to retrieve an appropriate set of
+SCCs. Doing so ensures the pod is authorized to make requests about its
+operating environment or to generate a set of constraints to apply to the pod.
+
+The set of SCCs that admission uses to authorize a pod are determined by the
+user identity and groups that the user belongs to. Additionally, if the pod
+specifies a service account, the set of allowable SCCs includes any constraints
+accessible to the service account.
+
+[NOTE]
+====
+When you create a workload resource, such as deployment, only the service account is used to find the SCCs and admit the pods when they are created.
+====
+
+Admission uses the following approach to create the final security context for
+the pod:
+
+. Retrieve all SCCs available for use.
+. Generate field values for security context settings that were not specified
+on the request.
+. Validate the final settings against the available constraints.
+
+If a matching set of constraints is found, then the pod is accepted. If the
+request cannot be matched to an SCC, the pod is rejected.
+
+A pod must validate every field against the SCC. The following are examples for
+just two of the fields that must be validated:
+
+[NOTE]
+====
+These examples are in the context of a strategy using the pre-allocated values.
+====
+
+*An FSGroup SCC strategy of `MustRunAs`*
+
+If the pod defines a `fsGroup` ID, then that ID must equal the default
+`fsGroup` ID. Otherwise, the pod is not validated by that SCC and the next SCC
+is evaluated.
+
+If the `SecurityContextConstraints.fsGroup` field has value `RunAsAny`
+and the pod specification omits the `Pod.spec.securityContext.fsGroup`,
+then this field is considered valid. Note that it is possible that during
+validation, other SCC settings will reject other pod fields and thus cause the
+pod to fail.
+
+*A `SupplementalGroups` SCC strategy of `MustRunAs`*
+
+If the pod specification defines one or more `supplementalGroups` IDs, then
+the pod's IDs must equal one of the IDs in the namespace's
+`openshift.io/sa.scc.supplemental-groups` annotation. Otherwise, the pod is not
+validated by that SCC and the next SCC is evaluated.
+
+If the `SecurityContextConstraints.supplementalGroups` field has value `RunAsAny`
+and the pod specification omits the `Pod.spec.securityContext.supplementalGroups`,
+then this field is considered valid. Note that it is possible that during
+validation, other SCC settings will reject other pod fields and thus cause the
+pod to fail.
+
+[id="scc-prioritization_{context}"]
+== Security context constraints prioritization
+
+Security context constraints (SCCs) have a priority field that affects the ordering when attempting to validate a request by the admission controller.
+
+A priority value of `0` is the lowest possible priority. A nil priority is considered a `0`, or lowest, priority. Higher priority SCCs are moved to the front of the set when sorting.
+
+When the complete set of available SCCs is determined, the SCCs are ordered in the following manner:
+
+. The highest priority SCCs are ordered first.
+. If the priorities are equal, the SCCs are sorted from most restrictive to least restrictive.
+. If both the priorities and restrictions are equal, the SCCs are sorted by name.
+
+By default, the `anyuid` SCC granted to cluster administrators is given priority
+in their SCC set. This allows cluster administrators to run pods as any
+user by specifying `RunAsUser` in the pod's `SecurityContext`.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/managing-security-context-constraints.adoc
+
+:_mod-docs-content-type: CONCEPT
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/managing-security-context-constraints.adoc
+
+[id="security-context-constraints-example_{context}"]
+= Example security context constraints
+
+The following examples show the security context constraints (SCC) format and
+annotations:
+
+.Annotated `privileged` SCC
+[source,yaml]
+----
+allowHostDirVolumePlugin: true
+allowHostIPC: true
+allowHostNetwork: true
+allowHostPID: true
+allowHostPorts: true
+allowPrivilegedContainer: true
+allowedCapabilities: <1>
+- '*'
+apiVersion: security.openshift.io/v1
+defaultAddCapabilities: [] <2>
+fsGroup: <3>
+  type: RunAsAny
+groups: <4>
+- system:cluster-admins
+- system:nodes
+kind: SecurityContextConstraints
+metadata:
+  annotations:
+    kubernetes.io/description: 'privileged allows access to all privileged and host
+      features and the ability to run as any user, any group, any fsGroup, and with
+      any SELinux context.  WARNING: this is the most relaxed SCC and should be used
+      only for cluster administration. Grant with caution.'
+  creationTimestamp: null
+  name: privileged
+priority: null
+readOnlyRootFilesystem: false
+requiredDropCapabilities: <5>
+- KILL
+- MKNOD
+- SETUID
+- SETGID
+runAsUser: <6>
+  type: RunAsAny
+seLinuxContext: <7>
+  type: RunAsAny
+seccompProfiles:
+- '*'
+supplementalGroups: <8>
+  type: RunAsAny
+users: <9>
+- system:serviceaccount:default:registry
+- system:serviceaccount:default:router
+- system:serviceaccount:openshift-infra:build-controller
+volumes: <10>
+- '*'
+----
+
+<1> A list of capabilities that a pod can request. An empty list means
+that none of capabilities can be requested while the special symbol `***`
+allows any capabilities.
+<2> A list of additional capabilities that are added to any pod.
+<3> The `FSGroup` strategy, which dictates the allowable values for the
+security context.
+<4> The groups that can access this SCC.
+<5> A list of capabilities to drop from a pod. Or, specify `ALL` to drop all
+capabilities.
+<6> The `runAsUser` strategy type, which dictates the allowable values for the
+security context.
+//could use the available strategies
+<7> The `seLinuxContext` strategy type, which dictates the allowable values for
+the security context.
+<8> The `supplementalGroups` strategy, which dictates the allowable supplemental
+groups for the security context.
+<9> The users who can access this SCC.
+<10> The allowable volume types for the security context. In the example, `*` allows the use of all volume types.
+
+The `users` and `groups` fields on the SCC control which users can access the
+SCC.
+By default, cluster administrators, nodes, and the build controller are granted
+access to the privileged SCC. All authenticated users are granted access to the
+`restricted-v2` SCC.
+
+.Without explicit `runAsUser` setting
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo
+spec:
+  securityContext: <1>
+  containers:
+  - name: sec-ctx-demo
+    image: gcr.io/google-samples/node-hello:1.0
+----
+<1> When a container or pod does not request a user ID under which it should be run,
+the effective UID depends on the SCC that emits this pod. Because the `restricted-v2` SCC
+is granted to all authenticated users by default, it will be available to all
+users and service accounts and used in most cases. The `restricted-v2` SCC uses
+`MustRunAsRange` strategy for constraining and defaulting the possible values of
+the `securityContext.runAsUser` field. The admission plugin will look for the
+`openshift.io/sa.scc.uid-range` annotation on the current project to populate
+range fields, as it does not provide this range. In the end, a container will
+have `runAsUser` equal to the first value of the range that is
+hard to predict because every project has different ranges.
+
+.With explicit `runAsUser` setting
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo
+spec:
+  securityContext:
+    runAsUser: 1000 <1>
+  containers:
+    - name: sec-ctx-demo
+      image: gcr.io/google-samples/node-hello:1.0
+----
+<1> A container or pod that requests a specific user ID will be accepted by
+{product-title} only when a service account or a user is granted access to a SCC
+that allows such a user ID. The SCC can allow arbitrary IDs, an ID that falls
+into a range, or the exact user ID specific to the request.
+
+This configuration is valid for SELinux, fsGroup, and Supplemental Groups.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/managing-security-context-constraints.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="security-context-constraints-creating_{context}"]
+= Creating security context constraints
+
+You can create security context constraints (SCCs) by using the OpenShift CLI (`oc`).
+
+[IMPORTANT]
+====
+Creating and modifying your own SCCs are advanced operations that might cause instability to your cluster. If you have questions about using your own SCCs, contact Red Hat Support. For information about contacting Red Hat support, see _Getting support_.
+====
+
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in to the cluster as a user with the `cluster-admin` role.
+
+.Procedure
+
+. Define the SCC in a YAML file named `scc-admin.yaml`:
++
+[source,yaml]
+----
+kind: SecurityContextConstraints
+apiVersion: security.openshift.io/v1
+metadata:
+  name: scc-admin
+allowPrivilegedContainer: true
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+fsGroup:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny
+users:
+- my-admin-user
+groups:
+- my-admin-group
+----
++
+Optionally, you can drop specific capabilities for an SCC by setting the `requiredDropCapabilities` field with the desired values. Any specified capabilities are dropped from the container. To drop all capabilities, specify `ALL`. For example, to create an SCC that drops the `KILL`, `MKNOD`, and `SYS_CHROOT` capabilities, add the following to the SCC object:
++
+[source,yaml]
+----
+requiredDropCapabilities:
+- KILL
+- MKNOD
+- SYS_CHROOT
+----
++
+[NOTE]
++
+====
+You cannot list a capability in both `allowedCapabilities` and `requiredDropCapabilities`.
+====
++
+CRI-O supports the same list of capability values that are found in the link:https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities[Docker documentation].
+
+. Create the SCC by passing in the file:
++
+[source,terminal]
+----
+$ oc create -f scc-admin.yaml
+----
++
+.Example output
+[source,terminal]
+----
+securitycontextconstraints "scc-admin" created
+----
+
+.Verification
+
+* Verify that the SCC was created:
++
+[source,terminal]
+----
+$ oc get scc scc-admin
+----
++
+.Example output
+[source,terminal]
+----
+NAME        PRIV      CAPS      SELINUX    RUNASUSER   FSGROUP    SUPGROUP   PRIORITY   READONLYROOTFS   VOLUMES
+scc-admin   true      []        RunAsAny   RunAsAny    RunAsAny   RunAsAny   <none>     false            [awsElasticBlockStore azureDisk azureFile cephFS cinder configMap downwardAPI emptyDir fc flexVolume flocker gcePersistentDisk gitRepo glusterfs iscsi nfs persistentVolumeClaim photonPersistentDisk quobyte rbd secret vsphere]
+----
+
+:leveloffset!:
+
+//  Configuring a workload to require a specific SCC
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/managing-security-context-constraints.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="security-context-constraints-requiring_{context}"]
+= Configuring a workload to require a specific SCC
+
+You can configure a workload to require a certain security context constraint (SCC). This is useful in scenarios where you want to pin a specific SCC to the workload or if you want to prevent your required SCC from being preempted by another SCC in the cluster.
+
+To require a specific SCC, set the `openshift.io/required-scc` annotation on your workload. You can set this annotation on any resource that can set a pod manifest template, such as a deployment or daemon set.
+
+The SCC must exist in the cluster and must be applicable to the workload, otherwise pod admission fails. An SCC is considered applicable to the workload if the user creating the pod or the pod's service account has `use` permissions for the SCC in the pod's namespace.
+
+[WARNING]
+====
+Do not change the `openshift.io/required-scc` annotation in the live pod's manifest, because doing so causes the pod admission to fail. To change the required SCC, update the annotation in the underlying pod template, which causes the pod to be deleted and re-created.
+====
+
+.Prerequisites
+
+* The SCC must exist in the cluster.
+
+.Procedure
+
+. Create a YAML file for the deployment and specify a required SCC by setting the `openshift.io/required-scc` annotation:
++
+.Example `deployment.yaml`
+[source,yaml]
+----
+apiVersion: config.openshift.io/v1
+kind: Deployment
+apiVersion: apps/v1
+spec:
+# ...
+  template:
+    metadata:
+      annotations:
+        openshift.io/required-scc: "my-scc" <1>
+# ...
+----
+<1> Specify the name of the SCC to require.
+
+. Create the resource by running the following command:
++
+[source,terminal]
+----
+$ oc create -f deployment.yaml
+----
+
+.Verification
+
+* Verify that the deployment used the specified SCC:
+
+.. View the value of the pod's `openshift.io/scc` annotation by running the following command:
++
+[source,terminal]
+----
+$ oc get pod <pod_name> -o jsonpath='{.metadata.annotations.openshift\.io\/scc}{"\n"}' <1>
+----
+<1> Replace `<pod_name>` with the name of your deployment pod.
+
+.. Examine the output and confirm that the displayed SCC matches the SCC that you defined in the deployment:
++
+.Example output
+[source,terminal]
+----
+my-scc
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/managing-security-context-constraints.adoc
+
+[id="role-based-access-to-ssc_{context}"]
+= Role-based access to security context constraints
+
+You can specify SCCs as resources that are handled by RBAC. This allows
+you to scope access to your SCCs to a certain project or to the entire
+cluster. Assigning users, groups, or service accounts directly to an
+SCC retains cluster-wide scope.
+
+// Text snippet included in the following assemblies:
+//
+// * applications/projects/working-with-projects.adoc
+// * applications/quotas/quotas-setting-across-multiple-projects.adoc
+// * openshift_images/image-streams-manage.adoc
+//
+// Text snippet included in the following modules:
+//
+// * modules/admission-plug-ins-about.adoc
+// * modules/creating-a-project-using-the-CLI.adoc
+// * modules/creating-a-project-using-the-web-console.adoc
+// * modules/images-managing-images-enabling-imagestreams-kube.adoc
+// * modules/odc-creating-projects-using-developer-perspective.adoc
+// * modules/rbac-default-projects.adoc
+// * modules/security-context-constraints-psa-about.adoc
+// * modules/security-context-constraints-rbac.adoc
+
+:_mod-docs-content-type: SNIPPET
+
+[IMPORTANT]
+====
+Do not run workloads in or share access to default projects. Default projects are reserved for running core cluster components.
+
+The following default projects are considered highly privileged: `default`, `kube-public`, `kube-system`, `openshift`, `openshift-infra`, `openshift-node`, and other system-created projects that have the `openshift.io/run-level` label set to `0` or `1`. Functionality that relies on admission plugins, such as pod security admission, security context constraints, cluster resource quotas, and image reference resolution, does not work in highly privileged projects.
+====
+
+To include access to SCCs for your role, specify the `scc` resource
+when creating a role.
+
+[source,terminal]
+----
+$ oc create role <role-name> --verb=use --resource=scc --resource-name=<scc-name> -n <namespace>
+----
+
+This results in the following role definition:
+
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+...
+  name: role-name <1>
+  namespace: namespace <2>
+...
+rules:
+- apiGroups:
+  - security.openshift.io <3>
+  resourceNames:
+  - scc-name <4>
+  resources:
+  - securitycontextconstraints <5>
+  verbs: <6>
+  - use
+----
+<1> The role's name.
+<2> Namespace of the defined role. Defaults to `default` if not specified.
+<3> The API group that includes the `SecurityContextConstraints` resource.
+Automatically defined when `scc` is specified as a resource.
+<4> An example name for an SCC you want to have access.
+<5> Name of the resource group that allows users to specify SCC names in
+the `resourceNames` field.
+<6> A list of verbs to apply to the role.
+
+A local or cluster role with such a rule allows the subjects that are
+bound to it with a role binding or a cluster role binding to use the
+user-defined SCC called `scc-name`.
+
+[NOTE]
+====
+Because RBAC is designed to prevent escalation, even project administrators
+are unable to grant access to an SCC. By default, they are not
+allowed to use the verb `use` on SCC resources, including the
+`restricted-v2` SCC.
+====
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/managing-security-context-constraints.adoc
+
+[id="security-context-constraints-command-reference_{context}"]
+= Reference of security context constraints commands
+
+You can manage security context constraints (SCCs) in your instance as normal API objects using the OpenShift CLI (`oc`).
+
+
+[id="listing-security-context-constraints_{context}"]
+== Listing security context constraints
+
+To get a current list of SCCs:
+
+[source,terminal]
+----
+$ oc get scc
+----
+
+.Example output
+[source,terminal]
+----
+NAME                              PRIV    CAPS                   SELINUX     RUNASUSER          FSGROUP     SUPGROUP    PRIORITY     READONLYROOTFS   VOLUMES
+anyuid                            false   <no value>             MustRunAs   RunAsAny           RunAsAny    RunAsAny    10           false            ["configMap","downwardAPI","emptyDir","persistentVolumeClaim","projected","secret"]
+hostaccess                        false   <no value>             MustRunAs   MustRunAsRange     MustRunAs   RunAsAny    <no value>   false            ["configMap","downwardAPI","emptyDir","hostPath","persistentVolumeClaim","projected","secret"]
+hostmount-anyuid                  false   <no value>             MustRunAs   RunAsAny           RunAsAny    RunAsAny    <no value>   false            ["configMap","downwardAPI","emptyDir","hostPath","nfs","persistentVolumeClaim","projected","secret"]
+hostnetwork                       false   <no value>             MustRunAs   MustRunAsRange     MustRunAs   MustRunAs   <no value>   false            ["configMap","downwardAPI","emptyDir","persistentVolumeClaim","projected","secret"]
+hostnetwork-v2                    false   ["NET_BIND_SERVICE"]   MustRunAs   MustRunAsRange     MustRunAs   MustRunAs   <no value>   false            ["configMap","downwardAPI","emptyDir","persistentVolumeClaim","projected","secret"]
+node-exporter                     true    <no value>             RunAsAny    RunAsAny           RunAsAny    RunAsAny    <no value>   false            ["*"]
+nonroot                           false   <no value>             MustRunAs   MustRunAsNonRoot   RunAsAny    RunAsAny    <no value>   false            ["configMap","downwardAPI","emptyDir","persistentVolumeClaim","projected","secret"]
+nonroot-v2                        false   ["NET_BIND_SERVICE"]   MustRunAs   MustRunAsNonRoot   RunAsAny    RunAsAny    <no value>   false            ["configMap","downwardAPI","emptyDir","persistentVolumeClaim","projected","secret"]
+privileged                        true    ["*"]                  RunAsAny    RunAsAny           RunAsAny    RunAsAny    <no value>   false            ["*"]
+restricted                        false   <no value>             MustRunAs   MustRunAsRange     MustRunAs   RunAsAny    <no value>   false            ["configMap","downwardAPI","emptyDir","persistentVolumeClaim","projected","secret"]
+restricted-v2                     false   ["NET_BIND_SERVICE"]   MustRunAs   MustRunAsRange     MustRunAs   RunAsAny    <no value>   false            ["configMap","downwardAPI","emptyDir","persistentVolumeClaim","projected","secret"]
+----
+
+[id="examining-a-security-context-constraints-object_{context}"]
+== Examining security context constraints
+
+You can view information about a particular SCC, including which users, service accounts, and groups the SCC is applied to.
+
+For example, to examine the `restricted` SCC:
+
+[source,terminal]
+----
+$ oc describe scc restricted
+----
+
+.Example output
+[source,terminal]
+----
+Name:                                  restricted
+Priority:                              <none>
+Access:
+  Users:                               <none> <1>
+  Groups:                              <none> <2>
+Settings:
+  Allow Privileged:                    false
+  Allow Privilege Escalation:          true
+  Default Add Capabilities:            <none>
+  Required Drop Capabilities:          KILL,MKNOD,SETUID,SETGID
+  Allowed Capabilities:                <none>
+  Allowed Seccomp Profiles:            <none>
+  Allowed Volume Types:                configMap,downwardAPI,emptyDir,persistentVolumeClaim,projected,secret
+  Allowed Flexvolumes:                 <all>
+  Allowed Unsafe Sysctls:              <none>
+  Forbidden Sysctls:                   <none>
+  Allow Host Network:                  false
+  Allow Host Ports:                    false
+  Allow Host PID:                      false
+  Allow Host IPC:                      false
+  Read Only Root Filesystem:           false
+  Run As User Strategy: MustRunAsRange
+    UID:                               <none>
+    UID Range Min:                     <none>
+    UID Range Max:                     <none>
+  SELinux Context Strategy: MustRunAs
+    User:                              <none>
+    Role:                              <none>
+    Type:                              <none>
+    Level:                             <none>
+  FSGroup Strategy: MustRunAs
+    Ranges:                            <none>
+  Supplemental Groups Strategy: RunAsAny
+    Ranges:                            <none>
+----
+<1> Lists which users and service accounts the SCC is applied to.
+<2> Lists which groups the SCC is applied to.
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_configuring-internal-oauth"]
+== Additional resources
+
+* xref:../support/getting-support.adoc#getting-support[Getting support]
+
+//# includes=_attributes/common-attributes,modules/security-context-constraints-about,modules/security-context-constraints-pre-allocated-values,modules/security-context-constraints-example,modules/security-context-constraints-creating,modules/security-context-constraints-requiring,modules/security-context-constraints-rbac,modules/snippets/default-projects,modules/security-context-constraints-command-reference

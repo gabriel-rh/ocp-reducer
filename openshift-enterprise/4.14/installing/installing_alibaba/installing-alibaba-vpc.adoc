@@ -1,0 +1,1786 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="installing-alibaba-vpc"]
+= Installing a cluster on Alibaba Cloud into an existing VPC
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: installing-alibaba-vpc
+
+toc::[]
+
+In {product-title} version {product-version}, you can install a cluster into an existing Alibaba Virtual Private Cloud (VPC) on Alibaba Cloud Services. The installation program provisions the required infrastructure, which can then be customized. To customize the VPC installation, modify the parameters in the 'install-config.yaml' file before you install the cluster.
+
+[NOTE]
+====
+The scope of the {product-title} installation configurations is intentionally narrow. It is designed for simplicity and ensured success. You can complete many more {product-title} configuration tasks after an installation completes.
+====
+
+:FeatureName: Alibaba Cloud on {product-title}
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+[id="prerequisites_installing-alibaba-vpc"]
+== Prerequisites
+
+* You reviewed details about the xref:../../architecture/architecture-installation.adoc#architecture-installation[{product-title} installation and update] processes.
+* You read the documentation on xref:../../installing/installing-preparing.adoc#installing-preparing[selecting a cluster installation method and preparing it for users].
+* You xref:../../installing/installing_alibaba/preparing-to-install-on-alibaba.adoc#installation-alibaba-dns_preparing-to-install-on-alibaba[registered your domain].
+* If you use a firewall, you xref:../../installing/install_config/configuring-firewall.adoc#configuring-firewall[configured it to allow the sites] that your cluster requires access to.
+* If the cloud Resource Access Management (RAM) APIs are not accessible in your environment, or if you do not want to store an administrator-level credential secret in the `kube-system` namespace, you can xref:../../installing/installing_alibaba/manually-creating-alibaba-ram.adoc#manually-creating-alibaba-ram[manually create and maintain Resource Access Management (RAM) credentials].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-custom-alibaba-vpc_{context}"]
+= Using a custom VPC
+
+In {product-title} {product-version}, you can deploy a cluster into existing subnets in an existing Virtual Private Cloud (VPC) in the Alibaba Cloud Platform. By deploying {product-title} into an existing Alibaba VPC, you can avoid limit constraints in new accounts and more easily adhere to your organization's operational constraints. If you cannot obtain the infrastructure creation permissions that are required to create the VPC yourself, use this installation option. You must configure networking using vSwitches.
+
+[id="installation-custom-alibaba-vpc-requirements_{context}"]
+== Requirements for using your VPC
+
+The union of the VPC CIDR block and the machine network CIDR must be non-empty. The vSwitches must be within the machine network.
+
+The installation program does not create the following components:
+
+* VPC
+* vSwitches
+* Route table
+* NAT gateway
+
+// Text snippet included in the following modules:
+//
+// * modules/installation-custom-aws-vpc.adoc
+// * modules/installation-about-custom-azure-vnet.adoc
+// * modules/installation-custom-gcp-vpc.adoc
+// * modules/installation-custom-alibaba-vpc.adoc
+// * modules/installation-ibm-power-vs.adoc
+
+:_mod-docs-content-type: SNIPPET
+
+[NOTE]
+====
+The installation program requires that you use the cloud-provided DNS server. Using a custom DNS server is not supported and causes the installation to fail.
+====
+
+[id="installation-custom-alibaba-vpc-validation_{context}"]
+== VPC validation
+
+To ensure that the vSwitches you provide are suitable, the installation program confirms the following data:
+
+* All the vSwitches that you specify must exist.
+* You have provided one or more vSwitches for control plane machines and compute machines.
+* The vSwitches' CIDRs belong to the machine CIDR that you specified.
+
+[id="installation-about-custom-alibaba-permissions_{context}"]
+== Division of permissions
+
+Some individuals can create different resources in your cloud than others. For example, you might be able to create application-specific items, like instances, buckets, and load balancers, but not networking-related components, such as VPCs or vSwitches.
+
+[id="installation-custom-alibaba-vpc-isolation_{context}"]
+== Isolation between clusters
+
+If you deploy {product-title} into an existing network, the isolation of cluster services is reduced in the following ways:
+
+* You can install multiple {product-title} clusters in the same VPC.
+
+* ICMP ingress is allowed to the entire network.
+
+* TCP 22 ingress (SSH) is allowed to the entire network.
+
+* Control plane TCP 6443 ingress (Kubernetes API) is allowed to the entire network.
+
+* Control plane TCP 22623 ingress (MCS) is allowed to the entire network.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-china-region.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-user-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_openstack/installing-openstack-installer-sr-iov.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-network-customizations.adoc
+// * architecture/architecture.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-installer-provisioned.adoc
+
+
+
+:_mod-docs-content-type: CONCEPT
+[id="cluster-entitlements_{context}"]
+= Internet access for {product-title}
+
+In {product-title} {product-version}, you require access to the internet to
+install
+your cluster.
+
+You must have internet access to:
+
+* Access {cluster-manager-url} to download the installation program and perform subscription management. If the cluster has internet access and you do not disable Telemetry, that service automatically entitles your cluster.
+* Access link:http://quay.io[Quay.io] to obtain the packages that are required to install your cluster.
+* Obtain the packages that are required to perform cluster updates.
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-customizations.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-power.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="ssh-agent-using_{context}"]
+= Generating a key pair for cluster node SSH access
+
+During an {product-title} installation, you can provide an SSH public key to the installation program. The key is passed to the {op-system-first} nodes through their Ignition config files and is used to authenticate SSH access to the nodes. The key is added to the `~/.ssh/authorized_keys` list for the `core` user on each node, which enables password-less authentication.
+
+After the key is passed to the nodes, you can use the key pair to SSH in to the {op-system} nodes as the user `core`. To access the nodes through SSH, the private key identity must be managed by SSH for your local user.
+
+If you want to SSH in to your cluster nodes to perform installation debugging or disaster recovery, you must provide the SSH public key during the installation process. The `./openshift-install gather` command also requires the SSH public key to be in place on the cluster nodes.
+
+[IMPORTANT]
+====
+Do not skip this procedure in production environments, where disaster recovery and debugging is required.
+====
+
+[NOTE]
+====
+You must use a local key, not one that you configured with platform-specific
+approaches such as
+link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html[AWS key pairs].
+====
+
+
+.Procedure
+
+. If you do not have an existing SSH key pair on your local machine to use for authentication onto your cluster nodes, create one. For example, on a computer that uses a Linux operating system, run the following command:
++
+[source,terminal]
+----
+$ ssh-keygen -t ed25519 -N '' -f <path>/<file_name> <1>
+----
+<1> Specify the path and file name, such as `~/.ssh/id_ed25519`, of the new SSH key. If you have an existing key pair, ensure your public key is in the your `~/.ssh` directory.
++
+[NOTE]
+====
+If you plan to install an {product-title} cluster that uses the {op-system-base} cryptographic libraries that have been submitted to NIST for FIPS 140-2/140-3 Validation on only the `x86_64`, `ppc64le`, and `s390x` architectures, do not create a key that uses the `ed25519` algorithm. Instead, create a key that uses the `rsa` or `ecdsa` algorithm.
+====
+
+. View the public SSH key:
++
+[source,terminal]
+----
+$ cat <path>/<file_name>.pub
+----
++
+For example, run the following to view the `~/.ssh/id_ed25519.pub` public key:
++
+[source,termanal]
+----
+$ cat ~/.ssh/id_ed25519.pub
+----
+
+. Add the SSH private key identity to the SSH agent for your local user, if it has not already been added. SSH agent management of the key is required for password-less SSH authentication onto your cluster nodes, or if you want to use the `./openshift-install gather` command.
++
+[NOTE]
+====
+On some distributions, default SSH private key identities such as `~/.ssh/id_rsa` and `~/.ssh/id_dsa` are managed automatically.
+====
++
+.. If the `ssh-agent` process is not already running for your local user, start it as a background task:
++
+[source,terminal]
+----
+$ eval "$(ssh-agent -s)"
+----
++
+.Example output
+[source,terminal]
+----
+Agent pid 31874
+----
++
+[NOTE]
+====
+If your cluster is in FIPS mode, only use FIPS-compliant algorithms to generate the SSH key. The key must be either RSA or ECDSA.
+====
+
+. Add your SSH private key to the `ssh-agent`:
++
+[source,terminal]
+----
+$ ssh-add <path>/<file_name> <1>
+----
+<1> Specify the path and file name for your SSH private key, such as `~/.ssh/id_ed25519`
++
+.Example output
+[source,terminal]
+----
+Identity added: /home/<you>/<path>/<file_name> (<computer_name>)
+----
+
+.Next steps
+
+* When you install {product-title}, provide the SSH public key to the installation program.
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-obtaining-installer_{context}"]
+= Obtaining the installation program
+
+Before you install {product-title}, download the installation file on
+ your provisioning machine.
+ the host you are using for installation.
+//mpytlak: Added "private" in the context of a review for the IBM Cloud VPC private work. In an effort to keep updates to other platforms separate, I will open a doc story for each platform that supports a private install.
+
+.Prerequisites
+
+* You have a computer that runs Linux or macOS, with 500 MB of local disk space.
+
+.Procedure
+
+. Access the link:https://console.redhat.com/openshift/install[Infrastructure Provider] page on the {cluster-manager} site. If you have a Red Hat account, log in with your credentials. If you do not, create an account.
+. Select your infrastructure provider.
+. Navigate to the page for your installation type, download the installation program that corresponds with your host operating system and architecture, and place the file in the directory where you will store the installation configuration files.
+
++
+[IMPORTANT]
+====
+The installation program creates several files on the computer that you use to install your cluster. You must keep the installation program and the files that the installation program creates after you finish installing the cluster. Both files are required to delete the cluster.
+====
++
+[IMPORTANT]
+====
+Deleting the files created by the installation program does not remove your cluster, even if the cluster failed during installation. To remove your cluster, complete the {product-title} uninstallation procedures for your specific cloud provider.
+====
+
+. Extract the installation program. For example, on a computer that uses a Linux
+operating system, run the following command:
++
+[source,terminal]
+----
+$ tar -xvf openshift-install-linux.tar.gz
+----
+
+. Download your installation {cluster-manager-url-pull}. This pull secret allows you to authenticate with the services that are provided by the included authorities, including Quay.io, which serves the container images for {product-title} components.
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-alibaba-default.adoc
+// * installing/installing_aws/installing-alibaba-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_aws/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-network-customizations
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-shared-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-customizations.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-user-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_vmc/installing-vmc-customizations.adoc
+// * installing/installing_vmc/installing-vmc-network-customizations.adoc
+// * installing/installing_vmc/installing-restricted-networks-vmc.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_nutanix/configuring-iam-nutanix.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+// * installing/installing_gcp/installing-openstack-installer-restricted.adoc
+// Consider also adding the installation-configuration-parameters.adoc module.
+//YOU MUST SET AN IFEVAL FOR EACH NEW MODULE
+
+:alibabacloud-vpc:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-initializing_{context}"]
+= Creating the installation configuration file
+
+You can customize the {product-title} cluster you install on
+Alibaba Cloud.
+
+.Prerequisites
+
+* You have the {product-title} installation program and the pull secret for your cluster.
+
+.Procedure
+
+. Create the `install-config.yaml` file.
++
+.. Change to the directory that contains the installation program and run the following command:
++
+[source,terminal]
+----
+$ ./openshift-install create install-config --dir <installation_directory> <1>
+----
+<1> For `<installation_directory>`, specify the directory name to store the
+files that the installation program creates.
++
+When specifying the directory:
+* Verify that the directory has the `execute` permission. This permission is required to run Terraform binaries under the installation directory.
+* Use an empty directory. Some installation assets, such as bootstrap X.509 certificates, have short expiration intervals, therefore you must not reuse an installation directory. If you want to reuse individual files from another cluster installation, you can copy them into your directory. However, the file names for the installation assets might change between releases. Use caution when copying installation files from an earlier {product-title} version.
++
+[NOTE]
+=====
+Always delete the `~/.powervs` directory to avoid reusing a stale configuration. Run the following command:
+[source,terminal]
+----
+$ rm -rf ~/.powervs
+----
+=====
+.. At the prompts, provide the configuration details for your cloud:
+... Optional: Select an SSH key to use to access your cluster machines.
++
+[NOTE]
+====
+For production {product-title} clusters on which you want to perform installation debugging or disaster recovery, specify an SSH key that your `ssh-agent` process uses.
+====
+... Select *alibabacloud* as the platform to target.
+... Select the region to deploy the cluster to.
+... Select the base domain to deploy the cluster to. The base domain corresponds to the public DNS zone that you created for your cluster.
+... Provide a descriptive name for your cluster.
+
+
+
+. Installing the cluster into Alibaba Cloud requires that the Cloud Credential Operator (CCO) operate in manual mode. Modify the `install-config.yaml` file to set the `credentialsMode` parameter to `Manual`:
++
+.Example install-config.yaml configuration file with `credentialsMode` set to `Manual`
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: cluster1.example.com
+credentialsMode: Manual <1>
+compute:
+- architecture: amd64
+  hyperthreading: Enabled
+ ...
+----
+<1> Add this line to set the `credentialsMode` to `Manual`.
+
+. Modify the `install-config.yaml` file. You can find more information about the available parameters in the "Installation configuration parameters" section.
+
+
+
+
+. Back up the `install-config.yaml` file so that you can use
+it to install multiple clusters.
++
+[IMPORTANT]
+====
+The `install-config.yaml` file is consumed during the installation process. If
+you want to reuse the file, you must back it up now.
+====
+
+
+You now have the file `install-config.yaml` in the directory that you specified.
+
+:!alibabacloud-vpc:
+:!platform:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../installing/installing_alibaba/installation-config-parameters-alibaba.adoc#installation-config-parameters-alibaba[Installation configuration parameters for Alibaba Cloud]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-customizations.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="installation-alibaba-config-yaml_{context}"]
+= Sample customized install-config.yaml file for Alibaba Cloud
+
+You can customize the installation configuration file (`install-config.yaml`) to specify more details about
+your cluster's platform or modify the values of the required
+parameters.
+
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: alicloud-dev.devcluster.openshift.com
+credentialsMode: Manual
+compute:
+- architecture: amd64
+  hyperthreading: Enabled
+  name: worker
+  platform: {}
+  replicas: 3
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  platform: {}
+  replicas: 3
+metadata:
+  creationTimestamp: null
+  name: test-cluster <1>
+ networking:
+  clusterNetwork:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: 10.0.0.0/16
+  networkType: OVNKubernetes <2>
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  alibabacloud:
+    defaultMachinePlatform: <3>
+      instanceType: ecs.g6.xlarge
+      systemDiskCategory: cloud_efficiency
+      systemDiskSize: 200
+    region: ap-southeast-1 <4>
+    resourceGroupID: rg-acfnw6j3hyai <5>
+    vpcID: vpc-0xifdjerdibmaqvtjob2b <8>
+    vswitchIDs: <8>
+    - vsw-0xi8ycgwc8wv5rhviwdq5
+    - vsw-0xiy6v3z2tedv009b4pz2
+publish: External
+pullSecret: '{"auths": {"cloud.openshift.com": {"auth": ... }' <6>
+sshKey: |
+  ssh-rsa AAAA... <7>
+----
+<1> Required. The installation program prompts you for a cluster name.
+<2> The cluster network plugin to install. The supported values are `OVNKubernetes` and `OpenShiftSDN`. The default value is `OVNKubernetes`.
+<3> Optional. Specify parameters for machine pools that do not define their own platform configuration.
+<4> Required. The installation program prompts you for the region to deploy the cluster to.
+<5> Optional. Specify an existing resource group where the cluster should be installed.
+<6> Required. The installation program prompts you for the pull secret.
+<7> Optional. The installation program prompts you for the SSH key value that you use to access the machines in your cluster.
+<8> Optional. These are example vswitchID values.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-default.adoc
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="manually-creating-alibaba-manifests_{context}"]
+= Generating the required installation manifests
+
+You must generate the Kubernetes manifest and Ignition config files that the cluster needs to configure the machines.
+
+.Procedure
+
+. Generate the manifests by running the following command from the directory that contains the installation program:
++
+[source,terminal]
+----
+$ openshift-install create manifests --dir <installation_directory>
+----
++
+where:
+
+`<installation_directory>`:: Specifies the directory in which the installation program creates files.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+//Platforms that must use `ccoctl` and update content
+// * installing/installing_ibm_cloud_public/configuring-iam-ibm-cloud.adoc
+// * installing/installing_ibm_powervs/preparing-to-install-on-ibm-power-vs.doc
+// * installing/installing_alibaba/manually-creating-alibaba-ram.adoc
+// * installing/installing_nutanix/preparing-to-install-on-nutanix.adoc
+// * updating/preparing_for_updates/preparing-manual-creds-update.adoc
+//
+// AWS assemblies:
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-localzone.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+//
+// GCP assemblies:
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-shared-vpc.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+//
+// Azure assemblies
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+
+//Platforms that must use `ccoctl` and update content
+
+//AWS install assemblies
+
+//GCP install assemblies
+
+//global Azure install assemblies
+
+:_mod-docs-content-type: PROCEDURE
+[id="cco-ccoctl-configuring_{context}"]
+= Configuring the Cloud Credential Operator utility
+= Configuring the Cloud Credential Operator utility for a cluster update
+
+//This applies only to Alibaba Cloud.
+
+//Nutanix-only intro because it needs context in its install procedure.
+
+//Alibaba Cloud uses ccoctl, but creates different kinds of resources than other clouds, so this applies to everyone else. The upgrade procs also have a different intro, so they are excluded here.
+To create and manage cloud credentials from outside of the cluster when the Cloud Credential Operator (CCO) is operating in manual mode, extract and prepare the CCO utility (`ccoctl`) binary.
+
+//Intro for the upgrade procs.
+
+[NOTE]
+====
+The `ccoctl` utility is a Linux binary that must run in a Linux environment.
+====
+
+.Prerequisites
+
+* You have access to an {product-title} account with cluster administrator access.
+* You have installed the {oc-first}.
+
+//Upgrade prereqs
+
+//AWS permissions needed when running ccoctl during install (I think we can omit from upgrade, since they already have an appropriate AWS account if they are upgrading).
+
+//Azure permissions needed when running ccoctl during install.
+
+.Procedure
+
+. Obtain the {product-title} release image by running the following command:
++
+[source,terminal]
+----
+$ RELEASE_IMAGE=$(./openshift-install version | awk '/release image/ {print $3}')
+----
+
+. Obtain the CCO container image from the {product-title} release image by running the following command:
++
+[source,terminal]
+----
+$ CCO_IMAGE=$(oc adm release info --image-for='cloud-credential-operator' $RELEASE_IMAGE -a ~/.pull-secret)
+----
++
+[NOTE]
+====
+Ensure that the architecture of the `$RELEASE_IMAGE` matches the architecture of the environment in which you will use the `ccoctl` tool.
+====
+
+. Extract the `ccoctl` binary from the CCO container image within the {product-title} release image by running the following command:
++
+[source,terminal]
+----
+$ oc image extract $CCO_IMAGE --file="/usr/bin/ccoctl" -a ~/.pull-secret
+----
+
+. Change the permissions to make `ccoctl` executable by running the following command:
++
+[source,terminal]
+----
+$ chmod 775 ccoctl
+----
+
+.Verification
+
+* To verify that `ccoctl` is ready to use, display the help file by running the following command:
++
+[source,terminal]
+----
+$ ccoctl --help
+----
++
+.Output of `ccoctl --help`
+[source,terminal]
+----
+OpenShift credentials provisioning tool
+
+Usage:
+  ccoctl [command]
+
+Available Commands:
+  alibabacloud Manage credentials objects for alibaba cloud
+  aws          Manage credentials objects for AWS cloud
+  azure        Manage credentials objects for Azure
+  gcp          Manage credentials objects for Google cloud
+  help         Help about any command
+  ibmcloud     Manage credentials objects for IBM Cloud
+  nutanix      Manage credentials objects for Nutanix
+
+Flags:
+  -h, --help   help for ccoctl
+
+Use "ccoctl [command] --help" for more information about a command.
+----
+
+//Platforms that must use `ccoctl` and update content
+
+//AWS install assemblies
+
+//GCP install assemblies
+
+//global Azure install assemblies
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// Platforms that must use `ccoctl`
+// * installing/installing_alibaba/manually-creating-alibaba-ram.adoc
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+//
+// AWS assemblies:
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-localzone.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+//
+// GCP assemblies:
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-shared-vpc.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+//
+// Azure assemblies
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+
+//Platforms that must use `ccoctl`
+:alibabacloud-vpc:
+
+//AWS install assemblies
+
+//GCP install assemblies
+
+//global Azure install assemblies
+
+:_mod-docs-content-type: PROCEDURE
+[id="cco-ccoctl-creating-at-once_{context}"]
+[id="cco-ccoctl-creating-at-once_{context}"]
+= Creating credentials for {product-title} components with the ccoctl tool
+
+You can use the {product-title} Cloud Credential Operator (CCO) utility to automate the creation of Alibaba Cloud RAM users and policies for each in-cluster component.
+
+[NOTE]
+====
+By default, `ccoctl` creates objects in the directory in which the commands are run. To create the objects in a different directory, use the `--output-dir` flag. This procedure uses `<path_to_ccoctl_output_dir>` to refer to this directory.
+====
+
+.Prerequisites
+
+You must have:
+
+* Extracted and prepared the `ccoctl` binary.
+* Created a RAM user with sufficient permission to create the {product-title} cluster.
+* Added the AccessKeyID (`access_key_id`) and AccessKeySecret (`access_key_secret`) of that RAM user into the link:https://www.alibabacloud.com/help/en/doc-detail/311667.htm#h2-sls-mfm-3p3[`~/.alibabacloud/credentials` file] on your local computer.
+
+.Procedure
+
+. Set a `$RELEASE_IMAGE` variable with the release image from your installation file by running the following command:
++
+[source,terminal]
+----
+$ RELEASE_IMAGE=$(./openshift-install version | awk '/release image/ {print $3}')
+----
+
+. Extract the list of `CredentialsRequest` objects from the {product-title} release image by running the following command:
++
+[source,terminal]
+----
+$ oc adm release extract \
+  --from=$RELEASE_IMAGE \
+  --credentials-requests \
+  --included \// <1>
+  --install-config=<path_to_directory_with_installation_configuration>/install-config.yaml \// <2>
+  --to=<path_to_directory_for_credentials_requests> <3>
+----
+<1> The `--included` parameter includes only the manifests that your specific cluster configuration requires.
+<2> Specify the location of the `install-config.yaml` file.
+<3> Specify the path to the directory where you want to store the `CredentialsRequest` objects. If the specified directory does not exist, this command creates it.
++
+[NOTE]
+====
+This command might take a few moments to run.
+====
+
+
+
+. Use the `ccoctl` tool to process all `CredentialsRequest` objects by running the following command:
+
+.. Run the following command to use the tool:
++
+[source,terminal]
+----
+$ ccoctl alibabacloud create-ram-users \
+  --name <name> \// <1>
+  --region=<alibaba_region> \// <2>
+  --credentials-requests-dir=<path_to_credentials_requests_directory> \// <3>
+  --output-dir=<path_to_ccoctl_output_dir> <4>
+----
+<1> Specify the name used to tag any cloud resources that are created for tracking.
+<2> Specify the Alibaba Cloud region in which cloud resources will be created.
+<3> Specify the directory containing the files for the component `CredentialsRequest` objects.
+<4> Specify the directory where the generated component credentials secrets will be placed.
++
+[NOTE]
+====
+If your cluster uses Technology Preview features that are enabled by the `TechPreviewNoUpgrade` feature set, you must include the `--enable-tech-preview` parameter.
+====
++
+.Example output
+[source,text]
+----
+2022/02/11 16:18:26 Created RAM User: user1-alicloud-openshift-machine-api-alibabacloud-credentials
+2022/02/11 16:18:27 Ready for creating new ram policy user1-alicloud-openshift-machine-api-alibabacloud-credentials-policy-policy
+2022/02/11 16:18:27 RAM policy user1-alicloud-openshift-machine-api-alibabacloud-credentials-policy-policy has created
+2022/02/11 16:18:28 Policy user1-alicloud-openshift-machine-api-alibabacloud-credentials-policy-policy has attached on user user1-alicloud-openshift-machine-api-alibabacloud-credentials
+2022/02/11 16:18:29 Created access keys for RAM User: user1-alicloud-openshift-machine-api-alibabacloud-credentials
+2022/02/11 16:18:29 Saved credentials configuration to: user1-alicloud/manifests/openshift-machine-api-alibabacloud-credentials-credentials.yaml
+...
+----
++
+[NOTE]
+====
+A RAM user can have up to two AccessKeys at the same time. If you run `ccoctl alibabacloud create-ram-users` more than twice, the previously generated manifests secret becomes stale and you must reapply the newly generated secrets.
+====
+
+.. Verify that the {product-title} secrets are created:
++
+[source,terminal]
+----
+$ ls <path_to_ccoctl_output_dir>/manifests
+----
++
+.Example output
+[source,text]
+----
+openshift-cluster-csi-drivers-alibaba-disk-credentials-credentials.yaml
+openshift-image-registry-installer-cloud-credentials-credentials.yaml
+openshift-ingress-operator-cloud-credentials-credentials.yaml
+openshift-machine-api-alibabacloud-credentials-credentials.yaml
+----
++
+You can verify that the RAM users and policies are created by querying Alibaba Cloud. For more information, refer to Alibaba Cloud documentation on listing RAM users and policies.
+
+. Copy the generated credential files to the target manifests directory:
++
+[source,terminal]
+----
+$ cp ./<path_to_ccoctl_output_dir>/manifests/*credentials.yaml ./<path_to_installation>dir>/manifests/
+----
++
+where:
+
+`<path_to_ccoctl_output_dir>`:: Specifies the directory created by the `ccoctl alibabacloud create-ram-users` command.
+`<path_to_installation_dir>`:: Specifies the directory in which the installation program creates files.
+
+
+//Platforms that must use `ccoctl`
+:!alibabacloud-vpc:
+
+//AWS install assemblies
+
+//GCP install assemblies
+
+//global Azure install assemblies
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-default.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-shared-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-ibm-cloud-customizations.adoc
+// * installing/installing_gcp/installing-ibm-cloud-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-customizations.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// If you use this module in any other assembly, you must update the ifeval
+// statements.
+
+:custom-config:
+:single-step:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-launching-installer_{context}"]
+= Deploying the cluster
+
+You can install {product-title} on a compatible cloud platform.
+
+[IMPORTANT]
+====
+You can run the `create cluster` command of the installation program only once, during initial installation.
+====
+
+.Prerequisites
+
+* You have configured an account with the cloud platform that hosts your cluster.
+
+* You have the {product-title} installation program and the pull secret for your cluster.
+* You have verified that the cloud provider account on your host has the correct permissions to deploy the cluster. An account with incorrect permissions causes the installation process to fail with an error message that displays the missing permissions.
+
+.Procedure
+
+* Change to the directory that contains the installation program and initialize the cluster deployment:
++
+[source,terminal]
+----
+$ ./openshift-install create cluster --dir <installation_directory> \ <1>
+    --log-level=info <2>
+----
+<1> For `<installation_directory>`, specify the
+location of your customized `./install-config.yaml` file.
+<2> To view different installation details, specify `warn`, `debug`, or
+`error` instead of `info`.
+
+
+
+
+
+.Verification
+When the cluster deployment completes successfully:
+
+* The terminal displays directions for accessing your cluster, including a link to the web console and credentials for the `kubeadmin` user.
+* Credential information also outputs to `<installation_directory>/.openshift_install.log`.
+
+[IMPORTANT]
+====
+Do not delete the installation program or the files that the installation program creates. Both are required to delete the cluster.
+====
+
+.Example output
+[source,terminal]
+----
+...
+INFO Install complete!
+INFO To access the cluster as the system:admin user when using 'oc', run 'export KUBECONFIG=/home/myuser/install_dir/auth/kubeconfig'
+INFO Access the OpenShift web-console here: https://console-openshift-console.apps.mycluster.example.com
+INFO Login to the console with user: "kubeadmin", and password: "password"
+INFO Time elapsed: 36m22s
+----
+
+[IMPORTANT]
+====
+* The Ignition config files that the installation program generates contain certificates that expire after 24 hours, which are then renewed at that time. If the cluster is shut down before renewing the certificates and the cluster is later restarted after the 24 hours have elapsed, the cluster automatically recovers the expired certificates. The exception is that you must manually approve the pending `node-bootstrapper` certificate signing requests (CSRs) to recover kubelet certificates. See the documentation for _Recovering from expired control plane certificates_ for more information.
+
+* It is recommended that you use Ignition config files within 12 hours after they are generated because the 24-hour certificate rotates from 16 to 22 hours after the cluster is installed. By using the Ignition config files within 12 hours, you can avoid installation failure if the certificate update runs during installation.
+====
+
+:!custom-config:
+:!single-step:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * cli_reference/openshift_cli/getting-started.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adocs
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/install_config/installing-restricted-networks-preparations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * openshift_images/samples-operator-alt-registry.adoc
+// * updating/updating-restricted-network-cluster/mirroring-image-repository.adoc
+// * microshift_cli_ref/microshift-oc-cli-install.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/mirroring-image-repository.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+// AMQ docs link to this; do not change anchor
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="cli-installing-cli_{context}"]
+= Installing the OpenShift CLI by downloading the binary
+
+You can install the {oc-first} to interact with
+{product-title}
+from a command-line interface. You can install `oc` on Linux, Windows, or macOS.
+
+[IMPORTANT]
+====
+If you installed an earlier version of `oc`, you cannot use it to complete all of the commands in
+{product-title} {product-version}.
+Download and install the new version of `oc`.
+====
+
+[discrete]
+== Installing the OpenShift CLI on Linux
+
+You can install the OpenShift CLI (`oc`) binary on Linux by using the following procedure.
+
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the architecture from the *Product Variant* drop-down list.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} Linux Client* entry and save the file.
+. Unpack the archive:
++
+[source,terminal]
+----
+$ tar xvf <file>
+----
+. Place the `oc` binary in a directory that is on your `PATH`.
++
+To check your `PATH`, execute the following command:
++
+[source,terminal]
+----
+$ echo $PATH
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+$ oc <command>
+----
+
+[discrete]
+== Installing the OpenShift CLI on Windows
+
+You can install the OpenShift CLI (`oc`) binary on Windows by using the following procedure.
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} Windows Client* entry and save the file.
+. Unzip the archive with a ZIP program.
+. Move the `oc` binary to a directory that is on your `PATH`.
++
+To check your `PATH`, open the command prompt and execute the following command:
++
+[source,terminal]
+----
+C:\> path
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+C:\> oc <command>
+----
+
+[discrete]
+== Installing the OpenShift CLI on macOS
+
+You can install the OpenShift CLI (`oc`) binary on macOS by using the following procedure.
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} macOS Client* entry and save the file.
++
+[NOTE]
+====
+For macOS arm64, choose the *OpenShift v{product-version} macOS arm64 Client* entry.
+====
+. Unpack and unzip the archive.
+. Move the `oc` binary to a directory on your PATH.
++
+To check your `PATH`, open a terminal and execute the following command:
++
+[source,terminal]
+----
+$ echo $PATH
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+$ oc <command>
+----
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp_user_infra/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="cli-logging-in-kubeadmin_{context}"]
+= Logging in to the cluster by using the CLI
+
+You can log in to your cluster as a default system user by exporting the cluster `kubeconfig` file.
+The `kubeconfig` file contains information about the cluster that is used by the CLI to connect a client to the correct cluster and API server.
+The file is specific to a cluster and is created during {product-title} installation.
+
+.Prerequisites
+
+* You deployed an {product-title} cluster.
+* You installed the `oc` CLI.
+
+.Procedure
+
+. Export the `kubeadmin` credentials:
++
+[source,terminal]
+----
+$ export KUBECONFIG=<installation_directory>/auth/kubeconfig <1>
+----
+<1> For `<installation_directory>`, specify the path to the directory that you stored
+the installation files in.
+
+. Verify you can run `oc` commands successfully using the exported configuration:
++
+[source,terminal]
+----
+$ oc whoami
+----
++
+.Example output
+[source,terminal]
+----
+system:admin
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-china.adoc.
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// *installing/validating-an-installation.adoc
+// *installing/installing_aws/installing-aws-user-infra.adoc
+// *installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// *installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="logging-in-by-using-the-web-console_{context}"]
+= Logging in to the cluster by using the web console
+
+The `kubeadmin` user exists by default after an {product-title} installation. You can log in to your cluster as the `kubeadmin` user by using the {product-title} web console.
+
+.Prerequisites
+
+* You have access to the installation host.
+* You completed a cluster installation and all cluster Operators are available.
+
+.Procedure
+
+. Obtain the password for the `kubeadmin` user from the `kubeadmin-password` file on the installation host:
++
+[source,terminal]
+----
+$ cat <installation_directory>/auth/kubeadmin-password
+----
++
+[NOTE]
+====
+Alternatively, you can obtain the `kubeadmin` password from the `<installation_directory>/.openshift_install.log` log file on the installation host.
+====
+
+. List the {product-title} web console route:
++
+[source,terminal]
+----
+$ oc get routes -n openshift-console | grep 'console-openshift'
+----
++
+[NOTE]
+====
+Alternatively, you can obtain the {product-title} route from the `<installation_directory>/.openshift_install.log` log file on the installation host.
+====
++
+.Example output
+[source,terminal]
+----
+console     console-openshift-console.apps.<cluster_name>.<base_domain>            console     https   reencrypt/Redirect   None
+----
+
+. Navigate to the route detailed in the output of the preceding command in a web browser and log in as the `kubeadmin` user.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-user-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_openstack/installing-openstack-installer-sr-iov.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cluster-telemetry_{context}"]
+= Telemetry access for {product-title}
+
+In {product-title} {product-version}, the Telemetry service, which runs by default to provide metrics about cluster health and the success of updates, requires internet access. If your cluster is connected to the internet, Telemetry runs automatically, and your cluster is registered to {cluster-manager-url}.
+
+After you confirm that your {cluster-manager-url} inventory is correct, either maintained automatically by Telemetry or manually by using {cluster-manager}, link:https://access.redhat.com/documentation/en-us/subscription_central/2020-04/html/getting_started_with_subscription_watch/con-how-to-select-datacollection-tool_assembly-requirements-and-your-responsibilities-ctxt#red_hat_openshift[use subscription watch] to track your {product-title} subscriptions at the account or multi-cluster level.
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See xref:../../support/remote_health_monitoring/about-remote-health-monitoring.adoc#about-remote-health-monitoring[About remote health monitoring] for more information about the Telemetry service.
+* See xref:../../web_console/web-console.adoc#web-console[Accessing the web console] for more details about accessing and understanding the {product-title} web console
+
+[id="next-steps_installing-alibaba-vpc"]
+== Next steps
+
+* xref:../../installing/validating-an-installation.adoc#validating-an-installation[Validating an installation].
+* xref:../../post_installation_configuration/cluster-tasks.adoc#available_cluster_customizations[Customize your cluster].
+* If necessary, you can xref:../../support/remote_health_monitoring/opting-out-of-remote-health-reporting.adoc#opting-out-remote-health-reporting_opting-out-remote-health-reporting[opt out of remote health reporting].
+//Given that manual mode is required to install on Alibaba Cloud, I do not believe this xref is necessary.
+//* If necessary, you can xref:../../post_installation_configuration/cluster-tasks.adoc#manually-removing-cloud-creds_post-install-cluster-tasks[remove cloud provider credentials].
+
+//# includes=_attributes/common-attributes,snippets/technology-preview,modules/installation-custom-alibaba-vpc,modules/snippets/custom-dns-server,modules/cluster-entitlements,modules/ssh-agent-using,modules/installation-obtaining-installer,modules/installation-initializing,modules/installation-alibaba-config-yaml,modules/manually-creating-alibaba-manifests,modules/cco-ccoctl-configuring,modules/cco-ccoctl-creating-at-once,modules/installation-launching-installer,modules/cli-installing-cli,modules/cli-logging-in-kubeadmin,modules/logging-in-by-using-the-web-console,modules/cluster-telemetry

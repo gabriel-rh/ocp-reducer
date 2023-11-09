@@ -1,0 +1,697 @@
+:_mod-docs-content-type: ASSEMBLY
+[id='what-huge-pages-do-and-how-they-are-consumed']
+= What huge pages do and how they are consumed by applications
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: huge-pages
+
+toc::[]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/what-huge-pages-do-and-how-they-are-consumed-by-apps.adoc
+// * virt/virtual_machines/advanced_vm_management/virt-using-huge-pages-with-vms.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:ocp-hugepages:
+
+
+[id="what-huge-pages-do_{context}"]
+= What huge pages do
+
+Memory is managed in blocks known as pages. On most systems, a page is 4Ki. 1Mi
+of memory is equal to 256 pages; 1Gi of memory is 256,000 pages, and so on. CPUs
+have a built-in memory management unit that manages a list of these pages in
+hardware. The Translation Lookaside Buffer (TLB) is a small hardware cache of
+virtual-to-physical page mappings. If the virtual address passed in a hardware
+instruction can be found in the TLB, the mapping can be determined quickly. If
+not, a TLB miss occurs, and the system falls back to slower, software-based
+address translation, resulting in performance issues. Since the size of the TLB
+is fixed, the only way to reduce the chance of a TLB miss is to increase the
+page size.
+
+A huge page is a memory page that is larger than 4Ki. On x86_64 architectures,
+there are two common huge page sizes: 2Mi and 1Gi. Sizes vary on other
+architectures. To use huge pages, code must be written so that
+applications are aware of them. Transparent Huge Pages (THP) attempt to automate
+the management of huge pages without application knowledge, but they have
+limitations. In particular, they are limited to 2Mi page sizes. THP can lead to
+performance degradation on nodes with high memory utilization or fragmentation
+due to defragmenting efforts of THP, which can lock memory pages. For this
+reason, some applications may be designed to (or recommend) usage of
+pre-allocated huge pages instead of THP.
+
+In {product-title}, applications in a pod can allocate and consume pre-allocated
+huge pages.
+
+
+
+:ocp-hugepages!:
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/what-huge-pages-do-and-how-they-are-consumed-by-apps.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+[id="how-huge-pages-are-consumed-by-apps_{context}"]
+= How huge pages are consumed by apps
+
+Nodes must pre-allocate huge pages in order for the node to report its huge page
+capacity. A node can only pre-allocate huge pages for a single size.
+
+Huge pages can be consumed through container-level resource requirements using the
+resource name `hugepages-<size>`, where size is the most compact binary
+notation using integer values supported on a particular node. For example, if a
+node supports 2048KiB page sizes, it exposes a schedulable resource
+`hugepages-2Mi`. Unlike CPU or memory, huge pages do not support over-commitment.
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  generateName: hugepages-volume-
+spec:
+  containers:
+  - securityContext:
+      privileged: true
+    image: rhel7:latest
+    command:
+    - sleep
+    - inf
+    name: example
+    volumeMounts:
+    - mountPath: /dev/hugepages
+      name: hugepage
+    resources:
+      limits:
+        hugepages-2Mi: 100Mi <1>
+        memory: "1Gi"
+        cpu: "1"
+  volumes:
+  - name: hugepage
+    emptyDir:
+      medium: HugePages
+----
+<1> Specify the amount of memory for `hugepages` as the exact amount to be
+allocated. Do not specify this value as the amount of memory for `hugepages`
+multiplied by the size of the page. For example, given a huge page size of 2MB,
+if you want to use 100MB of huge-page-backed RAM for your application, then you
+would allocate 50 huge pages. {product-title} handles the math for you. As in
+the above example, you can specify `100MB` directly.
+
+*Allocating huge pages of a specific size*
+
+Some platforms support multiple huge page sizes. To allocate huge pages of a
+specific size, precede the huge pages boot command parameters with a huge page
+size selection parameter `hugepagesz=<size>`. The `<size>` value must be
+specified in bytes with an optional scale suffix [`kKmMgG`]. The default huge
+page size can be defined with the `default_hugepagesz=<size>` boot parameter.
+
+*Huge page requirements*
+
+* Huge page requests must equal the limits. This is the default if limits are
+specified, but requests are not.
+
+* Huge pages are isolated at a pod scope. Container isolation is planned in a
+future iteration.
+
+* `EmptyDir` volumes backed by huge pages must not consume more huge page memory
+than the pod request.
+
+* Applications that consume huge pages via `shmget()` with `SHM_HUGETLB` must run
+with a supplemental group that matches *_proc/sys/vm/hugetlb_shm_group_*.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/what-huge-pages-do-and-how-they-are-consumed-by-apps.adoc
+
+:file-name: hugepages-volume-pod.yaml
+
+:_mod-docs-content-type: PROCEDURE
+[id="consuming-huge-pages-resource-using-the-downward-api_{context}"]
+= Consuming huge pages resources using the Downward API
+
+You can use the Downward API to inject information about the huge pages resources that are consumed by a container.
+
+You can inject the resource allocation as environment variables, a volume plugin, or both. Applications that you develop and run in the container can determine the resources that are available by reading the environment variables or files in the specified volumes.
+
+.Procedure
+
+. Create a `{file-name}` file that is similar to the following example:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  generateName: hugepages-volume-
+  labels:
+    app: hugepages-example
+spec:
+  containers:
+  - securityContext:
+      capabilities:
+        add: [ "IPC_LOCK" ]
+    image: rhel7:latest
+    command:
+    - sleep
+    - inf
+    name: example
+    volumeMounts:
+    - mountPath: /dev/hugepages
+      name: hugepage
+    - mountPath: /etc/podinfo
+      name: podinfo
+    resources:
+      limits:
+        hugepages-1Gi: 2Gi
+        memory: "1Gi"
+        cpu: "1"
+      requests:
+        hugepages-1Gi: 2Gi
+    env:
+    - name: REQUESTS_HUGEPAGES_1GI <.>
+      valueFrom:
+        resourceFieldRef:
+          containerName: example
+          resource: requests.hugepages-1Gi
+  volumes:
+  - name: hugepage
+    emptyDir:
+      medium: HugePages
+  - name: podinfo
+    downwardAPI:
+      items:
+        - path: "hugepages_1G_request" <.>
+          resourceFieldRef:
+            containerName: example
+            resource: requests.hugepages-1Gi
+            divisor: 1Gi
+----
+<.> Specifies to read the resource use from `requests.hugepages-1Gi` and expose the value as the `REQUESTS_HUGEPAGES_1GI` environment variable.
+<.> Specifies to read the resource use from `requests.hugepages-1Gi` and expose the value as the file `/etc/podinfo/hugepages_1G_request`.
+
+. Create the pod from the `{file-name}` file:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc create -f {file-name}
+----
+
+.Verification
+
+. Check the value of the `REQUESTS_HUGEPAGES_1GI` environment variable:
++
+[source,terminal]
+----
+$ oc exec -it $(oc get pods -l app=hugepages-example -o jsonpath='{.items[0].metadata.name}') \
+     -- env | grep REQUESTS_HUGEPAGES_1GI
+----
++
+.Example output
+[source,terminal]
+----
+REQUESTS_HUGEPAGES_1GI=2147483648
+----
+
+. Check the value of the `/etc/podinfo/hugepages_1G_request` file:
++
+[source,terminal]
+----
+$ oc exec -it $(oc get pods -l app=hugepages-example -o jsonpath='{.items[0].metadata.name}') \
+     -- cat /etc/podinfo/hugepages_1G_request
+----
++
+.Example output
+[source,terminal]
+----
+2
+----
+
+:!file-name:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../nodes/containers/nodes-containers-downward-api.adoc#nodes-containers-downward-api[Allowing containers to consume Downward API objects]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/what-huge-pages-do-and-how-they-are-consumed-by-apps.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-huge-pages_{context}"]
+= Configuring huge pages at boot time
+
+Nodes must pre-allocate huge pages used in an {product-title} cluster. There are two ways of reserving huge pages: at boot time and at run time. Reserving at boot time increases the possibility of success because the memory has not yet been significantly fragmented. The Node Tuning Operator currently supports boot time allocation of huge pages on specific nodes.
+
+.Procedure
+
+To minimize node reboots, the order of the steps below needs to be followed:
+
+. Label all nodes that need the same huge pages setting by a label.
++
+[source,terminal]
+----
+$ oc label node <node_using_hugepages> node-role.kubernetes.io/worker-hp=
+----
+
+. Create a file with the following content and name it `hugepages-tuned-boottime.yaml`:
++
+[source,yaml]
+----
+apiVersion: tuned.openshift.io/v1
+kind: Tuned
+metadata:
+  name: hugepages <1>
+  namespace: openshift-cluster-node-tuning-operator
+spec:
+  profile: <2>
+  - data: |
+      [main]
+      summary=Boot time configuration for hugepages
+      include=openshift-node
+      [bootloader]
+      cmdline_openshift_node_hugepages=hugepagesz=2M hugepages=50 <3>
+    name: openshift-node-hugepages
+
+  recommend:
+  - machineConfigLabels: <4>
+      machineconfiguration.openshift.io/role: "worker-hp"
+    priority: 30
+    profile: openshift-node-hugepages
+----
+<1> Set the `name` of the Tuned resource to `hugepages`.
+<2> Set the `profile` section to allocate huge pages.
+<3> Note the order of parameters is important as some platforms support huge pages of various sizes.
+<4> Enable machine config pool based matching.
+
+. Create the Tuned `hugepages` object
++
+[source,terminal]
+----
+$ oc create -f hugepages-tuned-boottime.yaml
+----
+
+. Create a file with the following content and name it `hugepages-mcp.yaml`:
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  name: worker-hp
+  labels:
+    worker-hp: ""
+spec:
+  machineConfigSelector:
+    matchExpressions:
+      - {key: machineconfiguration.openshift.io/role, operator: In, values: [worker,worker-hp]}
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/worker-hp: ""
+----
+
+. Create the machine config pool:
++
+[source,terminal]
+----
+$ oc create -f hugepages-mcp.yaml
+----
+
+Given enough non-fragmented memory, all the nodes in the `worker-hp` machine config pool should now have 50 2Mi huge pages allocated.
+
+[source,terminal]
+----
+$ oc get node <node_using_hugepages> -o jsonpath="{.status.allocatable.hugepages-2Mi}"
+100Mi
+----
+
+[NOTE]
+====
+The TuneD bootloader plugin only supports {op-system-first} worker nodes.
+====
+
+////
+For run-time allocation, kubelet changes are needed, see BZ1819719.
+== At run time
+
+.Procedure
+
+. Label the node so that the Node Tuning Operator knows on which node to apply the tuned profile, which describes how many huge pages should be allocated:
++
+[source,terminal]
+----
+$ oc label node <node_using_hugepages> hugepages=true
+----
+
+. Create a file with the following content and name it `hugepages-tuned-runtime.yaml`:
++
+[source,yaml]
+----
+apiVersion: tuned.openshift.io/v1
+kind: Tuned
+metadata:
+  name: hugepages <1>
+  namespace: openshift-cluster-node-tuning-operator
+spec:
+  profile: <2>
+  - data: |
+      [main]
+      summary=Run time configuration for hugepages
+      include=openshift-node
+      [vm]
+      transparent_hugepages=never
+      [sysfs]
+      /sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages=50
+    name: node-hugepages
+
+  recommend:
+  - match: <3>
+    - label: hugepages
+    priority: 30
+    profile: node-hugepages
+----
+<1> Set the `name` of the Tuned resource to `hugepages`.
+<2> Set the `profile` section to allocate huge pages.
+<3> Set the `match` section to associate the profile to nodes with the `hugepages` label.
+
+. Create the custom `hugepages` tuned profile by using the `hugepages-tuned-runtime.yaml` file:
++
+[source,terminal]
+----
+$ oc create -f hugepages-tuned-runtime.yaml
+----
+
+. After creating the profile, the Operator applies the new profile to the correct
+node and allocates huge pages. Check the logs of a tuned pod on a node using
+huge pages to verify:
++
+[source,terminal]
+----
+$ oc logs <tuned_pod_on_node_using_hugepages> \
+    -n openshift-cluster-node-tuning-operator | grep 'applied$' | tail -n1
+----
++
+----
+2019-08-08 07:20:41,286 INFO     tuned.daemon.daemon: static tuning from profile 'node-hugepages' applied
+----
+
+////
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/what-huge-pages-do-and-how-they-are-consumed-by-apps.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="disable-thp_{context}"]
+= Disabling Transparent Huge Pages
+
+Transparent Huge Pages (THP) attempt to automate most aspects of creating, managing, and using huge pages. Since THP automatically manages the huge pages, this is not always handled optimally for all types of workloads. THP can lead to performance regressions, since many applications handle huge pages on their own. Therefore, consider disabling THP. The following steps describe how to disable THP using the Node Tuning Operator (NTO).
+
+.Procedure
+
+. Create a file with the following content and name it `thp-disable-tuned.yaml`:
++
+[source,yaml]
+----
+apiVersion: tuned.openshift.io/v1
+kind: Tuned
+metadata:
+  name: thp-workers-profile
+  namespace: openshift-cluster-node-tuning-operator
+spec:
+  profile:
+  - data: |
+      [main]
+      summary=Custom tuned profile for OpenShift to turn off THP on worker nodes
+      include=openshift-node
+
+      [vm]
+      transparent_hugepages=never
+    name: openshift-thp-never-worker
+
+  recommend:
+  - match:
+    - label: node-role.kubernetes.io/worker
+    priority: 25
+    profile: openshift-thp-never-worker
+----
+
+. Create the Tuned object:
++
+[source,terminal]
+----
+$ oc create -f thp-disable-tuned.yaml
+----
+
+. Check the list of active profiles:
++
+[source,terminal]
+----
+$ oc get profile -n openshift-cluster-node-tuning-operator
+----
+
+.Verification
+
+* Log in to one of the nodes and do a regular THP check to verify if the nodes applied the profile successfully:
++
+[source,terminal]
+----
+$ cat /sys/kernel/mm/transparent_hugepage/enabled
+----
++
+.Example output
+[source,terminal]
+----
+always madvise [never]
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/what-huge-pages-do,modules/how-huge-pages-are-consumed-by-apps,modules/consuming-huge-pages-resource-using-the-downward-api,modules/configuring-huge-pages,modules/disabling-transparent-huge-pages

@@ -1,0 +1,989 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ztp-manual-install"]
+= Manually installing a {sno} cluster with ZTP
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: ztp-manual-install
+
+toc::[]
+
+You can deploy a managed {sno} cluster by using {rh-rhacm-first} and the assisted service.
+
+[NOTE]
+====
+If you are creating multiple managed clusters, use the `SiteConfig` method described in xref:../../scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc#ztp-deploying-far-edge-sites[Deploying far edge sites with ZTP].
+====
+
+[IMPORTANT]
+====
+The target bare-metal host must meet the networking, firmware, and hardware requirements listed in xref:../../scalability_and_performance/ztp_far_edge/ztp-reference-cluster-configuration-for-vdu.adoc#sno-configure-for-vdu[Recommended cluster configuration for vDU application workloads].
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-manual-install.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-generating-install-and-config-crs-manually_{context}"]
+= Generating {ztp} installation and configuration CRs manually
+
+Use the `generator` entrypoint for the `ztp-site-generate` container to generate the site installation and configuration custom resource (CRs) for a cluster based on `SiteConfig` and `PolicyGenTemplate` CRs.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create an output folder by running the following command:
++
+[source,terminal]
+----
+$ mkdir -p ./out
+----
+
+. Export the `argocd` directory from the `ztp-site-generate` container image:
++
+[source,terminal,subs="attributes+"]
+----
+$ podman run --log-driver=none --rm registry.redhat.io/openshift4/ztp-site-generate-rhel8:v{product-version} extract /home/ztp --tar | tar x -C ./out
+----
++
+The `./out` directory has the reference `PolicyGenTemplate` and `SiteConfig` CRs in the `out/argocd/example/` folder.
++
+.Example output
+[source,terminal]
+----
+out
+ └── argocd
+      └── example
+           ├── policygentemplates
+           │     ├── common-ranGen.yaml
+           │     ├── example-sno-site.yaml
+           │     ├── group-du-sno-ranGen.yaml
+           │     ├── group-du-sno-validator-ranGen.yaml
+           │     ├── kustomization.yaml
+           │     └── ns.yaml
+           └── siteconfig
+                  ├── example-sno.yaml
+                  ├── KlusterletAddonConfigOverride.yaml
+                  └── kustomization.yaml
+----
+
+. Create an output folder for the site installation CRs:
++
+[source,terminal]
+----
+$ mkdir -p ./site-install
+----
+
+. Modify the example `SiteConfig` CR for the cluster type that you want to install. Copy `example-sno.yaml` to `site-1-sno.yaml` and modify the CR to match the details of the site and bare-metal host that you want to install, for example:
++
+[source,yaml]
+----
+# example-node1-bmh-secret & assisted-deployment-pull-secret need to be created under same namespace example-sno
+---
+apiVersion: ran.openshift.io/v1
+kind: SiteConfig
+metadata:
+  name: "example-sno"
+  namespace: "example-sno"
+spec:
+  baseDomain: "example.com"
+  cpuPartitioningMode: AllNodes
+  pullSecretRef:
+    name: "assisted-deployment-pull-secret"
+  clusterImageSetNameRef: "openshift-4.10"
+  sshPublicKey: "ssh-rsa AAAA..."
+  clusters:
+  - clusterName: "example-sno"
+    networkType: "OVNKubernetes"
+    installConfigOverrides: |
+      {
+        "capabilities": {
+          "baselineCapabilitySet": "None",
+          "additionalEnabledCapabilities": [
+            "marketplace",
+            "NodeTuning"
+          ]
+        }
+      }
+    clusterLabels:
+      common: true
+      group-du-sno: ""
+      sites : "example-sno"
+    clusterNetwork:
+      - cidr: 1001:1::/48
+        hostPrefix: 64
+    machineNetwork:
+      - cidr: 1111:2222:3333:4444::/64
+    serviceNetwork:
+      - 1001:2::/112
+    additionalNTPSources:
+      - 1111:2222:3333:4444::2
+    # crTemplates:
+    #   KlusterletAddonConfig: "KlusterletAddonConfigOverride.yaml"
+    nodes:
+      - hostName: "example-node1.example.com"
+        role: "master"
+        bmcAddress: "idrac-virtualmedia+https://[1111:2222:3333:4444::bbbb:1]/redfish/v1/Systems/System.Embedded.1"
+        bmcCredentialsName:
+          name: "example-node1-bmh-secret"
+        bootMACAddress: "AA:BB:CC:DD:EE:11"
+        bootMode: "UEFI"
+        rootDeviceHints:
+          wwn: "0x11111000000asd123"
+        # diskPartition:
+        #   - device: /dev/disk/by-id/wwn-0x11111000000asd123 # match rootDeviceHints
+        #     partitions:
+        #       - mount_point: /var/imageregistry
+        #         size: 102500
+        #         start: 344844
+        ignitionConfigOverride: |
+          {
+            "ignition": {
+              "version": "3.2.0"
+            },
+            "storage": {
+              "disks": [
+                {
+                  "device": "/dev/disk/by-id/wwn-0x11111000000asd123",
+                  "wipeTable": false,
+                  "partitions": [
+                    {
+                      "sizeMiB": 16,
+                      "label": "httpevent1",
+                      "startMiB": 350000
+                    },
+                    {
+                      "sizeMiB": 16,
+                      "label": "httpevent2",
+                      "startMiB": 350016
+                    }
+                  ]
+                }
+              ],
+              "filesystem": [
+                {
+                  "device": "/dev/disk/by-partlabel/httpevent1",
+                  "format": "xfs",
+                  "wipeFilesystem": true
+                },
+                {
+                  "device": "/dev/disk/by-partlabel/httpevent2",
+                  "format": "xfs",
+                  "wipeFilesystem": true
+                }
+              ]
+            }
+          }
+        nodeNetwork:
+          interfaces:
+            - name: eno1
+              macAddress: "AA:BB:CC:DD:EE:11"
+          config:
+            interfaces:
+              - name: eno1
+                type: ethernet
+                state: up
+                ipv4:
+                  enabled: false
+                ipv6:
+                  enabled: true
+                  address:
+                  - ip: 1111:2222:3333:4444::aaaa:1
+                    prefix-length: 64
+            dns-resolver:
+              config:
+                search:
+                - example.com
+                server:
+                - 1111:2222:3333:4444::2
+            routes:
+              config:
+              - destination: ::/0
+                next-hop-interface: eno1
+                next-hop-address: 1111:2222:3333:4444::1
+                table-id: 254
+----
++
+[NOTE]
+====
+Once you have extracted reference CR configuration files from the `out/extra-manifest` directory of the `ztp-site-generate` container, you can use `extraManifests.searchPaths` to include the path to the git directory containing those files.
+This allows the {ztp} pipeline to apply those CR files during cluster installation.
+If you configure a `searchPaths` directory, the {ztp} pipeline does not fetch manifests from the `ztp-site-generate` container during site installation.
+====
+
+. Generate the Day 0 installation CRs by processing the modified `SiteConfig` CR `site-1-sno.yaml` by running the following command:
++
+[source,terminal,subs="attributes+"]
+----
+$ podman run -it --rm -v `pwd`/out/argocd/example/siteconfig:/resources:Z -v `pwd`/site-install:/output:Z,U registry.redhat.io/openshift4/ztp-site-generate-rhel8:v{product-version} generator install site-1-sno.yaml /output
+----
++
+.Example output
+[source,terminal]
+----
+site-install
+└── site-1-sno
+    ├── site-1_agentclusterinstall_example-sno.yaml
+    ├── site-1-sno_baremetalhost_example-node1.example.com.yaml
+    ├── site-1-sno_clusterdeployment_example-sno.yaml
+    ├── site-1-sno_configmap_example-sno.yaml
+    ├── site-1-sno_infraenv_example-sno.yaml
+    ├── site-1-sno_klusterletaddonconfig_example-sno.yaml
+    ├── site-1-sno_machineconfig_02-master-workload-partitioning.yaml
+    ├── site-1-sno_machineconfig_predefined-extra-manifests-master.yaml
+    ├── site-1-sno_machineconfig_predefined-extra-manifests-worker.yaml
+    ├── site-1-sno_managedcluster_example-sno.yaml
+    ├── site-1-sno_namespace_example-sno.yaml
+    └── site-1-sno_nmstateconfig_example-node1.example.com.yaml
+----
+
+. Optional: Generate just the Day 0 `MachineConfig` installation CRs for a particular cluster type by processing the reference `SiteConfig` CR with the `-E` option. For example, run the following commands:
+
+.. Create an output folder for the `MachineConfig` CRs:
++
+[source,terminal]
+----
+$ mkdir -p ./site-machineconfig
+----
+
+.. Generate the `MachineConfig` installation CRs:
++
+[source,terminal,subs="attributes+"]
+----
+$ podman run -it --rm -v `pwd`/out/argocd/example/siteconfig:/resources:Z -v `pwd`/site-machineconfig:/output:Z,U registry.redhat.io/openshift4/ztp-site-generate-rhel8:v{product-version} generator install -E site-1-sno.yaml /output
+----
++
+.Example output
+[source,terminal]
+----
+site-machineconfig
+└── site-1-sno
+    ├── site-1-sno_machineconfig_02-master-workload-partitioning.yaml
+    ├── site-1-sno_machineconfig_predefined-extra-manifests-master.yaml
+    └── site-1-sno_machineconfig_predefined-extra-manifests-worker.yaml
+----
+
+. Generate and export the Day 2 configuration CRs using the reference `PolicyGenTemplate` CRs from the previous step. Run the following commands:
+
+.. Create an output folder for the Day 2 CRs:
++
+[source,terminal]
+----
+$ mkdir -p ./ref
+----
+
+.. Generate and export the Day 2 configuration CRs:
++
+[source,terminal,subs="attributes+"]
+----
+$ podman run -it --rm -v `pwd`/out/argocd/example/policygentemplates:/resources:Z -v `pwd`/ref:/output:Z,U registry.redhat.io/openshift4/ztp-site-generate-rhel8:v{product-version} generator config -N . /output
+----
++
+The command generates example group and site-specific `PolicyGenTemplate` CRs for {sno}, three-node clusters, and standard clusters in the `./ref` folder.
++
+.Example output
+[source,terminal]
+----
+ref
+ └── customResource
+      ├── common
+      ├── example-multinode-site
+      ├── example-sno
+      ├── group-du-3node
+      ├── group-du-3node-validator
+      │    └── Multiple-validatorCRs
+      ├── group-du-sno
+      ├── group-du-sno-validator
+      ├── group-du-standard
+      └── group-du-standard-validator
+           └── Multiple-validatorCRs
+----
+
+. Use the generated CRs as the basis for the CRs that you use to install the cluster. You apply the installation CRs to the hub cluster as described in "Installing a single managed cluster". The configuration CRs can be applied to the cluster after cluster installation is complete.
+
+.Verification
+
+* Verify that the custom roles and labels are applied after the node is deployed:
++
+[source,terminal]
+----
+$ oc describe node example-node.example.com
+----
+
+.Example output
+[source,terminal]
+----
+Name:   example-node.example.com
+Roles:  control-plane,example-label,master,worker
+Labels: beta.kubernetes.io/arch=amd64
+        beta.kubernetes.io/os=linux
+        custom-label/parameter1=true
+        kubernetes.io/arch=amd64
+        kubernetes.io/hostname=cnfdf03.telco5gran.eng.rdu2.redhat.com
+        kubernetes.io/os=linux
+        node-role.kubernetes.io/control-plane=
+        node-role.kubernetes.io/example-label= <1>
+        node-role.kubernetes.io/master=
+        node-role.kubernetes.io/worker=
+        node.openshift.io/os_id=rhcos
+----
+<1> The custom label is applied to the node.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-reference-cluster-configuration-for-vdu.adoc#ztp-sno-du-enabling-workload-partitioning_sno-configure-for-vdu[Workload partitioning]
+
+* xref:../../installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc#bmc-addressing_ipi-install-installation-workflow[BMC addressing]
+
+* xref:../../installing/installing_with_agent_based_installer/preparing-to-install-with-agent-based-installer.adoc#root-device-hints_preparing-to-install-with-agent-based-installer[About root device hints]
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc#ztp-sno-siteconfig-config-reference_ztp-deploying-far-edge-sites[{sno-caps} SiteConfig CR installation reference]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+// * scalability_and_performance/ztp_far_edge/ztp-manual-install.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-creating-the-site-secrets_{context}"]
+= Creating the managed bare-metal host secrets
+
+Add the required `Secret` custom resources (CRs) for the managed bare-metal host to the hub cluster. You need a secret for the {ztp-first} pipeline to access the Baseboard Management Controller (BMC) and a secret for the assisted installer service to pull cluster installation images from the registry.
+
+[NOTE]
+====
+The secrets are referenced from the `SiteConfig` CR by name. The namespace
+must match the `SiteConfig` namespace.
+====
+
+.Procedure
+
+. Create a YAML secret file containing credentials for the host Baseboard Management Controller (BMC) and a pull secret required for installing OpenShift and all add-on cluster Operators:
+
+.. Save the following YAML as the file `example-sno-secret.yaml`:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-sno-bmc-secret
+  namespace: example-sno <1>
+data: <2>
+  password: <base64_password>
+  username: <base64_username>
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pull-secret
+  namespace: example-sno  <3>
+data:
+  .dockerconfigjson: <pull_secret> <4>
+type: kubernetes.io/dockerconfigjson
+----
+<1> Must match the namespace configured in the related `SiteConfig` CR
+<2> Base64-encoded values for `password` and `username`
+<3> Must match the namespace configured in the related `SiteConfig` CR
+<4> Base64-encoded pull secret
+
+. Add the relative path to `example-sno-secret.yaml` to the `kustomization.yaml` file that you use to install the cluster.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-manual-install.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="setting-managed-bare-metal-host-kernel-arguments_{context}"]
+= Configuring Discovery ISO kernel arguments for manual installations using {ztp}
+
+The {ztp-first} workflow uses the Discovery ISO as part of the {product-title} installation process on managed bare-metal hosts. You can edit the `InfraEnv` resource to specify kernel arguments for the Discovery ISO. This is useful for cluster installations with specific environmental requirements. For example, configure the `rd.net.timeout.carrier` kernel argument for the Discovery ISO to facilitate static networking for the cluster or to receive a DHCP address before downloading the root file system during installation.
+
+[NOTE]
+====
+In {product-title} {product-version}, you can only add kernel arguments. You can not replace or delete kernel arguments.
+====
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (oc).
+* You have logged in to the hub cluster as a user with cluster-admin privileges.
+* You have manually generated the installation and configuration custom resources (CRs).
+
+.Procedure
+
+. Edit the `spec.kernelArguments` specification in the `InfraEnv` CR to configure kernel arguments:
+
+[source,yaml,options="nowrap",role="white-space-pre"]
+----
+apiVersion: agent-install.openshift.io/v1beta1
+kind: InfraEnv
+metadata:
+  name: <cluster_name>
+  namespace: <cluster_name>
+spec:
+  kernelArguments:
+    - operation: append <1>
+      value: audit=0 <2>
+    - operation: append
+      value: trace=1
+  clusterRef:
+    name: <cluster_name>
+    namespace: <cluster_name>
+  pullSecretRef:
+    name: pull-secret
+----
+<1> Specify the append operation to add a kernel argument.
+<2> Specify the kernel argument you want to configure. This example configures the audit kernel argument and the trace kernel argument.
+
+[NOTE]
+====
+The `SiteConfig` CR generates the `InfraEnv` resource as part of the day-0 installation CRs.
+====
+
+.Verification
+To verify that the kernel arguments are applied, after the Discovery image verifies that {product-title} is ready for installation, you can SSH to the target host before the installation process begins. At that point, you can view the kernel arguments for the Discovery ISO in the `/proc/cmdline` file.
+
+. Begin an SSH session with the target host:
++
+[source,terminal]
+----
+$ ssh -i /path/to/privatekey core@<host_name>
+----
+
+. View the system's kernel arguments by using the following command:
++
+[source,terminal]
+----
+$ cat /proc/cmdline
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-manual-install.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-manually-install-a-single-managed-cluster_{context}"]
+= Installing a single managed cluster
+
+You can manually deploy a single managed cluster using the assisted service and {rh-rhacm-first}.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+* You have created the baseboard management controller (BMC) `Secret` and the image pull-secret `Secret` custom resources (CRs). See "Creating the managed bare-metal host secrets" for details.
+
+* Your target bare-metal host meets the networking and hardware requirements for managed clusters.
+
+.Procedure
+
+. Create a `ClusterImageSet` for each specific cluster version to be deployed, for example `clusterImageSet-{product-version}.yaml`. A `ClusterImageSet` has the following format:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: hive.openshift.io/v1
+kind: ClusterImageSet
+metadata:
+  name: openshift-{product-version}.0 <1>
+spec:
+   releaseImage: quay.io/openshift-release-dev/ocp-release:{product-version}.0-x86_64 <2>
+----
+<1> The descriptive version that you want to deploy.
+<2> Specifies the `releaseImage` to deploy and determines the operating system image version. The discovery ISO is based on the image version as set by `releaseImage`, or the latest version if the exact version is unavailable.
+
+. Apply the `clusterImageSet` CR:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc apply -f clusterImageSet-{product-version}.yaml
+----
+
+. Create the `Namespace` CR in the `cluster-namespace.yaml` file:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+     name: <cluster_name> <1>
+     labels:
+        name: <cluster_name> <1>
+----
+<1>  The name of the managed cluster to provision.
+
+. Apply the `Namespace` CR by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f cluster-namespace.yaml
+----
+
+. Apply the generated day-0 CRs that you extracted from the `ztp-site-generate` container and customized to meet your requirements:
++
+[source,terminal]
+----
+$ oc apply -R ./site-install/site-sno-1
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-reference-cluster-configuration-for-vdu.adoc#ztp-managed-cluster-network-prereqs_sno-configure-for-vdu[Connectivity prerequisites for managed cluster networks]
+
+* xref:../../storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc#lvms-preface-sno-ran_logical-volume-manager-storage[Deploying LVM Storage on single-node OpenShift clusters]
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-advanced-policy-config.adoc#ztp-provisioning-lvm-storage_ztp-advanced-policy-config[Configuring LVM Storage using PolicyGenTemplate CRs]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-manual-install.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-checking-the-managed-cluster-status_{context}"]
+= Monitoring the managed cluster installation status
+
+Ensure that cluster provisioning was successful by checking the cluster status.
+
+.Prerequisites
+
+* All of the custom resources have been configured and provisioned, and the `Agent`
+custom resource is created on the hub for the managed cluster.
+
+.Procedure
+
+. Check the status of the managed cluster:
++
+[source,terminal]
+----
+$ oc get managedcluster
+----
++
+`True` indicates the managed cluster is ready.
+
+. Check the agent status:
++
+[source,terminal]
+----
+$ oc get agent -n <cluster_name>
+----
+
+. Use the `describe` command to provide an in-depth description of the agent’s condition. Statuses to be aware of include `BackendError`, `InputError`, `ValidationsFailing`, `InstallationFailed`, and `AgentIsConnected`. These statuses are relevant to the `Agent` and `AgentClusterInstall` custom resources.
++
+[source,terminal]
+----
+$ oc describe agent -n <cluster_name>
+----
+
+. Check the cluster provisioning status:
++
+[source,terminal]
+----
+$ oc get agentclusterinstall -n <cluster_name>
+----
+
+. Use the `describe` command to provide an in-depth description of the cluster provisioning status:
++
+[source,terminal]
+----
+$ oc describe agentclusterinstall -n <cluster_name>
+----
+
+. Check the status of the managed cluster’s add-on services:
++
+[source,terminal]
+----
+$ oc get managedclusteraddon -n <cluster_name>
+----
+
+. Retrieve the authentication information of the `kubeconfig` file for the managed cluster:
++
+[source,terminal]
+----
+$ oc get secret -n <cluster_name> <cluster_name>-admin-kubeconfig -o jsonpath={.data.kubeconfig} | base64 -d > <directory>/<cluster_name>-kubeconfig
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-manual-install.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-troubleshooting-the-managed-cluster_{context}"]
+= Troubleshooting the managed cluster
+
+Use this procedure to diagnose any installation issues that might occur with the managed cluster.
+
+.Procedure
+
+. Check the status of the managed cluster:
++
+[source,terminal]
+----
+$ oc get managedcluster
+----
++
+.Example output
+[source,terminal]
+----
+NAME            HUB ACCEPTED   MANAGED CLUSTER URLS   JOINED   AVAILABLE   AGE
+SNO-cluster     true                                   True     True      2d19h
+----
++
+If the status in the `AVAILABLE` column is `True`, the managed cluster is being managed by the hub.
++
+If the status in the `AVAILABLE` column is `Unknown`, the managed cluster is not being managed by the hub.
+Use the following steps to continue checking to get more information.
+
+. Check the `AgentClusterInstall` install status:
++
+[source,terminal]
+----
+$ oc get clusterdeployment -n <cluster_name>
+----
++
+.Example output
+[source,terminal]
+----
+NAME        PLATFORM            REGION   CLUSTERTYPE   INSTALLED    INFRAID    VERSION  POWERSTATE AGE
+Sno0026    agent-baremetal                               false                          Initialized
+2d14h
+----
++
+If the status in the `INSTALLED` column is `false`, the installation was unsuccessful.
+
+. If the installation failed, enter the following command to review the status of the `AgentClusterInstall` resource:
++
+[source,terminal]
+----
+$ oc describe agentclusterinstall -n <cluster_name> <cluster_name>
+----
+
+. Resolve the errors and reset the cluster:
+
+.. Remove the cluster’s managed cluster resource:
++
+[source,terminal]
+----
+$ oc delete managedcluster <cluster_name>
+----
+.. Remove the cluster’s namespace:
++
+[source,terminal]
+----
+$ oc delete namespace <cluster_name>
+----
++
+This deletes all of the namespace-scoped custom resources created for this cluster. You must wait for the `ManagedCluster` CR deletion to complete before proceeding.
+
+.. Recreate the custom resources for the managed cluster.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-manual-install.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="ztp-installation-crs_{context}"]
+= {rh-rhacm} generated cluster installation CRs reference
+
+{rh-rhacm-first} supports deploying {product-title} on single-node clusters, three-node clusters, and standard clusters with a specific set of installation custom resources (CRs) that you generate using `SiteConfig` CRs for each site.
+
+[NOTE]
+====
+Every managed cluster has its own namespace, and all of the installation CRs except for `ManagedCluster` and `ClusterImageSet` are under that namespace. `ManagedCluster` and `ClusterImageSet` are cluster-scoped, not namespace-scoped. The namespace and the CR names match the cluster name.
+====
+
+The following table lists the installation CRs that are automatically applied by the {rh-rhacm} assisted service when it installs clusters using the `SiteConfig` CRs that you configure.
+
+.Cluster installation CRs generated by {rh-rhacm}
+[cols="1,3,3", options="header"]
+|===
+|CR |Description |Usage
+
+|`BareMetalHost`
+|Contains the connection information for the Baseboard Management Controller (BMC) of the target bare-metal host.
+|Provides access to the BMC to load and start the discovery image on the target server by using the Redfish protocol.
+
+|`InfraEnv`
+|Contains information for installing {product-title} on the target bare-metal host.
+|Used with `ClusterDeployment` to generate the discovery ISO for the managed cluster.
+
+|`AgentClusterInstall`
+|Specifies details of the managed cluster configuration such as networking and the number of control plane nodes. Displays the cluster `kubeconfig` and credentials when the installation is complete.
+|Specifies the managed cluster configuration information and provides status during the installation of the cluster.
+
+|`ClusterDeployment`
+|References the `AgentClusterInstall` CR to use.
+|Used with `InfraEnv` to generate the discovery ISO for the managed cluster.
+
+|`NMStateConfig`
+|Provides network configuration information such as `MAC` address to `IP` mapping, DNS server, default route, and other network settings.
+|Sets up a static IP address for the managed cluster’s Kube API server.
+
+|`Agent`
+|Contains hardware information about the target bare-metal host.
+|Created automatically on the hub when the target machine's discovery image boots.
+
+|`ManagedCluster`
+|When a cluster is managed by the hub, it must be imported and known. This Kubernetes object provides that interface.
+|The hub uses this resource to manage and show the status of managed clusters.
+
+|`KlusterletAddonConfig`
+|Contains the list of services provided by the hub to be deployed to the `ManagedCluster` resource.
+|Tells the hub which addon services to deploy to the `ManagedCluster` resource.
+
+|`Namespace`
+|Logical space for `ManagedCluster` resources existing on the hub. Unique per site.
+|Propagates resources to the `ManagedCluster`.
+
+| `Secret`
+|Two CRs are created: `BMC Secret` and `Image Pull Secret`.
+a| * `BMC Secret` authenticates into the target bare-metal host using its username and password.
+* `Image Pull Secret` contains authentication information for the {product-title} image installed on the target bare-metal host.
+
+|`ClusterImageSet`
+|Contains {product-title} image information such as the repository and image name.
+|Passed into resources to provide {product-title} images.
+|===
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/ztp-generating-install-and-config-crs-manually,modules/ztp-creating-the-site-secrets,modules/ztp-configuring-kernel-arguments-for-discovery-iso-in-manual-installations,modules/ztp-manually-install-a-single-managed-cluster,modules/ztp-checking-the-managed-cluster-status,modules/ztp-troubleshooting-the-managed-cluster,modules/ztp-installation-crs

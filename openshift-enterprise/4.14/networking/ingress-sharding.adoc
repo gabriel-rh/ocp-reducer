@@ -1,0 +1,688 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ingress-sharding"]
+= Ingress sharding in {product-title}
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: ingress-sharding
+
+toc::[]
+
+In {product-title}, an Ingress Controller can serve all routes, or it can serve a subset of routes. By default, the Ingress Controller serves any route created in any namespace in the cluster. You can add additional Ingress Controllers to your cluster to optimize routing by creating _shards_, which are subsets of routes based on selected characteristics. To mark a route as a member of a shard, use labels in the route or namespace `metadata` field. The Ingress Controller uses _selectors_, also known as a _selection expression_, to select a subset of routes from the entire pool of routes to serve.
+
+Ingress sharding is useful in cases where you want to load balance incoming traffic across multiple Ingress Controllers, when you want to isolate traffic to be routed to a specific Ingress Controller, or for a variety of other reasons described in the next section.
+
+By default, each route uses the default domain of the cluster. However, routes can be configured to use the domain of the router instead. For more information, see xref:../networking/ingress-sharding.adoc#nw-ingress-sharding-route-configuration_ingress-sharding[Creating a route for Ingress Controller Sharding].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * ingress-operator.adoc
+// * networking/ingress-sharding.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-ingress-sharding_{context}"]
+= Ingress Controller sharding
+
+You can use Ingress sharding, also known as router sharding, to distribute a set of routes across multiple routers by adding labels to routes, namespaces, or both. The Ingress Controller uses a corresponding set of selectors to admit only the routes that have a specified label. Each Ingress shard comprises the routes that are filtered using a given selection expression.
+
+As the primary mechanism for traffic to enter the cluster, the demands on the Ingress Controller can be significant. As a cluster administrator, you can shard the routes to:
+
+* Balance Ingress Controllers, or routers, with several routes to speed up responses to changes.
+* Allocate certain routes to have different reliability guarantees than other routes.
+* Allow certain Ingress Controllers to have different policies defined.
+* Allow only specific routes to use additional features.
+* Expose different routes on different addresses so that internal and external users can see different routes, for example.
+* Transfer traffic from one version of an application to another during a blue green deployment.
+
+When Ingress Controllers are sharded, a given route is admitted to zero or more Ingress Controllers in the group. A route's status describes whether an Ingress Controller has admitted it or not. An Ingress Controller will only admit a route if it is unique to its shard.
+
+An Ingress Controller can use three sharding methods:
+
+* Adding only a namespace selector to the Ingress Controller, so that all routes in a namespace with labels that match the namespace selector are in the Ingress shard.
+
+* Adding only a route selector to the Ingress Controller, so that all routes with labels that match the route selector are in the Ingress shard.
+
+* Adding both a namespace selector and route selector to the Ingress Controller, so that routes with labels that match the route selector in a namespace with labels that match the namespace selector are in the Ingress shard.
+
+With sharding, you can distribute subsets of routes over multiple Ingress Controllers. These subsets can be non-overlapping, also called _traditional_ sharding, or overlapping, otherwise known as _overlapped_ sharding.
+
+== Traditional sharding example
+
+An Ingress Controller `finops-router` is configured with the label selector `spec.namespaceSelector.matchLabels.name` set to `finance` and `ops`:
+
+.Example YAML definition for `finops-router`
+[source,yaml]
+----
+apiVersion: v1
+items:
+- apiVersion: operator.openshift.io/v1
+  kind: IngressController
+  metadata:
+    name: finops-router
+    namespace: openshift-ingress-operator
+  spec:
+    namespaceSelector:
+      matchLabels:
+        name:
+          - finance
+          - ops
+----
+
+A second Ingress Controller `dev-router` is configured with the label selector `spec.namespaceSelector.matchLabels.name` set to `dev`:
+
+.Example YAML definition for `dev-router`
+[source,yaml]
+----
+apiVersion: v1
+items:
+- apiVersion: operator.openshift.io/v1
+  kind: IngressController
+  metadata:
+    name: dev-router
+    namespace: openshift-ingress-operator
+  spec:
+    namespaceSelector:
+      matchLabels:
+        name: dev
+----
+
+If all application routes are in separate namespaces, each labeled with `name:finance`, `name:ops`, and `name:dev` respectively, this configuration effectively distributes your routes between the two Ingress Controllers. {product-title} routes for console, authentication, and other purposes should not be handled.
+
+In the above scenario, sharding becomes a special case of partitioning, with no overlapping subsets. Routes are divided between router shards.
+
+[WARNING]
+====
+The `default` Ingress Controller continues to serve all routes unless the `namespaceSelector` or `routeSelector` fields contain routes that are meant for exclusion. See this link:https://access.redhat.com/solutions/5097511[Red Hat Knowledgebase solution] and the section "Sharding the default Ingress Controller" for more information on how to exclude routes from the default Ingress Controller.
+====
+
+== Overlapped sharding example
+
+In addition to `finops-router` and `dev-router` in the example above, you also have `devops-router`, which is configured with the label selector `spec.namespaceSelector.matchLabels.name` set to `dev` and `ops`:
+
+.Example YAML definition for `devops-router`
+[source,yaml]
+----
+apiVersion: v1
+items:
+- apiVersion: operator.openshift.io/v1
+  kind: IngressController
+  metadata:
+    name: devops-router
+    namespace: openshift-ingress-operator
+  spec:
+    namespaceSelector:
+      matchLabels:
+        name:
+          - dev
+          - ops
+----
+The routes in the namespaces labeled `name:dev` and `name:ops` are now serviced by two different Ingress Controllers. With this configuration, you have overlapping subsets of routes.
+
+With overlapping subsets of routes you can create more complex routing rules. For example, you can divert higher priority traffic to the dedicated `finops-router` while sending lower priority traffic to `devops-router`.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module include in the following assemblies:
+//
+// * ingress-operator.adoc
+// * networking/ingress-sharding.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ingress-sharding-default_{context}"]
+= Sharding the default Ingress Controller
+
+After creating a new Ingress shard, there might be routes that are admitted to your new Ingress shard that are also admitted by the default Ingress Controller. This is because the default Ingress Controller has no selectors and admits all routes by default.
+
+You can restrict an Ingress Controller from servicing routes with specific labels using either namespace selectors or route selectors. The following procedure restricts the default Ingress Controller from servicing your newly sharded `finance`, `ops`, and `dev`, routes using a namespace selector. This adds further isolation to Ingress shards.
+
+[IMPORTANT]
+====
+You must keep all of {product-title}'s administration routes on the same Ingress Controller. Therefore, avoid adding additional selectors to the default Ingress Controller that exclude these essential routes.
+====
+
+.Prerequisites
+
+* You installed the OpenShift CLI (`oc`).
+* You are logged in as a project administrator.
+
+.Procedure
+
+. Modify the default Ingress Controller by running the following command:
++
+[source,terminal]
+----
+$ oc edit ingresscontroller -n openshift-ingress-operator default
+----
+
+. Edit the Ingress Controller to contain a `namespaceSelector` that excludes the routes with any of the `finance`, `ops`, and `dev` labels:
++
+[source,yaml]
+----
+apiVersion: v1
+items:
+- apiVersion: operator.openshift.io/v1
+  kind: IngressController
+  metadata:
+    name: default
+    namespace: openshift-ingress-operator
+  spec:
+  namespaceSelector:
+    matchExpressions:
+    - key: type
+      operator: NotIn
+      values:
+      - finance
+      - ops
+      - dev
+----
+
+The default Ingress Controller will no longer serve the namespaces labeled `name:finance`, `name:ops`, and `name:dev`.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/ingress-sharding.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-ingress-sharding-dns_{context}"]
+= Ingress sharding and DNS
+
+The cluster administrator is responsible for making a separate DNS entry for each router in a project. A router will not forward unknown routes to another router.
+
+Consider the following example:
+
+* Router A lives on host 192.168.0.5 and has routes with `*.foo.com`.
+* Router B lives on host 192.168.1.9 and has routes with `*.example.com`.
+
+Separate DNS entries must resolve `\*.foo.com` to the node hosting Router A and `*.example.com` to the node hosting Router B:
+
+* `*.foo.com A IN 192.168.0.5`
+* `*.example.com A IN 192.168.1.9`
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-ingress-controller.adoc
+// * networking/ingress-operator.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ingress-sharding-route-labels_{context}"]
+= Configuring Ingress Controller sharding by using route labels
+
+Ingress Controller sharding by using route labels means that the Ingress
+Controller serves any route in any namespace that is selected by the route
+selector.
+
+.Ingress sharding using route labels
+image::nw-sharding-route-labels.png[A diagram showing multiple Ingress Controllers with different route selectors serving any route containing a label that matches a given route selector regardless of the namespace a route belongs to]
+
+Ingress Controller sharding is useful when balancing incoming traffic load among
+a set of Ingress Controllers and when isolating traffic to a specific Ingress
+Controller. For example, company A goes to one Ingress Controller and company B
+to another.
+
+.Procedure
+
+. Edit the `router-internal.yaml` file:
++
+[source,terminal]
+----
+# cat router-internal.yaml
+apiVersion: v1
+items:
+- apiVersion: operator.openshift.io/v1
+  kind: IngressController
+  metadata:
+    name: sharded
+    namespace: openshift-ingress-operator
+  spec:
+    domain: <apps-sharded.basedomain.example.net> <1>
+    nodePlacement:
+      nodeSelector:
+        matchLabels:
+          node-role.kubernetes.io/worker: ""
+    routeSelector:
+      matchLabels:
+        type: sharded
+  status: {}
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+----
+<1> Specify a domain to be used by the Ingress Controller. This domain must be different from the default Ingress Controller domain.
+
+. Apply the Ingress Controller `router-internal.yaml` file:
++
+[source,terminal]
+----
+# oc apply -f router-internal.yaml
+----
++
+The Ingress Controller selects routes in any namespace that have the label
+`type: sharded`.
+
+. Create a new route using the domain configured in the `router-internal.yaml`:
++
+[source,terminal]
+----
+$ oc expose svc <service-name> --hostname <route-name>.apps-sharded.basedomain.example.net
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-ingress-controller.adoc
+// * ingress-operator.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ingress-sharding-namespace-labels_{context}"]
+= Configuring Ingress Controller sharding by using namespace labels
+
+Ingress Controller sharding by using namespace labels means that the Ingress
+Controller serves any route in any namespace that is selected by the namespace
+selector.
+
+.Ingress sharding using namespace labels
+image::nw-sharding-namespace-labels.png[A diagram showing multiple Ingress Controllers with different namespace selectors serving routes that belong to the namespace containing a label that matches a given namespace selector]
+
+Ingress Controller sharding is useful when balancing incoming traffic load among
+a set of Ingress Controllers and when isolating traffic to a specific Ingress
+Controller. For example, company A goes to one Ingress Controller and company B
+to another.
+
+.Procedure
+
+. Edit the `router-internal.yaml` file:
++
+[source,terminal]
+----
+# cat router-internal.yaml
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: v1
+items:
+- apiVersion: operator.openshift.io/v1
+  kind: IngressController
+  metadata:
+    name: sharded
+    namespace: openshift-ingress-operator
+  spec:
+    domain: <apps-sharded.basedomain.example.net> <1>
+    nodePlacement:
+      nodeSelector:
+        matchLabels:
+          node-role.kubernetes.io/worker: ""
+    namespaceSelector:
+      matchLabels:
+        type: sharded
+  status: {}
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+----
+<1> Specify a domain to be used by the Ingress Controller. This domain must be different from the default Ingress Controller domain.
+
+. Apply the Ingress Controller `router-internal.yaml` file:
++
+[source,terminal]
+----
+# oc apply -f router-internal.yaml
+----
++
+The Ingress Controller selects routes in any namespace that is selected by the
+namespace selector that have the label `type: sharded`.
+
+. Create a new route using the domain configured in the `router-internal.yaml`:
++
+[source,terminal]
+----
+$ oc expose svc <service-name> --hostname <route-name>.apps-sharded.basedomain.example.net
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-ingress-controller.adoc
+// * networking/routes/route-configuration.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ingress-sharding-route-configuration_{context}"]
+= Creating a route for Ingress Controller sharding
+
+A route allows you to host your application at a URL. In this case, the hostname is not set and the route uses a subdomain instead. When you specify a subdomain, you automatically use the domain of the Ingress Controller that exposes the route. For situations where a route is exposed by multiple Ingress Controllers, the route is hosted at multiple URLs.
+
+The following procedure describes how to create a route for Ingress Controller sharding, using the `hello-openshift` application as an example.
+
+Ingress Controller sharding is useful when balancing incoming traffic load among a set of Ingress Controllers and when isolating traffic to a specific Ingress Controller. For example, company A goes to one Ingress Controller and company B to another.
+
+.Prerequisites
+
+* You installed the OpenShift CLI (`oc`).
+* You are logged in as a project administrator.
+* You have a web application that exposes a port and an HTTP or TLS endpoint listening for traffic on the port.
+* You have configured the Ingress Controller for sharding.
+
+.Procedure
+
+. Create a project called `hello-openshift` by running the following command:
++
+[source,terminal]
+----
+$ oc new-project hello-openshift
+----
+
+. Create a pod in the project by running the following command:
++
+[source,terminal]
+----
+$ oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/hello-openshift/hello-pod.json
+----
+
+. Create a service called `hello-openshift` by running the following command:
++
+[source,terminal]
+----
+$ oc expose pod/hello-openshift
+----
+
+. Create a route definition called `hello-openshift-route.yaml`:
++
+.YAML definition of the created route for sharding:
+[source,yaml]
+----
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    type: sharded <1>
+  name: hello-openshift-edge
+  namespace: hello-openshift
+spec:
+  subdomain: hello-openshift <2>
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: hello-openshift
+----
+<1> Both the label key and its corresponding label value must match the ones specified in the Ingress Controller. In this example, the Ingress Controller has the label key and value `type: sharded`.
+<2> The route will be exposed using the value of the `subdomain` field. When you specify the `subdomain` field, you must leave the hostname unset. If you specify both the `host` and `subdomain` fields, then the route will use the value of the `host` field, and ignore the `subdomain` field.
+
+. Use `hello-openshift-route.yaml` to create a route to the `hello-openshift` application by running the following command:
++
+[source,terminal]
+----
+$ oc -n hello-openshift create -f hello-openshift-route.yaml
+----
+
+.Verification
+* Get the status of the route with the following command:
++
+[source,terminal]
+----
+$ oc -n hello-openshift get routes/hello-openshift-edge -o yaml
+----
++
+The resulting `Route` resource should look similar to the following:
++
+.Example output
+[source,yaml]
+----
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    type: sharded
+  name: hello-openshift-edge
+  namespace: hello-openshift
+spec:
+  subdomain: hello-openshift
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: hello-openshift
+status:
+  ingress:
+  - host: hello-openshift.<apps-sharded.basedomain.example.net> <1>
+    routerCanonicalHostname: router-sharded.<apps-sharded.basedomain.example.net> <2>
+    routerName: sharded <3>
+----
+<1> The hostname the Ingress Controller, or router, uses to expose the route. The value of the `host` field is automatically determined by the Ingress Controller, and uses its domain. In this example, the domain of the Ingress Controller is `<apps-sharded.basedomain.example.net>`.
+<2> The hostname of the Ingress Controller.
+<3> The name of the Ingress Controller. In this example, the Ingress Controller has the name `sharded`.
+
+:leveloffset!:
+
+[discrete]
+[role="_additional-resources"]
+[id="additional-resources_ingress-sharding"]
+== Additional Resources
+
+* xref:../scalability_and_performance/optimization/routing-optimization.adoc#baseline-router-performance_routing-optimization[Baseline Ingress Controller (router) performance]
+
+//# includes=_attributes/common-attributes,modules/nw-ingress-sharding,modules/nw-ingress-sharding-default,modules/nw-ingress-sharding-dns,modules/nw-ingress-sharding-route-labels,modules/nw-ingress-sharding-namespace-labels,modules/nw-ingress-sharding-route-configuration

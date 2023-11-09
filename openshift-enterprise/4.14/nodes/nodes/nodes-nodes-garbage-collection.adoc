@@ -1,0 +1,501 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="nodes-nodes-garbage-collection"]
+= Freeing node resources using garbage collection
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: nodes-nodes-configuring
+
+toc::[]
+
+As an administrator, you can use {product-title} to ensure that your nodes are running efficiently
+by freeing up resources through garbage collection.
+
+The {product-title} node performs two types of garbage collection:
+
+* Container garbage collection: Removes terminated containers.
+* Image garbage collection: Removes images not referenced by any running pods.
+
+
+// The following include statements pull in the module files that comprise
+// the assembly. Include any combination of concept, procedure, or reference
+// modules required to cover the user story. You can also include other
+// assemblies.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-nodes-garbage-collection.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-nodes-garbage-collection-containers_{context}"]
+= Understanding how terminated containers are removed through garbage collection
+
+Container garbage collection removes terminated containers by using eviction thresholds.
+
+When eviction thresholds are set for garbage collection, the node tries to keep any container for any pod accessible from the API. If the pod has been deleted, the containers will be as well. Containers are preserved as long the pod is not deleted and the eviction threshold is not reached. If the node is under disk pressure, it will remove containers and their logs will no longer be accessible using `oc logs`.
+
+* *eviction-soft* - A soft eviction threshold pairs an eviction threshold with a required administrator-specified grace period.
+
+* *eviction-hard* - A hard eviction threshold has no grace period, and if observed, {product-title} takes immediate action.
+
+The following table lists the eviction thresholds:
+
+.Variables for configuring container garbage collection
+|===
+| Node condition | Eviction signal | Description
+
+| MemoryPressure
+| `memory.available`
+| The available memory on the node.
+
+| DiskPressure
+a| * `nodefs.available`
+  * `nodefs.inodesFree`
+  * `imagefs.available`
+  * `imagefs.inodesFree`
+| The available disk space or inodes on the node root file system, `nodefs`, or image file system, `imagefs`.
+|===
+
+[NOTE]
+====
+For `evictionHard` you must specify all of these parameters.  If you do not specify all parameters, only the specified parameters are applied and the garbage collection will not function properly.
+====
+
+If a node is oscillating above and below a soft eviction threshold, but not exceeding its associated grace period, the corresponding node would constantly oscillate between `true` and `false`. As a consequence, the scheduler could make poor scheduling decisions.
+
+To protect against this oscillation, use the `eviction-pressure-transition-period` flag to control how long {product-title} must wait before transitioning out of a pressure condition. {product-title} will not set an eviction threshold as being met for the specified pressure condition for the period specified before toggling the condition back to false.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-nodes-garbage-collection.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-nodes-garbage-collection-images_{context}"]
+= Understanding how images are removed through garbage collection
+
+Image garbage collection removes images that are not referenced by any running pods.
+
+{product-title} determines which images to remove from a node based on the disk usage that is reported by *cAdvisor*.
+
+The policy for image garbage collection is based on two conditions:
+
+* The percent of disk usage (expressed as an integer) which triggers image
+garbage collection. The default is *85*.
+
+* The percent of disk usage (expressed as an integer) to which image garbage
+collection attempts to free. Default is *80*.
+
+For image garbage collection, you can modify any of the following variables using
+a custom resource.
+
+.Variables for configuring image garbage collection
+
+[options="header",cols="1,3"]
+|===
+
+|Setting |Description
+
+|`imageMinimumGCAge`
+|The minimum age for an unused image before the image is removed by garbage collection. The default is *2m*.
+
+|`imageGCHighThresholdPercent`
+|The percent of disk usage, expressed as an integer, which triggers image
+garbage collection. The default is *85*.
+
+|`imageGCLowThresholdPercent`
+|The percent of disk usage, expressed as an integer, to which image garbage
+collection attempts to free. The default is *80*.
+|===
+
+Two lists of images are retrieved in each garbage collector run:
+
+1. A list of images currently running in at least one pod.
+2. A list of images available on a host.
+
+As new containers are run, new images appear. All images are marked with a time
+stamp. If the image is running (the first list above) or is newly detected (the
+second list above), it is marked with the current time. The remaining images are
+already marked from the previous spins. All images are then sorted by the time
+stamp.
+
+Once the collection starts, the oldest images get deleted first until the
+stopping criterion is met.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-nodes-garbage-collection.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-nodes-garbage-collection-configuring_{context}"]
+= Configuring garbage collection for containers and images
+
+As an administrator, you can configure how {product-title} performs garbage collection by creating a `kubeletConfig` object for each machine config pool.
+
+[NOTE]
+====
+{product-title} supports only one `kubeletConfig` object for each machine config pool.
+====
+
+You can configure any combination of the following:
+
+* Soft eviction for containers
+* Hard eviction for containers
+* Eviction for images
+
+Container garbage collection removes terminated containers. Image garbage collection removes images that are not referenced by any running pods.
+
+.Prerequisites
+
+. Obtain the label associated with the static `MachineConfigPool` CRD for the type of node you want to configure by entering the following command:
++
+[source,terminal]
+----
+$ oc edit machineconfigpool <name>
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc edit machineconfigpool worker
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  creationTimestamp: "2022-11-16T15:34:25Z"
+  generation: 4
+  labels:
+    pools.operator.machineconfiguration.openshift.io/worker: "" <1>
+  name: worker
+#...
+----
+<1> The label appears under Labels.
++
+[TIP]
+====
+If the label is not present, add a key/value pair such as:
+
+----
+$ oc label machineconfigpool worker custom-kubelet=small-pods
+----
+====
+
+.Procedure
+
+. Create a custom resource (CR) for your configuration change.
++
+[IMPORTANT]
+====
+If there is one file system, or if `/var/lib/kubelet` and `/var/lib/containers/` are in the same file system, the settings with the highest values trigger evictions, as those are met first. The file system triggers the eviction.
+====
++
+.Sample configuration for a container garbage collection CR:
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: KubeletConfig
+metadata:
+  name: worker-kubeconfig <1>
+spec:
+  machineConfigPoolSelector:
+    matchLabels:
+      pools.operator.machineconfiguration.openshift.io/worker: "" <2>
+  kubeletConfig:
+    evictionSoft: <3>
+      memory.available: "500Mi" <4>
+      nodefs.available: "10%"
+      nodefs.inodesFree: "5%"
+      imagefs.available: "15%"
+      imagefs.inodesFree: "10%"
+    evictionSoftGracePeriod:  <5>
+      memory.available: "1m30s"
+      nodefs.available: "1m30s"
+      nodefs.inodesFree: "1m30s"
+      imagefs.available: "1m30s"
+      imagefs.inodesFree: "1m30s"
+    evictionHard: <6>
+      memory.available: "200Mi"
+      nodefs.available: "5%"
+      nodefs.inodesFree: "4%"
+      imagefs.available: "10%"
+      imagefs.inodesFree: "5%"
+    evictionPressureTransitionPeriod: 0s <7>
+    imageMinimumGCAge: 5m <8>
+    imageGCHighThresholdPercent: 80 <9>
+    imageGCLowThresholdPercent: 75 <10>
+#...
+----
+<1> Name for the object.
+<2> Specify the label from the machine config pool.
+<3> For container garbage collection: Type of eviction: `evictionSoft` or `evictionHard`.
+<4> For container garbage collection: Eviction thresholds based on a specific eviction trigger signal.
+<5> For container garbage collection: Grace periods for the soft eviction. This parameter does not apply to `eviction-hard`.
+<6> For container garbage collection: Eviction thresholds based on a specific eviction trigger signal.
+For `evictionHard` you must specify all of these parameters.  If you do not specify all parameters, only the specified parameters are applied and the garbage collection will not function properly.
+<7> For container garbage collection: The duration to wait before transitioning out of an eviction pressure condition.
+<8> For image garbage collection: The minimum age for an unused image before the image is removed by garbage collection.
+<9> For image garbage collection: The percent of disk usage (expressed as an integer) that triggers image garbage collection.
+<10> For image garbage collection: The percent of disk usage (expressed as an integer) that image garbage collection attempts to free.
+
+. Run the following command to create the CR:
++
+[source,terminal]
+----
+$ oc create -f <file_name>.yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc create -f gc-container.yaml
+----
++
+.Example output
+[source,terminal]
+----
+kubeletconfig.machineconfiguration.openshift.io/gc-container created
+----
+
+.Verification
+
+. Verify that garbage collection is active by entering the following command. The Machine Config Pool you specified in the custom resource appears with `UPDATING` as 'true` until the change is fully implemented:
++
+[source,terminal]
+----
+$ oc get machineconfigpool
+----
++
+.Example output
+[source,terminal]
+----
+NAME     CONFIG                                   UPDATED   UPDATING
+master   rendered-master-546383f80705bd5aeaba93   True      False
+worker   rendered-worker-b4c51bb33ccaae6fc4a6a5   False     True
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/nodes-nodes-garbage-collection-containers,modules/nodes-nodes-garbage-collection-images,modules/nodes-nodes-garbage-collection-configuring

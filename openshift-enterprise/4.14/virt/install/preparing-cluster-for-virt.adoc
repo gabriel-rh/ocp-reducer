@@ -1,0 +1,564 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="preparing-cluster-for-virt"]
+= Preparing your cluster for {VirtProductName}
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: preparing-cluster-for-virt
+:toclevels: 3
+
+toc::[]
+
+Review this section before you install {VirtProductName} to ensure that your cluster meets the requirements.
+
+[IMPORTANT]
+====
+Installation method considerations::
+You can use any installation method, including user-provisioned, installer-provisioned, or assisted installer, to deploy {product-title}. However, the installation method and the cluster topology might affect {VirtProductName} functionality, such as snapshots or xref:../../virt/install/preparing-cluster-for-virt.adoc#live-migration_preparing-cluster-for-virt[live migration].
+
+{rh-storage-first}::
+If you deploy {VirtProductName} with {rh-storage-first}, you must create a dedicated storage class for Windows virtual machine disks. See link:https://access.redhat.com/articles/6978371[Optimizing ODF PersistentVolumes for Windows VMs] for details.
+
+IPv6::
+You cannot run {VirtProductName} on a single-stack IPv6 cluster.
+====
+
+.FIPS mode
+
+If you install your cluster in xref:../../installing/installing-fips.adoc#installing-fips-mode_installing-fips[FIPS mode], no additional setup is required for {VirtProductName}.
+
+[id="supported-platforms_preparing-cluster-for-virt"]
+== Supported platforms
+
+You can use the following platforms with {VirtProductName}:
+
+* On-premise bare metal servers. See xref:../../installing/installing_bare_metal/preparing-to-install-on-bare-metal.adoc#virt-planning-bare-metal-cluster-for-ocp-virt_preparing-to-install-on-bare-metal[Planning a bare metal cluster for {VirtProductName}].
+
+* Amazon Web Services bare metal instances. See xref:../../installing/installing_aws/installing-aws-customizations.html#installing-aws-customizations[Installing a cluster on AWS with customizations].
+//See link:https://access.redhat.com/articles/6409731[Deploy {VirtProductName} on AWS metal instance types]. // seems outdated with references to OCS - remove?
+
+* IBM Cloud Bare Metal Servers. See link:https://access.redhat.com/articles/6738731[Deploy {VirtProductName} on IBM Cloud Bare Metal nodes].
++
+--
+--
+
+Bare metal instances or servers offered by other cloud providers are not supported.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/install/preparing-cluster-for-virt.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="virt-aws-bm_{context}"]
+= {VirtProductName} on AWS bare metal
+
+You can run {VirtProductName} on an Amazon Web Services (AWS) bare-metal {product-title} cluster.
+
+[NOTE]
+====
+{VirtProductName} is also supported on {product-rosa} (ROSA) Classic clusters, which have the same configuration requirements as AWS bare-metal clusters.
+====
+
+Before you set up your cluster, review the following summary of supported features and limitations:
+
+Installing::
+--
+* You can install the cluster by using installer-provisioned infrastructure, ensuring that you specify bare-metal instance types for the worker nodes by editing the `install-config.yaml` file. For example, you can use the `c5n.metal` type value for a machine based on x86_64 architecture.
++
+For more information, see the {product-title} documentation about installing on AWS.
+--
+
+Accessing virtual machines (VMs)::
+--
+* There is no change to how you access VMs by using the `virtctl` CLI tool or the {product-title} web console.
+* You can expose VMs by using a `NodePort` or `LoadBalancer` service.
+** The load balancer approach is preferable because {product-title} automatically creates the load balancer in AWS and manages its lifecycle. A security group is also created for the load balancer, and you can use annotations to attach existing security groups. When you remove the service, {product-title} removes the load balancer and its associated resources.
+--
+
+Networking::
+--
+* You cannot use Single Root I/O Virtualization (SR-IOV) or bridge Container Network Interface (CNI) networks, including virtual LAN (VLAN). If your application requires a flat layer 2 network or control over the IP pool, consider using OVN-Kubernetes secondary overlay networks.
+--
+
+Storage::
+--
+* You can use any storage solution that is certified by the storage vendor to work with the underlying platform.
++
+[IMPORTANT]
+====
+AWS bare-metal and ROSA clusters might have different supported storage solutions. Ensure that you confirm support with your storage vendor.
+====
+* Amazon Elastic File System (EFS) and Amazon Elastic Block Store (EBS) are not supported for use with {VirtProductName} due to performance and functionality limitations.
+--
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../virt/vm_networking/virt-connecting-vm-to-ovn-secondary-network.adoc#virt-connecting-vm-to-ovn-secondary-network[Connecting a virtual machine to an OVN-Kubernetes secondary network]
+* xref:../../virt/vm_networking/virt-exposing-vm-with-service.adoc#virt-exposing-vm-with-service[Exposing a virtual machine by using a service]
+
+// Section is in assembly so that we can use xrefs
+[id="virt-hardware-os-requirements_preparing-cluster-for-virt"]
+== Hardware and operating system requirements
+
+Review the following hardware and operating system requirements for {VirtProductName}.
+
+[id="cpu-requirements_preparing-cluster-for-virt"]
+=== CPU requirements
+
+* Supported by {op-system-base-full} 9.
++
+See link:https://catalog.redhat.com[Red Hat Ecosystem Catalog] for supported CPUs.
++
+[NOTE]
+====
+If your worker nodes have different CPUs, live migration failures might occur because different CPUs have different capabilities. You can mitigate this issue by ensuring that your worker nodes have CPUs with the appropriate capacity and by configuring node affinity rules for your virtual machines.
+
+See xref:../../nodes/scheduling/nodes-scheduler-node-affinity.adoc#nodes-scheduler-node-affinity-configuring-required_nodes-scheduler-node-affinity[Configuring a required node affinity rule] for details.
+====
+
+* Support for Intel 64 or AMD64 CPU extensions.
+* Intel VT or AMD-V hardware virtualization extensions enabled.
+* NX (no execute) flag enabled.
+
+[id="os-requirements_preparing-cluster-for-virt"]
+=== Operating system requirements
+
+* {op-system-first} installed on worker nodes.
++
+See xref:../../architecture/architecture-rhcos.adoc#rhcos-about_architecture-rhcos[About RHCOS] for details.
++
+[NOTE]
+====
+{op-system-base} worker nodes are not supported.
+====
+
+[id="storage-requirements_preparing-cluster-for-virt"]
+=== Storage requirements
+
+* Supported by {product-title}. See xref:../../scalability_and_performance/optimization/optimizing-storage.adoc#_optimizing-storage[Optimizing storage].
+
+* {rh-storage-first}: You must create a dedicated storage class for Windows virtual machine disks. See link:https://access.redhat.com/articles/6978371[Optimizing ODF PersistentVolumes for Windows VMs] for details.
+
+[NOTE]
+====
+You must specify a default storage class for the cluster. See xref:../../storage/container_storage_interface/persistent-storage-csi-sc-manage.adoc#persistent-storage-csi-sc-manage[Managing the default storage class]. If the default storage class provisioner supports the `ReadWriteMany` (RWX) xref:../../storage/understanding-persistent-storage.adoc#pv-access-modes_understanding-persistent-storage[access mode], use the RWX mode for the associated persistent volumes for optimal performance.
+
+If the storage provisioner supports snapshots, there must be a xref:../../storage/container_storage_interface/persistent-storage-csi-snapshots.adoc#volume-snapshot-crds[`VolumeSnapshotClass`] object associated with the default storage class.
+====
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/about/about-virt.adoc
+// * virt/install/preparing-cluster-for-virt.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="virt-about-storage-volumes-for-vm-disks_{context}"]
+= About volume and access modes for virtual machine disks
+
+If you use the storage API with known storage providers, the volume and access modes are selected automatically. However, if you use a storage class that does not have a storage profile, you must configure the volume and access mode.
+
+For best results, use the `ReadWriteMany` (RWX) access mode and the `Block` volume mode. This is important for the following reasons:
+
+* `ReadWriteMany` (RWX) access mode is required for live migration.
+
+* The `Block` volume mode performs significantly better than the `Filesystem` volume mode. This is because the `Filesystem` volume mode uses more storage layers, including a file system layer and a disk image file. These layers are not necessary for VM disk storage.
++
+For example, if you use {rh-storage-first}, Ceph RBD volumes are preferable to CephFS volumes.
+
+[IMPORTANT]
+====
+You cannot live migrate virtual machines with the following configurations:
+
+* Storage volume with `ReadWriteOnce` (RWO) access mode
+* Passthrough features such as GPUs
+
+Do not set the `evictionStrategy` field to `LiveMigrate` for these virtual machines.
+====
+
+:leveloffset!:
+
+[id="live-migration_preparing-cluster-for-virt"]
+== Live migration requirements
+
+* Shared storage with `ReadWriteMany` (RWX) access mode.
+* Sufficient RAM and network bandwidth.
++
+[NOTE]
+====
+You must ensure that there is enough memory request capacity in the cluster to support node drains that result in live migrations. You can determine the approximate required spare memory by using the following calculation:
+
+----
+Product of (Maximum number of nodes that can drain in parallel) and (Highest total VM memory request allocations across nodes)
+----
+
+The default xref:../../virt/live_migration/virt-configuring-live-migration#virt-configuring-live-migration-limits_virt-configuring-live-migration[number of migrations that can run in parallel] in the cluster is 5.
+====
+
+* If the virtual machine uses a host model CPU, the nodes must support the virtual machine's host model CPU.
+* A xref:../../virt/vm_networking/virt-dedicated-network-live-migration.adoc#virt-dedicated-network-live-migration[dedicated Multus network] for live migration is highly recommended. A dedicated network minimizes the effects of network saturation on tenant workloads during migration.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/install/preparing-cluster-for-virt.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-cluster-resource-requirements_{context}"]
+= Physical resource overhead requirements
+
+{VirtProductName} is an add-on to {product-title} and imposes additional overhead that you must account for when planning a cluster. Each cluster machine must accommodate the following overhead requirements in addition to the {product-title} requirements. Oversubscribing the physical resources in a cluster can affect performance.
+
+[IMPORTANT]
+====
+The numbers noted in this documentation are based on Red Hat's test methodology and setup. These numbers can vary based on your own individual setup and environments.
+====
+
+[discrete]
+[id="memory-overhead_{context}"]
+== Memory overhead
+
+Calculate the memory overhead values for {VirtProductName} by using the equations below.
+
+.Cluster memory overhead
+
+----
+Memory overhead per infrastructure node ≈ 150 MiB
+----
+
+----
+Memory overhead per worker node ≈ 360 MiB
+----
+
+Additionally, {VirtProductName} environment resources require a total of 2179 MiB of RAM that is spread across all infrastructure nodes.
+
+.Virtual machine memory overhead
+
+----
+Memory overhead per virtual machine ≈ (1.002 * requested memory) + 146 MiB  \
+              + 8 MiB * (number of vCPUs) \ <1>
+              + 16 MiB * (number of graphics devices) <2>
+----
+<1> Number of virtual CPUs requested by the virtual machine
+<2> Number of virtual graphics cards requested by the virtual machine
+
+If your environment includes a Single Root I/O Virtualization (SR-IOV) network device or a Graphics Processing Unit (GPU), allocate 1 GiB additional memory overhead for each device.
+
+[discrete]
+[id="CPU-overhead_{context}"]
+== CPU overhead
+
+Calculate the cluster processor overhead requirements for {VirtProductName} by using the equation below. The CPU overhead per virtual machine depends on your individual setup.
+
+.Cluster CPU overhead
+
+----
+CPU overhead for infrastructure nodes ≈ 4 cores
+----
+
+{VirtProductName} increases the overall utilization of cluster level services such as logging, routing, and monitoring. To account for this workload, ensure that nodes that host infrastructure components have capacity allocated for 4 additional cores (4000 millicores) distributed across those nodes.
+
+----
+CPU overhead for worker nodes ≈ 2 cores + CPU overhead per virtual machine
+----
+
+Each worker node that hosts virtual machines must have capacity for 2 additional cores (2000 millicores) for {VirtProductName} management workloads in addition to the CPUs required for virtual machine workloads.
+
+.Virtual machine CPU overhead
+
+If dedicated CPUs are requested, there is a 1:1 impact on the cluster CPU overhead requirement. Otherwise, there are no specific rules about how many CPUs a virtual machine requires.
+
+[discrete]
+[id="storage-overhead_{context}"]
+== Storage overhead
+
+Use the guidelines below to estimate storage overhead requirements for your {VirtProductName} environment.
+
+.Cluster storage overhead
+
+----
+Aggregated storage overhead per node ≈ 10 GiB
+----
+
+10 GiB is the estimated on-disk storage impact for each node in the cluster when you install {VirtProductName}.
+
+.Virtual machine storage overhead
+
+Storage overhead per virtual machine depends on specific requests for resource allocation within the virtual machine. The request could be for ephemeral storage on the node or storage resources hosted elsewhere in the cluster. {VirtProductName} does not currently allocate any additional ephemeral storage for the running container itself.
+
+.Example
+
+As a cluster administrator, if you plan to host 10 virtual machines in the cluster, each with 1 GiB of RAM and 2 vCPUs, the memory impact across the cluster is 11.68 GiB. The estimated on-disk storage impact for each node in the cluster is 10 GiB and the CPU impact for worker nodes that host virtual machine workloads is a minimum of 2 cores.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/about-virt.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="virt-sno-differences_{context}"]
+= {sno-caps} differences
+
+You can install {VirtProductName} on {sno}.
+
+However, you should be aware that {sno-caps} does not support the following features:
+
+* High availability
+* Pod disruption
+* Live migration
+* Virtual machines or templates that have an eviction strategy configured
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../storage/index.adoc#openshift-storage-common-terms_storage-overview[Glossary of common terms for {product-title} storage]
+
+[id="object-maximums_preparing-cluster-for-virt"]
+== Object maximums
+
+You must consider the following tested object maximums when planning your cluster:
+
+* xref:../../scalability_and_performance/planning-your-environment-according-to-object-maximums.adoc#planning-your-environment-according-to-object-maximums[{product-title} object maximums].
+* link:https://access.redhat.com/articles/6571671[{VirtProductName} object maximums].
+
+// The HA section actually belongs to OpenShift, not Virt
+[id="cluster-high-availability-options_preparing-cluster-for-virt"]
+== Cluster high-availability options
+
+You can configure one of the following high-availability (HA) options for your cluster:
+
+* Automatic high availability for xref:../../installing/installing_bare_metal_ipi/ipi-install-overview.adoc#ipi-install-overview[installer-provisioned infrastructure] (IPI) is available by deploying xref:../../machine_management/deploying-machine-health-checks.adoc#machine-health-checks-about_deploying-machine-health-checks[machine health checks].
++
+[NOTE]
+====
+In {product-title} clusters installed using installer-provisioned infrastructure and with a properly configured `MachineHealthCheck` resource, if a node fails the machine health check and becomes unavailable to the cluster, it is recycled. What happens next with VMs that ran on the failed node depends on a series of conditions. See xref:../../virt/nodes/virt-node-maintenance.adoc#run-strategies[Run strategies] for more detailed information about the potential outcomes and how run strategies affect those outcomes.
+====
+
+* Automatic high availability for both IPI and non-IPI is available by using the *Node Health Check Operator* on the {product-title} cluster to deploy the `NodeHealthCheck` controller. The controller identifies unhealthy nodes and uses the Self Node Remediation Operator to remediate the unhealthy nodes. For more information on remediation, fencing, and maintaining nodes, see the link:https://access.redhat.com/documentation/en-us/workload_availability_for_red_hat_openshift/23.2/html-single/remediation_fencing_and_maintenance/index#about-remediation-fencing-maintenance[Workload Availability for Red Hat OpenShift] documentation.
++
+--
+--
+
+* High availability for any platform is available by using either a monitoring system or a qualified human to monitor node availability. When a node is lost, shut it down and run `oc delete node <lost_node>`.
++
+[NOTE]
+====
+Without an external monitoring system or a qualified human monitoring node health, virtual machines lose high availability.
+====
+
+//# includes=_attributes/common-attributes,modules/virt-aws-bm,modules/virt-about-storage-volumes-for-vm-disks,modules/virt-cluster-resource-requirements,modules/virt-sno-differences

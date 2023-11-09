@@ -1,0 +1,441 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ossm-vs-community-v1x"]
+= Service Mesh and Istio differences
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: ossm-vs-istio-v1x
+
+toc::[]
+
+// Text snippet included in all Service Mesh v1 assemblies.
+// NOTE: The OpenShift docs standards state that snippets should NOT contain xrefs.   https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#writing-text-snippets
+//Because this snippet contains two xrefs it should ONLY be used in the v1 assemblies and never in a module.
+
+:_mod-docs-content-type: SNIPPET
+
+[WARNING]
+====
+*You are viewing documentation for a {SMProductName} release that is no longer supported.*
+
+Service Mesh version 1.0 and 1.1 control planes are no longer supported. For information about upgrading your service mesh control plane, see xref:../../service_mesh/v2x/upgrading-ossm.adoc#ossm-versions_ossm-upgrade[Upgrading Service Mesh].
+
+For information about the support status of a particular {SMProductName} release, see the https://access.redhat.com/support/policy/updates/openshift#ossm[Product lifecycle page].
+====
+
+An installation of {SMProductName} differs from upstream Istio community installations in multiple ways. The modifications to {SMProductName} are sometimes necessary to resolve issues, provide additional features, or to handle differences when deploying on {product-title}.
+
+The current release of {SMProductName} differs from the current upstream Istio community release in the following ways:
+
+// The following include statements pull in the module files that comprise the assembly.
+
+:leveloffset: +1
+
+////
+Module included in the following assemblies:
+-ossm-vs-community.adoc
+////
+
+[id="ossm-multitenant-install_{context}"]
+= Multitenant installations
+
+Whereas upstream Istio takes a single tenant approach, {SMProductName} supports multiple independent control planes within the cluster. {SMProductName} uses a multitenant operator to manage the control plane lifecycle.
+
+{SMProductName} installs a multitenant control plane by default. You specify the projects that can access the {SMProductShortName}, and isolate the {SMProductShortName} from other control plane instances.
+
+[id="ossm-mt-vs-clusterwide_{context}"]
+== Multitenancy versus cluster-wide installations
+
+The main difference between a multitenant installation and a cluster-wide installation is the scope of privileges used by istod. The components no longer use cluster-scoped Role Based Access Control (RBAC) resource `ClusterRoleBinding`.
+
+Every project in the `ServiceMeshMemberRoll` `members` list will have a `RoleBinding` for each service account associated with the control plane deployment and each control plane deployment will only watch those member projects. Each member project has a `maistra.io/member-of` label added to it, where the `member-of` value is the project containing the control plane installation.
+
+{SMProductName} configures each member project to ensure network access between itself, the control plane, and other member projects. The exact configuration differs depending on how {product-title} software-defined networking (SDN) is configured. See About OpenShift SDN for additional details.
+
+If the {product-title} cluster is configured to use the SDN plugin:
+
+* *`NetworkPolicy`*: {SMProductName} creates a `NetworkPolicy` resource in each member project allowing ingress to all pods from the other members and the control plane. If you remove a member from {SMProductShortName}, this `NetworkPolicy` resource is deleted from the project.
++
+[NOTE]
+====
+This also restricts ingress to only member projects. If you require ingress from non-member projects, you need to create a `NetworkPolicy` to allow that traffic through.
+====
+
+* *Multitenant*: {SMProductName} joins the `NetNamespace` for each member project to the `NetNamespace` of the control plane project (the equivalent of running `oc adm pod-network join-projects --to control-plane-project member-project`). If you remove a member from the {SMProductShortName}, its `NetNamespace` is isolated from the control plane (the equivalent of running `oc adm pod-network isolate-projects member-project`).
+
+* *Subnet*: No additional configuration is performed.
+
+[id="ossm-cluster-scoped-resources_{context}"]
+== Cluster scoped resources
+
+Upstream Istio has two cluster scoped resources that it relies on. The `MeshPolicy` and the `ClusterRbacConfig`. These are not compatible with a multitenant cluster and have been replaced as described below.
+
+* _ServiceMeshPolicy_ replaces MeshPolicy for configuration of control-plane-wide authentication policies. This must be created in the same project as the control plane.
+* _ServicemeshRbacConfig_ replaces ClusterRbacConfig for configuration of control-plane-wide role based access control. This must be created in the same project as the control plane.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+Module included in the following assemblies:
+-service_mesh/v1x/ossm-vs-community.adoc
+////
+
+[id="ossm-vs-istio_{context}"]
+= Differences between Istio and {SMProductName}
+
+An installation of {SMProductName} differs from an installation of Istio in multiple ways. The modifications to {SMProductName} are sometimes necessary to resolve issues, provide additional features, or to handle differences when deploying on {product-title}.
+
+[id="ossm-cli-tool_{context}"]
+== Command line tool
+
+The command line tool for {SMProductName} is oc.  {SMProductName}  does not support istioctl.
+
+[id="ossm-automatic-injection_{context}"]
+== Automatic injection
+
+The upstream Istio community installation automatically injects the sidecar into pods within the projects you have labeled.
+
+{SMProductName} does not automatically inject the sidecar to any pods, but requires you to opt in to injection using an annotation without labeling projects. This method requires fewer privileges and does not conflict with other OpenShift capabilities such as builder pods. To enable automatic injection you specify the `sidecar.istio.io/inject` annotation as described in the Automatic sidecar injection section.
+
+[id="ossm-rbac_{context}"]
+== Istio Role Based Access Control features
+
+Istio Role Based Access Control (RBAC) provides a mechanism you can use to control access to a service. You can identify subjects by user name or by specifying a set of properties and apply access controls accordingly.
+
+The upstream Istio community installation includes options to perform exact header matches, match wildcards in headers, or check for a header containing a specific prefix or suffix.
+
+{SMProductName} extends the ability to match request headers by using a regular expression. Specify a property key of `request.regex.headers` with a regular expression.
+
+.Upstream Istio community matching request headers example
+[source,yaml]
+----
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: httpbin-client-binding
+  namespace: httpbin
+spec:
+  subjects:
+  - user: "cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"
+    properties:
+      request.headers[<header>]: "value"
+----
+
+.{SMProductName} matching request headers by using regular expressions
+[source,yaml]
+----
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: httpbin-client-binding
+  namespace: httpbin
+spec:
+  subjects:
+  - user: "cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"
+    properties:
+      request.regex.headers[<header>]: "<regular expression>"
+----
+
+
+[id="ossm-openssl_{context}"]
+== OpenSSL
+
+{SMProductName} replaces BoringSSL with OpenSSL. OpenSSL is a software library that contains an open source implementation of the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) protocols. The {SMProductName} Proxy binary dynamically links the OpenSSL libraries (libssl and libcrypto) from the underlying Red Hat Enterprise Linux operating system.
+
+[id="ossm-component-modifications_{context}"]
+== Component modifications
+
+* A _maistra-version_ label has been added to all resources.
+* All Ingress resources have been converted to OpenShift Route resources.
+* Grafana, Tracing (Jaeger), and Kiali are enabled by default and exposed through OpenShift routes.
+* Godebug has been removed from all templates
+* The `istio-multi` ServiceAccount and ClusterRoleBinding have been removed, as well as the `istio-reader` ClusterRole.
+
+[id="ossm-envoy-sds-ca_{context}"]
+== Envoy, Secret Discovery Service, and certificates
+
+* {SMProductName} does not support QUIC-based services.
+* Deployment of TLS certificates using the Secret Discovery Service (SDS) functionality of Istio is not currently supported in {SMProductName}. The Istio implementation depends on a nodeagent container that uses hostPath mounts.
+
+[id="ossm-cni_{context}"]
+== Istio Container Network Interface (CNI) plugin
+
+{SMProductName} includes CNI plugin, which provides you with an alternate way to configure application pod networking. The CNI plugin replaces the `init-container` network configuration eliminating the need to grant service accounts and projects access to Security Context Constraints (SCCs) with elevated privileges.
+
+[id="ossm-routes-gateways_{context}"]
+== Routes for Istio Gateways
+
+OpenShift routes for Istio Gateways are automatically managed in {SMProductName}. Every time an Istio Gateway is created, updated or deleted inside the service mesh, an OpenShift route is created, updated or deleted.
+
+A {SMProductName} control plane component called Istio OpenShift Routing (IOR) synchronizes the gateway route.  For more information, see Automatic route creation.
+
+[id="ossm-catch-all-domains_{context}"]
+=== Catch-all domains
+Catch-all domains ("\*") are not supported. If one is found in the Gateway definition, {SMProductName} _will_ create the route, but will rely on OpenShift to create a default hostname. This means that the newly created route will __not__ be a catch all ("*") route, instead it will have a hostname in the form `<route-name>[-<project>].<suffix>`. See the OpenShift documentation for more information about how default hostnames work and how a cluster administrator can customize it.
+
+[id="ossm-subdomains_{context}"]
+=== Subdomains
+Subdomains (e.g.: "*.domain.com") are supported. However this ability doesn't come enabled by default in {product-title}. This means that {SMProductName} _will_ create the route with the subdomain, but it will only be in effect if {product-title} is configured to enable it.
+
+[id="ossm-tls_{context}"]
+=== Transport layer security
+Transport Layer Security (TLS) is supported. This means that, if the Gateway contains a `tls` section, the OpenShift Route will be configured to support TLS.
+
+:leveloffset!:
+[discrete]
+[id="additional-resources_ossm-vs-istio-v1x"]
+[role="_additional-resources"]
+==== Additional resources
+
+* xref:../../service_mesh/v1x/ossm-traffic-manage.adoc#ossm-auto-route-1x_routing-traffic-v1x[Automatic route creation]
+
+:leveloffset: +1
+
+////
+This CONCEPT module included in the following assemblies:
+-service_mesh/v1x/ossm-vs-community.adoc
+-service_mesh/v2x/ossm-vs-community.adoc
+////
+:_mod-docs-content-type: CONCEPT
+[id="ossm-kiali-service-mesh_{context}"]
+= Kiali and service mesh
+
+Installing Kiali via the Service Mesh on {product-title} differs from community Kiali installations in multiple ways. These modifications are sometimes necessary to resolve issues, provide additional features, or to handle differences when deploying on {product-title}.
+
+* Kiali has been enabled by default.
+* Ingress has been enabled by default.
+* Updates have been made to the Kiali ConfigMap.
+* Updates have been made to the ClusterRole settings for Kiali.
+* Do not edit the ConfigMap, because your changes might be overwritten by the {SMProductShortName} or Kiali Operators. Files that the Kiali Operator manages have a `kiali.io/` label or annotation. Updating the Operator files should be restricted to those users with `cluster-admin` privileges. If you use {product-dedicated}, updating the Operator files should be restricted to those users with `dedicated-admin` privileges.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This CONCEPT module included in the following assemblies:
+-service_mesh/v1x/ossm-vs-community.adoc
+-service_mesh/v2x/ossm-vs-community.adoc
+////
+
+[id="ossm-jaeger-service-mesh_{context}"]
+= Distributed tracing and service mesh
+
+Installing the {JaegerShortName} with the Service Mesh on {product-title} differs from community Jaeger installations in multiple ways. These modifications are sometimes necessary to resolve issues, provide additional features, or to handle differences when deploying on {product-title}.
+
+* Distributed tracing has been enabled by default for {SMProductShortName}.
+* Ingress has been enabled by default for {SMProductShortName}.
+* The name for the Zipkin port name has changed to `jaeger-collector-zipkin` (from `http`)
+* Jaeger uses Elasticsearch for storage by default when you select either the `production` or `streaming` deployment option.
+* The community version of Istio provides a generic "tracing" route. {SMProductName} uses a "jaeger" route that is installed by the {JaegerName} Operator and is already protected by OAuth.
+* {SMProductName} uses a sidecar for the Envoy proxy, and Jaeger also uses a sidecar, for the Jaeger agent.
+These two sidecars are configured separately and should not be confused with each other. The proxy sidecar creates spans related to the pod's ingress and egress traffic. The agent sidecar receives the spans emitted by the application and sends them to the Jaeger Collector.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,snippets/ossm-out-of-support,modules/ossm-multitenant,modules/ossm-vs-istio-1x,modules/ossm-kiali-service-mesh,modules/ossm-jaeger-service-mesh

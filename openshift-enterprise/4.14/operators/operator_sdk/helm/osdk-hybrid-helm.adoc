@@ -1,0 +1,1123 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="osdk-hybrid-helm"]
+= Operator SDK tutorial for Hybrid Helm Operators
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: osdk-hybrid-helm
+
+toc::[]
+
+The standard Helm-based Operator support in the Operator SDK has limited functionality compared to the Go-based and Ansible-based Operator support that has reached the Auto Pilot capability (level V) in the xref:../../../operators/understanding/olm-what-operators-are.adoc#olm-maturity-model_olm-what-operators-are[Operator maturity model].
+
+The Hybrid Helm Operator enhances the existing Helm-based support's abilities through Go APIs. With this hybrid approach of Helm and Go, the Operator SDK enables Operator authors to use the following process:
+
+* Generate a default structure for, or _scaffold_, a Go API in the same project as Helm.
+* Configure the Helm reconciler in the `main.go` file of the project, through the libraries provided by the Hybrid Helm Operator.
+
+:FeatureName: The Hybrid Helm Operator
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+This tutorial walks through the following process using the Hybrid Helm Operator:
+
+* Create a `Memcached` deployment through a Helm chart if it does not exist
+* Ensure that the deployment size is the same as specified by `Memcached` custom resource (CR) spec
+* Create a `MemcachedBackup` deployment by using the Go API
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/golang/osdk-golang-quickstart.adoc
+// * operators/operator_sdk/golang/osdk-golang-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-quickstart.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-helm-quickstart.adoc
+// * operators/operator_sdk/helm/osdk-helm-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+// * operators/operator_sdk/osdk-working-bundle-images.adoc
+// * operators/operator_sdk/java/osdk-java-quickstart.adoc
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+
+
+[id="osdk-common-prereqs_{context}"]
+= Prerequisites
+
+* Operator SDK CLI installed
+* OpenShift CLI (`oc`) {product-version}+ installed
+* Logged into an {product-title} {product-version} cluster with `oc` with an account that has `cluster-admin` permissions
+* To allow the cluster to pull the image, the repository where you push your image must be set as public, or you must configure an image pull secret
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../../operators/operator_sdk/osdk-installing-cli.adoc#osdk-installing-cli[Installing the Operator SDK CLI]
+* xref:../../../cli_reference/openshift_cli/getting-started-cli.adoc#getting-started-cli[Getting started with the OpenShift CLI]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-hh-create-project_{context}"]
+= Creating a project
+
+Use the Operator SDK CLI to create a project called `memcached-operator`.
+
+.Procedure
+
+. Create a directory for the project:
++
+[source,terminal]
+----
+$ mkdir -p $HOME/github.com/example/memcached-operator
+----
+
+. Change to the directory:
++
+[source,terminal]
+----
+$ cd $HOME/github.com/example/memcached-operator
+----
+
+. Run the `operator-sdk init` command to initialize the project. Use a domain of `example.com` so that all API groups are `<group>.example.com`:
++
+[source,terminal]
+----
+$ operator-sdk init \
+    --plugins=hybrid.helm.sdk.operatorframework.io \
+    --project-version="3" \
+    --domain example.com \
+    --repo=github.com/example/memcached-operator
+----
++
+The `init` command generates the RBAC rules in the `config/rbac/role.yaml` file based on the resources that would be deployed by the chart's default manifests. Verify that the rules generated in the `config/rbac/role.yaml` file meet your Operator's permission requirements.
+
+:leveloffset!:
+.Additional resources
+
+* This procedure creates a project structure that is compatible with both Helm and Go APIs. To learn more about the project directory structure, see xref:../../../operators/operator_sdk/helm/osdk-hybrid-helm.adoc#osdk-hh-project-layout_osdk-hybrid-helm[Project layout].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-hh-create-helm-api_{context}"]
+= Creating a Helm API
+
+Use the Operator SDK CLI to create a Helm API.
+
+.Procedure
+
+* Run the following command to create a Helm API with group `cache`, version `v1`, and kind `Memcached`:
++
+[source,terminal]
+----
+$ operator-sdk create api \
+    --plugins helm.sdk.operatorframework.io/v1 \
+    --group cache \
+    --version v1 \
+    --kind Memcached
+----
+
+[NOTE]
+====
+This procedure also configures your Operator project to watch the `Memcached` resource with API version `v1` and scaffolds a boilerplate Helm chart. Instead of creating the project from the boilerplate Helm chart scaffolded by the Operator SDK, you can alternatively use an existing chart from your local file system or remote chart repository.
+
+For more details and examples for creating Helm API based on existing or new charts, run the following command:
+
+[source,terminal]
+----
+$ operator-sdk create api --plugins helm.sdk.operatorframework.io/v1 --help
+----
+====
+
+:leveloffset!:
+.Additional resources
+
+* xref:../../../operators/operator_sdk/helm/osdk-helm-tutorial.adoc#osdk-helm-existing-chart_osdk-helm-tutorial[Existing Helm charts]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-hh-helm-api-logic_{context}"]
+= Operator logic for the Helm API
+
+By default, your scaffolded Operator project watches `Memcached` resource events as shown in the `watches.yaml` file and executes Helm releases using the specified chart.
+
+.Example `watches.yaml` file
+[%collapsible]
+====
+[source,yaml]
+----
+# Use the 'create api' subcommand to add watches to this file.
+- group: cache.my.domain
+  version: v1
+  kind: Memcached
+  chart: helm-charts/memcached
+#+kubebuilder:scaffold:watch
+----
+====
+
+:leveloffset!:
+.Additional resources
+
+* For detailed documentation on customizing the Helm Operator logic through the chart, see xref:../../../operators/operator_sdk/helm/osdk-helm-tutorial.adoc#osdk-helm-logic_osdk-helm-tutorial[Understanding the Operator logic].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-hh-helm-reconciler_{context}"]
+= Custom Helm reconciler configurations using provided library APIs
+
+A disadvantage of existing Helm-based Operators is the inability to configure the Helm reconciler, because it is abstracted from users. For a Helm-based Operator to reach the Seamless Upgrades capability (level II and later) that reuses an already existing Helm chart, a hybrid between the Go and Helm Operator types adds value.
+
+The APIs provided in the link:https://github.com/operator-framework/helm-operator-plugins[`helm-operator-plugins`] library allow Operator authors to make the following configurations:
+
+* Customize value mapping based on cluster state
+* Execute code in specific events by configuring the reconciler's event recorder
+* Customize the reconciler's logger
+* Setup `Install`, `Upgrade`, and `Uninstall` annotations to enable Helm's actions to be configured based on the annotations found in custom resources watched by the reconciler
+* Configure the reconciler to run with `Pre` and `Post` hooks
+
+The above configurations to the reconciler can be done in the `main.go` file:
+
+[%collapsible]
+====
+.Example `main.go` file
+[source,golang]
+----
+// Operator's main.go
+// With the help of helpers provided in the library, the reconciler can be
+// configured here before starting the controller with this reconciler.
+reconciler := reconciler.New(
+ reconciler.WithChart(*chart),
+ reconciler.WithGroupVersionKind(gvk),
+)
+
+if err := reconciler.SetupWithManager(mgr); err != nil {
+ panic(fmt.Sprintf("unable to create reconciler: %s", err))
+}
+----
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-hh-create-go-api_{context}"]
+= Creating a Go API
+
+Use the Operator SDK CLI to create a Go API.
+
+.Procedure
+
+. Run the following command to create a Go API with group `cache`, version `v1`, and kind `MemcachedBackup`:
++
+[source,terminal]
+----
+$ operator-sdk create api \
+    --group=cache \
+    --version v1 \
+    --kind MemcachedBackup \
+    --resource \
+    --controller \
+    --plugins=go/v3
+----
+
+. When prompted, enter `y` for creating both resource and controller:
++
+[source,terminal]
+----
+$ Create Resource [y/n]
+y
+Create Controller [y/n]
+y
+----
+
+This procedure generates the `MemcachedBackup` resource API at `api/v1/memcachedbackup_types.go` and the controller at `controllers/memcachedbackup_controller.go`.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-hh-defining-go-api_{context}"]
+= Defining the API
+
+Define the API for the `MemcachedBackup` custom resource (CR).
+
+Represent this Go API by defining the `MemcachedBackup` type, which will have a `MemcachedBackupSpec.Size` field to set the quantity of Memcached backup instances (CRs) to be deployed, and a `MemcachedBackupStatus.Nodes` field to store a CR's pod names.
+
+[NOTE]
+====
+The `Node` field is used to illustrate an example of a `Status` field.
+====
+
+.Procedure
+
+. Define the API for the `MemcachedBackup` CR by modifying the Go type definitions in the `api/v1/memcachedbackup_types.go` file to have the following `spec` and `status`:
++
+.Example `api/v1/memcachedbackup_types.go` file
+[%collapsible]
+====
+[source,golang]
+----
+// MemcachedBackupSpec defines the desired state of MemcachedBackup
+type MemcachedBackupSpec struct {
+	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+	// Important: Run "make" to regenerate code after modifying this file
+
+	//+kubebuilder:validation:Minimum=0
+	// Size is the size of the memcached deployment
+	Size int32 `json:"size"`
+}
+
+// MemcachedBackupStatus defines the observed state of MemcachedBackup
+type MemcachedBackupStatus struct {
+	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
+	// Important: Run "make" to regenerate code after modifying this file
+	// Nodes are the names of the memcached pods
+	Nodes []string `json:"nodes"`
+}
+----
+====
+
+. Update the generated code for the resource type:
++
+[source,terminal]
+----
+$ make generate
+----
++
+[TIP]
+====
+After you modify a `*_types.go` file, you must run the `make generate` command to update the generated code for that resource type.
+====
+
+. After the API is defined with `spec` and `status` fields and CRD validation markers, generate and update the CRD manifests:
++
+[source,terminal]
+----
+$ make manifests
+----
+
+This Makefile target invokes the `controller-gen` utility to generate the CRD manifests in the `config/crd/bases/cache.my.domain_memcachedbackups.yaml` file.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-hh-implement-controller_{context}"]
+= Controller implementation
+
+The controller in this tutorial performs the following actions:
+
+* Create a `Memcached` deployment if it does not exist.
+* Ensure that the deployment size is the same as specified by the `Memcached` CR spec.
+* Update the `Memcached` CR status with the names of the `memcached` pods.
+
+:leveloffset!:
+
+For a detailed explanation on how to configure the controller to perform the above mentioned actions, see xref:../../../operators/operator_sdk/golang/osdk-golang-tutorial.adoc#osdk-golang-implement-controller_osdk-golang-tutorial[Implementing the controller] in the Operator SDK tutorial for standard Go-based Operators.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-hh-main-go_{context}"]
+= Differences in main.go
+
+For standard Go-based Operators and the Hybrid Helm Operator, the `main.go` file handles the scaffolding the initialization and running of the link:https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager#Manager[`Manager`] program for the Go API. For the Hybrid Helm Operator, however, the `main.go` file also exposes the logic for loading the `watches.yaml` file and configuring the Helm reconciler.
+
+.Example `main.go` file
+[%collapsible]
+====
+[source,terminal]
+----
+...
+	for _, w := range ws {
+		// Register controller with the factory
+		reconcilePeriod := defaultReconcilePeriod
+		if w.ReconcilePeriod != nil {
+			reconcilePeriod = w.ReconcilePeriod.Duration
+		}
+
+		maxConcurrentReconciles := defaultMaxConcurrentReconciles
+		if w.MaxConcurrentReconciles != nil {
+			maxConcurrentReconciles = *w.MaxConcurrentReconciles
+		}
+
+		r, err := reconciler.New(
+			reconciler.WithChart(*w.Chart),
+			reconciler.WithGroupVersionKind(w.GroupVersionKind),
+			reconciler.WithOverrideValues(w.OverrideValues),
+			reconciler.SkipDependentWatches(w.WatchDependentResources != nil && !*w.WatchDependentResources),
+			reconciler.WithMaxConcurrentReconciles(maxConcurrentReconciles),
+			reconciler.WithReconcilePeriod(reconcilePeriod),
+			reconciler.WithInstallAnnotations(annotation.DefaultInstallAnnotations...),
+			reconciler.WithUpgradeAnnotations(annotation.DefaultUpgradeAnnotations...),
+			reconciler.WithUninstallAnnotations(annotation.DefaultUninstallAnnotations...),
+		)
+...
+----
+====
+
+The manager is initialized with both `Helm` and `Go` reconcilers:
+
+.Example `Helm` and `Go` reconcilers
+[%collapsible]
+====
+[source,terminal]
+----
+...
+// Setup manager with Go API
+   if err = (&controllers.MemcachedBackupReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "MemcachedBackup")
+		os.Exit(1)
+	}
+
+   ...
+// Setup manager with Helm API
+	for _, w := range ws {
+
+      ...
+		if err := r.SetupWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Helm")
+			os.Exit(1)
+		}
+		setupLog.Info("configured watch", "gvk", w.GroupVersionKind, "chartPath", w.ChartPath, "maxConcurrentReconciles", maxConcurrentReconciles, "reconcilePeriod", reconcilePeriod)
+	}
+
+// Start the manager
+   if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
+		setupLog.Error(err, "problem running manager")
+		os.Exit(1)
+	}
+----
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-hh-rbac_{context}"]
+= Permissions and RBAC manifests
+
+The controller requires certain role-based access control (RBAC) permissions to interact with the resources it manages. For the Go API, these are specified with RBAC markers, as shown in the Operator SDK tutorial for standard Go-based Operators.
+
+For the Helm API, the permissions are scaffolded by default in `roles.yaml`. Currently, however, due to a known issue when the Go API is scaffolded, the permissions for the Helm API are overwritten. As a result of this issue, ensure that the permissions defined in `roles.yaml` match your requirements.
+
+[NOTE]
+====
+This known issue is being tracked in link:https://github.com/operator-framework/helm-operator-plugins/issues/142[].
+====
+
+The following is an example `role.yaml` for a Memcached Operator:
+
+.Example `Helm` and `Go` reconcilers
+[%collapsible]
+====
+[source,yaml]
+----
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - daemonsets
+  - replicasets
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cache.my.domain
+  resources:
+  - memcachedbackups
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cache.my.domain
+  resources:
+  - memcachedbackups/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - services/finalizers
+  - endpoints
+  - persistentvolumeclaims
+  - events
+  - configmaps
+  - secrets
+  - serviceaccounts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cache.my.domain
+  resources:
+  - memcachedbackups/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - policy
+  resources:
+  - events
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cache.my.domain
+  resources:
+  - memcacheds
+  - memcacheds/status
+  - memcacheds/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+----
+====
+
+:leveloffset!:
+.Additional resources
+
+* xref:../../../operators/operator_sdk/golang/osdk-golang-tutorial.adoc#osdk-golang-controller-rbac-markers_osdk-golang-tutorial[RBAC markers for Go-based Operators]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/golang/osdk-golang-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-helm-tutorial.adoc
+
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-run-locally_{context}"]
+= Running locally outside the cluster
+
+You can run your Operator project as a Go program outside of the cluster. This is useful for development purposes to speed up deployment and testing.
+
+.Procedure
+* Run the following command to install the custom resource definitions (CRDs) in the cluster configured in your `~/.kube/config` file and run the Operator locally:
++
+[source,terminal]
+----
+$ make install run
+----
++
+.Example output
+[source,terminal]
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/golang/osdk-golang-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-inside-operator.adoc
+// * operators/operator_sdk/helm/osdk-helm-tutorial.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-run-deployment_{context}"]
+= Running as a deployment on the cluster
+
+You can run your Operator project as a deployment on your cluster.
+
+
+.Procedure
+
+. Run the following `make` commands to build and push the Operator image. Modify the `IMG` argument in the following steps to reference a repository that you have access to. You can obtain an account for storing containers at repository sites such as Quay.io.
+
+.. Build the image:
++
+[source,terminal]
+----
+$ make docker-build IMG=<registry>/<user>/<image_name>:<tag>
+----
++
+[NOTE]
+====
+The Dockerfile generated by the SDK for the Operator explicitly references `GOARCH=amd64` for `go build`. This can be amended to `GOARCH=$TARGETARCH` for non-AMD64 architectures. Docker will automatically set the environment variable to the value specified by `–platform`. With Buildah, the `–build-arg` will need to be used for the purpose. For more information, see link:https://sdk.operatorframework.io/docs/advanced-topics/multi-arch/#supporting-multiple-architectures[Multiple Architectures].
+====
+
+.. Push the image to a repository:
++
+[source,terminal]
+----
+$ make docker-push IMG=<registry>/<user>/<image_name>:<tag>
+----
++
+[NOTE]
+====
+The name and tag of the image, for example `IMG=<registry>/<user>/<image_name>:<tag>`, in both the commands can also be set in your Makefile. Modify the `IMG ?= controller:latest` value to set your default image name.
+====
+
+
+. Run the following command to deploy the Operator:
++
+[source,terminal]
+----
+$ make deploy IMG=<registry>/<user>/<image_name>:<tag>
+----
++
+By default, this command creates a namespace with the name of your Operator project in the form `<project_name>-system` and is used for the deployment. This command also installs the RBAC manifests from `config/rbac`.
+
+. Run the following command to verify that the Operator is running:
++
+[source,terminal]
+----
+$ oc get deployment -n <project_name>-system
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                    READY   UP-TO-DATE   AVAILABLE   AGE
+<project_name>-controller-manager       1/1     1            1           8m
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-hh-create-cr_{context}"]
+= Creating custom resources
+
+After your Operator is installed, you can test it by creating custom resources (CRs) that are now provided on the cluster by the Operator.
+
+.Procedure
+
+. Change to the namespace where your Operator is installed:
++
+[source,terminal]
+----
+$ oc project <project_name>-system
+----
+
+. Update the sample `Memcached` CR manifest at the `config/samples/cache_v1_memcached.yaml` file by updating the `replicaCount` field to `3`:
++
+.Example `config/samples/cache_v1_memcached.yaml` file
+[%collapsible]
+====
+[source,yaml]
+----
+apiVersion: cache.my.domain/v1
+kind: Memcached
+metadata:
+  name: memcached-sample
+spec:
+  # Default values copied from <project_dir>/helm-charts/memcached/values.yaml
+  affinity: {}
+  autoscaling:
+    enabled: false
+    maxReplicas: 100
+    minReplicas: 1
+    targetCPUUtilizationPercentage: 80
+  fullnameOverride: ""
+  image:
+    pullPolicy: IfNotPresent
+    repository: nginx
+    tag: ""
+  imagePullSecrets: []
+  ingress:
+    annotations: {}
+    className: ""
+    enabled: false
+    hosts:
+    - host: chart-example.local
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+    tls: []
+  nameOverride: ""
+  nodeSelector: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+  replicaCount: 3
+  resources: {}
+  securityContext: {}
+  service:
+    port: 80
+    type: ClusterIP
+  serviceAccount:
+    annotations: {}
+    create: true
+    name: ""
+  tolerations: []
+----
+====
+
+. Create the `Memcached` CR:
++
+[source,terminal]
+----
+$ oc apply -f config/samples/cache_v1_memcached.yaml
+----
+
+. Ensure that the Memcached Operator creates the deployment for the sample CR with the correct size:
++
+[source,terminal]
+----
+$ oc get pods
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                  READY     STATUS    RESTARTS   AGE
+memcached-sample-6fd7c98d8-7dqdr      1/1       Running   0          18m
+memcached-sample-6fd7c98d8-g5k7v      1/1       Running   0          18m
+memcached-sample-6fd7c98d8-m7vn7      1/1       Running   0          18m
+----
+
+. Update the sample `MemcachedBackup` CR manifest at the `config/samples/cache_v1_memcachedbackup.yaml` file by updating the `size` to `2`:
++
+.Example `config/samples/cache_v1_memcachedbackup.yaml` file
+[%collapsible]
+====
+[source,yaml]
+----
+apiVersion: cache.my.domain/v1
+kind: MemcachedBackup
+metadata:
+  name: memcachedbackup-sample
+spec:
+  size: 2
+----
+====
+
+. Create the `MemcachedBackup` CR:
++
+[source,terminal]
+----
+$ oc apply -f config/samples/cache_v1_memcachedbackup.yaml
+----
+
+. Ensure that the count of `memcachedbackup` pods is the same as specified in the CR:
++
+[source,terminal]
+----
+$ oc get pods
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                        READY     STATUS    RESTARTS   AGE
+memcachedbackup-sample-8649699989-4bbzg     1/1       Running   0          22m
+memcachedbackup-sample-8649699989-mq6mx     1/1       Running   0          22m
+----
+
+. You can update the `spec` in each of the above CRs, and then apply them again. The controller reconciles again and ensures that the size of the pods is as specified in the `spec` of the respective CRs.
+
+. Clean up the resources that have been created as part of this tutorial:
+
+.. Delete the `Memcached` resource:
++
+[source,terminal]
+----
+$ oc delete -f config/samples/cache_v1_memcached.yaml
+----
+
+.. Delete the `MemcachedBackup` resource:
++
+[source,terminal]
+----
+$ oc delete -f config/samples/cache_v1_memcachedbackup.yaml
+----
+
+.. If you used the `make deploy` command to test the Operator, run the following command:
++
+[source,terminal]
+----
+$ make undeploy
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="osdk-hh-project-layout_{context}"]
+= Project layout
+
+The Hybrid Helm Operator scaffolding is customized to be compatible with both Helm and Go APIs.
+
+[options="header",cols="1a,4a"]
+|===
+
+|File/folders |Purpose
+
+|`Dockerfile`
+|Instructions used by a container engine to build your Operator image with the `make docker-build` command.
+
+|`Makefile`
+|Build file with helper targets to help you work with your project.
+
+|`PROJECT`
+|YAML file containing metadata information for the Operator. Represents the project's configuration and is used to track useful information for the CLI and plugins.
+
+|`bin/`
+|Contains useful binaries such as the `manager` which is used to run your project locally and  the `kustomize` utility used for the project configuration.
+
+|`config/`
+|Contains configuration files, including all link:https://kustomize.io/[Kustomize] manifests, to launch your Operator project on a cluster. Plugins might use it to provide functionality. For example, for the Operator SDK to help create your Operator bundle, the CLI looks up the CRDs and CRs which are scaffolded in this directory.
+
+`config/crd/`:: Contains custom resource definitions (CRDs).
+
+`config/default/`:: Contains a Kustomize base for launching the controller in a standard configuration.
+
+`config/manager/`:: Contains the manifests to launch your Operator project as pods on the cluster.
+
+`config/manifests/`:: Contains the base to generate your OLM manifests in the `bundle/` directory.
+
+`config/prometheus/`:: Contains the manifests required to enable project to serve metrics to Prometheus such as the `ServiceMonitor` resource.
+
+`config/scorecard/`:: Contains the manifests required to allow you test your project with the scorecard tool.
+
+`config/rbac/`:: Contains the RBAC permissions required to run your project.
+
+`config/samples/`:: Contains samples for custom resources.
+
+|`api/`
+|Contains the Go API definition.
+
+|`controllers/`
+|Contains the controllers for the Go API.
+
+|`hack/`
+|Contains utility files, such as the file used to scaffold the license header for your project files.
+
+|`main.go`
+|Main program of the Operator. Instantiates a new manager that registers all custom resource definitions (CRDs) in the `apis/` directory and starts all controllers in the `controllers/` directory.
+
+|`helm-charts/`
+|Contains the Helm charts which can be specified using the `create api` command with the Helm plugin.
+
+|`watches.yaml`
+|Contains group/version/kind (GVK) and Helm chart location. Used to configure the Helm watches.
+
+|===
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,snippets/technology-preview,modules/osdk-common-prereqs,modules/osdk-hh-create-project,modules/osdk-hh-create-helm-api,modules/osdk-hh-helm-api-logic,modules/osdk-hh-helm-reconciler,modules/osdk-hh-create-go-api,modules/osdk-hh-defining-go-api,modules/osdk-hh-implement-controller,modules/osdk-hh-main-go,modules/osdk-hh-rbac,modules/osdk-run-locally,modules/osdk-run-deployment,modules/osdk-hh-create-cr,modules/osdk-hh-project-layout

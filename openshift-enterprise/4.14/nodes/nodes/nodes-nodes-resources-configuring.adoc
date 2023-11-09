@@ -1,0 +1,560 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="nodes-nodes-resources-configuring"]
+= Allocating resources for nodes in an {product-title} cluster
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: nodes-nodes-resources-configuring
+
+toc::[]
+
+To provide more reliable scheduling and minimize node resource overcommitment, reserve a portion of the CPU and memory resources for use by the underlying node components, such as `kubelet` and `kube-proxy`, and the remaining system components, such as `sshd` and `NetworkManager`. By specifying the resources to reserve, you provide the scheduler with more information about the remaining CPU and memory resources that a node has available for use by pods. You can allow {product-title} to xref:../../nodes/nodes/nodes-nodes-resources-configuring.adoc#nodes-nodes-resources-configuring-auto_nodes-nodes-resources-configuring[automatically determine the optimal `system-reserved` CPU and memory resources] for your nodes or you can xref:../../nodes/nodes/nodes-nodes-resources-configuring.adoc#nodes-nodes-resources-configuring-setting_nodes-nodes-resources-configuring[manually determine and set the best resources] for your nodes.
+
+[IMPORTANT]
+====
+To manually set resource values, you must use a kubelet config CR. You cannot use a machine config CR.
+====
+
+// The following include statements pull in the module files that comprise
+// the assembly. Include any combination of concept, procedure, or reference
+// modules required to cover the user story. You can also include other
+// assemblies.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-nodes-resources-configuring.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-nodes-resources-configuring-about_{context}"]
+= Understanding how to allocate resources for nodes
+
+CPU and memory resources reserved for node components in {product-title} are based on two node settings:
+
+[options="header",cols="1,2"]
+|===
+|Setting |Description
+
+|`kube-reserved`
+| This setting is not used with {product-title}. Add the CPU and memory resources that you planned to reserve to the `system-reserved` setting.
+
+|`system-reserved`
+| This setting identifies the resources to reserve for the node components and system components, such as CRI-O and Kubelet. The default settings depend on the {product-title} and Machine Config Operator versions. Confirm the default `systemReserved` parameter on the `machine-config-operator` repository.
+|===
+
+If a flag is not set, the defaults are used. If none of the flags are set, the
+allocated resource is set to the node's capacity as it was before the
+introduction of allocatable resources.
+
+[NOTE]
+====
+Any CPUs specifically reserved using the `reservedSystemCPUs` parameter are not available for allocation using `kube-reserved` or `system-reserved`.
+====
+
+[id="computing-allocated-resources_{context}"]
+== How {product-title} computes allocated resources
+
+An allocated amount of a resource is computed based on the following formula:
+
+----
+[Allocatable] = [Node Capacity] - [system-reserved] - [Hard-Eviction-Thresholds]
+----
+
+[NOTE]
+====
+The withholding of `Hard-Eviction-Thresholds` from `Allocatable` improves system reliability because the value for `Allocatable` is enforced for pods at the node level.
+====
+
+If `Allocatable` is negative, it is set to `0`.
+
+Each node reports the system resources that are used by the container runtime and kubelet. To simplify configuring the `system-reserved` parameter, view the resource use for the node by using the node summary API. The node summary is available at `/api/v1/nodes/<node>/proxy/stats/summary`.
+
+[id="allocate-node-enforcement_{context}"]
+== How nodes enforce resource constraints
+
+The node is able to limit the total amount of resources that pods can consume based on the configured allocatable value. This feature significantly improves the reliability of the node by preventing pods from using CPU and memory resources that are needed by system services such as the container runtime and node agent. To improve node reliability, administrators should reserve resources based on a target for resource use.
+
+The node enforces resource constraints by using a new cgroup hierarchy that enforces quality of service. All pods are launched in a dedicated cgroup hierarchy that is separate from system daemons.
+
+Administrators should treat system daemons similar to pods that have a guaranteed quality of service. System daemons can burst within their bounding control groups and this behavior must be managed as part of cluster deployments. Reserve CPU and memory resources for system daemons by specifying the amount of CPU and memory resources in `system-reserved`.
+
+Enforcing `system-reserved` limits can prevent critical system services from receiving CPU and memory resources. As a result, a critical system service can be ended by the out-of-memory killer. The recommendation is to enforce `system-reserved` only if you have profiled the nodes exhaustively to determine precise estimates and you are confident that critical system services can recover if any process in that group is ended by the out-of-memory killer.
+
+[id="allocate-eviction-thresholds_{context}"]
+== Understanding Eviction Thresholds
+
+If a node is under memory pressure, it can impact the entire node and all pods running on the node. For example, a system daemon that uses more than its reserved amount of memory can trigger an out-of-memory event. To avoid or reduce the probability of system out-of-memory events, the node provides out-of-resource handling.
+
+You can reserve some memory using the `--eviction-hard` flag. The node attempts to evict
+pods whenever memory availability on the node drops below the absolute value or percentage.
+If system daemons do not exist on a node, pods are limited to the memory
+`capacity - eviction-hard`. For this reason, resources set aside as a buffer for eviction
+before reaching out of memory conditions are not available for pods.
+
+The following is an example to illustrate the impact of node allocatable for memory:
+
+* Node capacity is `32Gi`
+* --system-reserved is `3Gi`
+* --eviction-hard is set to `100Mi`.
+
+For this node, the effective node allocatable value is `28.9Gi`. If the node and system components use all their reservation, the memory available for pods is `28.9Gi`, and kubelet evicts pods when it exceeds this threshold.
+
+If you enforce node allocatable, `28.9Gi`, with top-level cgroups, then pods can never exceed `28.9Gi`. Evictions are not performed unless system daemons consume more than `3.1Gi` of memory.
+
+If system daemons do not use up all their reservation, with the above example,
+pods would face memcg OOM kills from their bounding cgroup before node evictions kick in.
+To better enforce QoS under this situation, the node applies the hard eviction thresholds to
+the top-level cgroup for all pods to be `Node Allocatable + Eviction Hard Thresholds`.
+
+If system daemons do not use up all their reservation, the node will evict pods whenever
+they consume more than `28.9Gi` of memory. If eviction does not occur in time, a pod
+will be OOM killed if pods consume `29Gi` of memory.
+
+[id="allocate-scheduler-policy_{context}"]
+== How the scheduler determines resource availability
+
+The scheduler uses the value of `node.Status.Allocatable` instead of
+`node.Status.Capacity` to decide if a node will become a candidate for pod
+scheduling.
+
+By default, the node will report its machine capacity as fully schedulable by
+the cluster.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-nodes-resources-configuring.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-nodes-resources-configuring-auto_{context}"]
+= Automatically allocating resources for nodes
+
+{product-title} can automatically determine the optimal `system-reserved` CPU and memory resources for nodes associated with a specific machine config pool and update the nodes with those values when the nodes start. By default, the `system-reserved` CPU is `500m` and `system-reserved` memory is `1Gi`.
+
+To automatically determine and allocate the `system-reserved` resources on nodes, create a `KubeletConfig` custom resource (CR) to set the `autoSizingReserved: true` parameter. A script on each node calculates the optimal values for the respective reserved resources based on the installed CPU and memory capacity on each node. The script takes into account that increased capacity requires a corresponding increase in the reserved resources.
+
+Automatically determining the optimal `system-reserved` settings ensures that your cluster is running efficiently and prevents node failure due to resource starvation of system components, such as CRI-O and kubelet, without your needing to manually calculate and update the values.
+
+This feature is disabled by default.
+
+.Prerequisites
+
+. Obtain the label associated with the static `MachineConfigPool` object for the type of node you want to configure by entering the following command:
++
+[source,terminal]
+----
+$ oc edit machineconfigpool <name>
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc edit machineconfigpool worker
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  creationTimestamp: "2022-11-16T15:34:25Z"
+  generation: 4
+  labels:
+    pools.operator.machineconfiguration.openshift.io/worker: "" <1>
+  name: worker
+#...
+----
+<1> The label appears under `Labels`.
++
+[TIP]
+====
+If an appropriate label is not present, add a key/value pair such as:
+
+----
+$ oc label machineconfigpool worker custom-kubelet=small-pods
+----
+====
+
+.Procedure
+
+. Create a custom resource (CR) for your configuration change:
++
+.Sample configuration for a resource allocation CR
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: KubeletConfig
+metadata:
+  name: dynamic-node <1>
+spec:
+  autoSizingReserved: true <2>
+  machineConfigPoolSelector:
+    matchLabels:
+      pools.operator.machineconfiguration.openshift.io/worker: "" <3>
+#...
+----
+<1> Assign a name to CR.
+<2> Add the `autoSizingReserved` parameter set to `true` to allow {product-title} to automatically determine and allocate the `system-reserved` resources on the nodes associated with the specified label. To disable automatic allocation on those nodes, set this parameter to `false`.
+<3> Specify the label from the machine config pool that you configured in the "Prerequisites" section. You can choose any desired labels for the machine config pool, such as `custom-kubelet: small-pods`, or the default label, `pools.operator.machineconfiguration.openshift.io/worker: ""`.
++
+The previous example enables automatic resource allocation on all worker nodes. {product-title} drains the nodes, applies the kubelet config, and restarts the nodes.
+
+. Create the CR by entering the following command:
++
+[source,terminal]
+----
+$ oc create -f <file_name>.yaml
+----
+
+.Verification
+
+. Log in to a node you configured by entering the following command:
++
+[source,terminal]
+----
+$ oc debug node/<node_name>
+----
+
+. Set `/host` as the root directory within the debug shell:
++
+[source,terminal]
+----
+# chroot /host
+----
+
+. View the `/etc/node-sizing.env` file:
++
+.Example output
+[source,terminal]
+----
+SYSTEM_RESERVED_MEMORY=3Gi
+SYSTEM_RESERVED_CPU=0.08
+----
++
+The kubelet uses the `system-reserved` values in the `/etc/node-sizing.env` file. In the previous example, the worker nodes are allocated `0.08` CPU and 3 Gi of memory. It can take several minutes for the optimal values to appear.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-nodes-resources-configuring.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-nodes-resources-configuring-setting_{context}"]
+= Manually allocating resources for nodes
+
+{product-title} supports the CPU and memory resource types for allocation. The `ephemeral-resource` resource type is also supported. For the `cpu` type, you specify the resource quantity in units of cores, such as `200m`, `0.5`, or `1`. For `memory` and `ephemeral-storage`, you specify the resource quantity in units of bytes, such as `200Ki`, `50Mi`, or `5Gi`. By default, the `system-reserved` CPU is `500m` and `system-reserved` memory is `1Gi`.
+
+As an administrator, you can set these values by using a kubelet config custom resource (CR) through a set of `<resource_type>=<resource_quantity>` pairs
+(e.g., `cpu=200m,memory=512Mi`).
+
+[IMPORTANT]
+====
+You must use a kubelet config CR to manually set resource values. You cannot use a machine config CR.
+====
+
+For details on the recommended `system-reserved` values, refer to the link:https://access.redhat.com/solutions/5843241[recommended system-reserved values].
+
+.Prerequisites
+
+. Obtain the label associated with the static `MachineConfigPool` CRD for the type of node you want to configure by entering the following command:
++
+[source,terminal]
+----
+$ oc edit machineconfigpool <name>
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc edit machineconfigpool worker
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  creationTimestamp: "2022-11-16T15:34:25Z"
+  generation: 4
+  labels:
+    pools.operator.machineconfiguration.openshift.io/worker: "" <1>
+  name: worker
+#...
+----
+<1> The label appears under Labels.
++
+[TIP]
+====
+If the label is not present, add a key/value pair such as:
+
+----
+$ oc label machineconfigpool worker custom-kubelet=small-pods
+----
+====
+
+.Procedure
+
+. Create a custom resource (CR) for your configuration change.
++
+.Sample configuration for a resource allocation CR
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: KubeletConfig
+metadata:
+  name: set-allocatable <1>
+spec:
+  machineConfigPoolSelector:
+    matchLabels:
+      pools.operator.machineconfiguration.openshift.io/worker: "" <2>
+  kubeletConfig:
+    systemReserved: <3>
+      cpu: 1000m
+      memory: 1Gi
+#...
+----
+<1> Assign a name to CR.
+<2> Specify the label from the machine config pool.
+<3> Specify the resources to reserve for the node components and system components.
+
+. Run the following command to create the CR:
++
+[source,terminal]
+----
+$ oc create -f <file_name>.yaml
+----
+
+:leveloffset!:
+
+////
+[role="_additional-resources"]
+== Additional resources
+
+The ephemeral storage management feature is disabled by default. To enable this
+feature,
+
+See /install_config/configuring_ephemeral.adoc#install-config-configuring-ephemeral-storage[configuring for
+ephemeral storage].
+
+See /dev_guide/compute_resources.adoc#dev-guide-compute-resources[Compute Resources] for more
+details.
+
+#update these links when the links become available#
+
+////
+
+//# includes=_attributes/common-attributes,modules/nodes-nodes-resources-configuring-about,modules/nodes-nodes-resources-configuring-auto,modules/nodes-nodes-resources-configuring-setting

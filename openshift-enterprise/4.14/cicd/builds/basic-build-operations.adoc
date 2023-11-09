@@ -1,0 +1,646 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="basic-build-operations"]
+= Performing and configuring basic builds
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: basic-build-operations
+
+toc::[]
+
+The following sections provide instructions for basic build operations, including starting and canceling builds, editing `BuildConfigs`, deleting `BuildConfigs`, viewing build details, and accessing build logs.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-start-build_{context}"]
+= Starting a build
+
+You can manually start a new build from an existing build configuration in your current project.
+
+.Procedure
+
+To manually start a build, enter the following command:
+
+[source,terminal]
+----
+$ oc start-build <buildconfig_name>
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-start-re-run_{context}"]
+= Re-running a build
+
+You can manually re-run a build using the `--from-build` flag.
+
+.Procedure
+
+* To manually re-run a build, enter the following command:
++
+[source,terminal]
+----
+$ oc start-build --from-build=<build_name>
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-start-logs_{context}"]
+= Streaming build logs
+
+You can specify the `--follow` flag to stream the build's logs in `stdout`.
+
+.Procedure
+
+* To manually stream a build's logs in `stdout`, enter the following command:
++
+[source,terminal]
+----
+$ oc start-build <buildconfig_name> --follow
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-start-environment-variable_{context}"]
+= Setting environment variables when starting a build
+
+You can specify the `--env` flag to set any desired environment variable for the build.
+
+.Procedure
+
+* To specify a desired environment variable, enter the following command:
++
+[source,terminal]
+----
+$ oc start-build <buildconfig_name> --env=<key>=<value>
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-start-source_{context}"]
+= Starting a build with source
+
+Rather than relying on a Git source pull
+for a build, you can also start a build by directly pushing your source, which could be the contents of a Git or SVN working directory, a set of pre-built binary artifacts you want to deploy, or a single file. This can be done by specifying one of the following options for the `start-build` command:
+
+[cols="1,2",options="header"]
+|===
+|Option |Description
+
+|`--from-dir=<directory>`
+|Specifies a directory that will be archived and used as a binary input for the build.
+
+|`--from-file=<file>`
+|Specifies a single file that will be the only file in the build source. The file is placed in the root of an empty directory with the same file name as the original file provided.
+
+|`--from-repo=<local_source_repo>`
+|Specifies a path to a local repository to use as the binary input for a build. Add the `--commit` option to control which branch, tag, or commit is used for the build.
+|===
+
+When passing any of these options directly to the build, the contents are streamed to the build and override the current build source settings.
+
+[NOTE]
+====
+Builds triggered from binary input will not preserve the source on the server, so rebuilds triggered by base image changes will use the source specified in the build configuration.
+====
+
+.Procedure
+
+* Start a build from a source using the following command to send the contents of a local Git repository as an archive from the tag `v2`:
++
+[source,terminal]
+----
+$ oc start-build hello-world --from-repo=../hello-world --commit=v2
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-cancel-build_{context}"]
+= Canceling a build
+
+You can cancel a build using the web console, or with the following CLI command.
+
+.Procedure
+
+* To manually cancel a build, enter the following command:
++
+[source,terminal]
+----
+$ oc cancel-build <build_name>
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-cancel-multiple_{context}"]
+= Canceling multiple builds
+
+You can cancel multiple builds with the following CLI command.
+
+.Procedure
+
+* To manually cancel multiple builds, enter the following command:
++
+[source,terminal]
+----
+$ oc cancel-build <build1_name> <build2_name> <build3_name>
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-cancel-all_{context}"]
+= Canceling all builds
+
+You can cancel all builds from the build configuration with the following CLI command.
+
+.Procedure
+
+* To cancel all builds, enter the following command:
++
+[source,terminal]
+----
+$ oc cancel-build bc/<buildconfig_name>
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-cancel-all-state_{context}"]
+= Canceling all builds in a given state
+
+You can cancel all builds in a given state, such as `new` or `pending`, while ignoring the builds in other states.
+
+.Procedure
+
+* To cancel all in a given state, enter the following command:
++
+[source,terminal]
+----
+$ oc cancel-build bc/<buildconfig_name>
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-edit-buildconfig_{context}"]
+= Editing a BuildConfig
+
+To edit your build configurations, you use the *Edit BuildConfig* option in the *Builds* view of the *Developer* perspective.
+
+You can use either of the following views to edit a `BuildConfig`:
+
+* The *Form view* enables you to edit your `BuildConfig` using the standard form fields and checkboxes.
+* The *YAML view* enables you to edit your `BuildConfig` with full control over the operations.
+
+You can switch between the *Form view* and *YAML view* without losing any data. The data in the *Form view* is transferred to the *YAML view* and vice versa.
+
+.Procedure
+
+. In the *Builds* view of the *Developer* perspective, click the menu {kebab} to see the *Edit BuildConfig* option.
+. Click *Edit BuildConfig* to see the *Form view* option.
+. In the *Git* section, enter the Git repository URL for the codebase you want to use to create an application. The URL is then validated.
+* Optional: Click *Show Advanced Git Options* to add details such as:
+** *Git Reference* to specify a branch, tag, or commit that contains code you want to use to build the application.
+** *Context Dir* to specify the subdirectory that contains code you want to use to build the application.
+** *Source Secret* to create a *Secret Name* with credentials for pulling your source code from a private repository.
+. In the *Build from* section, select the option that you would like to build from. You can use the following options:
+** *Image Stream tag* references an image for a given image stream and tag. Enter the project, image stream, and tag of the location you would like to build from and push to.
+** *Image Stream image* references an image for a given image stream and image name. Enter the image stream image you would like to build from. Also enter the project, image stream, and tag to push to.
+** *Docker image*: The Docker image is referenced through a Docker image repository. You will also need to enter the project, image stream, and tag to refer to where you would like to push to.
+. Optional: In the *Environment Variables* section, add the environment variables associated with the project by using the *Name* and *Value* fields. To add more environment variables, use *Add Value*, or *Add from ConfigMap* and *Secret* .
+. Optional: To further customize your application, use the following advanced options:
+Trigger::
+Triggers a new image build when the builder image changes. Add more triggers by clicking *Add Trigger* and selecting the *Type* and *Secret*.
+
+Secrets::
+Adds secrets for your application. Add more secrets by clicking *Add secret* and selecting the *Secret* and *Mount point*.
+
+Policy::
+Click *Run policy* to select the build run policy. The selected policy determines the order in which builds created from the build configuration must run.
+
+Hooks::
+Select *Run build hooks after image is built* to run commands at the end of the build and verify the image. Add *Hook type*, *Command*, and *Arguments* to append to the command.
+
+. Click *Save* to save the `BuildConfig`.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-delete-buildconfig_{context}"]
+= Deleting a BuildConfig
+
+You can delete a `BuildConfig` using the following command.
+
+.Procedure
+
+* To delete a `BuildConfig`, enter the following command:
++
+[source,terminal]
+----
+$ oc delete bc <BuildConfigName>
+----
++
+This also deletes all builds that were instantiated from this `BuildConfig`.
+
+* To delete a `BuildConfig` and keep the builds instatiated from the `BuildConfig`, specify the `--cascade=false` flag when you enter the following command:
++
+[source,terminal]
+----
+$ oc delete --cascade=false bc <BuildConfigName>
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-view-build-details_{context}"]
+= Viewing build details
+
+You can view build details with the web console or by using the `oc describe` CLI command.
+
+This displays information including:
+
+* The build source.
+* The build strategy.
+* The output destination.
+* Digest of the image in the destination registry.
+* How the build was created.
+
+If the build uses the
+`Source` strategy, the `oc describe` output also includes information about the source revision used for the build, including the commit ID, author, committer, and message.
+
+.Procedure
+
+* To view build details, enter the following command:
++
+[source,terminal]
+----
+$ oc describe build <build_name>
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-access-build-logs_{context}"]
+= Accessing build logs
+
+You can access build logs using the web console or the CLI.
+
+.Procedure
+
+* To stream the logs using the build directly, enter the following command:
++
+[source,terminal]
+----
+$ oc describe build <build_name>
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-access-buildconfig-logs_{context}"]
+= Accessing BuildConfig logs
+
+You can access `BuildConfig` logs using the web console or the CLI.
+
+.Procedure
+
+* To stream the logs of the latest build for a `BuildConfig`, enter the following command:
++
+[source,terminal]
+----
+$ oc logs -f bc/<buildconfig_name>
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-access-buildconfig-version-logs_{context}"]
+= Accessing BuildConfig logs for a given version build
+
+You can access logs for a given version build for a `BuildConfig` using the web console or the CLI.
+
+.Procedure
+
+* To stream the logs for a given version build for a `BuildConfig`, enter the following command:
++
+[source,terminal]
+----
+$ oc logs --version=<number> bc/<buildconfig_name>
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * builds/basic-build-operations.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="builds-basic-access-build-verbosity_{context}"]
+= Enabling log verbosity
+
+You can enable a more verbose output by passing the `BUILD_LOGLEVEL` environment variable as part of the `sourceStrategy`
+in a `BuildConfig`.
+
+[NOTE]
+====
+An administrator can set the default build verbosity for the entire {product-title} instance by configuring `env/BUILD_LOGLEVEL`. This default can be overridden by specifying `BUILD_LOGLEVEL` in a given `BuildConfig`. You can specify a higher priority override on the command line for non-binary builds by passing `--build-loglevel` to `oc start-build`.
+====
+
+Available log levels for source builds are as follows:
+
+[horizontal]
+Level 0:: Produces output from containers running the `assemble` script and all encountered errors. This is the default.
+Level 1:: Produces basic information about the executed process.
+Level 2:: Produces very detailed information about the executed process.
+Level 3:: Produces very detailed information about the executed process, and a listing of the archive contents.
+Level 4:: Currently produces the same information as level 3.
+Level 5:: Produces everything mentioned on previous levels and additionally provides docker push messages.
+
+.Procedure
+
+* To enable more verbose output, pass the `BUILD_LOGLEVEL` environment variable as part of the `sourceStrategy`
+or `dockerStrategy`
+in a `BuildConfig`:
++
+[source,yaml]
+----
+sourceStrategy:
+...
+  env:
+    - name: "BUILD_LOGLEVEL"
+      value: "2" <1>
+----
+<1> Adjust this value to the desired log level.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/builds-basic-start-build,modules/builds-basic-start-re-run,modules/builds-basic-start-logs,modules/builds-basic-start-environment-variable,modules/builds-basic-start-source,modules/builds-basic-cancel-build,modules/builds-basic-cancel-multiple,modules/builds-basic-cancel-all,modules/builds-basic-cancel-all-state,modules/builds-basic-edit-buildconfig,modules/builds-basic-delete-buildconfig,modules/builds-basic-view-build-details,modules/builds-basic-access-build-logs,modules/builds-basic-access-buildconfig-logs,modules/builds-basic-access-buildconfig-version-logs,modules/builds-basic-access-build-verbosity

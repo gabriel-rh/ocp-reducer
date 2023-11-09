@@ -1,0 +1,622 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="persistent-storage-csi-azure-disk"]
+= Azure Disk CSI Driver Operator
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: persistent-storage-csi-azure
+
+toc::[]
+
+== Overview
+
+{product-title} is capable of provisioning persistent volumes (PVs) using the Container Storage Interface (CSI) driver for Microsoft Azure Disk Storage.
+
+Familiarity with xref:../../storage/understanding-persistent-storage.adoc#understanding-persistent-storage[persistent storage] and xref:../../storage/container_storage_interface/persistent-storage-csi.adoc#persistent-storage-csi[configuring CSI volumes] is recommended when working with a CSI Operator and driver.
+
+To create CSI-provisioned PVs that mount to Azure Disk storage assets, {product-title} installs the Azure Disk CSI Driver Operator and the Azure Disk CSI driver by default in the `openshift-cluster-csi-drivers` namespace.
+
+* The _Azure Disk CSI Driver Operator_ provides a storage class named `managed-csi` that you can use to create persistent volume claims (PVCs). The Azure Disk CSI Driver Operator supports dynamic volume provisioning by allowing storage volumes to be created on-demand, eliminating the need for cluster administrators to pre-provision storage. You can disable this default storage class if desired (see xref:../../storage/container_storage_interface/persistent-storage-csi-sc-manage.adoc#persistent-storage-csi-sc-manage[Managing the default storage class]).
+
+* The _Azure Disk CSI driver_ enables you to create and mount Azure Disk PVs.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-ebs.adoc
+// * storage/container_storage_interface/persistent-storage-csi-manila.adoc
+// * storage/container_storage_interface/persistent-storage-csi-aws-efs.adoc
+// * storage/container_storage_interface/osd-persistent-storage-aws-efs-csi.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="csi-about_{context}"]
+= About CSI
+Storage vendors have traditionally provided storage drivers as part of Kubernetes. With the implementation of the Container Storage Interface (CSI), third-party providers can instead deliver storage plugins using a standard interface without ever having to change the core Kubernetes code.
+
+CSI Operators give {product-title} users storage options, such as volume snapshots, that are not possible with in-tree volume plugins.
+
+:leveloffset!:
+
+[IMPORTANT]
+====
+{product-title} defaults to using the CSI plugin to provision Azure Disk storage.
+====
+
+:leveloffset: +1
+
+//
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-azure.adoc
+//
+
+:_mod-docs-content-type: PROCEDURE
+[id="persistent-storage-csi-azure-disk-sc-zrs_{context}"]
+= Creating a storage class with storage account type
+
+
+Storage classes are used to differentiate and delineate storage levels and usages. By defining a storage class, you can obtain dynamically provisioned persistent volumes.
+
+When creating a storage class, you can designate the storage account type. This corresponds to your Azure storage account SKU tier. Valid options are `Standard_LRS`, `Premium_LRS`, `StandardSSD_LRS`, `UltraSSD_LRS`, `Premium_ZRS`, `StandardSSD_ZRS`, and `PremiumV2_LRS`. For information about finding your Azure SKU tier, see link:https://learn.microsoft.com/en-us/rest/api/storagerp/srp_sku_types[SKU Types].
+
+Both ZRS and PremiumV2_LRS have some region limitations. For information about these limitations, see link:https://learn.microsoft.com/en-us/azure/virtual-machines/disks-deploy-zrs?tabs=portal#limitations[ZRS limitations] and link:https://learn.microsoft.com/en-us/azure/virtual-machines/disks-deploy-premium-v2?tabs=azure-cli#limitations[Premium_LRS limitations].
+
+.Prerequisites
+
+* Access to an {product-title} cluster with administrator rights
+
+.Procedure
+
+Use the following steps to create a storage class with a storage account type.
+
+. Create a storage class designating the storage account type using a YAML file similar to the following:
++
+[source,terminal]
+--
+$ oc create -f - << EOF
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: <storage-class> <1>
+provisioner: disk.csi.azure.com
+parameters:
+  skuName: <storage-class-account-type> <2>
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+EOF
+--
+<1> Storage class name.
+<2> Storage account type. This corresponds to your Azure storage account SKU tier:`Standard_LRS`, `Premium_LRS`, `StandardSSD_LRS`, `UltraSSD_LRS`, `Premium_ZRS`, `StandardSSD_ZRS`, `PremiumV2_LRS`.
++
+[NOTE]
+====
+For PremiumV2_LRS, specify `cachingMode: None` in `storageclass.parameters`.
+====
+
+. Ensure that the storage class was created by listing the storage classes:
++
+[source,terminal]
+--
+$ oc get storageclass
+--
++
+[source,terminal]
+.Example output
+--
+$ oc get storageclass
+NAME                    PROVISIONER          RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+azurefile-csi           file.csi.azure.com   Delete          Immediate              true                   68m
+managed-csi (default)   disk.csi.azure.com   Delete          WaitForFirstConsumer   true                   68m
+sc-prem-zrs             disk.csi.azure.com   Delete          WaitForFirstConsumer   true                   4m25s <1>
+--
+<1> New storage class with storage account type.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/container_storage_interface/persistent-storage-csi-azure.adoc
+// storage/container_storage_interface/persistent-storage-csi-ebs.adoc
+// storage/container_storage_interface/persistent-storage-csi-gcp-pd.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="byok_{context}"]
+= User-managed encryption
+
+The user-managed encryption feature allows you to provide keys during installation that encrypt {product-title} node root volumes, and enables all managed storage classes to use these keys to encrypt provisioned storage volumes. You must specify the custom key in the `platform.<cloud_type>.defaultMachinePlatform` field in the install-config YAML file.
+
+This features supports the following storage types:
+
+* Amazon Web Services (AWS) Elastic Block storage (EBS)
+
+* Microsoft Azure Disk storage
+
+* Google Cloud Platform (GCP) persistent disk (PD) storage
+
+:leveloffset!:
+
+[NOTE]
+====
+If the OS (root) disk is encrypted, and there is no encrypted key defined in the storage class, Azure Disk CSI driver uses the OS disk encryption key by default to encrypt provisioned storage volumes.
+====
+
+For information about installing with user-managed encryption for Azure, see xref:../../installing/installing_azure/enabling-user-managed-encryption-azure.adoc[Enabling user-managed encryption for Azure].
+
+//Machine sets that deploy machines on ultra disks using PVCs
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * storage/persistent_storage/persistent-storage-azure.adoc
+// * storage/persistent_storage/persistent-storage-csi-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:pvc:
+
+:_mod-docs-content-type: CONCEPT
+[id="machineset-azure-ultra-disk_{context}"]
+= Machine sets that deploy machines with ultra disks as data disks
+= Machine sets that deploy machines with ultra disks using PVCs
+
+You can create a machine set running on Azure that deploys machines with ultra disks. Ultra disks are high-performance storage that are intended for use with the most demanding data workloads.
+
+
+Both the in-tree plugin and CSI driver support using PVCs to enable ultra disks. You can also deploy machines with ultra disks as data disks without creating a PVC.
+
+:!pvc:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* link:https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types#ultra-disks[Microsoft Azure ultra disks documentation]
+* xref:../../storage/persistent_storage/persistent-storage-azure.adoc#machineset-azure-ultra-disk_persistent-storage-azure[Machine sets that deploy machines on ultra disks using in-tree PVCs]
+* xref:../../machine_management/creating_machinesets/creating-machineset-azure.adoc#machineset-azure-ultra-disk_creating-machineset-azure[Machine sets that deploy machines on ultra disks as data disks]
+
+//Creating machines on ultra disks by using compute machine sets
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * storage/persistent_storage/persistent-storage-azure.adoc
+// * storage/persistent_storage/persistent-storage-csi-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:pvc:
+
+:machine-role: worker
+:machine-role: master
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-creating-azure-ultra-disk_{context}"]
+= Creating machines with ultra disks by using machine sets
+
+You can deploy machines with ultra disks on Azure by editing your machine set YAML file.
+
+.Prerequisites
+
+* Have an existing Microsoft Azure cluster.
+
+.Procedure
+
+
+. Copy an existing Azure `MachineSet` custom resource (CR) and edit it by running the following command:
++
+[source,terminal]
+----
+$ oc edit machineset <machine-set-name>
+----
++
+where `<machine-set-name>` is the machine set that you want to provision machines with ultra disks.
+
+. Add the following lines in the positions indicated:
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+spec:
+  template:
+    spec:
+      metadata:
+        labels:
+          disk: ultrassd <1>
+      providerSpec:
+        value:
+          ultraSSDCapability: Enabled <2>
+----
+<1> Specify a label to use to select a node that is created by this machine set. This procedure uses `disk.ultrassd` for this value.
+<2> These lines enable the use of ultra disks.
+
+. Create a machine set using the updated configuration by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <machine-set-name>.yaml
+----
+
+
+. Create a storage class that contains the following YAML definition:
++
+[source,yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ultra-disk-sc <1>
+parameters:
+  cachingMode: None
+  diskIopsReadWrite: "2000" <2>
+  diskMbpsReadWrite: "320" <3>
+  kind: managed
+  skuname: UltraSSD_LRS
+provisioner: disk.csi.azure.com <4>
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer <5>
+----
+<1> Specify the name of the storage class. This procedure uses `ultra-disk-sc` for this value.
+<2> Specify the number of IOPS for the storage class.
+<3> Specify the throughput in MBps for the storage class.
+<4> For Azure Kubernetes Service (AKS) version 1.21 or later, use `disk.csi.azure.com`. For earlier versions of AKS, use `kubernetes.io/azure-disk`.
+<5> Optional: Specify this parameter to wait for the creation of the pod that will use the disk.
+
+. Create a persistent volume claim (PVC) to reference the `ultra-disk-sc` storage class that contains the following YAML definition:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ultra-disk <1>
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: ultra-disk-sc <2>
+  resources:
+    requests:
+      storage: 4Gi <3>
+----
+<1> Specify the name of the PVC. This procedure uses `ultra-disk` for this value.
+<2> This PVC references the `ultra-disk-sc` storage class.
+<3> Specify the size for the storage class. The minimum value is `4Gi`.
+
+. Create a pod that contains the following YAML definition:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-ultra
+spec:
+  nodeSelector:
+    disk: ultrassd <1>
+  containers:
+  - name: nginx-ultra
+    image: alpine:latest
+    command:
+      - "sleep"
+      - "infinity"
+    volumeMounts:
+    - mountPath: "/mnt/azure"
+      name: volume
+  volumes:
+    - name: volume
+      persistentVolumeClaim:
+        claimName: ultra-disk <2>
+----
+<1> Specify the label of the machine set that enables the use of ultra disks. This procedure uses `disk.ultrassd` for this value.
+<2> This pod references the `ultra-disk` PVC.
+
+.Verification
+
+. Validate that the machines are created by running the following command:
++
+[source,terminal]
+----
+$ oc get machines
+----
++
+The machines should be in the `Running` state.
+
+. For a machine that is running and has a node attached, validate the partition by running the following command:
++
+[source,terminal]
+----
+$ oc debug node/<node-name> -- chroot /host lsblk
+----
++
+In this command, `oc debug node/<node-name>` starts a debugging shell on the node `<node-name>` and passes a command with `--`. The passed command `chroot /host` provides access to the underlying host OS binaries, and `lsblk` shows the block devices that are attached to the host OS machine.
+
+.Next steps
+
+* To use an ultra disk from within a pod, create a workload that uses the mount point. Create a YAML file similar to the following example:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ssd-benchmark1
+spec:
+  containers:
+  - name: ssd-benchmark1
+    image: nginx
+    ports:
+      - containerPort: 80
+        name: "http-server"
+    volumeMounts:
+    - name: lun0p1
+      mountPath: "/tmp"
+  volumes:
+    - name: lun0p1
+      hostPath:
+        path: /var/lib/lun0p1
+        type: DirectoryOrCreate
+  nodeSelector:
+    disktype: ultrassd
+----
+
+
+:!pvc:
+
+:leveloffset!:
+
+//Troubleshooting resources for compute machine sets that enable ultra disks
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * storage/persistent_storage/persistent-storage-azure.adoc
+// * storage/persistent_storage/persistent-storage-csi-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:pvc:
+
+:_mod-docs-content-type: REFERENCE
+[id="machineset-troubleshooting-azure-ultra-disk_{context}"]
+= Troubleshooting resources for machine sets that enable ultra disks
+
+Use the information in this section to understand and recover from issues you might encounter.
+
+[id="ts-pvc-mounting-ultra_{context}"]
+== Unable to mount a persistent volume claim backed by an ultra disk
+
+If there is an issue mounting a persistent volume claim backed by an ultra disk, the pod becomes stuck in the `ContainerCreating` state and an alert is triggered.
+
+For example, if the `additionalCapabilities.ultraSSDEnabled` parameter is not set on the machine that backs the node that hosts the pod, the following error message appears:
+
+[source,terminal]
+----
+StorageAccountType UltraSSD_LRS can be used only when additionalCapabilities.ultraSSDEnabled is set.
+----
+
+* To resolve this issue, describe the pod by running the following command:
++
+[source,terminal]
+----
+$ oc -n <stuck_pod_namespace> describe pod <stuck_pod_name>
+----
+
+
+:!pvc:
+
+:leveloffset!:
+
+[id="additional-resources_persistent-storage-csi-azure"]
+[role="_additional-resources"]
+== Additional resources
+* xref:../../storage/persistent_storage/persistent-storage-azure.adoc#persistent-storage-using-azure[Persistent storage using Azure Disk]
+* xref:../../storage/container_storage_interface/persistent-storage-csi.adoc#persistent-storage-csi[Configuring CSI volumes]
+
+//# includes=_attributes/common-attributes,modules/persistent-storage-csi-about,modules/persistent-storage-csi-azure-disk-sc-zrs,modules/persistent-storage-byok,modules/machineset-azure-ultra-disk,modules/machineset-creating-azure-ultra-disk,modules/machineset-troubleshooting-azure-ultra-disk

@@ -1,0 +1,348 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="persistent-storage-using-gce"]
+= Persistent storage using GCE Persistent Disk
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: persistent-storage-gce
+
+toc::[]
+
+{product-title} supports GCE Persistent Disk volumes (gcePD).
+You can provision your {product-title} cluster with persistent storage
+using GCE.
+Some familiarity with Kubernetes and GCE is assumed.
+
+The Kubernetes persistent volume framework allows administrators to
+provision a cluster with persistent storage and gives users a way to
+request those resources without having any knowledge of the underlying
+infrastructure.
+
+GCE Persistent Disk volumes can be provisioned dynamically.
+
+Persistent volumes are not bound to a single project or namespace;
+they can be shared across the {product-title} cluster.
+Persistent volume claims are specific to a project or namespace and can be
+requested by users.
+
+[IMPORTANT]
+====
+{product-title} defaults to using an in-tree (non-CSI) plugin to provision gcePD storage.
+
+In future {product-title} versions, volumes provisioned using existing in-tree plug-ins are planned for migration to their equivalent CSI driver. CSI automatic migration should be seamless. Migration does not change how you use all existing API objects, such as persistent volumes, persistent volume claims, and storage classes.
+For more information about migration, see xref:../../storage/container_storage_interface/persistent-storage-csi-migration.adoc#persistent-storage-csi-migration[CSI automatic migration].
+
+After full migration, in-tree plugins will eventually be removed in future versions of {product-title}.
+====
+
+[IMPORTANT]
+====
+High availability of storage in the infrastructure is left to the underlying
+storage provider.
+====
+
+[role="_additional-resources"]
+.Additional resources
+
+* link:https://cloud.google.com/compute/docs/disks/[GCE Persistent Disk]
+
+// Defining attributes required by the next module
+:StorageClass: GCE
+:Provisioner: kubernetes.io/gce-pd
+
+:leveloffset: +1
+
+// Be sure to set the :StorageClass: and :Provisioner: value in each assembly
+// on the line before the include statement for this module. For example, to
+// set the StorageClass value to "AWS EBS", add the following line to the
+// assembly:
+// :StorageClass: AWS EBS
+// Module included in the following assemblies:
+//
+// * storage/persistent_storage/persistent-storage-aws.adoc
+// * storage/container_storage_interface/persistent-storage-csi-aws-efs.adoc
+// * storage/persistent_storage/rosa-persistent-storage-aws-efs-csi.adoc
+// * storage/container_storage_interface/osd-persistent-storage-aws-efs-csi.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="storage-create-storage-class_{context}"]
+= Creating the {StorageClass} storage class
+
+Storage classes are used to differentiate and delineate storage levels and
+usages. By defining a storage class, users can obtain dynamically provisioned
+persistent volumes.
+
+
+
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/persistent_storage-aws.adoc
+
+= Creating the persistent volume claim
+
+.Prerequisites
+
+Storage must exist in the underlying infrastructure before it can be mounted as
+a volume in {product-title}.
+
+.Procedure
+
+. In the {product-title} console, click *Storage* -> *Persistent Volume Claims*.
+
+. In the persistent volume claims overview, click *Create Persistent Volume
+Claim*.
+
+. Define the desired options on the page that appears.
+
+.. Select the previously-created storage class from the drop-down menu.
+
+.. Enter a unique name for the storage claim.
+
+.. Select the access mode. This selection determines the read and write access for the storage claim.
+
+.. Define the size of the storage claim.
+
+. Click *Create* to create the persistent volume claim and generate a persistent
+volume.
+
+:leveloffset!:
+
+:provider: GCE
+:leveloffset: +1
+
+// Be sure to set the :provider: value in each assembly
+// on the line before the include statement for this module.
+// For example:
+// :provider: AWS
+//
+// Module included in the following assemblies:
+//
+// * storage/persistent_storage-aws.adoc
+// * storage/persistent_storage-gce.adoc
+
+[id="volume-format-{provider}_{context}"]
+= Volume format
+Before {product-title} mounts the volume and passes it to a container, it
+checks that the volume contains a file system as specified by the `fsType`
+parameter in the persistent volume definition. If the device is not
+formatted with the file system, all data from the device is erased and the
+device is automatically formatted with the given file system.
+
+This verification enables you to use unformatted {provider} volumes as persistent volumes,
+because {product-title} formats them before the first use.
+
+// Undefined {provider} attribute, so that any mistakes are easily spotted
+:!provider:
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/storage-create-storage-class,modules/storage-persistent-storage-creating-volume-claim,modules/storage-persistent-storage-volume-format

@@ -1,0 +1,1393 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="virt-accessing-vm-ssh"]
+= Configuring SSH access to virtual machines
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: virt-accessing-vm-ssh
+:toclevels: 3
+
+toc::[]
+
+You can configure SSH access to virtual machines (VMs) by using the following methods:
+
+* xref:../../virt/virtual_machines/virt-accessing-vm-ssh.adoc#using-virtctl-ssh_virt-accessing-vm-ssh[`virtctl ssh` command]
++
+You create an SSH key pair, add the public key to a VM, and connect to the VM by running the `virtctl ssh` command with the private key.
++
+You can add public SSH keys to {op-system-base-full} 9 VMs at runtime or at first boot to VMs with guest operating systems that can be configured by using a cloud-init data source.
+
+* xref:../../virt/virtual_machines/virt-accessing-vm-ssh.adoc#virt-using-virtctl-port-forward-command_virt-accessing-vm-ssh[`virtctl port-forward` command]
++
+You add the `virtctl port-foward` command to your `.ssh/config` file and connect to the VM by using OpenSSH.
+
+* xref:../../virt/virtual_machines/virt-accessing-vm-ssh.adoc#using-services-ssh_virt-accessing-vm-ssh[Service]
++
+You create a service, associate the service with the VM, and connect to the IP address and port exposed by the service.
+
+* xref:../../virt/virtual_machines/virt-accessing-vm-ssh.adoc#using-secondary-networks-ssh_virt-accessing-vm-ssh[Secondary network]
++
+You configure a secondary network, attach a virtual machine (VM) to the secondary network interface, and connect to the DHCP-allocated IP address.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-access-configuration-considerations_{context}"]
+= Access configuration considerations
+
+Each method for configuring access to a virtual machine (VM) has advantages and limitations, depending on the traffic load and client requirements.
+
+Services provide excellent performance and are recommended for applications that are accessed from outside the cluster.
+
+If the internal cluster network cannot handle the traffic load, you can configure a secondary network.
+
+`virtctl ssh` and `virtctl port-forwarding` commands::
+* Simple to configure.
+* Recommended for troubleshooting VMs.
+* `virtctl port-forwarding` recommended for automated configuration of VMs with Ansible.
+* Dynamic public SSH keys can be used to provision VMs with Ansible.
+* Not recommended for high-traffic applications like Rsync or Remote Desktop Protocol because of the burden on the API server.
+* The API server must be able to handle the traffic load.
+* The clients must be able to access the API server.
+* The clients must have access credentials for the cluster.
+
+Cluster IP service::
+* The internal cluster network must be able to handle the traffic load.
+* The clients must be able to access an internal cluster IP address.
+
+Node port service::
+* The internal cluster network must be able to handle the traffic load.
+* The clients must be able to access at least one node.
+
+Load balancer service::
+* A load balancer must be configured.
+* Each node must be able to handle the traffic load of one or more load balancer services.
+
+Secondary network::
+* Excellent performance because traffic does not go through the internal cluster network.
+* Allows a flexible approach to network topology.
+* Guest operating system must be configured with appropriate security because the VM is exposed directly to the secondary network. If a VM is compromised, an intruder could gain access to the secondary network.
+
+
+:leveloffset!:
+
+[id="using-virtctl-ssh_virt-accessing-vm-ssh"]
+== Using virtctl ssh
+
+You can add a public SSH key to a virtual machine (VM) and connect to the VM by running the `virtctl ssh` command.
+
+This method is simple to configure. However, it is not recommended for high traffic loads because it places a burden on the API server.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-about-static-and-dynamic-ssh-keys_{context}"]
+= About static and dynamic SSH key management
+
+You can add public SSH keys to virtual machines (VMs) statically at first boot or dynamically at runtime.
+
+[NOTE]
+====
+Only {op-system-base-full} 9 supports dynamic key injection.
+====
+
+[discrete]
+[id="static-key-management_{context}"]
+== Static SSH key management
+
+You can add a statically managed SSH key to a VM with a guest operating system that supports configuration by using a cloud-init data source. The key is added to the virtual machine (VM) at first boot.
+
+You can add the key by using one of the following methods:
+
+* Add a key to a single VM when you create it by using the web console or the command line.
+* Add a key to a project by using the web console. Afterwards, the key is automatically added to the VMs that you create in this project.
+
+.Use cases
+
+* As a VM owner, you can provision all your newly created VMs with a single key.
+
+[discrete]
+[id="dynamic-key-management_{context}"]
+== Dynamic SSH key management
+
+You can enable dynamic SSH key management for a VM with {op-system-base-full} 9 installed. Afterwards, you can update the key during runtime. The key is added by the QEMU guest agent, which is installed with Red Hat boot sources.
+
+You can disable dynamic key management for security reasons. Then, the VM inherits the key management setting of the image from which it was created.
+
+.Use cases
+
+* Granting or revoking access to VMs: As a cluster administrator, you can grant or revoke remote VM access by adding or removing the keys of individual users from a `Secret` object that is applied to all VMs in a namespace.
+* User access: You can add your access credentials to all VMs that you create and manage.
+
+* Ansible provisioning:
+
+** As an operations team member, you can create a single secret that contains all the keys used for Ansible provisioning.
+** As a VM owner, you can create a VM and attach the keys used for Ansible provisioning.
+
+* Key rotation:
+
+** As a cluster administrator, you can rotate the Ansible provisioner keys used by VMs in a namespace.
+** As a workload owner, you can rotate the key for the VMs that you manage.
+
+:leveloffset!:
+
+[id="static-key-management-vm"]
+=== Static key management
+
+You can add a statically managed public SSH key when you create a virtual machine (VM) by using the {product-title} web console or the command line. The key is added as a cloud-init data source when the VM boots for the first time.
+
+[TIP]
+====
+You can also add the key to a project by using the {product-title} web console. Afterwards, this key is added automatically to VMs that you create in the project.
+====
+
+:context: static-key
+:static-key:
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:static-key:
+:title: Adding a key
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-adding-key-creating-vm-template_{context}"]
+= {title} when creating a VM from a template
+
+You can add a statically managed public SSH key when you create a virtual machine (VM) by using the {product-title} web console. The key is added to the VM as a cloud-init data source at first boot. This method does not affect cloud-init user data.
+
+Optional: You can add a key to a project. Afterwards, this key is added automatically to VMs that you create in the project.
+
+.Prerequisites
+
+* You generated an SSH key pair by running the `ssh-keygen` command.
+
+.Procedure
+
+. Navigate to *Virtualization* -> *Catalog* in the web console.
+. Click a template tile.
++
+The guest operating system must support configuration from a cloud-init data source.
+. Click *Customize VirtualMachine*.
+. Click *Next*.
+. Click the *Scripts* tab.
+. If you have not already added a public SSH key to your project, click the edit icon beside *Authorized SSH key* and select one of the following options:
+
+* *Use existing*: Select a secret from the secrets list.
+* *Add new*:
+.. Browse to the SSH key file or paste the file in the key field.
+.. Enter the secret name.
+.. Optional: Select *Automatically apply this key to any new VirtualMachine you create in this project*.
+. Click *Save*.
+. Click *Create VirtualMachine*.
++
+The *VirtualMachine details* page displays the progress of the VM creation.
+
+.Verification
+. Click the *Scripts* tab on the *Configuration* tab.
++
+The secret name is displayed in the *Authorized SSH key* section.
+
+:!static-key:
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-creating-vms-from-instance-types.adoc
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:static-key:
+:title: Adding a key when creating a VM
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-vm-instancetype_{context}"]
+= {title} from an instance type
+
+You can add a statically managed SSH key when you create a virtual machine (VM) from an instance type by using the {product-title} web console. The key is added to the VM as a cloud-init data source at first boot. This method does not affect cloud-init user data.
+
+.Procedure
+
+. In the web console, navigate to *Virtualization* -> *Catalog* and click the *InstanceTypes* tab.
+. Select a bootable volume.
++
+[NOTE]
+====
+The volume table only lists volumes in the `openshift-virtualization-os-images` namespace that have the `instancetype.kubevirt.io/default-preference` label.
+====
+
+. If you have not already added a public SSH key to your project, click the edit icon beside *Authorized SSH key* in the *VirtualMachine details* section.
+. Select one of the following options:
+
+* *Use existing*: Select a secret from the secrets list.
+* *Add new*:
+.. Browse to the public SSH key file or paste the file in the key field.
+.. Enter the secret name.
+.. Optional: Select *Automatically apply this key to any new VirtualMachine you create in this project*.
+.. Click *Save*.
+. Optional: Click *View YAML & CLI* to view the YAML file. Click *CLI* to view the CLI commands. You can also download or copy either the YAML file contents or the CLI commands.
+. Click *Create VirtualMachine*.
+
+
+After the VM is created, you can monitor the status on the *VirtualMachine details* page.
+
+:!static-key:
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:static-key:
+:header: Adding a key when creating a VM
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-adding-public-key-cli_{context}"]
+= {header} by using the command line
+
+You can add a statically managed public SSH key when you create a virtual machine (VM) by using the command line. The key is added to the VM at first boot.
+
+The key is added to the VM as a cloud-init data source. This method separates the access credentials from the application data in the cloud-init user data. This method does not affect cloud-init user data.
+
+.Prerequisites
+
+* You generated an SSH key pair by running the `ssh-keygen` command.
+
+.Procedure
+
+. Create a manifest file for a `VirtualMachine` object and a `Secret` object:
++
+[source,yaml]
+----
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: example-vm
+  namespace: example-namespace
+spec:
+  dataVolumeTemplates:
+  - apiVersion: cdi.kubevirt.io/v1beta1
+    kind: DataVolume
+    metadata:
+      name: example-vm-disk
+    spec:
+      sourceRef:
+        kind: DataSource
+        name: rhel9
+        namespace: openshift-virtualization-os-images
+      storage:
+        resources:
+          requests:
+            storage: 30Gi
+  running: false
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: example-vm
+    spec:
+      domain:
+        cpu:
+          cores: 1
+          sockets: 2
+          threads: 1
+        devices:
+          disks:
+          - disk:
+              bus: virtio
+            name: rootdisk
+          - disk:
+              bus: virtio
+            name: cloudinitdisk
+          interfaces:
+          - masquerade: {}
+            name: default
+          rng: {}
+        features:
+          smm:
+            enabled: true
+        firmware:
+          bootloader:
+            efi: {}
+        resources:
+          requests:
+            memory: 8Gi
+      evictionStrategy: LiveMigrate
+      networks:
+      - name: default
+        pod: {}
+      volumes:
+      - dataVolume:
+          name: example-volume
+        name: example-vm-disk
+        - cloudInitConfigDrive: <.>
+            userData: |-
+              #cloud-config
+              user: cloud-user
+              password: <password>
+              chpasswd: { expire: False }
+          name: cloudinitdisk
+      accessCredentials:
+        - sshPublicKey:
+            propagationMethod:
+              configDrive: {}
+            source:
+              secret:
+                secretName: authorized-keys <.>
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: authorized-keys
+data:
+  key:  |
+      MIIEpQIBAAKCAQEAulqb/Y... <.>
+----
+<.> Specify `cloudInitConfigDrive` to create a configuration drive.
+<.> Specify the `Secret` object name.
+<.> Paste the public SSH key.
+
+. Create the `VirtualMachine` and `Secret` objects:
++
+[source,terminal]
+----
+$ oc create -f <manifest_file>.yaml
+----
+
+. Start the VM:
++
+[source,terminal]
+----
+$ virtctl start vm example-vm
+----
+
+.Verification
+. Get the VM configuration:
++
+[source,terminal]
+----
+$ oc describe vm example-vm -n example-namespace
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: example-vm
+  namespace: example-namespace
+spec:
+  template:
+    spec:
+      accessCredentials:
+        - sshPublicKey:
+            propagationMethod:
+              configDrive: {}
+            source:
+              secret:
+                secretName: authorized-keys
+----
+
+:!static-key:
+
+:leveloffset!:
+:!static-key:
+
+:virt-accessing-vm-ssh:
+[id="adding-dynamic-key-vm"]
+=== Dynamic key management
+
+You can enable dynamic key injection for a virtual machine (VM) by using the {product-title} web console or the command line. Then, you can update the key at runtime.
+
+[NOTE]
+====
+Only {op-system-base-full} 9 supports dynamic key injection.
+====
+
+If you disable dynamic key injection, the VM inherits the key management method of the image from which it was created.
+
+:context: dynamic-key
+:dynamic-key:
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:dynamic-key:
+:title: Enabling dynamic key injection
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-adding-key-creating-vm-template_{context}"]
+= {title} when creating a VM from a template
+
+You can enable dynamic public SSH key injection when you create a virtual machine (VM) from a template by using the {product-title} web console. Then, you can update the key at runtime.
+
+[NOTE]
+====
+Only {op-system-base-full} 9 supports dynamic key injection.
+====
+
+The key is added to the VM by the QEMU guest agent, which is installed with {op-system-base} 9.
+
+.Prerequisites
+
+* You generated an SSH key pair by running the `ssh-keygen` command.
+
+.Procedure
+
+. Navigate to *Virtualization* -> *Catalog* in the web console.
+. Click the *Red Hat Enterprise Linux 9 VM* tile.
+. Click *Customize VirtualMachine*.
+. Click *Next*.
+. Click the *Scripts* tab.
+. If you have not already added a public SSH key to your project, click the edit icon beside *Authorized SSH key* and select one of the following options:
+
+* *Use existing*: Select a secret from the secrets list.
+* *Add new*:
+.. Browse to the SSH key file or paste the file in the key field.
+.. Enter the secret name.
+.. Optional: Select *Automatically apply this key to any new VirtualMachine you create in this project*.
+. Set *Dynamic SSH key injection* to on.
+. Click *Save*.
+. Click *Create VirtualMachine*.
++
+The *VirtualMachine details* page displays the progress of the VM creation.
+
+.Verification
+. Click the *Scripts* tab on the *Configuration* tab.
++
+The secret name is displayed in the *Authorized SSH key* section.
+
+:!dynamic-key:
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-creating-vms-from-instance-types.adoc
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:dynamic-key:
+:title: Enabling dynamic key injection when creating a VM
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-vm-instancetype_{context}"]
+= {title} from an instance type
+
+You can enable dynamic SSH key injection when you create a virtual machine (VM) from an instance type by using the {product-title} web console. Then, you can add or revoke the key at runtime.
+
+[NOTE]
+====
+Only {op-system-base-full} 9 supports dynamic key injection.
+====
+
+The key is added to the VM by the QEMU guest agent, which is installed with {op-system-base} 9.
+
+.Procedure
+
+. In the web console, navigate to *Virtualization* -> *Catalog* and click the *InstanceTypes* tab.
+. Select a bootable volume.
++
+[NOTE]
+====
+The volume table only lists volumes in the `openshift-virtualization-os-images` namespace that have the `instancetype.kubevirt.io/default-preference` label.
+====
+
+. Click the *Red Hat Enterprise Linux 9 VM* tile.
+. If you have not already added a public SSH key to your project, click the edit icon beside *Authorized SSH key* in the *VirtualMachine details* section.
+. Select one of the following options:
+
+* *Use existing*: Select a secret from the secrets list.
+* *Add new*:
+.. Browse to the public SSH key file or paste the file in the key field.
+.. Enter the secret name.
+.. Optional: Select *Automatically apply this key to any new VirtualMachine you create in this project*.
+.. Click *Save*.
+. Set *Dynamic SSH key injection* in the *VirtualMachine details* section to on.
+. Optional: Click *View YAML & CLI* to view the YAML file. Click *CLI* to view the CLI commands. You can also download or copy either the YAML file contents or the CLI commands.
+. Click *Create VirtualMachine*.
+
+
+After the VM is created, you can monitor the status on the *VirtualMachine details* page.
+
+:!dynamic-key:
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-editing-vm-dynamic-key-injection_{context}"]
+= Enabling dynamic SSH key injection by using the web console
+
+You can enable dynamic key injection for a virtual machine (VM) by using the {product-title} web console. Then, you can update the public SSH key at runtime.
+
+The key is added to the VM by the QEMU guest agent, which is installed with {op-system-base-full} 9.
+
+.Prerequisites
+
+* The guest operating system is {op-system-base} 9.
+
+.Procedure
+
+. Navigate to *Virtualization* -> *VirtualMachines* in the web console.
+. Select a VM to open the *VirtualMachine details* page.
+. On the *Configure* tab, click *Scripts*.
+. If you have not already added a public SSH key to your project, click the edit icon beside *Authorized SSH key* and select one of the following options:
+
+* *Use existing*: Select a secret from the secrets list.
+* *Add new*:
+.. Browse to the SSH key file or paste the file in the key field.
+.. Enter the secret name.
+.. Optional: Select *Automatically apply this key to any new VirtualMachine you create in this project*.
+. Set *Dynamic SSH key injection* to on.
+. Click *Save*.
+
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:dynamic-key:
+:header: Enabling dynamic key injection
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-adding-public-key-cli_{context}"]
+= {header} by using the command line
+
+You can enable dynamic key injection for a virtual machine (VM) by using the command line. Then, you can update the public SSH key at runtime.
+
+[NOTE]
+====
+Only {op-system-base-full} 9 supports dynamic key injection.
+====
+
+The key is added to the VM by the QEMU guest agent, which is installed automatically with {op-system-base} 9.
+
+.Prerequisites
+
+* You generated an SSH key pair by running the `ssh-keygen` command.
+
+.Procedure
+
+. Create a manifest file for a `VirtualMachine` object and a `Secret` object:
++
+[source,yaml]
+----
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: example-vm
+  namespace: example-namespace
+spec:
+  dataVolumeTemplates:
+  - apiVersion: cdi.kubevirt.io/v1beta1
+    kind: DataVolume
+    metadata:
+      name: example-vm-disk
+    spec:
+      sourceRef:
+        kind: DataSource
+        name: rhel9
+        namespace: openshift-virtualization-os-images
+      storage:
+        resources:
+          requests:
+            storage: 30Gi
+  running: false
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: example-vm
+    spec:
+      domain:
+        cpu:
+          cores: 1
+          sockets: 2
+          threads: 1
+        devices:
+          disks:
+          - disk:
+              bus: virtio
+            name: rootdisk
+          - disk:
+              bus: virtio
+            name: cloudinitdisk
+          interfaces:
+          - masquerade: {}
+            name: default
+          rng: {}
+        features:
+          smm:
+            enabled: true
+        firmware:
+          bootloader:
+            efi: {}
+        resources:
+          requests:
+            memory: 8Gi
+      evictionStrategy: LiveMigrate
+      networks:
+      - name: default
+        pod: {}
+      volumes:
+      - dataVolume:
+          name: example-volume
+        name: example-vm-disk
+        - cloudInitConfigDrive: <.>
+            userData: |-
+              #cloud-config
+              user: cloud-user
+              password: <password>
+              chpasswd: { expire: False }
+              runcmd:
+                - [ setsebool, -P, virt_qemu_ga_manage_ssh, on ]
+          name: cloudinitdisk
+      accessCredentials:
+        - sshPublicKey:
+            propagationMethod:
+              qemuGuestAgent:
+                users: ["user1","user2","fedora"] <.>
+            source:
+              secret:
+                secretName: authorized-keys <.>
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: authorized-keys
+data:
+  key:  |
+      MIIEpQIBAAKCAQEAulqb/Y... <.>
+----
+<.> Specify `cloudInitConfigDrive` to create a configuration drive.
+<.> Specify the user names.
+<.> Specify the `Secret` object name.
+<.> Paste the public SSH key.
+
+. Create the `VirtualMachine` and `Secret` objects:
++
+[source,terminal]
+----
+$ oc create -f <manifest_file>.yaml
+----
+
+. Start the VM:
++
+[source,terminal]
+----
+$ virtctl start vm example-vm
+----
+
+.Verification
+. Get the VM configuration:
++
+[source,terminal]
+----
+$ oc describe vm example-vm -n example-namespace
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: example-vm
+  namespace: example-namespace
+spec:
+  template:
+    spec:
+      accessCredentials:
+        - sshPublicKey:
+            propagationMethod:
+              qemuGuestAgent:
+                users: ["user1","user2","fedora"]
+            source:
+              secret:
+                secretName: authorized-keys
+----
+
+:!dynamic-key:
+
+:leveloffset!:
+:!dynamic-key:
+
+:context: virt-accessing-vm-ssh
+:virt-accessing-vm-ssh:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-using-virtctl-ssh-command_{context}"]
+= Using the virtctl ssh command
+
+You can access a running virtual machine (VM) by using the `virtcl ssh` command.
+
+.Prerequisites
+
+* You installed the `virtctl` command line tool.
+* You added a public SSH key to the VM.
+* You have an SSH client installed.
+* The environment where you installed the `virtctl` tool has the cluster permissions required to access the VM. For example, you ran `oc login` or you set the `KUBECONFIG` environment variable.
+
+.Procedure
+
+* Run the `virtctl ssh` command:
++
+[source,terminal]
+----
+$ virtctl -n <namespace> ssh <username>@example-vm -i <ssh_key> <1>
+----
+<1> Specify the namespace, user name, and the SSH private key. The default SSH key location is `/home/user/.ssh`. If you save the key in a different location, you must specify the path.
++
+.Example
+[source,terminal]
+----
+$ virtctl -n my-namespace ssh cloud-user@example-vm -i my-key
+----
+
+:leveloffset!:
+
+[TIP]
+====
+You can copy the `virtctl ssh` command in the web console by selecting *Copy SSH command* from the options {kebab} menu beside a VM on the xref:../../virt/getting_started/virt-web-console-overview.adoc#virtualmachines-page_virt-web-console-overview[*VirtualMachines* page].
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-using-virtctl-port-forward-command_{context}"]
+= Using the virtctl port-forward command
+
+You can use your local OpenSSH client and the `virtctl port-forward` command to connect to a running virtual machine (VM). You can use this method with Ansible to automate the configuration of VMs.
+
+This method is recommended for low-traffic applications because port-forwarding traffic is sent over the control plane. This method is not recommended for high-traffic applications such as Rsync or Remote Desktop Protocol because it places a heavy burden on the API server.
+
+.Prerequisites
+* You have installed the `virtctl` client.
+* The virtual machine you want to access is running.
+* The environment where you installed the `virtctl` tool has the cluster permissions required to access the VM. For example, you ran `oc login` or you set the `KUBECONFIG` environment variable.
+
+.Procedure
+
+. Add the following text to the `~/.ssh/config` file on your client machine:
++
+[source,terminal]
+----
+Host vm/*
+  ProxyCommand virtctl port-forward --stdio=true %h %p
+----
+
+. Connect to the VM by running the following command:
++
+[source,terminal]
+----
+$ ssh <user>@vm/<vm_name>.<namespace>
+----
+
+:leveloffset!:
+
+[id="using-services-ssh_virt-accessing-vm-ssh"]
+== Using a service for SSH access
+
+You can create a service for a virtual machine (VM) and connect to the IP address and port exposed by the service.
+
+Services provide excellent performance and are recommended for applications that are accessed from outside the cluster or within the cluster. Ingress traffic is protected by firewalls.
+
+If the cluster network cannot handle the traffic load, consider using a secondary network for VM access.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/vm_networking/virt-creating-service-vm.adoc
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="virt-about-services_{context}"]
+= About services
+
+A Kubernetes service exposes network access for clients to an application running on a set of pods. Services offer abstraction, load balancing, and, in the case of the `NodePort` and `LoadBalancer` types, exposure to the outside world.
+
+ClusterIP:: Exposes the service on an internal IP address and as a DNS name to other applications within the cluster. A single service can map to multiple virtual machines. When a client tries to connect to the service, the client's request is load balanced among available backends. `ClusterIP` is the default service type.
+
+NodePort:: Exposes the service on the same port of each selected node in the cluster. `NodePort` makes a port accessible from outside the cluster, as long as the node itself is externally accessible to the client.
+
+LoadBalancer:: Creates an external load balancer in the current cloud (if supported) and assigns a fixed, external IP address to the service.
+
+[NOTE]
+====
+For on-premise clusters, you can configure a load balancing service by using the MetalLB Operator in layer 2 mode. The BGP mode is not supported. The MetalLB Operator is installed in the `metallb-system` namespace.
+====
+
+:leveloffset!:
+
+[id="creating-services-ssh_virt-accessing-vm-ssh"]
+=== Creating a service
+
+You can create a service to expose a virtual machine (VM) by using the {product-title} web console, `virtctl` command line tool, or a YAML file.
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+// * virt/post_installation_configuration/virt-post-install-network-config.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-enabling-load-balancer-service-web_{context}"]
+= Enabling load balancer service creation by using the web console
+
+You can enable the creation of load balancer services for a virtual machine (VM) by using the {product-title} web console.
+
+.Prerequisites
+
+* You have configured a load balancer for the cluster.
+* You are logged in as a user with the `cluster-admin` role.
+
+.Procedure
+
+. Navigate to *Virtualization* -> *Overview*.
+. On the *Settings* tab, click *Cluster*.
+. Expand *LoadBalancer service* and select *Enable the creation of LoadBalancer services for SSH connections to VirtualMachines*.
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-service-web_{context}"]
+= Creating a service by using the web console
+
+You can create a node port or load balancer service for a virtual machine (VM) by using the {product-title} web console.
+
+.Prerequisites
+
+* You configured the cluster network to support either a load balancer or a node port.
+* To create a load balancer service, you enabled the creation of load balancer services.
+
+.Procedure
+
+. Navigate to *VirtualMachines* and select a virtual machine to view the *VirtualMachine details* page.
+. On the *Details* tab, select *SSH over LoadBalancer* from the *SSH service type* list.
+. Optional: Click the copy icon to copy the `SSH` command to your clipboard.
+
+.Verification
+
+* Check the *Services* pane on the *Details* tab to view the new service.
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-service-virtctl_{context}"]
+= Creating a service by using virtctl
+
+You can create a service for a virtual machine (VM) by using the `virtctl` command line tool.
+
+.Prerequisites
+
+* You installed the `virtctl` command line tool.
+* You configured the cluster network to support the service.
+* The environment where you installed `virtctl` has the cluster permissions required to access the VM. For example, you ran `oc login` or you set the `KUBECONFIG` environment variable.
+
+.Procedure
+
+* Create a service by running the following command:
++
+[source,terminal]
+----
+$ virtctl expose vm <vm_name> --name <service_name> --type <service_type> --port <port> <1>
+----
+<1> Specify the `ClusterIP`, `NodePort`, or `LoadBalancer` service type.
++
+.Example
++
+[source,terminal]
+----
+$ virtctl expose vm example-vm --name example-service --type NodePort --port 22
+----
+
+.Verification
+
+* Verify the service by running the following command:
++
+[source,terminal]
+----
+$ oc get service
+----
+
+:leveloffset!:
+
+.Next steps
+
+After you create a service with `virtctl`, you must add `special: key` to the `spec.template.metadata.labels` stanza of the `VirtualMachine` manifest. See xref:../../virt/virtual_machines/virt-accessing-vm-ssh.adoc#virt-creating-service-cli_virt-accessing-vm-ssh[Creating a service by using the command line].
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/vm_networking/virt-creating-service-vm.adoc
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-service-cli_{context}"]
+= Creating a service by using the command line
+
+You can create a service and associate it with a virtual machine (VM) by using the command line.
+
+.Prerequisites
+
+* You configured the cluster network to support the service.
+
+.Procedure
+
+. Edit the `VirtualMachine` manifest to add the label for service creation:
++
+[source,yaml]
+----
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: example-vm
+  namespace: example-namespace
+spec:
+  running: false
+  template:
+    metadata:
+      labels:
+        special: key <1>
+# ...
+----
+<1> Add `special: key` to the `spec.template.metadata.labels` stanza.
++
+[NOTE]
+====
+Labels on a virtual machine are passed through to the pod. The `special: key` label must match the label in the `spec.selector` attribute of the `Service` manifest.
+====
+
+. Save the `VirtualMachine` manifest file to apply your changes.
+
+. Create a `Service` manifest to expose the VM:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-service
+  namespace: example-namespace
+spec:
+# ...
+  selector:
+    special: key <1>
+  type: NodePort <2>
+----
+<1> Specify the label that you added to the `spec.template.metadata.labels` stanza of the `VirtualMachine` manifest.
+<2> Specify `ClusterIP`, `NodePort`, or `LoadBalancer`.
+
+. Save the `Service` manifest file.
+. Create the service by running the following command:
++
+[source,terminal]
+----
+$ oc create -f example-service.yaml
+----
+
+. Restart the VM to apply the changes.
+
+.Verification
+
+* Query the `Service` object to verify that it is available:
++
+[source,terminal]
+----
+$ oc get service -n example-namespace
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+// * virt/vm_networking/virt-creating-service-vm.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-connecting-service-ssh_{context}"]
+= Connecting to a VM exposed by a service by using SSH
+
+You can connect to a virtual machine (VM) that is exposed by a service by using SSH.
+
+.Prerequisites
+
+* You created a service to expose the VM.
+* You have an SSH client installed.
+* You are logged in to the cluster.
+
+.Procedure
+
+* Run the following command to access the VM:
++
+[source,terminal]
+----
+$ ssh <user_name>@<ip_address> -p <port> <1>
+----
+<1> Specify the cluster IP for a cluster IP service, the node IP for a node port service, or the external IP address for a load balancer service.
+
+:leveloffset!:
+
+[id="using-secondary-networks-ssh_virt-accessing-vm-ssh"]
+== Using a secondary network for SSH access
+
+You can configure a secondary network, attach a virtual machine (VM) to the secondary network interface, and connect to the DHCP-allocated IP address by using SSH.
+
+[IMPORTANT]
+====
+Secondary networks provide excellent performance because the traffic is not handled by the cluster network stack. However, the VMs are exposed directly to the secondary network and are not protected by firewalls. If a VM is compromised, an intruder could gain access to the secondary network. You must configure appropriate security within the operating system of the VM if you use this method.
+====
+
+See the link:https://access.redhat.com/articles/6994974#networking-multus[Multus] and link:https://access.redhat.com/articles/6994974#networking-sriov[SR-IOV] documentation in the link:https://access.redhat.com/articles/6994974[{VirtProductName} Tuning & Scaling Guide] for additional information about networking options.
+
+.Prerequisites
+
+* You configured a secondary network such as xref:../../virt/vm_networking/virt-connecting-vm-to-linux-bridge.adoc#virt-connecting-vm-to-linux-bridge[Linux bridge] or xref:../../virt/vm_networking/virt-connecting-vm-to-sriov.adoc#virt-connecting-vm-to-sriov[SR-IOV].
+* You created a network attachment definition for a xref:../../virt/vm_networking/virt-connecting-vm-to-linux-bridge.adoc#virt-creating-linux-bridge-nad-web_virt-connecting-vm-to-linux-bridge[Linux bridge network] or the SR-IOV Network Operator created a xref:../../virt/vm_networking/virt-connecting-vm-to-sriov.adoc#nw-sriov-network-attachment_virt-connecting-vm-to-sriov[network attachment definition] when you created an `SriovNetwork` object.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/vm_networking/virt-connecting-vm-to-linux-bridge.adoc
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-vm-creating-nic-web_{context}"]
+= Configuring a VM network interface by using the web console
+
+You can configure a network interface for a virtual machine (VM) by using the {product-title} web console.
+
+.Prerequisites
+
+* You created a network attachment definition for the network.
+
+.Procedure
+
+. Navigate to *Virtualization* -> *VirtualMachines*.
+. Click a VM to view the *VirtualMachine details* page.
+. On the *Configuration* tab, click the *Network interfaces* tab.
+. Click *Add network interface*.
+. Enter the interface name and select the network attachment definition from the *Network* list.
+. Click *Save*.
+. Restart the VM to apply the changes.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-accessing-vm-ssh.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-connecting-secondary-network-ssh_{context}"]
+= Connecting to a VM attached to a secondary network by using SSH
+
+You can connect to a virtual machine (VM) attached to a secondary network by using SSH.
+
+.Prerequisites
+
+* You attached a VM to a secondary network with a DHCP server.
+* You have an SSH client installed.
+
+.Procedure
+
+. Obtain the IP address of the VM by running the following command:
++
+[source,terminal]
+----
+$ oc describe vm <vm_name>
+----
++
+.Example output
+----
+# ...
+Interfaces:
+  Interface Name:  eth0
+  Ip Address:      10.244.0.37/24
+  Ip Addresses:
+    10.244.0.37/24
+    fe80::858:aff:fef4:25/64
+  Mac:             0a:58:0a:f4:00:25
+  Name:            default
+# ...
+----
+
+. Connect to the VM by running the following command:
++
+[source,terminal]
+----
+$ ssh <user_name>@<ip_address> -i <ssh_key>
+----
++
+.Example
+[source,terminal]
+----
+$ ssh cloud-user@10.244.0.37 -i ~/.ssh/id_rsa_cloud-user
+----
+
+:leveloffset!:
+
+[NOTE]
+====
+You can also xref:../../virt/vm_networking/virt-accessing-vm-secondary-network-fqdn.adoc#virt-accessing-vm-secondary-network-fqdn[access a VM attached to a secondary network interface by using the cluster FQDN].
+====
+
+//# includes=_attributes/common-attributes,modules/virt-access-configuration-considerations,modules/virt-about-static-and-dynamic-ssh-keys,modules/virt-adding-key-creating-vm-template,modules/virt-creating-vm-instancetype,modules/virt-adding-public-key-cli,modules/virt-editing-vm-dynamic-key-injection,modules/virt-using-virtctl-ssh-command,modules/virt-using-virtctl-port-forward-command,modules/virt-about-services,modules/virt-enabling-load-balancer-service-web,modules/virt-creating-service-web,modules/virt-creating-service-virtctl,modules/virt-creating-service-cli,modules/virt-connecting-service-ssh,modules/virt-vm-creating-nic-web,modules/virt-connecting-secondary-network-ssh

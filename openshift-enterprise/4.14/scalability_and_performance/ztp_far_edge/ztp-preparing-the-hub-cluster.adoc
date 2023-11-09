@@ -1,0 +1,1041 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ztp-preparing-the-hub-cluster"]
+= Preparing the hub cluster for ZTP
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: ztp-preparing-the-hub-cluster
+
+toc::[]
+
+To use {rh-rhacm} in a disconnected environment, create a mirror registry that mirrors the {product-title} release images and Operator Lifecycle Manager (OLM) catalog that contains the required Operator images. OLM manages, installs, and upgrades Operators and their dependencies in the cluster. You can also use a disconnected mirror host to serve the {op-system} ISO and RootFS disk images that are used to provision the bare-metal hosts.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="ztp-telco-ran-software-versions_{context}"]
+= Telco RAN {product-version} validated software components
+
+The Red Hat Telco RAN {product-version} solution has been validated using the following Red Hat software products for {product-title}.
+
+.Telco RAN DU {product-version} validated software components
+[cols=2*, width="80%", options="header"]
+|====
+|Component
+|Software version
+
+|RAN DU cluster version
+|4.14
+
+|Cluster Logging Operator
+|5.7
+
+|Local Storage Operator
+|4.14
+
+|PTP Operator
+|4.14
+
+|SRIOV Operator
+|4.14
+
+|SRIOV-FEC Operator
+|2.7
+|====
+
+.Telco RAN {product-version} hub cluster validated software components
+[cols=2*, width="80%", options="header"]
+|====
+|Component
+|Software version
+
+|Hub cluster version
+|4.14
+
+|{ztp} plugin
+|4.14
+
+|{rh-rhacm-first}
+|2.8, 2.9
+
+|{gitops-title}
+|1.9
+
+|{cgu-operator-first}
+|4.14
+|====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc]
+
+:_mod-docs-content-type: REFERENCE
+[id="ztp-gitops-ztp-max-spoke-clusters_{context}"]
+= Recommended hub cluster specifications and managed cluster limits for {ztp}
+
+With {ztp-first}, you can manage thousands of clusters in geographically dispersed regions and networks.
+The Red Hat Performance and Scale lab successfully created and managed 3500 virtual {sno} clusters with a reduced DU profile from a single {rh-rhacm-first} hub cluster in a lab environment.
+
+In real-world situations, the scaling limits for the number of clusters that you can manage will vary depending on various factors affecting the hub cluster.
+For example:
+
+Hub cluster resources::
+Available hub cluster host resources (CPU, memory, storage) are an important factor in determining how many clusters the hub cluster can manage.
+The more resources allocated to the hub cluster, the more managed clusters it can accommodate.
+
+Hub cluster storage::
+The hub cluster host storage IOPS rating and whether the hub cluster hosts use NVMe storage can affect hub cluster performance and the number of clusters it can manage.
+
+Network bandwidth and latency::
+Slow or high-latency network connections between the hub cluster and managed clusters can impact how the hub cluster manages multiple clusters.
+
+Managed cluster size and complexity::
+The size and complexity of the managed clusters also affects the capacity of the hub cluster.
+Larger managed clusters with more nodes, namespaces, and resources require additional processing and management resources.
+Similarly, clusters with complex configurations such as the RAN DU profile or diverse workloads can require more resources from the hub cluster.
+
+Number of managed policies::
+The number of policies managed by the hub cluster scaled over the number of managed clusters bound to those policies is an important factor that determines how many clusters can be managed.
+
+Monitoring and management workloads::
+{rh-rhacm} continuously monitors and manages the managed clusters.
+The number and complexity of monitoring and management workloads running on the hub cluster can affect its capacity.
+Intensive monitoring or frequent reconciliation operations can require additional resources, potentially limiting the number of manageable clusters.
+
+{rh-rhacm} version and configuration::
+Different versions of {rh-rhacm} can have varying performance characteristics and resource requirements.
+Additionally, the configuration settings of {rh-rhacm}, such as the number of concurrent reconciliations or the frequency of health checks, can affect the managed cluster capacity of the hub cluster.
+
+Use the following representative configuration and network specifications to develop your own Hub cluster and network specifications.
+
+[IMPORTANT]
+====
+The following guidelines are based on internal lab benchmark testing only and do not represent complete bare-metal host specifications.
+====
+
+.Representative three-node hub cluster machine specifications
+[cols=2*, width="90%", options="header"]
+|====
+|Requirement
+|Description
+
+|{product-title}
+|version 4.13
+
+|{rh-rhacm}
+|version 2.7
+
+|{cgu-operator-first}
+|version 4.13
+
+|Server hardware
+|3 x Dell PowerEdge R650 rack servers
+
+|NVMe hard disks
+a|* 50 GB disk for `/var/lib/etcd`
+* 2.9 TB disk for `/var/lib/containers`
+
+|SSD hard disks
+a|* 1 SSD split into 15 200GB thin-provisioned logical volumes provisioned as `PV` CRs
+* 1 SSD serving as an extra large `PV` resource
+
+|Number of applied DU profile policies
+|5
+|====
+
+[IMPORTANT]
+====
+The following network specifications are representative of a typical real-world RAN network and were applied to the scale lab environment during testing.
+====
+
+.Simulated lab environment network specifications
+[cols=2*, width="90%", options="header"]
+|====
+|Specification
+|Description
+
+|Round-trip time (RTT) latency
+|50 ms
+
+|Packet loss
+|0.02% packet loss
+
+|Network bandwidth limit
+|20 Mbps
+|====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.7/html/install/installing#single-node[Creating and managing {sno} clusters with {rh-rhacm}]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc
+
+[id="installing-disconnected-rhacm_{context}"]
+:_mod-docs-content-type: PROCEDURE
+= Installing {ztp} in a disconnected environment
+
+Use {rh-rhacm-first}, {gitops-title}, and {cgu-operator-first} on the hub cluster in the disconnected environment to manage the deployment of multiple managed clusters.
+
+.Prerequisites
+
+* You have installed the {product-title} CLI (`oc`).
+
+* You have logged in as a user with `cluster-admin` privileges.
+
+* You have configured a disconnected mirror registry for use in the cluster.
++
+[NOTE]
+====
+The disconnected mirror registry that you create must contain a version of {cgu-operator} backup and pre-cache images that matches the version of {cgu-operator} running in the hub cluster. The spoke cluster must be able to resolve these images in the disconnected mirror registry.
+====
+
+.Procedure
+
+* Install {rh-rhacm} in the hub cluster. See link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/{rh-rhacm-version}/html/install/installing#install-on-disconnected-networks[Installing {rh-rhacm} in a disconnected environment].
+
+* Install {gitops-shortname} and {cgu-operator} in the hub cluster.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* link:https://docs.openshift.com/gitops/latest/installing_gitops/installing-openshift-gitops.html#installing-openshift-gitops[Installing OpenShift GitOps]
+
+* xref:../../scalability_and_performance/ztp_far_edge/cnf-talm-for-cluster-upgrades.adoc#installing-topology-aware-lifecycle-manager-using-cli_cnf-topology-aware-lifecycle-manager[Installing {cgu-operator}]
+
+* xref:../../operators/admin/olm-restricted-networks.adoc#olm-mirror-catalog_olm-restricted-networks[Mirroring an Operator catalog]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-acm-adding-images-to-mirror-registry_{context}"]
+= Adding {op-system} ISO and RootFS images to the disconnected mirror host
+
+Before you begin installing clusters in the disconnected environment with {rh-rhacm-first}, you must first host {op-system-first} images for it to use. Use a disconnected mirror to host the {op-system} images.
+
+.Prerequisites
+
+* Deploy and configure an HTTP server to host the {op-system} image resources on the network. You must be able to access the HTTP server from your computer, and from the machines that you create.
+
+[IMPORTANT]
+====
+The {op-system} images might not change with every release of {product-title}. You must download images with the highest version that is less than or equal to the version that you install. Use the image versions that match your {product-title} version if they are available. You require ISO and RootFS images to install {op-system} on the hosts. {op-system} QCOW2 images are not supported for this installation type.
+====
+
+.Procedure
+
+. Log in to the mirror host.
+. Obtain the {op-system} ISO and RootFS images from link:https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/[mirror.openshift.com], for example:
+
+.. Export the required image names and {product-title} version as environment variables:
++
+[source,terminal]
+----
+$ export ISO_IMAGE_NAME=<iso_image_name> <1>
+----
++
+[source,terminal]
+----
+$ export ROOTFS_IMAGE_NAME=<rootfs_image_name> <2>
+----
++
+[source,terminal]
+----
+$ export OCP_VERSION=<ocp_version> <3>
+----
+<1> ISO image name, for example, `rhcos-{product-version}.1-x86_64-live.x86_64.iso`
+<2> RootFS image name, for example, `rhcos-{product-version}.1-x86_64-live-rootfs.x86_64.img`
+<3> {product-title} version, for example, `{product-version}.1`
+
+.. Download the required images:
++
+[source,terminal,subs="attributes+"]
+----
+$ sudo wget https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{product-version}/${OCP_VERSION}/${ISO_IMAGE_NAME} -O /var/www/html/${ISO_IMAGE_NAME}
+----
++
+[source,terminal,subs="attributes+"]
+----
+$ sudo wget https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{product-version}/${OCP_VERSION}/${ROOTFS_IMAGE_NAME} -O /var/www/html/${ROOTFS_IMAGE_NAME}
+----
+
+.Verification steps
+
+* Verify that the images downloaded successfully and are being served on the disconnected mirror host, for example:
++
+[source,terminal]
+----
+$ wget http://$(hostname)/${ISO_IMAGE_NAME}
+----
++
+.Example output
++
+[source,terminal,subs="attributes+"]
+----
+Saving to: rhcos-{product-version}.1-x86_64-live.x86_64.iso
+rhcos-{product-version}.1-x86_64-live.x86_64.iso-  11%[====>    ]  10.01M  4.71MB/s
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../installing/disconnected_install/installing-mirroring-creating-registry.adoc#installing-mirroring-creating-registry[Creating a mirror registry]
+
+* xref:../../installing/disconnected_install/installing-mirroring-installation-images.adoc#installing-mirroring-installation-images[Mirroring images for a disconnected installation]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc
+
+[id="enabling-assisted-installer-service-on-bare-metal_{context}"]
+= Enabling the assisted service
+
+{rh-rhacm-first} uses the assisted service to deploy {product-title} clusters. The assisted service is deployed automatically when you enable the MultiClusterHub Operator on {rh-rhacm-first}. After that, you need to configure the `Provisioning` resource to watch all namespaces and to update the `AgentServiceConfig` custom resource (CR) with references to the ISO and RootFS images that are hosted on the mirror registry HTTP server.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+* You have {rh-rhacm} with MultiClusterHub enabled.
+
+.Procedure
+
+. Enable the `Provisioning` resource to watch all namespaces and configure mirrors for disconnected environments. For more information, see link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html/clusters/cluster_mce_overview#enable-cim[Enabling the Central Infrastructure Management service].
+
+. Update the `AgentServiceConfig` CR by running the following command:
++
+[source,terminal]
+----
+$ oc edit AgentServiceConfig
+----
+
+. Add the following entry to the `items.spec.osImages` field in the CR:
++
+[source,yaml,subs="attributes+"]
+----
+- cpuArchitecture: x86_64
+    openshiftVersion: "{product-version}"
+    rootFSUrl: https://<host>/<path>/rhcos-live-rootfs.x86_64.img
+    url: https://<mirror-registry>/<path>/rhcos-live.x86_64.iso
+----
++
+where:
++
+--
+<host> :: Is the fully qualified domain name (FQDN) for the target mirror registry HTTP server.
+<path> :: Is the path to the image on the target mirror registry.
+--
++
+Save and quit the editor to apply the changes.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-configuring-the-cluster-for-a-disconnected-environment_{context}"]
+= Configuring the hub cluster to use a disconnected mirror registry
+
+You can configure the hub cluster to use a disconnected mirror registry for a disconnected environment.
+
+.Prerequisites
+
+* You have a disconnected hub cluster installation with {rh-rhacm-first} {rh-rhacm-version} installed.
+
+* You have hosted the `rootfs` and `iso` images on an HTTP server.
+
+[WARNING]
+====
+If you enable TLS for the HTTP server, you must confirm the root certificate is signed by an authority trusted by the client and verify the trusted certificate chain between your {product-title} hub and managed clusters and the HTTP server. Using a server configured with an untrusted certificate prevents the images from being downloaded to the image creation service. Using untrusted HTTPS servers is not supported.
+====
+
+.Procedure
+
+. Create a `ConfigMap` containing the mirror registry config:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: assisted-installer-config-map
+  namespace: "<infrastructure_operator_namespace>" <1>
+  labels:
+    app: assisted-service
+data:
+  ca-bundle.crt: | <2>
+    -----BEGIN CERTIFICATE-----
+    <certificate_contents>
+    -----END CERTIFICATE-----
+
+  registries.conf: | <3>
+    unqualified-search-registries = ["registry.access.redhat.com", "docker.io"]
+
+    [[registry]]
+       prefix = ""
+       location = "quay.io/example-repository" <4>
+       mirror-by-digest-only = true
+
+       [[registry.mirror]]
+       location = "mirror1.registry.corp.com:5000/example-repository" <5>
+----
+<1> The `ConfigMap` namespace must be the same as the namespace of the Infrastructure Operator.
+<2> The mirror registry’s certificate that is used when creating the mirror registry.
+<3> The configuration file for the mirror registry. The mirror registry configuration adds mirror information to the `/etc/containers/registries.conf` file in the discovery image. The mirror information is stored in the `imageContentSources` section of the `install-config.yaml` file when the information is passed to the installation program. The Assisted Service pod that runs on the hub cluster fetches the container images from the configured mirror registry.
+<4> The URL of the mirror registry. You must use the URL from the `imageContentSources` section by running the `oc adm release mirror` command when you configure the mirror registry. For more information, see the _Mirroring the OpenShift Container Platform image repository_ section.
+<5> The registries defined in the `registries.conf` file must be scoped by repository, not by registry. In this example, both the `quay.io/example-repository` and the `mirror1.registry.corp.com:5000/example-repository` repositories are scoped by the `example-repository` repository.
++
+This updates `mirrorRegistryRef` in the `AgentServiceConfig` custom resource, as shown below:
++
+.Example output
++
+[source,yaml]
+----
+apiVersion: agent-install.openshift.io/v1beta1
+kind: AgentServiceConfig
+metadata:
+  name: agent
+spec:
+  databaseStorage:
+    volumeName: <db_pv_name>
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: <db_storage_size>
+  filesystemStorage:
+    volumeName: <fs_pv_name>
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: <fs_storage_size>
+  mirrorRegistryRef:
+    name: 'assisted-installer-mirror-config'
+  osImages:
+    - openshiftVersion: <ocp_version>
+      url: <iso_url> <1>
+----
+<1> Must match the URL of the HTTPD server.
+
+[IMPORTANT]
+====
+A valid NTP server is required during cluster installation. Ensure that a suitable NTP server is available and can be reached from the installed clusters through the disconnected network.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../installing/disconnected_install/installing-mirroring-installation-images.adoc#installation-mirror-repository_installing-mirroring-installation-images[Mirroring the OpenShift Container Platform image repository]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-configuring-the-hub-cluster-to-use-unauthenticated-registries_{context}"]
+= Configuring the hub cluster to use unauthenticated registries
+
+You can configure the hub cluster to use unauthenticated registries.
+Unauthenticated registries does not require authentication to access and download images.
+
+.Prerequisites
+
+* You have installed and configured a hub cluster and installed {rh-rhacm-first} on the hub cluster.
+
+* You have installed the OpenShift Container Platform CLI (oc).
+
+* You have logged in as a user with `cluster-admin` privileges.
+
+* You have configured an unauthenticated registry for use with the hub cluster.
+
+.Procedure
+
+. Update the `AgentServiceConfig` custom resource (CR) by running the following command:
++
+[source,terminal]
+----
+$ oc edit AgentServiceConfig agent
+----
+
+. Add the `unauthenticatedRegistries` field in the CR:
++
+[source,yaml]
+----
+apiVersion: agent-install.openshift.io/v1beta1
+kind: AgentServiceConfig
+metadata:
+  name: agent
+spec:
+  unauthenticatedRegistries:
+  - example.registry.com
+  - example.registry2.com
+  ...
+----
++
+Unauthenticated registries are listed under `spec.unauthenticatedRegistries` in the `AgentServiceConfig` resource.
+Any registry on this list is not required to have an entry in the pull secret used for the spoke cluster installation.
+`assisted-service` validates the pull secret by making sure it contains the authentication information for every image registry used for installation.
+
+[NOTE]
+====
+Mirror registries are automatically added to the ignore list and do not need to be added under `spec.unauthenticatedRegistries`.
+Specifying the `PUBLIC_CONTAINER_REGISTRIES` environment variable in the `ConfigMap` overrides the default values with the specified value.
+The `PUBLIC_CONTAINER_REGISTRIES` defaults are https://quay.io[quay.io] and https://registry.svc.ci.openshift.org[registry.svc.ci.openshift.org].
+====
+
+.Verification
+
+Verify that you can access the newly added registry from the hub cluster by running the following commands:
+
+. Open a debug shell prompt to the hub cluster:
++
+[source,terminal]
+----
+$ oc debug node/<node_name>
+----
+
+. Test access to the unauthenticated registry by running the following command:
++
+[source,terminal]
+----
+sh-4.4# podman login -u kubeadmin -p $(oc whoami -t) <unauthenticated_registry>
+----
++
+where:
++
+--
+<unauthenticated_registry>:: Is the new registry, for example, `unauthenticated-image-registry.openshift-image-registry.svc:5000`.
+--
++
+.Example output
+[source,terminal]
+----
+Login Succeeded!
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-configuring-hub-cluster-with-argocd_{context}"]
+= Configuring the hub cluster with ArgoCD
+
+You can configure the hub cluster with a set of ArgoCD applications that generate the required installation and policy custom resources (CRs) for each site with {ztp-first}.
+
+[NOTE]
+====
+{rh-rhacm-first} uses `SiteConfig` CRs to generate the Day 1 managed cluster installation CRs for ArgoCD. Each ArgoCD application can manage a maximum of 300 `SiteConfig` CRs.
+====
+
+.Prerequisites
+
+* You have a {product-title} hub cluster with {rh-rhacm-first} and {gitops-title} installed.
+
+* You have extracted the reference deployment from the {ztp} plugin container as described in the "Preparing the {ztp} site configuration repository" section. Extracting the reference deployment creates the `out/argocd/deployment` directory referenced in the following procedure.
+
+.Procedure
+
+. Prepare the ArgoCD pipeline configuration:
+
+.. Create a Git repository with the directory structure similar to the example directory. For more information, see "Preparing the {ztp} site configuration repository".
+
+.. Configure access to the repository using the ArgoCD UI. Under *Settings* configure the following:
+
+*** *Repositories* - Add the connection information. The URL must end in `.git`, for example, `https://repo.example.com/repo.git` and credentials.
+
+*** *Certificates* - Add the public certificate for the repository, if needed.
+
+.. Modify the two ArgoCD applications, `out/argocd/deployment/clusters-app.yaml` and `out/argocd/deployment/policies-app.yaml`, based on your Git repository:
+
+*** Update the URL to point to the Git repository. The URL ends with `.git`, for example, `https://repo.example.com/repo.git`.
+
+*** The `targetRevision` indicates which Git repository branch to monitor.
+
+*** `path` specifies the path to the `SiteConfig` and `PolicyGenTemplate` CRs, respectively.
+
+. To install the {ztp} plugin you must patch the ArgoCD instance in the hub cluster by using the patch file previously extracted into the `out/argocd/deployment/` directory. Run the following command:
++
+[source,terminal]
+----
+$ oc patch argocd openshift-gitops \
+-n openshift-gitops --type=merge \
+--patch-file out/argocd/deployment/argocd-openshift-gitops-patch.json
+----
+
+. In {rh-rhacm} 2.7 and later, the multicluster engine enables the `cluster-proxy-addon` feature by default.
+To disable this feature, apply the following patch to disable and remove the relevant hub cluster and managed cluster pods that are responsible for this add-on.
+Run the following command:
++
+[source,terminal]
+----
+$ oc patch multiclusterengines.multicluster.openshift.io multiclusterengine --type=merge --patch-file out/argocd/deployment/disable-cluster-proxy-addon.json
+----
+
+. Apply the pipeline configuration to your hub cluster by using the following command:
++
+[source,terminal]
+----
+$ oc apply -k out/argocd/deployment
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-preparing-the-ztp-git-repository_{context}"]
+= Preparing the {ztp} site configuration repository
+
+Before you can use the {ztp-first} pipeline, you need to prepare the Git repository to host the site configuration data.
+
+.Prerequisites
+
+* You have configured the hub cluster GitOps applications for generating the required installation and policy custom resources (CRs).
+
+* You have deployed the managed clusters using {ztp}.
+
+.Procedure
+
+. Create a directory structure with separate paths for the `SiteConfig` and `PolicyGenTemplate` CRs.
++
+[NOTE]
+====
+Keep `SiteConfig` and `PolicyGenTemplate` CRs in separate directories.
+Both the `SiteConfig` and `PolicyGenTemplate` directories must contain a `kustomization.yaml` file that explicitly includes the files in that directory.
+====
+
+. Export the `argocd` directory from the `ztp-site-generate` container image using the following commands:
++
+[source,terminal,subs="attributes+"]
+----
+$ podman pull registry.redhat.io/openshift4/ztp-site-generate-rhel8:v{product-version}
+----
++
+[source,terminal]
+----
+$ mkdir -p ./out
+----
++
+[source,terminal,subs="attributes+"]
+----
+$ podman run --log-driver=none --rm registry.redhat.io/openshift4/ztp-site-generate-rhel8:v{product-version} extract /home/ztp --tar | tar x -C ./out
+----
+
+
+. Check that the `out` directory contains the following subdirectories:
++
+* `out/extra-manifest` contains the source CR files that `SiteConfig` uses to generate extra manifest `configMap`.
+* `out/source-crs` contains the source CR files that `PolicyGenTemplate` uses to generate the {rh-rhacm-first} policies.
+* `out/argocd/deployment` contains patches and YAML files to apply on the hub cluster for use in the next step of this procedure.
+* `out/argocd/example` contains the examples for `SiteConfig` and `PolicyGenTemplate` files that represent the recommended configuration.
+
+
+. Copy the `out/source-crs` folder and contents to the `PolicyGentemplate` directory.
+
+. The out/extra-manifests directory contains the reference manifests for a RAN DU cluster.
+Copy the `out/extra-manifests` directory into the `SiteConfig` folder.
+This directory should contain CRs from the `ztp-site-generate` container only.
+Do not add user-provided CRs here.
+If you want to work with user-provided CRs you must create another directory for that content.
+For example:
++
+[source,text]
+----
+example/
+  ├── policygentemplates
+  │   ├── kustomization.yaml
+  │   └── source-crs/
+  └── siteconfig
+        ├── extra-manifests
+        └── kustomization.yaml
+----
+
+. Commit the directory structure and the `kustomization.yaml` files and push to your Git repository.
+The initial push to Git should include the `kustomization.yaml` files.
+
+You can use the directory structure under `out/argocd/example` as a reference for the structure and content of your Git repository.
+That structure includes `SiteConfig` and `PolicyGenTemplate` reference CRs for single-node, three-node, and standard clusters.
+Remove references to cluster types that you are not using.
+
+For all cluster types, you must:
+
+* Add the `source-crs` subdirectory to the `policygentemplate` directory.
+* Add the `extra-manifests` directory to the `siteconfig` directory.
+
+The following example describes a set of CRs for a network of single-node clusters:
+
+[source,text]
+----
+example/
+  ├── policygentemplates
+  │   ├── common-ranGen.yaml
+  │   ├── example-sno-site.yaml
+  │   ├── group-du-sno-ranGen.yaml
+  │   ├── group-du-sno-validator-ranGen.yaml
+  │   ├── kustomization.yaml
+  │   ├── source-crs/
+  │   └── ns.yaml
+  └── siteconfig
+        ├── example-sno.yaml
+        ├── extra-manifests/ <1>
+        ├── custom-manifests/ <2>
+        ├── KlusterletAddonConfigOverride.yaml
+        └── kustomization.yaml
+----
+<1> Contains reference manifests from the `ztp-container`.
+<2> Contains custom manifests.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-preparing-the-ztp-git-repository-ver-ind_{context}"]
+= Preparing the {ztp} site configuration repository for version independence
+
+You can use {ztp} to manage source custom resources (CRs) for managed clusters that are running different versions of {product-title}.
+This means that the version of {product-title} running on the hub cluster can be independent of the version running on the managed clusters.
+
+.Procedure
+
+. Create a directory structure with separate paths for the `SiteConfig` and `PolicyGenTemplate` CRs.
+
+. Within the `PolicyGenTemplate` directory, create a directory for each {product-title} version you want to make available.
+For each version, create the following resources:
+* `kustomization.yaml` file that explicitly includes the files in that directory
+* `source-crs` directory to contain reference CR configuration files from the `ztp-site-generate` container
+
+. In the `/siteconfig` directory, create a subdirectory for each {product-title} version you want to make available. For each version, create at least one directory for reference CRs to be copied from the container. There is no restriction on the naming of directories or on the number of reference directories. If you want to work with user-provided CRs, you must create a separate directory for those.
++
+The following example describes a structure using user-provided CRs for different versions of {product-title}:
++
+[source,text]
+----
+├── policygentemplates
+│   ├── kustomization.yaml <1>
+│   ├── version_4.13 <2>
+│   │   ├── common-ranGen.yaml
+│   │   ├── group-du-sno-ranGen.yaml
+│   │   ├── group-du-sno-validator-ranGen.yaml
+│   │   ├── helix56-v413.yaml
+│   │   ├── kustomization.yaml <3>
+│   │   ├── ns.yaml
+│   │   └── source-crs/  <4>
+│   └── version_4.14 <2>
+│       ├── common-ranGen.yaml
+│       ├── group-du-sno-ranGen.yaml
+│       ├── group-du-sno-validator-ranGen.yaml
+│       ├── helix56-v414.yaml
+│       ├── kustomization.yaml <3>
+│       ├── ns.yaml
+│       └── source-crs/ <4>
+└── siteconfig
+    ├── kustomization.yaml
+    ├── version_4.13
+    │   ├── helix56-v413.yaml
+    │   ├── kustomization.yaml
+    │   ├── extra-manifest/ <5>
+    │   └── custom-manifest/ <6>
+    └── version_4.14
+        ├── helix57-v414.yaml
+        ├── kustomization.yaml
+        ├── extra-manifest/ <5>
+        └── custom-manifest/ <6>
+
+----
+<1> Create a top-level `kustomization` yaml file.
+<2> Create the version-specific directories within the custom `/policygentemplates` directory.
+<3> Create a `kustomization.yaml` file for each version.
+<4> Create a `source-crs` directory for each version to contain reference CRs from the `ztp-site-generate` container.
+<5> Create a directory within the custom `/siteconfig` directory to contain extra manifests from the `ztp-site-generate` container.
+<6> Create a folder to hold user-provided CRs.
++
+[NOTE]
+====
+In the previous example, each version subdirectory in the custom `/siteconfig` directory contains two further subdirectories, one containing the reference manifests copied from the container, the other for custom manifests that you provide.
+The names assigned to those directories are examples.
+If you use user-provided CRs, the last directory listed under `extraManifests.searchPaths` in the `SiteConfig` CR must be the directory containing user-provided CRs.
+====
+
+. Edit the `SiteConfig` CR to include the search paths of any directories you have created.
+The first directory that is listed under `extraManifests.searchPaths` must be the directory containing the reference manifests.
+Consider the order in which the directories are listed.
+In cases where directories contain files with the same name, the file in the final directory takes precedence.
++
+.Example SiteConfig CR
++
+[source,yaml]
+----
+extraManifests:
+    searchPaths:
+    - extra-manifest/ <1>
+    - custom-manifest/ <2>
+----
+<1>  The directory containing the reference manifests must be listed first under `extraManifests.searchPaths`.
+<2>  If you are using user-provided CRs, the last directory listed under `extraManifests.searchPaths` in the `SiteConfig` CR must be the directory containing those user-provided CRs.
+
+. Edit the top-level `kustomization.yaml` file to control which {product-title} versions are active. The following is an example of a `kustomization.yaml` file at the top level:
++
+[source,yaml]
+----
+resources:
+- version_4.13 <1>
+#- version_4.14 <2>
+----
+<1> Activate version 4.13.
+<2> Use comments to deactivate a version.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/ztp-telco-ran-software-versions,modules/ztp-gitops-ztp-max-spoke-clusters,modules/ztp-acm-installing-disconnected-rhacm,modules/ztp-acm-adding-images-to-mirror-registry,modules/ztp-enabling-assisted-installer-service-on-bare-metal,modules/ztp-configuring-the-cluster-for-a-disconnected-environment,modules/ztp-configuring-the-hub-cluster-to-use-unauthenticated-registries,modules/ztp-preparing-the-hub-cluster-for-ztp,modules/ztp-preparing-the-ztp-git-repository,modules/ztp-preparing-the-ztp-git-repository-ver-ind

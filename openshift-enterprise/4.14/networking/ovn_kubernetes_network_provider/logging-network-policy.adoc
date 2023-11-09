@@ -1,0 +1,707 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="logging-network-policy"]
+= Logging for egress firewall and network policy rules
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: logging-network-policy
+
+toc::[]
+
+As a cluster administrator, you can configure audit logging for your cluster and enable logging for one or more namespaces. {product-title} produces audit logs for both egress firewalls and network policies.
+
+[NOTE]
+====
+Audit logging is available for only the xref:../../networking/ovn_kubernetes_network_provider/about-ovn-kubernetes.adoc#about-ovn-kubernetes[OVN-Kubernetes network plugin].
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/logging-network-policy.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-networkpolicy-audit-concept_{context}"]
+= Audit logging
+
+The OVN-Kubernetes network plugin uses Open Virtual Network (OVN) ACLs to manage egress firewalls and network policies. Audit logging exposes allow and deny ACL events.
+
+You can configure the destination for audit logs, such as a syslog server or a UNIX domain socket.
+Regardless of any additional configuration, an audit log is always saved to `/var/log/ovn/acl-audit-log.log` on each OVN-Kubernetes pod in the cluster.
+
+Audit logging is enabled per namespace by annotating the namespace with the `k8s.ovn.org/acl-logging` key as in the following example:
+
+.Example namespace annotation
+[source,yaml]
+----
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: example1
+  annotations:
+    k8s.ovn.org/acl-logging: |-
+      {
+        "deny": "info",
+        "allow": "info"
+      }
+----
+
+The logging format is compatible with syslog as defined by RFC5424. The syslog facility is configurable and defaults to `local0`. An example log entry might resemble the following:
+
+.Example ACL deny log entry for a network policy
+[source,text]
+----
+2021-06-13T19:33:11.590Z|00005|acl_log(ovn_pinctrl0)|INFO|name="verify-audit-logging_deny-all", verdict=drop, severity=alert: icmp,vlan_tci=0x0000,dl_src=0a:58:0a:80:02:39,dl_dst=0a:58:0a:80:02:37,nw_src=10.128.2.57,nw_dst=10.128.2.55,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0
+----
+
+The following table describes namespace annotation values:
+
+.Audit logging namespace annotation
+[cols=".^4,.^6a",options="header"]
+|====
+|Annotation|Value
+
+|`k8s.ovn.org/acl-logging`
+|
+You must specify at least one of `allow`, `deny`, or both to enable audit logging for a namespace.
+
+`deny`:: Optional: Specify `alert`, `warning`, `notice`, `info`, or `debug`.
+`allow`:: Optional: Specify `alert`, `warning`, `notice`, `info`, or `debug`.
+
+|====
+
+:leveloffset!:
+
+[id="network-policy-audit-configuration-{context}"]
+== Audit configuration
+
+The configuration for audit logging is specified as part of the OVN-Kubernetes cluster network provider configuration. The following YAML illustrates the default values for the audit logging:
+
+.Audit logging configuration
+[source,yaml]
+----
+apiVersion: operator.openshift.io/v1
+kind: Network
+metadata:
+  name: cluster
+spec:
+  defaultNetwork:
+    ovnKubernetesConfig:
+      policyAuditConfig:
+        destination: "null"
+        maxFileSize: 50
+        rateLimit: 20
+        syslogFacility: local0
+----
+
+The following table describes the configuration fields for audit logging.
+
+.`policyAuditConfig` object
+[cols=".^2,.^2,.^6a",options="header"]
+|====
+|Field|Type|Description
+
+|`rateLimit`
+|integer
+|The maximum number of messages to generate every second per node. The default value is `20` messages per second.
+
+|`maxFileSize`
+|integer
+|The maximum size for the audit log in bytes. The default value is `50000000` or 50 MB.
+
+|`destination`
+|string
+|
+One of the following additional audit log targets:
+
+`libc`:: The libc `syslog()` function of the journald process on the host.
+`udp:<host>:<port>`:: A syslog server. Replace `<host>:<port>` with the host and port of the syslog server.
+`unix:<file>`:: A Unix Domain Socket file specified by `<file>`.
+`null`:: Do not send the audit logs to any additional target.
+
+|`syslogFacility`
+|string
+|The syslog facility, such as `kern`, as defined by RFC5424. The default value is `local0`.
+
+|====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/logging-network-policy.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-networkpolicy-audit-configure_{context}"]
+= Configuring egress firewall and network policy auditing for a cluster
+
+As a cluster administrator, you can customize audit logging for your cluster.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in to the cluster with a user with `cluster-admin` privileges.
+
+.Procedure
+
+* To customize the audit logging configuration, enter the following command:
++
+[source,terminal]
+----
+$ oc edit network.operator.openshift.io/cluster
+----
++
+[TIP]
+====
+You can alternatively customize and apply the following YAML to configure audit logging:
+
+[source,yaml]
+----
+apiVersion: operator.openshift.io/v1
+kind: Network
+metadata:
+  name: cluster
+spec:
+  defaultNetwork:
+    ovnKubernetesConfig:
+      policyAuditConfig:
+        destination: "null"
+        maxFileSize: 50
+        rateLimit: 20
+        syslogFacility: local0
+----
+====
+
+.Verification
+
+. To create a namespace with network policies complete the following steps:
+.. Create a namespace for verification:
++
+[source,terminal]
+----
+$ cat <<EOF| oc create -f -
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: verify-audit-logging
+  annotations:
+    k8s.ovn.org/acl-logging: '{ "deny": "alert", "allow": "alert" }'
+EOF
+----
++
+.Example output
+[source,text]
+----
+namespace/verify-audit-logging created
+----
+
+.. Enable audit logging:
++
+[source,terminal]
+----
+$ oc annotate namespace verify-audit-logging k8s.ovn.org/acl-logging='{ "deny": "alert", "allow": "alert" }'
+----
++
+[source,text]
+----
+namespace/verify-audit-logging annotated
+----
+
+.. Create network policies for the namespace:
++
+[source,terminal]
+----
+$ cat <<EOF| oc create -n verify-audit-logging -f -
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+spec:
+  podSelector:
+    matchLabels:
+  policyTypes:
+  - Ingress
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-same-namespace
+spec:
+  podSelector: {}
+  policyTypes:
+   - Ingress
+   - Egress
+  ingress:
+    - from:
+        - podSelector: {}
+  egress:
+    - to:
+       - namespaceSelector:
+          matchLabels:
+            namespace: verify-audit-logging
+EOF
+----
++
+.Example output
+[source,text]
+----
+networkpolicy.networking.k8s.io/deny-all created
+networkpolicy.networking.k8s.io/allow-from-same-namespace created
+----
+
+. Create a pod for source traffic in the `default` namespace:
++
+[source,terminal]
+----
+$ cat <<EOF| oc create -n default -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client
+spec:
+  containers:
+    - name: client
+      image: registry.access.redhat.com/rhel7/rhel-tools
+      command: ["/bin/sh", "-c"]
+      args:
+        ["sleep inf"]
+EOF
+----
+
+. Create two pods in the `verify-audit-logging` namespace:
++
+[source,terminal]
+----
+$ for name in client server; do
+cat <<EOF| oc create -n verify-audit-logging -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ${name}
+spec:
+  containers:
+    - name: ${name}
+      image: registry.access.redhat.com/rhel7/rhel-tools
+      command: ["/bin/sh", "-c"]
+      args:
+        ["sleep inf"]
+EOF
+done
+----
++
+.Example output
+[source,text]
+----
+pod/client created
+pod/server created
+----
+
+. To generate traffic and produce network policy audit log entries, complete the following steps:
+
+.. Obtain the IP address for pod named `server` in the `verify-audit-logging` namespace:
++
+[source,terminal]
+----
+$ POD_IP=$(oc get pods server -n verify-audit-logging -o jsonpath='{.status.podIP}')
+----
+
+.. Ping the IP address from the previous command from the pod named `client` in the `default` namespace and confirm that all packets are dropped:
++
+[source,terminal]
+----
+$ oc exec -it client -n default -- /bin/ping -c 2 $POD_IP
+----
++
+.Example output
+[source,text]
+----
+PING 10.128.2.55 (10.128.2.55) 56(84) bytes of data.
+
+--- 10.128.2.55 ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 2041ms
+----
+
+.. Ping the IP address saved in the `POD_IP` shell environment variable from the pod named `client` in the `verify-audit-logging` namespace and confirm that all packets are allowed:
++
+[source,terminal]
+----
+$ oc exec -it client -n verify-audit-logging -- /bin/ping -c 2 $POD_IP
+----
++
+.Example output
+[source,text]
+----
+PING 10.128.0.86 (10.128.0.86) 56(84) bytes of data.
+64 bytes from 10.128.0.86: icmp_seq=1 ttl=64 time=2.21 ms
+64 bytes from 10.128.0.86: icmp_seq=2 ttl=64 time=0.440 ms
+
+--- 10.128.0.86 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.440/1.329/2.219/0.890 ms
+----
+
+. Display the latest entries in the network policy audit log:
++
+[source,terminal]
+----
+$ for pod in $(oc get pods -n openshift-ovn-kubernetes -l app=ovnkube-node --no-headers=true | awk '{ print $1 }') ; do
+    oc exec -it $pod -n openshift-ovn-kubernetes -- tail -4 /var/log/ovn/acl-audit-log.log
+  done
+----
++
+.Example output
+[source,text]
+----
+Defaulting container name to ovn-controller.
+Use 'oc describe pod/ovnkube-node-hdb8v -n openshift-ovn-kubernetes' to see all of the containers in this pod.
+2021-06-13T19:33:11.590Z|00005|acl_log(ovn_pinctrl0)|INFO|name="verify-audit-logging_deny-all", verdict=drop, severity=alert: icmp,vlan_tci=0x0000,dl_src=0a:58:0a:80:02:39,dl_dst=0a:58:0a:80:02:37,nw_src=10.128.2.57,nw_dst=10.128.2.55,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0
+2021-06-13T19:33:12.614Z|00006|acl_log(ovn_pinctrl0)|INFO|name="verify-audit-logging_deny-all", verdict=drop, severity=alert: icmp,vlan_tci=0x0000,dl_src=0a:58:0a:80:02:39,dl_dst=0a:58:0a:80:02:37,nw_src=10.128.2.57,nw_dst=10.128.2.55,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0
+2021-06-13T19:44:10.037Z|00007|acl_log(ovn_pinctrl0)|INFO|name="verify-audit-logging_allow-from-same-namespace_0", verdict=allow, severity=alert: icmp,vlan_tci=0x0000,dl_src=0a:58:0a:80:02:3b,dl_dst=0a:58:0a:80:02:3a,nw_src=10.128.2.59,nw_dst=10.128.2.58,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0
+2021-06-13T19:44:11.037Z|00008|acl_log(ovn_pinctrl0)|INFO|name="verify-audit-logging_allow-from-same-namespace_0", verdict=allow, severity=alert: icmp,vlan_tci=0x0000,dl_src=0a:58:0a:80:02:3b,dl_dst=0a:58:0a:80:02:3a,nw_src=10.128.2.59,nw_dst=10.128.2.58,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/logging-network-policy.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-networkpolicy-audit-enable_{context}"]
+= Enabling egress firewall and network policy audit logging for a namespace
+
+As a cluster administrator, you can enable audit logging for a namespace.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in to the cluster with a user with `cluster-admin` privileges.
+
+.Procedure
+
+* To enable audit logging for a namespace, enter the following command:
++
+[source,terminal]
+----
+$ oc annotate namespace <namespace> \
+  k8s.ovn.org/acl-logging='{ "deny": "alert", "allow": "notice" }'
+----
++
+--
+where:
+
+`<namespace>`:: Specifies the name of the namespace.
+--
++
+[TIP]
+====
+You can alternatively apply the following YAML to enable audit logging:
+
+[source,yaml]
+----
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: <namespace>
+  annotations:
+    k8s.ovn.org/acl-logging: |-
+      {
+        "deny": "alert",
+        "allow": "notice"
+      }
+----
+====
++
+.Example output
+[source,terminal]
+----
+namespace/verify-audit-logging annotated
+----
+
+.Verification
+
+* Display the latest entries in the audit log:
++
+[source,terminal]
+----
+$ for pod in $(oc get pods -n openshift-ovn-kubernetes -l app=ovnkube-node --no-headers=true | awk '{ print $1 }') ; do
+    oc exec -it $pod -n openshift-ovn-kubernetes -- tail -4 /var/log/ovn/acl-audit-log.log
+  done
+----
++
+.Example output
+[source,text]
+----
+2021-06-13T19:33:11.590Z|00005|acl_log(ovn_pinctrl0)|INFO|name="verify-audit-logging_deny-all", verdict=drop, severity=alert: icmp,vlan_tci=0x0000,dl_src=0a:58:0a:80:02:39,dl_dst=0a:58:0a:80:02:37,nw_src=10.128.2.57,nw_dst=10.128.2.55,nw_tos=0,nw_ecn=0,nw_ttl=64,icmp_type=8,icmp_code=0
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/logging-network-policy.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-networkpolicy-audit-disable_{context}"]
+= Disabling egress firewall and network policy audit logging for a namespace
+
+As a cluster administrator, you can disable audit logging for a namespace.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in to the cluster with a user with `cluster-admin` privileges.
+
+.Procedure
+
+* To disable audit logging for a namespace, enter the following command:
++
+[source,terminal]
+----
+$ oc annotate --overwrite namespace <namespace> k8s.ovn.org/acl-logging-
+----
++
+--
+where:
+
+`<namespace>`:: Specifies the name of the namespace.
+--
++
+[TIP]
+====
+You can alternatively apply the following YAML to disable audit logging:
+
+[source,yaml]
+----
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: <namespace>
+  annotations:
+    k8s.ovn.org/acl-logging: null
+----
+====
++
+.Example output
+[source,terminal]
+----
+namespace/verify-audit-logging annotated
+----
+
+:leveloffset!:
+
+[id="{context}-additional-resources"]
+[role="_additional-resources"]
+== Additional resources
+
+* xref:../../networking/network_policy/about-network-policy.adoc#about-network-policy[About network policy]
+* xref:../../networking/ovn_kubernetes_network_provider/configuring-egress-firewall-ovn.adoc#configuring-egress-firewall-ovn[Configuring an egress firewall for a project]
+
+//# includes=_attributes/common-attributes,modules/nw-networkpolicy-audit-concept,~modules/nw-operator-cr,modules/nw-networkpolicy-audit-configure,modules/nw-networkpolicy-audit-enable,modules/nw-networkpolicy-audit-disable

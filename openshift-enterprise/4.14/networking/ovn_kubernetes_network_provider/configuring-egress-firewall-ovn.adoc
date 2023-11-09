@@ -1,0 +1,539 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="configuring-egress-firewall-ovn"]
+= Configuring an egress firewall for a project
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: configuring-egress-firewall-ovn
+
+toc::[]
+
+As a cluster administrator, you can create an egress firewall for a project that restricts egress traffic leaving your {product-title} cluster.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/openshift_sdn/configuring-egress-firewall.adoc
+// * networking/ovn_kubernetes_network_provider/configuring-egress-firewall-ovn.adoc
+
+:ovn:
+:kind: EgressFirewall
+:api: k8s.ovn.org/v1
+
+[id="nw-egressnetworkpolicy-about_{context}"]
+= How an egress firewall works in a project
+
+As a cluster administrator, you can use an _egress firewall_ to
+limit the external hosts that some or all pods can access from within the
+cluster. An egress firewall supports the following scenarios:
+
+- A pod can only connect to internal hosts and cannot initiate connections to
+the public internet.
+- A pod can only connect to the public internet and cannot initiate connections
+to internal hosts that are outside the {product-title} cluster.
+- A pod cannot reach specified internal subnets or hosts outside the {product-title} cluster.
+- A pod can connect to only specific external hosts.
+
+For example, you can allow one project access to a specified IP range but deny the same access to a different project. Or you can restrict application developers from updating from Python pip mirrors, and force updates to come only from approved sources.
+
+[NOTE]
+====
+Egress firewall does not apply to the host network namespace. Pods with host networking enabled are unaffected by egress firewall rules.
+====
+
+You configure an egress firewall policy by creating an {kind} custom resource (CR) object. The egress firewall matches network traffic that meets any of the following criteria:
+
+- An IP address range in CIDR format
+- A DNS name that resolves to an IP address
+- A port number
+- A protocol that is one of the following protocols: TCP, UDP, and SCTP
+
+[IMPORTANT]
+====
+If your egress firewall includes a deny rule for `0.0.0.0/0`, access to your {product-title} API servers is blocked. You must either add allow rules for each IP address or use the `nodeSelector` type allow rule in your egress policy rules to connect to API servers.
+
+The following example illustrates the order of the egress firewall rules necessary to ensure API server access:
+
+[source,yaml,subs="attributes+"]
+----
+apiVersion: {api}
+kind: {kind}
+metadata:
+  name: default
+  namespace: <namespace> <1>
+spec:
+  egress:
+  - to:
+      cidrSelector: <api_server_address_range> <2>
+    type: Allow
+# ...
+  - to:
+      cidrSelector: 0.0.0.0/0 <3>
+    type: Deny
+----
+<1> The namespace for the egress firewall.
+<2> The IP address range that includes your {product-title} API servers.
+<3> A global deny rule prevents access to the {product-title} API servers.
+
+To find the IP address for your API servers, run `oc get ep kubernetes -n default`.
+
+For more information, see link:https://bugzilla.redhat.com/show_bug.cgi?id=1988324[BZ#1988324].
+====
+
+
+[WARNING]
+====
+Egress firewall rules do not apply to traffic that goes through routers. Any user with permission to create a Route CR object can bypass egress firewall policy rules by creating a route that points to a forbidden destination.
+====
+
+[id="limitations-of-an-egress-firewall_{context}"]
+== Limitations of an egress firewall
+
+An egress firewall has the following limitations:
+
+* No project can have more than one {kind} object.
+
+* A maximum of one {kind} object with a maximum of 8,000 rules can be defined per project.
+
+* If you are using the OVN-Kubernetes network plugin with shared gateway mode in Red Hat OpenShift Networking, return ingress replies are affected by egress firewall rules. If the egress firewall rules drop the ingress reply destination IP, the traffic is dropped.
+
+Violating any of these restrictions results in a broken egress firewall for the project. Consequently, all external network traffic is dropped, which can cause security risks for your organization.
+
+An Egress Firewall resource can be created in the `kube-node-lease`, `kube-public`, `kube-system`, `openshift` and `openshift-` projects.
+
+[id="policy-rule-order_{context}"]
+== Matching order for egress firewall policy rules
+
+The egress firewall policy rules are evaluated in the order that they are defined, from first to last. The first rule that matches an egress connection from a pod applies. Any subsequent rules are ignored for that connection.
+
+[id="domain-name-server-resolution_{context}"]
+== How Domain Name Server (DNS) resolution works
+
+If you use DNS names in any of your egress firewall policy rules, proper resolution of the domain names is subject to the following restrictions:
+
+* Domain name updates are polled based on a time-to-live (TTL) duration. By default, the duration is 30 minutes. When the egress firewall controller queries the local name servers for a domain name, if the response includes a TTL and the TTL is less than 30 minutes, the controller sets the duration for that DNS name to the returned value. Each DNS name is queried after the TTL for the DNS record expires.
+
+* The pod must resolve the domain from the same local name servers when necessary. Otherwise the IP addresses for the domain known by the egress firewall controller and the pod can be different. If the IP addresses for a hostname differ, the egress firewall might not be enforced consistently.
+
+* Because the egress firewall controller and pods asynchronously poll the same local name server, the pod might obtain the updated IP address before the egress controller does, which causes a race condition. Due to this current limitation, domain name usage in {kind} objects is only recommended for domains with infrequent IP address changes.
+
+[NOTE]
+====
+The egress firewall always allows pods access to the external interface of the node that the pod is on for DNS resolution.
+
+If you use domain names in your egress firewall policy and your DNS resolution is not handled by a DNS server on the local node, then you must add egress firewall rules that allow access to your DNS server's IP addresses. if you are using domain names in your pods.
+====
+
+:!ovn:
+:!kind:
+:!api:
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/openshift_sdn/configuring-egress-firewall.adoc
+// * networking/ovn_kubernetes_network_provider/configuring-egress-firewall-ovn.adoc
+
+:kind: EgressFirewall
+:api: k8s.ovn.org/v1
+:ovn:
+
+[id="nw-egressnetworkpolicy-object_{context}"]
+= {kind} custom resource (CR) object
+
+You can define one or more rules for an egress firewall. A rule is either an `Allow` rule or a `Deny` rule, with a specification for the traffic that the rule applies to.
+
+The following YAML describes an {kind} CR object:
+
+.{kind} object
+[source,yaml,subs="attributes+"]
+----
+apiVersion: {api}
+kind: {kind}
+metadata:
+  name: <name> <1>
+spec:
+  egress: <2>
+    ...
+----
+<1> The name for the object must be `default`.
+<2> A collection of one or more egress network policy rules as described in the following section.
+
+[id="egressnetworkpolicy-rules_{context}"]
+== {kind} rules
+
+The following YAML describes an egress firewall rule object. The user can select either an IP address range in CIDR format, a domain name, or use the `nodeSelector` to allow or deny egress traffic. The `egress` stanza expects an array of one or more objects.
+
+// - OVN-Kubernetes does not support DNS
+// - OpenShift SDN does not support port and protocol specification
+
+.Egress policy rule stanza
+[source,yaml]
+----
+egress:
+- type: <type> <1>
+  to: <2>
+    cidrSelector: <cidr> <3>
+    dnsName: <dns_name> <4>
+    nodeSelector: <label_name>: <label_value> <5>
+  ports: <6>
+      ...
+----
+<1> The type of rule. The value must be either `Allow` or `Deny`.
+<2> A stanza describing an egress traffic match rule that specifies the `cidrSelector` field or the `dnsName` field. You cannot use both fields in the same rule.
+<3> An IP address range in CIDR format.
+<4> A DNS domain name.
+<5> Labels are key/value pairs that the user defines. Labels are attached to objects, such as pods. The `nodeSelector` allows for one or more node labels to be selected and attached to pods.
+<6> Optional: A stanza describing a collection of network ports and protocols for the rule.
+
+.Ports stanza
+[source,yaml]
+----
+ports:
+- port: <port> <1>
+  protocol: <protocol> <2>
+----
+<1> A network port, such as `80` or `443`. If you specify a value for this field, you must also specify a value for `protocol`.
+<2> A network protocol. The value must be either `TCP`, `UDP`, or `SCTP`.
+
+[id="egressnetworkpolicy-example_{context}"]
+== Example {kind} CR objects
+
+The following example defines several egress firewall policy rules:
+
+[source,yaml,subs="attributes+"]
+----
+apiVersion: {api}
+kind: {kind}
+metadata:
+  name: default
+spec:
+  egress: <1>
+  - type: Allow
+    to:
+      cidrSelector: 1.2.3.0/24
+  - type: Deny
+    to:
+      cidrSelector: 0.0.0.0/0
+----
+<1> A collection of egress firewall policy rule objects.
+
+The following example defines a policy rule that denies traffic to the host at the `172.16.1.1` IP address, if the traffic is using either the TCP protocol and destination port `80` or any protocol and destination port `443`.
+
+[source,yaml,subs="attributes+"]
+----
+apiVersion: {api}
+kind: {kind}
+metadata:
+  name: default
+spec:
+  egress:
+  - type: Deny
+    to:
+      cidrSelector: 172.16.1.1
+    ports:
+    - port: 80
+      protocol: TCP
+    - port: 443
+----
+
+[id="configuringNodeSelector-example_{context}"]
+== Example nodeSelector for {kind}
+
+As a cluster administrator, you can allow or deny egress traffic to nodes in your cluster by specifying a label using `nodeSelector`. Labels can be applied to one or more nodes. The following is an example with the `region=east` label:
+
+[source,yaml,subs="attributes+"]
+----
+apiVersion: {api}
+kind: EgressFirewall
+metadata:
+  name: default
+spec:
+    egress:
+    - to:
+        nodeSelector:
+          matchLabels:
+            region: east
+      type: Allow
+----
+
+[TIP]
+====
+Instead of adding manual rules per node IP address, use node selectors to create a label that allows pods behind an egress firewall to access host network pods.
+====
+
+:!kind:
+:!api:
+:!ovn:
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/openshift_sdn/configuring-egress-firewall.adoc
+// * networking/ovn_kubernetes_network_provider/configuring-egress-firewall-ovn.adoc
+
+:kind: EgressFirewall
+:obj: egressfirewall.k8s.ovn.org/v1
+:cni: OVN-Kubernetes
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-networkpolicy-create_{context}"]
+= Creating an egress firewall policy object
+
+As a cluster administrator, you can create an egress firewall policy object for a project.
+
+[IMPORTANT]
+====
+If the project already has an {kind} object defined, you must edit the existing policy to make changes to the egress firewall rules.
+====
+
+.Prerequisites
+
+* A cluster that uses the {cni} network plugin.
+* Install the OpenShift CLI (`oc`).
+* You must log in to the cluster as a cluster administrator.
+
+.Procedure
+
+. Create a policy rule:
+.. Create a `<policy_name>.yaml` file where `<policy_name>` describes the egress
+policy rules.
+.. In the file you created, define an egress policy object.
+
+. Enter the following command to create the policy object. Replace `<policy_name>` with the name of the policy and `<project>` with the project that the rule applies to.
++
+[source,terminal]
+----
+$ oc create -f <policy_name>.yaml -n <project>
+----
++
+In the following example, a new {kind} object is created in a project named `project1`:
++
+[source,terminal]
+----
+$ oc create -f default.yaml -n project1
+----
++
+.Example output
+[source,terminal,subs="attributes"]
+----
+{obj} created
+----
+
+. Optional: Save the `<policy_name>.yaml` file so that you can make changes later.
+
+:!kind:
+:!obj:
+:!cni:
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/nw-egressnetworkpolicy-about,modules/nw-egressnetworkpolicy-object,modules/nw-egressnetworkpolicy-create

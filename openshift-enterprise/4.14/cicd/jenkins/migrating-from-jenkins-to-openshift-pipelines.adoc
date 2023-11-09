@@ -1,0 +1,703 @@
+:_mod-docs-content-type: ASSEMBLY
+//Jenkins-Tekton-Migration
+[id="migrating-from-jenkins-to-openshift-pipelines_{context}"]
+= Migrating from Jenkins to {pipelines-shortname} or Tekton
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: migrating-from-jenkins-to-openshift-pipelines
+
+toc::[]
+
+You can migrate your CI/CD workflows from Jenkins to link:https://docs.openshift.com/pipelines/latest/about/understanding-openshift-pipelines.html[{pipelines-title}], a cloud-native CI/CD experience based on the Tekton project.
+
+:leveloffset: +1
+
+// Module included in the following assembly:
+//
+// jenkins/migrating-from-jenkins-to-openshift-pipelines.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="jt-comparison-of-jenkins-and-openshift-pipelines-concepts_{context}"]
+= Comparison of Jenkins and {pipelines-shortname} concepts
+
+You can review and compare the following equivalent terms used in Jenkins and {pipelines-shortname}.
+
+== Jenkins terminology
+Jenkins offers declarative and scripted pipelines that are extensible using shared libraries and plugins. Some basic terms in Jenkins are as follows:
+
+* *Pipeline*: Automates the entire process of building, testing, and deploying applications by using link:https://groovy-lang.org/[Groovy] syntax.
+* *Node*: A machine capable of either orchestrating or executing a scripted pipeline.
+* *Stage*: A conceptually distinct subset of tasks performed in a pipeline. Plugins or user interfaces often use this block to display the status or progress of tasks.
+* **Step**: A single task that specifies the exact action to be taken, either by using a command or a script.
+
+== {pipelines-shortname} terminology
+{pipelines-shortname} uses link:https://yaml.org/[YAML] syntax for declarative pipelines and consists of tasks. Some basic terms in {pipelines-shortname} are as follows:
+
+* **Pipeline**: A set of tasks in a series, in parallel, or both.
+* **Task**: A sequence of steps as commands, binaries, or scripts.
+* **PipelineRun**: Execution of a pipeline with one or more tasks.
+* **TaskRun**: Execution of a task with one or more steps.
++
+[NOTE]
+====
+You can initiate a PipelineRun or a TaskRun with a set of inputs such as parameters and workspaces, and the execution results in a set of outputs and artifacts.
+====
+* **Workspace**: In {pipelines-shortname}, workspaces are conceptual blocks that serve the following purposes:
+
+** Storage of inputs, outputs, and build artifacts.
+
+** Common space to share data among tasks.
+
+** Mount points for credentials held in secrets, configurations held in config maps, and common tools shared by an organization.
+
++
+[NOTE]
+====
+In Jenkins, there is no direct equivalent of {pipelines-shortname} workspaces. You can think of the control node as a workspace, as it stores the cloned code repository, build history, and artifacts. When a job is assigned to a different node, the cloned code and the generated artifacts are stored in that node, but the control node maintains the build history.
+====
+
+== Mapping of concepts
+The building blocks of Jenkins and {pipelines-shortname} are not equivalent, and a specific comparison does not provide a technically accurate mapping. The following terms and concepts in Jenkins and {pipelines-shortname} correlate in general:
+
+.Jenkins and {pipelines-shortname} - basic comparison
+[cols="1,1",options="header"]
+|===
+|Jenkins|{pipelines-shortname}
+|Pipeline|Pipeline and PipelineRun
+|Stage|Task
+|Step|A step in a task
+|===
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assembly:
+//
+// jenkins/migrating-from-jenkins-to-openshift-pipelines.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="jt-migrating-a-sample-pipeline-from-jenkins-to-openshift-pipelines_{context}"]
+= Migrating a sample pipeline from Jenkins to {pipelines-shortname}
+
+You can use the following equivalent examples to help migrate your build, test, and deploy pipelines from Jenkins to {pipelines-shortname}.
+
+== Jenkins pipeline
+Consider a Jenkins pipeline written in Groovy for building, testing, and deploying:
+[source,groovy,subs="attributes+"]
+----
+pipeline {
+   agent any
+   stages {
+       stage('Build') {
+           steps {
+               sh 'make'
+           }
+       }
+       stage('Test'){
+           steps {
+               sh 'make check'
+               junit 'reports/**/*.xml'
+           }
+       }
+       stage('Deploy') {
+           steps {
+               sh 'make publish'
+           }
+       }
+   }
+}
+----
+
+== {pipelines-shortname} pipeline
+
+To create a pipeline in {pipelines-shortname} that is equivalent to the preceding Jenkins pipeline, you create the following three tasks:
+
+.Example `build` task YAML definition file
+[source,yaml,subs="attributes+"]
+----
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: myproject-build
+spec:
+  workspaces:
+  - name: source
+  steps:
+  - image: my-ci-image
+    command: ["make"]
+    workingDir: $(workspaces.source.path)
+----
+
+.Example `test` task YAML definition file
+[source,yaml,subs="attributes+"]
+----
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: myproject-test
+spec:
+  workspaces:
+  - name: source
+  steps:
+  - image: my-ci-image
+    command: ["make check"]
+    workingDir: $(workspaces.source.path)
+  - image: junit-report-image
+    script: |
+      #!/usr/bin/env bash
+      junit-report reports/**/*.xml
+    workingDir: $(workspaces.source.path)
+----
+
+.Example `deploy` task YAML definition file
+[source,yaml,subs="attributes+"]
+----
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: myprojectd-deploy
+spec:
+  workspaces:
+  - name: source
+  steps:
+  - image: my-deploy-image
+    command: ["make deploy"]
+    workingDir: $(workspaces.source.path)
+----
+
+You can combine the three tasks sequentially to form a pipeline in {pipelines-shortname}:
+
+.Example: {pipelines-shortname} pipeline for building, testing, and deployment
+[source,yaml,subs="attributes+"]
+----
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: myproject-pipeline
+spec:
+  workspaces:
+  - name: shared-dir
+  tasks:
+  - name: build
+    taskRef:
+      name: myproject-build
+    workspaces:
+    - name: source
+      workspace: shared-dir
+  - name: test
+    taskRef:
+      name: myproject-test
+    workspaces:
+    - name: source
+      workspace: shared-dir
+  - name: deploy
+    taskRef:
+      name: myproject-deploy
+    workspaces:
+    - name: source
+      workspace: shared-dir
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assembly:
+//
+// jenkins/migrating-from-jenkins-to-openshift-pipelines.adoc
+
+:_mod-docs-content-type: PROCEDURE
+
+[id="jt-migrating-from-jenkins-plugins-to-openshift-pipelines-hub-tasks_{context}"]
+= Migrating from Jenkins plugins to Tekton Hub tasks
+
+You can extend the capability of Jenkins by using link:https://plugins.jenkinsci.org[plugins]. To achieve similar extensibility in {pipelines-shortname}, use any of the tasks available from link:https://hub.tekton.dev[Tekton Hub].
+
+For example, consider the link:https://hub.tekton.dev/tekton/task/git-clone[git-clone] task in Tekton Hub, which corresponds to the link:https://plugins.jenkins.io/git/[git plugin] for Jenkins.
+
+.Example: `git-clone` task from Tekton Hub
+[source,yaml,subs="attributes+"]
+----
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+ name: demo-pipeline
+spec:
+ params:
+   - name: repo_url
+   - name: revision
+ workspaces:
+   - name: source
+ tasks:
+   - name: fetch-from-git
+     taskRef:
+       name: git-clone
+     params:
+       - name: url
+         value: $(params.repo_url)
+       - name: revision
+         value: $(params.revision)
+     workspaces:
+     - name: output
+       workspace: source
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assembly:
+//
+// jenkins/migrating-from-jenkins-to-openshift-pipelines.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="jt-extending-openshift-pipelines-capabilities-using-custom-tasks-and-scripts_{context}"]
+= Extending {pipelines-shortname} capabilities using custom tasks and scripts
+
+In {pipelines-shortname}, if you do not find the right task in Tekton Hub, or need greater control over tasks, you can create custom tasks and scripts to extend the capabilities of {pipelines-shortname}.
+
+.Example: A custom task for running the `maven test` command
+[source,yaml,subs="attributes+"]
+----
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: maven-test
+spec:
+  workspaces:
+  - name: source
+  steps:
+  - image: my-maven-image
+    command: ["mvn test"]
+    workingDir: $(workspaces.source.path)
+----
+
+.Example: Run a custom shell script by providing its path
+[source,yaml,subs="attributes+"]
+----
+...
+steps:
+  image: ubuntu
+  script: |
+      #!/usr/bin/env bash
+      /workspace/my-script.sh
+...
+----
+
+.Example: Run a custom Python script by writing it in the YAML file
+[source,yaml,subs="attributes+"]
+----
+...
+steps:
+  image: python
+  script: |
+      #!/usr/bin/env python3
+      print(“hello from python!”)
+...
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assembly:
+//
+// jenkins/migrating-from-jenkins-to-openshift-pipelines.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="jt-comparison-of-jenkins-openshift-pipelines-execution-models_{context}"]
+= Comparison of Jenkins and {pipelines-shortname} execution models
+
+Jenkins and {pipelines-shortname} offer similar functions but are different in architecture and execution.
+
+.Comparison of execution models in Jenkins and {pipelines-shortname}
+[cols="1,1",options="header"]
+|===
+|Jenkins|{pipelines-shortname}
+|Jenkins has a controller node. Jenkins runs pipelines and steps centrally, or orchestrates jobs running in other nodes.|{pipelines-shortname} is serverless and distributed, and there is no central dependency for execution.
+|Containers are launched by the Jenkins controller node through the pipeline.|{pipelines-shortname} adopts a 'container-first' approach, where every step runs as a container in a pod (equivalent to nodes in Jenkins).
+|Extensibility is achieved by using plugins.|Extensibility is achieved by using tasks in Tekton Hub or by creating custom tasks and scripts.
+|===
+
+:leveloffset!:
+
+:leveloffset: +1
+
+:_mod-docs-content-type: CONCEPT
+// Module included in the following assembly:
+//
+// jenkins/migrating-from-jenkins-to-openshift-pipelines.adoc
+
+[id="jt-examples-of-common-use-cases_{context}"]
+= Examples of common use cases
+
+Both Jenkins and {pipelines-shortname} offer capabilities for common CI/CD use cases, such as:
+
+* Compiling, building, and deploying images using Apache Maven
+* Extending the core capabilities by using plugins
+* Reusing shareable libraries and custom scripts
+
+== Running a Maven pipeline in Jenkins and {pipelines-shortname}
+
+You can use Maven in both Jenkins and {pipelines-shortname} workflows for compiling, building, and deploying images. To map your existing Jenkins workflow to {pipelines-shortname}, consider the following examples:
+
+.Example: Compile and build an image and deploy it to OpenShift using Maven in Jenkins
+[source,groovy]
+----
+#!/usr/bin/groovy
+node('maven') {
+    stage 'Checkout'
+    checkout scm
+
+    stage 'Build'
+    sh 'cd helloworld && mvn clean'
+    sh 'cd helloworld && mvn compile'
+
+    stage 'Run Unit Tests'
+    sh 'cd helloworld && mvn test'
+
+    stage 'Package'
+    sh 'cd helloworld && mvn package'
+
+    stage 'Archive artifact'
+    sh 'mkdir -p artifacts/deployments && cp helloworld/target/*.war artifacts/deployments'
+    archive 'helloworld/target/*.war'
+
+    stage 'Create Image'
+    sh 'oc login https://kubernetes.default -u admin -p admin --insecure-skip-tls-verify=true'
+    sh 'oc new-project helloworldproject'
+    sh 'oc project helloworldproject'
+    sh 'oc process -f helloworld/jboss-eap70-binary-build.json | oc create -f -'
+    sh 'oc start-build eap-helloworld-app --from-dir=artifacts/'
+
+    stage 'Deploy'
+    sh 'oc new-app helloworld/jboss-eap70-deploy.json' }
+
+----
+
+.Example: Compile and build an image and deploy it to OpenShift using Maven in {pipelines-shortname}.
+[source,yaml]
+----
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: maven-pipeline
+spec:
+  workspaces:
+    - name: shared-workspace
+    - name: maven-settings
+    - name: kubeconfig-dir
+      optional: true
+  params:
+    - name: repo-url
+    - name: revision
+    - name: context-path
+  tasks:
+    - name: fetch-repo
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: "$(params.repo-url)"
+        - name: subdirectory
+          value: ""
+        - name: deleteExisting
+          value: "true"
+        - name: revision
+          value: $(params.revision)
+    - name: mvn-build
+      taskRef:
+        name: maven
+      runAfter:
+        - fetch-repo
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+        - name: maven-settings
+          workspace: maven-settings
+      params:
+        - name: CONTEXT_DIR
+          value: "$(params.context-path)"
+        - name: GOALS
+          value: ["-DskipTests", "clean", "compile"]
+    - name: mvn-tests
+      taskRef:
+        name: maven
+      runAfter:
+        - mvn-build
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+        - name: maven-settings
+          workspace: maven-settings
+      params:
+        - name: CONTEXT_DIR
+          value: "$(params.context-path)"
+        - name: GOALS
+          value: ["test"]
+    - name: mvn-package
+      taskRef:
+        name: maven
+      runAfter:
+        - mvn-tests
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+        - name: maven-settings
+          workspace: maven-settings
+      params:
+        - name: CONTEXT_DIR
+          value: "$(params.context-path)"
+        - name: GOALS
+          value: ["package"]
+    - name: create-image-and-deploy
+      taskRef:
+        name: openshift-client
+      runAfter:
+        - mvn-package
+      workspaces:
+        - name: manifest-dir
+          workspace: shared-workspace
+        - name: kubeconfig-dir
+          workspace: kubeconfig-dir
+      params:
+        - name: SCRIPT
+          value: |
+            cd "$(params.context-path)"
+            mkdir -p ./artifacts/deployments && cp ./target/*.war ./artifacts/deployments
+            oc new-project helloworldproject
+            oc project helloworldproject
+            oc process -f jboss-eap70-binary-build.json | oc create -f -
+            oc start-build eap-helloworld-app --from-dir=artifacts/
+            oc new-app jboss-eap70-deploy.json
+
+----
+
+== Extending the core capabilities of Jenkins and {pipelines-shortname} by using plugins
+Jenkins has the advantage of a large ecosystem of numerous plugins developed over the years by its extensive user base. You can search and browse the plugins in the link:https://plugins.jenkins.io/[Jenkins Plugin Index].
+
+{pipelines-shortname} also has many tasks developed and contributed by the community and enterprise users. A publicly available catalog of reusable {pipelines-shortname} tasks are available in the link:https://hub.tekton.dev/[Tekton Hub].
+
+In addition, {pipelines-shortname} incorporates many of the plugins of the Jenkins ecosystem within its core capabilities. For example, authorization is a critical function in both Jenkins and {pipelines-shortname}. While Jenkins ensures authorization using the link:https://plugins.jenkins.io/role-strategy/[Role-based Authorization Strategy] plugin, {pipelines-shortname} uses OpenShift's built-in Role-based Access Control system.
+
+== Sharing reusable code in Jenkins and {pipelines-shortname}
+Jenkins link:https://www.jenkins.io/doc/book/pipeline/shared-libraries/[shared libraries] provide reusable code for parts of Jenkins pipelines. The libraries are shared between link:https://www.jenkins.io/doc/book/pipeline/jenkinsfile/[Jenkinsfiles] to create highly modular pipelines without code repetition.
+
+Although there is no direct equivalent of Jenkins shared libraries in {pipelines-shortname}, you can achieve similar workflows by using tasks from the link:https://hub.tekton.dev/[Tekton Hub] in combination with custom tasks and scripts.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+== Additional resources
+* link:https://docs.openshift.com/pipelines/latest/about/understanding-openshift-pipelines.html[Understanding {pipelines-shortname}]
+* xref:../../authentication/using-rbac.adoc#using-rbac[Role-based Access Control]
+
+//# includes=_attributes/common-attributes,modules/jt-comparison-of-jenkins-and-openshift-pipelines-concepts,modules/jt-migrating-a-sample-pipeline-from-jenkins-to-openshift-pipelines,modules/jt-migrating-from-jenkins-plugins-to-openshift-pipelines-hub-tasks,modules/jt-extending-openshift-pipelines-capabilities-using-custom-tasks-and-scripts,modules/jt-comparison-of-jenkins-openshift-pipelines-execution-models,modules/jt-examples-of-common-use-cases

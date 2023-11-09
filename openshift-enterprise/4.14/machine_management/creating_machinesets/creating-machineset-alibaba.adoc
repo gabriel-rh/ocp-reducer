@@ -1,0 +1,604 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="creating-machineset-alibaba"]
+= Creating a compute machine set on Alibaba Cloud
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: creating-machineset-alibaba
+
+toc::[]
+
+You can create a different compute machine set to serve a specific purpose in your {product-title} cluster on Alibaba Cloud. For example, you might create infrastructure machine sets and related machines so that you can move supporting workloads to the new machines.
+
+//[IMPORTANT] admonition for UPI
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-osp.adoc
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+// * machine_management/deploying-machine-health-checks.adoc
+// * machine_management/manually-scaling-machinesets.adoc
+// * post_installation_configuration/node-tasks.adoc
+// * nodes-nodes-creating-infrastructure-nodes.adoc
+
+[IMPORTANT]
+====
+You can use the advanced machine management and scaling capabilities only in clusters where the Machine API is operational. Clusters with user-provisioned infrastructure require additional validation and configuration to use the Machine API.
+
+Clusters with the infrastructure platform type `none` cannot use the Machine API. This limitation applies even if the compute machines that are attached to the cluster are installed on a platform that supports the feature. This parameter cannot be changed after installation.
+
+To view the platform type for your cluster, run the following command:
+
+[source,terminal]
+----
+$ oc get infrastructure cluster -o jsonpath='{.status.platform}'
+----
+====
+
+:leveloffset!:
+
+//Sample YAML for a compute machine set custom resource on Alibaba Cloud
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * machine_management/creating_machinesets/creating-machineset-alibaba.adoc
+
+
+:_mod-docs-content-type: REFERENCE
+[id="machineset-yaml-alibaba_{context}"]
+= Sample YAML for a compute machine set custom resource on Alibaba Cloud
+
+This sample YAML defines a compute machine set that runs in a specified Alibaba Cloud zone in a region and creates nodes that are labeled with
+`node-role.kubernetes.io/<role>: ""`.
+`node-role.kubernetes.io/infra: ""`.
+
+In this sample, `<infrastructure_id>` is the infrastructure ID label that is based on the cluster ID that you set when you provisioned the cluster, and
+`<role>`
+`<infra>`
+is the node label to add.
+
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+    machine.openshift.io/cluster-api-machine-role: <role> <2>
+    machine.openshift.io/cluster-api-machine-type: <role> <2>
+  name: <infrastructure_id>-<role>-<zone> <3>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+      machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>-<zone> <3>
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+        machine.openshift.io/cluster-api-machine-role: <role> <2>
+        machine.openshift.io/cluster-api-machine-type: <role> <2>
+        machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>-<zone> <3>
+    spec:
+      metadata:
+        labels:
+          node-role.kubernetes.io/<role>: ""
+      providerSpec:
+        value:
+          apiVersion: machine.openshift.io/v1
+          credentialsSecret:
+            name: alibabacloud-credentials
+          imageId: <image_id> <4>
+          instanceType: <instance_type> <5>
+          kind: AlibabaCloudMachineProviderConfig
+          ramRoleName: <infrastructure_id>-role-worker <6>
+          regionId: <region> <7>
+          resourceGroup: <8>
+            id: <resource_group_id>
+            type: ID
+          securityGroups:
+          - tags: <9>
+            - Key: Name
+              Value: <infrastructure_id>-sg-<role>
+            type: Tags
+          systemDisk: <10>
+            category: cloud_essd
+            size: <disk_size>
+          tag: <9>
+          - Key: kubernetes.io/cluster/<infrastructure_id>
+            Value: owned
+          userDataSecret:
+            name: <user_data_secret> <11>
+          vSwitch:
+            tags: <9>
+            - Key: Name
+              Value: <infrastructure_id>-vswitch-<zone>
+            type: Tags
+          vpcId: ""
+          zoneId: <zone> <12>
+----
+<1> Specify the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. If you have the OpenShift CLI (`oc`) installed, you can obtain the infrastructure ID by running the following command:
++
+[source,terminal]
+----
+$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster
+----
+<2> Specify the node label to add.
+<3> Specify the infrastructure ID, node label, and zone.
+<4> Specify the image to use. Use an image from an existing default compute machine set for the cluster.
+<5> Specify the instance type you want to use for the compute machine set.
+<6> Specify the name of the RAM role to use for the compute machine set. Use the value that the installer populates in the default compute machine set.
+<7> Specify the region to place machines on.
+<8> Specify the resource group and type for the cluster. You can use the value that the installer populates in the default compute machine set, or specify a different one.
+<9> Specify the tags to use for the compute machine set. Minimally, you must include the tags shown in this example, with appropriate values for your cluster. You can include additional tags, including the tags that the installer populates in the default compute machine set it creates, as needed.
+<10> Specify the type and size of the root disk. Use the `category` value that the installer populates in the default compute machine set it creates. If required, specify a different value in gigabytes for `size`.
+<11> Specify the name of the secret in the user data YAML file that is in the `openshift-machine-api` namespace. Use the value that the installer populates in the default compute machine set.
+<12> Specify the zone within your region to place machines on. Be sure that your region supports the zone that you specify.
+
+
+////
+Not needed for this release, but the process to create a new value for the name of the secret in the user data YAML file is:
+1. Create a file (script with things you want to run).
+2. Run base64 encoding on the script.
+3. Add the base64-encoded string to a user data YAML file like this one: https://github.com/openshift/cluster-api-provider-alibaba/blob/main/examples/userdata.yml#L1 The `name` in that file should match the `userDataSecret` name in the compute machine set.
+4. Place the user data file in the `openshift-machine-api` namespace.
+////
+
+:leveloffset!:
+
+//Machine set parameters for Alibaba Cloud usage statistics
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * machine_management/creating_machinesets/creating-machineset-alibaba.adoc
+
+
+:_mod-docs-content-type: REFERENCE
+[id="machineset-yaml-alibaba-usage-stats_{context}"]
+= Machine set parameters for Alibaba Cloud usage statistics
+
+The default compute machine sets that the installer creates for Alibaba Cloud clusters include nonessential tag values that Alibaba Cloud uses internally to track usage statistics. These tags are populated in the `securityGroups`, `tag`, and `vSwitch` parameters of the `spec.template.spec.providerSpec.value` list.
+
+When creating compute machine sets to deploy additional machines, you must include the required Kubernetes tags. The usage statistics tags are applied by default, even if they are not specified in the compute machine sets you create. You can also include additional tags as needed.
+
+The following YAML snippets indicate which tags in the default compute machine sets are optional and which are required.
+
+.Tags in `spec.template.spec.providerSpec.value.securityGroups`
+[source,yaml]
+----
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          securityGroups:
+          - tags:
+            - Key: kubernetes.io/cluster/<infrastructure_id> <1>
+              Value: owned
+            - Key: GISV
+              Value: ocp
+            - Key: sigs.k8s.io/cloud-provider-alibaba/origin <1>
+              Value: ocp
+            - Key: Name
+              Value: <infrastructure_id>-sg-<role> <2>
+            type: Tags
+----
+<1> Optional: This tag is applied even when not specified in the compute machine set.
+<2> Required.
++
+where:
++
+* `<infrastructure_id>` is the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster.
+* `<role>` is the node label to add.
+
+.Tags in `spec.template.spec.providerSpec.value.tag`
+[source,yaml]
+----
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          tag:
+          - Key: kubernetes.io/cluster/<infrastructure_id> <2>
+            Value: owned
+          - Key: GISV <1>
+            Value: ocp
+          - Key: sigs.k8s.io/cloud-provider-alibaba/origin <1>
+            Value: ocp
+----
+<1> Optional: This tag is applied even when not specified in the compute machine set.
+<2> Required.
++
+where `<infrastructure_id>` is the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster.
+
+.Tags in `spec.template.spec.providerSpec.value.vSwitch`
+[source,yaml]
+----
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          vSwitch:
+            tags:
+            - Key: kubernetes.io/cluster/<infrastructure_id> <1>
+              Value: owned
+            - Key: GISV <1>
+              Value: ocp
+            - Key: sigs.k8s.io/cloud-provider-alibaba/origin <1>
+              Value: ocp
+            - Key: Name
+              Value: <infrastructure_id>-vswitch-<zone> <2>
+            type: Tags
+----
+<1> Optional: This tag is applied even when not specified in the compute machine set.
+<2> Required.
++
+where:
++
+* `<infrastructure_id>` is the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster.
+* `<zone>` is the zone within your region to place machines on.
+
+:leveloffset!:
+
+//Creating a compute machine set
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-osp.adoc
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-aws.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-azure.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-vsphere.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-gcp.adoc
+// * post_installation_configuration/cluster-tasks.adoc
+// * post_installation_configuration/installation-creating-aws-subnet-localzone.adoc
+// * post_installation_configuration/aws-compute-edge-tasks.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-creating_{context}"]
+= Creating a compute machine set
+
+In addition to the compute machine sets created by the installation program, you can create your own to dynamically manage the machine compute resources for specific workloads of your choice.
+
+
+.Prerequisites
+
+* Deploy an {product-title} cluster.
+* Install the OpenShift CLI (`oc`).
+* Log in to `oc` as a user with `cluster-admin` permission.
+
+.Procedure
+
+. Create a new YAML file that contains the compute machine set custom resource (CR) sample and is named `<file_name>.yaml`.
++
+Ensure that you set the `<clusterID>` and `<role>` parameter values.
+
+. Optional: If you are not sure which value to set for a specific field, you can check an existing compute machine set from your cluster.
+
+.. To list the compute machine sets in your cluster, run the following command:
++
+[source,terminal]
+----
+$ oc get machinesets -n openshift-machine-api
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m
+----
+
+.. To view values of a specific compute machine set custom resource (CR), run the following command:
++
+[source,terminal]
+----
+$ oc get machineset <machineset_name> \
+  -n openshift-machine-api -o yaml
+----
++
+--
+.Example output
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+  name: <infrastructure_id>-<role> <2>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: <infrastructure_id>
+      machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: <infrastructure_id>
+        machine.openshift.io/cluster-api-machine-role: <role>
+        machine.openshift.io/cluster-api-machine-type: <role>
+        machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>
+    spec:
+      providerSpec: <3>
+        ...
+----
+<1> The cluster infrastructure ID.
+<2> A default node label.
++
+[NOTE]
+====
+For clusters that have user-provisioned infrastructure, a compute machine set can only create `worker` and `infra` type machines.
+====
+<3> The values in the `<providerSpec>` section of the compute machine set CR are platform-specific. For more information about `<providerSpec>` parameters in the CR, see the sample compute machine set CR configuration for your provider.
+--
+
+
+. Create a `MachineSet` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <file_name>.yaml
+----
+
+
+.Verification
+
+* View the list of compute machine sets by running the following command:
++
+[source,terminal]
+----
+$ oc get machineset -n openshift-machine-api
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-infra-us-east-1a    1         1         1       1           11m
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m
+----
++
+When the new compute machine set is available, the `DESIRED` and `CURRENT` values match. If the compute machine set is not available, wait a few minutes and run the command again.
+
+
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/machine-user-provisioned-limitations,modules/machineset-yaml-alibaba,modules/machineset-yaml-alibaba-usage-stats,modules/machineset-creating

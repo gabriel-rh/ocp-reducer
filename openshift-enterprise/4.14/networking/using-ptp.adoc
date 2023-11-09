@@ -1,0 +1,2737 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="using-ptp"]
+= Using PTP hardware
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: using-ptp
+
+toc::[]
+
+You can configure `linuxptp` services and use PTP-capable hardware in {product-title} cluster nodes.
+
+[id="about-using-ptp-hardware"]
+== About PTP hardware
+
+You can use the {product-title} console or OpenShift CLI (`oc`) to install PTP by deploying the PTP Operator. The PTP Operator creates and manages the `linuxptp` services and provides the following features:
+
+* Discovery of the PTP-capable devices in the cluster.
+
+* Management of the configuration of `linuxptp` services.
+
+* Notification of PTP clock events that negatively affect the performance and reliability of your application with the PTP Operator `cloud-event-proxy` sidecar.
+
+[NOTE]
+====
+The PTP Operator works with PTP-capable devices on clusters provisioned only on bare-metal infrastructure.
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="ptp-introduction_{context}"]
+= About PTP
+
+Precision Time Protocol (PTP) is used to synchronize clocks in a network. When used in conjunction with hardware support, PTP is capable of sub-microsecond accuracy, and is more accurate than Network Time Protocol (NTP).
+
+[id="ptp-elements_{context}"]
+== Elements of a PTP domain
+
+PTP is used to synchronize multiple nodes connected in a network, with clocks for each node. The clocks synchronized by PTP are organized in a source-destination hierarchy.
+The hierarchy is created and updated automatically by the best master clock (BMC) algorithm, which runs on every clock. Destination clocks are synchronized to source clocks, and destination clocks can themselves be the source for other downstream clocks.
+The three primary types of PTP clocks are described below.
+
+Grandmaster clock:: The grandmaster clock provides standard time information to other clocks across the network and ensures accurate and stable synchronisation. It writes time stamps and responds to time requests from other clocks. Grandmaster clocks synchronize to a Global Navigation Satellite System (GNSS) time source. The Grandmaster clock is the authoritative source of time in the network and is responsible for providing time synchronization to all other devices.
+
+Ordinary clock:: The ordinary clock has a single port connection that can play the role of source or destination clock, depending on its position in the network. The ordinary clock can read and write time stamps.
+
+Boundary clock:: The boundary clock has ports in two or more communication paths and can be a source and a destination to other destination clocks at the same time. The boundary clock works as a destination clock upstream. The destination clock receives the timing message, adjusts for delay, and then creates a new source time signal to pass down the network. The boundary clock produces a new timing packet that is still correctly synced with the source clock and can reduce the number of connected devices reporting directly to the source clock.
+
+[id="ptp-advantages-over-ntp_{context}"]
+== Advantages of PTP over NTP
+
+One of the main advantages that PTP has over NTP is the hardware support present in various network interface controllers (NIC) and network switches. The specialized hardware allows PTP to account for delays in message transfer and improves the accuracy of time synchronization. To achieve the best possible accuracy, it is recommended that all networking components between PTP clocks are PTP hardware enabled.
+
+Hardware-based PTP provides optimal accuracy, since the NIC can time stamp the PTP packets at the exact moment they are sent and received. Compare this to software-based PTP, which requires additional processing of the PTP packets by the operating system.
+
+:leveloffset!:
+
+[IMPORTANT]
+====
+Before enabling PTP, ensure that NTP is disabled for the required nodes. You can disable the chrony time service (`chronyd`) using a `MachineConfig` custom resource. For more information, see xref:../post_installation_configuration/machine-configuration-tasks.adoc#cnf-disable-chronyd_post-install-machine-configuration-tasks[Disabling chrony time service].
+====
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_module-type: CONCEPT
+[id="ptp-dual-nics_{context}"]
+= Using PTP with dual NIC hardware
+
+{product-title} supports single and dual NIC hardware for precision PTP timing in the cluster.
+
+For 5G telco networks that deliver mid-band spectrum coverage, each virtual distributed unit (vDU) requires connections to 6 radio units (RUs). To make these connections, each vDU host requires 2 NICs configured as boundary clocks.
+
+Dual NIC hardware allows you to connect each NIC to the same upstream leader clock with separate `ptp4l` instances for each NIC feeding the downstream clocks.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="ptp-linuxptp-introduction_{context}"]
+= Overview of linuxptp in {product-title} nodes
+
+{product-title} uses PTP and `linuxptp` for high precision system timing in bare-metal infrastructure.
+The `linuxptp` package includes the `ts2phc`, `pmc`, `ptp4l`, and `phc2sys` programs for system clock synchronization.
+
+ts2phc:: `ts2phc` synchronizes the PTP hardware clock (PHC) across PTP devices with a high degree of precision.
+`ts2phc` is used in grandmaster clock configurations.
+It receives the precision timing signal a high precision clock source such as Global Navigation Satellite System (GNSS).
+GNSS provides an accurate and reliable source of synchronized time for use in large distributed networks.
+GNSS clocks typically provide time information with a precision of a few nanoseconds.
++
+The `ts2phc` system daemon sends timing information from the grandmaster clock to other PTP devices in the network by reading time information from the grandmaster clock and converting it to PHC format.
+PHC time is used by other devices in the network to synchronize their clocks with the grandmaster clock.
+
+pmc:: `pmc` implements a PTP management client (`pmc`) according to IEEE standard 1588.1588.
+`pmc` provides basic management access for the `ptp4l` system daemon.
+`pmc` reads from standard input and sends the output over the selected transport, printing any replies it receives.
+
+ptp4l:: `ptp4l` implements the PTP boundary clock and ordinary clock and runs as a system daemon.
+`ptp4l` does the following:
+
+* Synchronizes the PHC to the source clock with hardware time stamping
+* Synchronizes the system clock to the source clock with software time stamping
+
+phc2sys:: `phc2sys` synchronizes the system clock to the PHC on the network interface controller (NIC).
+The `phc2sys` system daemon continuously monitors the PHC for timing information.
+When it detects a timing error, the PHC corrects the system clock.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="install-ptp-operator-cli_{context}"]
+= Installing the PTP Operator using the CLI
+
+As a cluster administrator, you can install the Operator by using the CLI.
+
+.Prerequisites
+
+* A cluster installed on bare-metal hardware with nodes that have hardware that supports PTP.
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create a namespace for the PTP Operator.
+
+.. Save the following YAML in the `ptp-namespace.yaml` file:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-ptp
+  annotations:
+    workload.openshift.io/allowed: management
+  labels:
+    name: openshift-ptp
+    openshift.io/cluster-monitoring: "true"
+----
+
+.. Create the `Namespace` CR:
++
+[source,terminal]
+----
+$ oc create -f ptp-namespace.yaml
+----
+
+. Create an Operator group for the PTP Operator.
+
+.. Save the following YAML in the `ptp-operatorgroup.yaml` file:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: ptp-operators
+  namespace: openshift-ptp
+spec:
+  targetNamespaces:
+  - openshift-ptp
+----
+
+.. Create the `OperatorGroup` CR:
++
+[source,terminal]
+----
+$ oc create -f ptp-operatorgroup.yaml
+----
+
+. Subscribe to the PTP Operator.
+
+.. Save the following YAML in the `ptp-sub.yaml` file:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: ptp-operator-subscription
+  namespace: openshift-ptp
+spec:
+  channel: "stable"
+  name: ptp-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+----
+
+.. Create the `Subscription` CR:
++
+[source,terminal]
+----
+$ oc create -f ptp-sub.yaml
+----
+
+. To verify that the Operator is installed, enter the following command:
++
+[source,terminal]
+----
+$ oc get csv -n openshift-ptp -o custom-columns=Name:.metadata.name,Phase:.status.phase
+----
++
+.Example output
+[source,terminal,subs="attributes+"]
+----
+Name                         Phase
+{product-version}.0-202301261535          Succeeded
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="install-ptp-operator-web-console_{context}"]
+= Installing the PTP Operator using the web console
+
+As a cluster administrator, you can install the PTP Operator using the web console.
+
+[NOTE]
+====
+You have to create the namespace and Operator group as mentioned
+in the previous section.
+====
+
+.Procedure
+
+. Install the PTP Operator using the {product-title} web console:
+
+.. In the {product-title} web console, click *Operators* -> *OperatorHub*.
+
+.. Choose  *PTP Operator* from the list of available Operators, and then click *Install*.
+
+.. On the *Install Operator* page, under *A specific namespace on the cluster* select *openshift-ptp*. Then, click *Install*.
+
+. Optional: Verify that the PTP Operator installed successfully:
+
+.. Switch to the *Operators* -> *Installed Operators* page.
+
+.. Ensure that *PTP Operator* is listed in the *openshift-ptp* project with a *Status* of *InstallSucceeded*.
++
+[NOTE]
+====
+During installation an Operator might display a *Failed* status.
+If the installation later succeeds with an *InstallSucceeded* message, you can ignore the *Failed* message.
+====
+
++
+If the Operator does not appear as installed, to troubleshoot further:
+
++
+* Go to the *Operators* -> *Installed Operators* page and inspect
+the *Operator Subscriptions* and *Install Plans* tabs for any failure or errors
+under *Status*.
+* Go to the *Workloads* -> *Pods* page and check the logs for pods in the
+`openshift-ptp` project.
+
+:leveloffset!:
+
+== Configuring PTP devices
+
+The PTP Operator adds the `NodePtpDevice.ptp.openshift.io` custom resource definition (CRD) to {product-title}.
+
+When installed, the PTP Operator searches your cluster for PTP-capable network devices on each node. It creates and updates a `NodePtpDevice` custom resource (CR) object for each node that provides a compatible PTP-capable network device.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="discover-ptp-devices_{context}"]
+= Discovering PTP capable network devices in your cluster
+
+* To return a complete list of PTP capable network devices in your cluster, run the following command:
++
+[source,terminal]
+----
+$ oc get NodePtpDevice -n openshift-ptp -o yaml
+----
++
+.Example output
+[source,terminal]
+----
+apiVersion: v1
+items:
+- apiVersion: ptp.openshift.io/v1
+  kind: NodePtpDevice
+  metadata:
+    creationTimestamp: "2022-01-27T15:16:28Z"
+    generation: 1
+    name: dev-worker-0 <1>
+    namespace: openshift-ptp
+    resourceVersion: "6538103"
+    uid: d42fc9ad-bcbf-4590-b6d8-b676c642781a
+  spec: {}
+  status:
+    devices: <2>
+    - name: eno1
+    - name: eno2
+    - name: eno3
+    - name: eno4
+    - name: enp5s0f0
+    - name: enp5s0f1
+...
+----
+<1> The value for the `name` parameter is the same as the name of the parent node.
+<2> The `devices` collection includes a list of the PTP capable devices that the PTP Operator discovers for the node.
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-linuxptp-services-as-grandmaster-clock_{context}"]
+= Configuring linuxptp services as a grandmaster clock
+
+You can configure the `linuxptp` services (`ptp4l`, `phc2sys`, `ts2phc`) as grandmaster clock by creating a `PtpConfig` custom resource (CR) that configures the host NIC.
+
+The `ts2phc` utility allows you to synchronize the system clock with the PTP grandmaster clock so that the node can stream precision clock signal to downstream PTP ordinary clocks and boundary clocks.
+
+[NOTE]
+====
+Use the following example `PtpConfig` CR as the basis to configure `linuxptp` services as the grandmaster clock for your particular hardware and environment.
+This example CR does not configure PTP fast events. To configure PTP fast events, set appropriate values for `ptp4lOpts`, `ptp4lConf`, and `ptpClockThreshold`.
+`ptpClockThreshold` is used only when events are enabled.
+See "Configuring the PTP fast event notifications publisher" for more information.
+====
+
+.Prerequisites
+
+* Install an Intel Westport Channel network interface in the bare-metal cluster host.
+
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+* Install the PTP Operator.
+
+.Procedure
+
+. Create the `PtpConfig` resource. For example:
+
+.. Save the following YAML in the `grandmaster-clock-ptp-config.yaml` file:
++
+.Example PTP grandmaster clock configuration
+[source,yaml]
+----
+apiVersion: ptp.openshift.io/v1
+kind: PtpConfig
+metadata:
+  name: grandmaster-clock
+  namespace: openshift-ptp
+  annotations: {}
+spec:
+  profile:
+    - name: grandmaster-clock
+      # The interface name is hardware-specific
+      interface: $interface
+      ptp4lOpts: "-2"
+      phc2sysOpts: "-a -r -r -n 24"
+      ptpSchedulingPolicy: SCHED_FIFO
+      ptpSchedulingPriority: 10
+      ptpSettings:
+        logReduce: "true"
+      ptp4lConf: |
+        [global]
+        #
+        # Default Data Set
+        #
+        twoStepFlag 1
+        slaveOnly 0
+        priority1 128
+        priority2 128
+        domainNumber 24
+        #utc_offset 37
+        clockClass 255
+        clockAccuracy 0xFE
+        offsetScaledLogVariance 0xFFFF
+        free_running 0
+        freq_est_interval 1
+        dscp_event 0
+        dscp_general 0
+        dataset_comparison G.8275.x
+        G.8275.defaultDS.localPriority 128
+        #
+        # Port Data Set
+        #
+        logAnnounceInterval -3
+        logSyncInterval -4
+        logMinDelayReqInterval -4
+        logMinPdelayReqInterval -4
+        announceReceiptTimeout 3
+        syncReceiptTimeout 0
+        delayAsymmetry 0
+        fault_reset_interval -4
+        neighborPropDelayThresh 20000000
+        masterOnly 0
+        G.8275.portDS.localPriority 128
+        #
+        # Run time options
+        #
+        assume_two_step 0
+        logging_level 6
+        path_trace_enabled 0
+        follow_up_info 0
+        hybrid_e2e 0
+        inhibit_multicast_service 0
+        net_sync_monitor 0
+        tc_spanning_tree 0
+        tx_timestamp_timeout 50
+        unicast_listen 0
+        unicast_master_table 0
+        unicast_req_duration 3600
+        use_syslog 1
+        verbose 0
+        summary_interval 0
+        kernel_leap 1
+        check_fup_sync 0
+        clock_class_threshold 7
+        #
+        # Servo Options
+        #
+        pi_proportional_const 0.0
+        pi_integral_const 0.0
+        pi_proportional_scale 0.0
+        pi_proportional_exponent -0.3
+        pi_proportional_norm_max 0.7
+        pi_integral_scale 0.0
+        pi_integral_exponent 0.4
+        pi_integral_norm_max 0.3
+        step_threshold 2.0
+        first_step_threshold 0.00002
+        max_frequency 900000000
+        clock_servo pi
+        sanity_freq_limit 200000000
+        ntpshm_segment 0
+        #
+        # Transport options
+        #
+        transportSpecific 0x0
+        ptp_dst_mac 01:1B:19:00:00:00
+        p2p_dst_mac 01:80:C2:00:00:0E
+        udp_ttl 1
+        udp6_scope 0x0E
+        uds_address /var/run/ptp4l
+        #
+        # Default interface options
+        #
+        clock_type OC
+        network_transport L2
+        delay_mechanism E2E
+        time_stamping hardware
+        tsproc_mode filter
+        delay_filter moving_median
+        delay_filter_length 10
+        egressLatency 0
+        ingressLatency 0
+        boundary_clock_jbod 0
+        #
+        # Clock description
+        #
+        productDescription ;;
+        revisionData ;;
+        manufacturerIdentity 00:00:00
+        userDescription ;
+        timeSource 0xA0
+  recommend:
+    - profile: grandmaster-clock
+      priority: 4
+      match:
+        - nodeLabel: "node-role.kubernetes.io/$mcp"
+----
+
+.. Create the CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f grandmaster-clock-ptp-config.yaml
+----
+
+.Verification
+
+. Check that the `PtpConfig` profile is applied to the node.
+
+.. Get the list of pods in the `openshift-ptp` namespace by running the following command:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-ptp -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                          READY   STATUS    RESTARTS   AGE     IP             NODE
+linuxptp-daemon-74m2g         3/3     Running   3          4d15h   10.16.230.7    compute-1.example.com
+ptp-operator-5f4f48d7c-x7zkf  1/1     Running   1          4d15h   10.128.1.145   compute-1.example.com
+----
+
+.. Check that the profile is correct. Examine the logs of the `linuxptp` daemon that corresponds to the node you specified in the `PtpConfig` profile.
+Run the following command:
++
+[source,terminal]
+----
+$ oc logs linuxptp-daemon-74m2g -n openshift-ptp -c linuxptp-daemon-container
+----
++
+.Example output
+[source,terminal]
+----
+ts2phc[94980.334]: [ts2phc.0.config] nmea delay: 98690975 ns
+ts2phc[94980.334]: [ts2phc.0.config] ens3f0 extts index 0 at 1676577329.999999999 corr 0 src 1676577330.901342528 diff -1
+ts2phc[94980.334]: [ts2phc.0.config] ens3f0 master offset         -1 s2 freq      -1
+ts2phc[94980.441]: [ts2phc.0.config] nmea sentence: GNRMC,195453.00,A,4233.24427,N,07126.64420,W,0.008,,160223,,,A,V
+phc2sys[94980.450]: [ptp4l.0.config] CLOCK_REALTIME phc offset       943 s2 freq  -89604 delay    504
+phc2sys[94980.512]: [ptp4l.0.config] CLOCK_REALTIME phc offset      1000 s2 freq  -89264 delay    474
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../networking/using-ptp.adoc#cnf-configuring-the-ptp-fast-event-publisher_using-ptp[Configuring the PTP fast event notifications publisher]
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="nw-ptp-grandmaster-clock-configuration-reference_{context}"]
+= Grandmaster clock PtpConfig configuration reference
+
+The following reference information describes the configuration options for the `PtpConfig` custom resource (CR) that configures the `linuxptp` services (`ptp4l`, `phc2sys`, `ts2phc`) as grandmaster clock.
+
+.PtpConfig configuration options for PTP Grandmaster clock
+[cols="1,3" options="header"]
+|====
+|PtpConfig CR field
+|Description
+
+|`plugins`
+|Specify an array of `.exec.cmdline` options that configure the NIC for grandmaster clock operation. Grandmaster clock configuration requires certain PTP pins to be disabled.
+
+The plugin mechanism allows the PTP Operator to do automated hardware configuration.
+For the Intel Westport Channel NIC, when `enableDefaultConfig` is true, The PTP Operator runs a hard-coded script to do the required configuration for the NIC.
+
+|`ptp4lOpts`
+|Specify system configuration options for the `ptp4l` service.
+The options should not include the network interface name `-i <interface>` and service config file `-f /etc/ptp4l.conf` because the network interface name and the service config file are automatically appended.
+
+|`ptp4lConf`
+|Specify the required configuration to start `ptp4l` as grandmaster clock.
+For example, the `ens2f1` interface synchronizes downstream connected devices.
+For grandmaster clocks, set `clockClass` to `6` and set `clockAccuracy` to `0x27`.
+Set `timeSource` to `0x20` for when receiving the timing signal from a Global navigation satellite system (GNSS).
+
+|`tx_timestamp_timeout`
+|Specify the maximum amount of time to wait for the transmit (TX) timestamp from the sender before discarding the data.
+
+|`boundary_clock_jbod`
+|Specify the JBOD boundary clock time delay value.
+This value is used to correct the time values that are passed between the network time devices.
+
+|`phc2sysOpts`
+a|Specify system config options for the `phc2sys` service.
+If this field is empty the PTP Operator does not start the `phc2sys` service.
+[NOTE]
+====
+Ensure that the network interface listed here is configured as grandmaster and is referenced as required in the `ts2phcConf` and `ptp4lConf` fields.
+====
+
+|`ptpSchedulingPolicy`
+|Configure the scheduling policy for `ptp4l` and `phc2sys` processes.
+Default value is `SCHED_OTHER`.
+Use `SCHED_FIFO` on systems that support FIFO scheduling.
+
+|`ptpSchedulingPriority`
+|Set an integer value from 1-65 to configure FIFO priority for `ptp4l` and `phc2sys` processes when `ptpSchedulingPolicy` is set to `SCHED_FIFO`.
+The `ptpSchedulingPriority` field is not used when `ptpSchedulingPolicy` is set to `SCHED_OTHER`.
+
+|`ptpClockThreshold`
+|Optional.
+If `ptpClockThreshold` stanza is not present, default values are used for `ptpClockThreshold` fields.
+Stanza shows default `ptpClockThreshold` values. `ptpClockThreshold` values configure how long after the PTP master clock is disconnected before PTP events are triggered.
+`holdOverTimeout` is the time value in seconds before the PTP clock event state changes to `FREERUN` when the PTP master clock is disconnected.
+The `maxOffsetThreshold` and `minOffsetThreshold` settings configure offset values in nanoseconds that compare against the values for `CLOCK_REALTIME` (`phc2sys`) or master offset (`ptp4l`).
+When the `ptp4l` or `phc2sys` offset value is outside this range, the PTP clock state is set to `FREERUN`. When the offset value is within this range, the PTP clock state is set to `LOCKED`.
+
+|`ts2phcConf`
+a|Sets the configuration for the `ts2phc` command.
+
+`leapfile` is the default path to the current leap seconds definition file in the PTP Operator container image.
+
+`ts2phc.nmea_serialport` is the serial port device that is connected to the NMEA GPS clock source.
+When configured, the GNSS receiver is accessible on `/dev/gnss<id>`.
+If the host has multiple GNSS receivers, you can find the correct device by enumerating either of the following devices:
+
+* `/sys/class/net/<eth_port>/device/gnss/`
+* `/sys/class/gnss/gnss<id>/device/`
+
+|`ts2phcOpts`
+|Set options for the `ts2phc` command.
+
+|`recommend`
+|Specify an array of one or more `recommend` objects that define rules on how the `profile` should be applied to nodes.
+
+|`.recommend.profile`
+|Specify the `.recommend.profile` object name that is defined in the `profile` section.
+
+|`.recommend.priority`
+|Specify the `priority` with an integer value between `0` and `99`.
+A larger number gets lower priority, so a priority of `99` is lower than a priority of `10`.
+If a node can be matched with multiple profiles according to rules defined in the `match` field, the profile with the higher priority is applied to that node.
+
+|`.recommend.match`
+|Specify `.recommend.match` rules with `nodeLabel` or `nodeName`.
+
+|`.recommend.match.nodeLabel`
+|Set `nodeLabel` with the `key` of `node.Labels` from the node object by using the `oc
+get nodes --show-labels` command.
+For example: `node-role.kubernetes.io/worker`.
+
+|`.recommend.match.nodeName`
+|Set `nodeName` with value of `node.Name` from the node object by using the `oc get nodes` command.
+For example: `compute-1.example.com`.
+|====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-linuxptp-services-as-ordinary-clock_{context}"]
+= Configuring linuxptp services as an ordinary clock
+
+You can configure `linuxptp` services (`ptp4l`, `phc2sys`) as ordinary clock by creating a `PtpConfig` custom resource (CR) object.
+
+[NOTE]
+====
+Use the following example `PtpConfig` CR as the basis to configure `linuxptp` services as an ordinary clock for your particular hardware and environment.
+This example CR does not configure PTP fast events.
+To configure PTP fast events, set appropriate values for `ptp4lOpts`, `ptp4lConf`, and `ptpClockThreshold`. `ptpClockThreshold` is required only when events are enabled.
+See "Configuring the PTP fast event notifications publisher" for more information.
+====
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+* Install the PTP Operator.
+
+.Procedure
+
+. Create the following `PtpConfig` CR, and then save the YAML in the `ordinary-clock-ptp-config.yaml` file.
++
+[[ptp-ordinary-clock]]
+.Example PTP ordinary clock configuration
+[source,yaml]
+----
+apiVersion: ptp.openshift.io/v1
+kind: PtpConfig
+metadata:
+  name: ordinary-clock
+  namespace: openshift-ptp
+  annotations: {}
+spec:
+  profile:
+    - name: ordinary-clock
+      # The interface name is hardware-specific
+      interface: $interface
+      ptp4lOpts: "-2 -s"
+      phc2sysOpts: "-a -r -n 24"
+      ptpSchedulingPolicy: SCHED_FIFO
+      ptpSchedulingPriority: 10
+      ptpSettings:
+        logReduce: "true"
+      ptp4lConf: |
+        [global]
+        #
+        # Default Data Set
+        #
+        twoStepFlag 1
+        slaveOnly 1
+        priority1 128
+        priority2 128
+        domainNumber 24
+        #utc_offset 37
+        clockClass 255
+        clockAccuracy 0xFE
+        offsetScaledLogVariance 0xFFFF
+        free_running 0
+        freq_est_interval 1
+        dscp_event 0
+        dscp_general 0
+        dataset_comparison G.8275.x
+        G.8275.defaultDS.localPriority 128
+        #
+        # Port Data Set
+        #
+        logAnnounceInterval -3
+        logSyncInterval -4
+        logMinDelayReqInterval -4
+        logMinPdelayReqInterval -4
+        announceReceiptTimeout 3
+        syncReceiptTimeout 0
+        delayAsymmetry 0
+        fault_reset_interval -4
+        neighborPropDelayThresh 20000000
+        masterOnly 0
+        G.8275.portDS.localPriority 128
+        #
+        # Run time options
+        #
+        assume_two_step 0
+        logging_level 6
+        path_trace_enabled 0
+        follow_up_info 0
+        hybrid_e2e 0
+        inhibit_multicast_service 0
+        net_sync_monitor 0
+        tc_spanning_tree 0
+        tx_timestamp_timeout 50
+        unicast_listen 0
+        unicast_master_table 0
+        unicast_req_duration 3600
+        use_syslog 1
+        verbose 0
+        summary_interval 0
+        kernel_leap 1
+        check_fup_sync 0
+        clock_class_threshold 7
+        #
+        # Servo Options
+        #
+        pi_proportional_const 0.0
+        pi_integral_const 0.0
+        pi_proportional_scale 0.0
+        pi_proportional_exponent -0.3
+        pi_proportional_norm_max 0.7
+        pi_integral_scale 0.0
+        pi_integral_exponent 0.4
+        pi_integral_norm_max 0.3
+        step_threshold 2.0
+        first_step_threshold 0.00002
+        max_frequency 900000000
+        clock_servo pi
+        sanity_freq_limit 200000000
+        ntpshm_segment 0
+        #
+        # Transport options
+        #
+        transportSpecific 0x0
+        ptp_dst_mac 01:1B:19:00:00:00
+        p2p_dst_mac 01:80:C2:00:00:0E
+        udp_ttl 1
+        udp6_scope 0x0E
+        uds_address /var/run/ptp4l
+        #
+        # Default interface options
+        #
+        clock_type OC
+        network_transport L2
+        delay_mechanism E2E
+        time_stamping hardware
+        tsproc_mode filter
+        delay_filter moving_median
+        delay_filter_length 10
+        egressLatency 0
+        ingressLatency 0
+        boundary_clock_jbod 0
+        #
+        # Clock description
+        #
+        productDescription ;;
+        revisionData ;;
+        manufacturerIdentity 00:00:00
+        userDescription ;
+        timeSource 0xA0
+  recommend:
+    - profile: ordinary-clock
+      priority: 4
+      match:
+        - nodeLabel: "node-role.kubernetes.io/$mcp"
+----
++
+.PTP ordinary clock CR configuration options
+[cols="1,3" options="header"]
+|====
+|Custom resource field
+|Description
+
+|`name`
+|The name of the `PtpConfig` CR.
+
+|`profile`
+|Specify an array of one or more `profile` objects. Each profile must be uniquely named.
+
+|`interface`
+|Specify the network interface to be used by the `ptp4l` service, for example `ens787f1`.
+
+|`ptp4lOpts`
+|Specify system config options for the `ptp4l` service, for example `-2` to select the IEEE 802.3 network transport. The options should not include the network interface name `-i <interface>` and service config file `-f /etc/ptp4l.conf` because the network interface name and the service config file are automatically appended. Append `--summary_interval -4` to use PTP fast events with this interface.
+
+|`phc2sysOpts`
+|Specify system config options for the `phc2sys` service. If this field is empty, the PTP Operator does not start the `phc2sys` service. For Intel Columbiaville 800 Series NICs, set `phc2sysOpts` options to `-a -r -m -n 24 -N 8 -R 16`. `-m` prints messages to `stdout`. The `linuxptp-daemon` `DaemonSet` parses the logs and generates Prometheus metrics.
+
+|`ptp4lConf`
+|Specify a string that contains the configuration to replace the default `/etc/ptp4l.conf` file. To use the default configuration, leave the field empty.
+
+|`tx_timestamp_timeout`
+|For Intel Columbiaville 800 Series NICs, set `tx_timestamp_timeout` to `50`.
+
+|`boundary_clock_jbod`
+|For Intel Columbiaville 800 Series NICs, set `boundary_clock_jbod` to `0`.
+
+|`ptpSchedulingPolicy`
+|Scheduling policy for `ptp4l` and `phc2sys` processes. Default value is `SCHED_OTHER`. Use `SCHED_FIFO` on systems that support FIFO scheduling.
+
+|`ptpSchedulingPriority`
+|Integer value from 1-65 used to set FIFO priority for `ptp4l` and `phc2sys` processes when `ptpSchedulingPolicy` is set to `SCHED_FIFO`. The `ptpSchedulingPriority` field is not used when `ptpSchedulingPolicy` is set to `SCHED_OTHER`.
+
+|`ptpClockThreshold`
+|Optional. If `ptpClockThreshold` is not present, default values are used for the `ptpClockThreshold` fields. `ptpClockThreshold` configures how long after the PTP master clock is disconnected before PTP events are triggered. `holdOverTimeout` is the time value in seconds before the PTP clock event state changes to `FREERUN` when the PTP master clock is disconnected. The `maxOffsetThreshold` and `minOffsetThreshold` settings configure offset values in nanoseconds that compare against the values for `CLOCK_REALTIME` (`phc2sys`) or master offset (`ptp4l`). When the `ptp4l` or `phc2sys` offset value is outside this range, the PTP clock state is set to `FREERUN`. When the offset value is within this range, the PTP clock state is set to `LOCKED`.
+
+|`recommend`
+|Specify an array of one or more `recommend` objects that define rules on how the `profile` should be applied to nodes.
+
+|`.recommend.profile`
+|Specify the `.recommend.profile` object name defined in the `profile` section.
+
+|`.recommend.priority`
+|Set `.recommend.priority` to `0` for ordinary clock.
+
+|`.recommend.match`
+|Specify `.recommend.match` rules with `nodeLabel` or `nodeName`.
+
+|`.recommend.match.nodeLabel`
+|Update `nodeLabel` with the `key` of `node.Labels` from the node object by using the `oc get nodes --show-labels` command. For example: `node-role.kubernetes.io/worker`.
+
+|`.recommend.match.nodeLabel`
+|Update `nodeName` with value of `node.Name` from the node object by using the `oc get nodes` command. For example: `compute-0.example.com`.
+|====
+
+. Create the `PtpConfig` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f ordinary-clock-ptp-config.yaml
+----
+
+.Verification
+
+. Check that the `PtpConfig` profile is applied to the node.
+
+.. Get the list of pods in the `openshift-ptp` namespace by running the following command:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-ptp -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                            READY   STATUS    RESTARTS   AGE   IP               NODE
+linuxptp-daemon-4xkbb           1/1     Running   0          43m   10.1.196.24      compute-0.example.com
+linuxptp-daemon-tdspf           1/1     Running   0          43m   10.1.196.25      compute-1.example.com
+ptp-operator-657bbb64c8-2f8sj   1/1     Running   0          43m   10.129.0.61      control-plane-1.example.com
+----
+
+.. Check that the profile is correct. Examine the logs of the `linuxptp` daemon that corresponds to the node you specified in the `PtpConfig` profile. Run the following command:
++
+[source,terminal]
+----
+$ oc logs linuxptp-daemon-4xkbb -n openshift-ptp -c linuxptp-daemon-container
+----
++
+.Example output
+[source,terminal]
+----
+I1115 09:41:17.117596 4143292 daemon.go:107] in applyNodePTPProfile
+I1115 09:41:17.117604 4143292 daemon.go:109] updating NodePTPProfile to:
+I1115 09:41:17.117607 4143292 daemon.go:110] ------------------------------------
+I1115 09:41:17.117612 4143292 daemon.go:102] Profile Name: profile1
+I1115 09:41:17.117616 4143292 daemon.go:102] Interface: ens787f1
+I1115 09:41:17.117620 4143292 daemon.go:102] Ptp4lOpts: -2 -s
+I1115 09:41:17.117623 4143292 daemon.go:102] Phc2sysOpts: -a -r -n 24
+I1115 09:41:17.117626 4143292 daemon.go:116] ------------------------------------
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For more information about FIFO priority scheduling on PTP hardware, see xref:../networking/using-ptp.adoc#cnf-configuring-fifo-priority-scheduling-for-ptp_using-ptp[Configuring FIFO priority scheduling for PTP hardware].
+
+* For more information about configuring PTP fast events, see xref:../networking/using-ptp.adoc#cnf-configuring-the-ptp-fast-event-publisher_using-ptp[Configuring the PTP fast event notifications publisher].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-linuxptp-services-as-boundary-clock_{context}"]
+= Configuring linuxptp services as a boundary clock
+
+You can configure the `linuxptp` services (`ptp4l`, `phc2sys`) as boundary clock by creating a `PtpConfig` custom resource (CR) object.
+
+[NOTE]
+====
+Use the following example `PtpConfig` CR as the basis to configure `linuxptp` services as the boundary clock for your particular hardware and environment.
+This example CR does not configure PTP fast events. To configure PTP fast events, set appropriate values for `ptp4lOpts`, `ptp4lConf`, and `ptpClockThreshold`.
+`ptpClockThreshold` is used only when events are enabled.
+See "Configuring the PTP fast event notifications publisher" for more information.
+====
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+* Install the PTP Operator.
+
+.Procedure
+
+. Create the following `PtpConfig` CR, and then save the YAML in the `boundary-clock-ptp-config.yaml` file.
++
+.Example PTP boundary clock configuration
+[source,yaml]
+----
+apiVersion: ptp.openshift.io/v1
+kind: PtpConfig
+metadata:
+  name: boundary-clock
+  namespace: openshift-ptp
+  annotations: {}
+spec:
+  profile:
+    - name: boundary-clock
+      ptp4lOpts: "-2"
+      phc2sysOpts: "-a -r -n 24"
+      ptpSchedulingPolicy: SCHED_FIFO
+      ptpSchedulingPriority: 10
+      ptpSettings:
+        logReduce: "true"
+      ptp4lConf: |
+        # The interface name is hardware-specific
+        [$iface_slave]
+        masterOnly 0
+        [$iface_master_1]
+        masterOnly 1
+        [$iface_master_2]
+        masterOnly 1
+        [$iface_master_3]
+        masterOnly 1
+        [global]
+        #
+        # Default Data Set
+        #
+        twoStepFlag 1
+        slaveOnly 0
+        priority1 128
+        priority2 128
+        domainNumber 24
+        #utc_offset 37
+        clockClass 248
+        clockAccuracy 0xFE
+        offsetScaledLogVariance 0xFFFF
+        free_running 0
+        freq_est_interval 1
+        dscp_event 0
+        dscp_general 0
+        dataset_comparison G.8275.x
+        G.8275.defaultDS.localPriority 128
+        #
+        # Port Data Set
+        #
+        logAnnounceInterval -3
+        logSyncInterval -4
+        logMinDelayReqInterval -4
+        logMinPdelayReqInterval -4
+        announceReceiptTimeout 3
+        syncReceiptTimeout 0
+        delayAsymmetry 0
+        fault_reset_interval -4
+        neighborPropDelayThresh 20000000
+        masterOnly 0
+        G.8275.portDS.localPriority 128
+        #
+        # Run time options
+        #
+        assume_two_step 0
+        logging_level 6
+        path_trace_enabled 0
+        follow_up_info 0
+        hybrid_e2e 0
+        inhibit_multicast_service 0
+        net_sync_monitor 0
+        tc_spanning_tree 0
+        tx_timestamp_timeout 50
+        unicast_listen 0
+        unicast_master_table 0
+        unicast_req_duration 3600
+        use_syslog 1
+        verbose 0
+        summary_interval 0
+        kernel_leap 1
+        check_fup_sync 0
+        clock_class_threshold 135
+        #
+        # Servo Options
+        #
+        pi_proportional_const 0.0
+        pi_integral_const 0.0
+        pi_proportional_scale 0.0
+        pi_proportional_exponent -0.3
+        pi_proportional_norm_max 0.7
+        pi_integral_scale 0.0
+        pi_integral_exponent 0.4
+        pi_integral_norm_max 0.3
+        step_threshold 2.0
+        first_step_threshold 0.00002
+        max_frequency 900000000
+        clock_servo pi
+        sanity_freq_limit 200000000
+        ntpshm_segment 0
+        #
+        # Transport options
+        #
+        transportSpecific 0x0
+        ptp_dst_mac 01:1B:19:00:00:00
+        p2p_dst_mac 01:80:C2:00:00:0E
+        udp_ttl 1
+        udp6_scope 0x0E
+        uds_address /var/run/ptp4l
+        #
+        # Default interface options
+        #
+        clock_type BC
+        network_transport L2
+        delay_mechanism E2E
+        time_stamping hardware
+        tsproc_mode filter
+        delay_filter moving_median
+        delay_filter_length 10
+        egressLatency 0
+        ingressLatency 0
+        boundary_clock_jbod 0
+        #
+        # Clock description
+        #
+        productDescription ;;
+        revisionData ;;
+        manufacturerIdentity 00:00:00
+        userDescription ;
+        timeSource 0xA0
+  recommend:
+    - profile: boundary-clock
+      priority: 4
+      match:
+        - nodeLabel: "node-role.kubernetes.io/$mcp"
+----
++
+.PTP boundary clock CR configuration options
+[cols="1,3" options="header"]
+|====
+|Custom resource field
+|Description
+
+|`name`
+|The name of the `PtpConfig` CR.
+
+|`profile`
+|Specify an array of one or more `profile` objects.
+
+|`name`
+|Specify the name of a profile object which uniquely identifies a profile object.
+
+|`ptp4lOpts`
+|Specify system config options for the `ptp4l` service. The options should not include the network interface name `-i <interface>` and service config file `-f /etc/ptp4l.conf` because the network interface name and the service config file are automatically appended.
+
+|`ptp4lConf`
+|Specify the required configuration to start `ptp4l` as boundary clock. For example, `ens1f0` synchronizes from a grandmaster clock and `ens1f3` synchronizes connected devices.
+
+|`<interface_1>`
+|The interface that receives the synchronization clock.
+
+|`<interface_2>`
+|The interface that sends the synchronization clock.
+
+|`tx_timestamp_timeout`
+|For Intel Columbiaville 800 Series NICs, set `tx_timestamp_timeout` to `50`.
+
+|`boundary_clock_jbod`
+|For Intel Columbiaville 800 Series NICs, ensure `boundary_clock_jbod` is set to `0`. For Intel Fortville X710 Series NICs, ensure `boundary_clock_jbod` is set to `1`.
+
+|`phc2sysOpts`
+|Specify system config options for the `phc2sys` service. If this field is empty, the PTP Operator does not start the `phc2sys` service.
+
+|`ptpSchedulingPolicy`
+|Scheduling policy for ptp4l and phc2sys processes. Default value is `SCHED_OTHER`. Use `SCHED_FIFO` on systems that support FIFO scheduling.
+
+|`ptpSchedulingPriority`
+|Integer value from 1-65 used to set FIFO priority for `ptp4l` and `phc2sys` processes when `ptpSchedulingPolicy` is set to `SCHED_FIFO`. The `ptpSchedulingPriority` field is not used when `ptpSchedulingPolicy` is set to `SCHED_OTHER`.
+
+|`ptpClockThreshold`
+|Optional. If `ptpClockThreshold` is not present, default values are used for the `ptpClockThreshold` fields. `ptpClockThreshold` configures how long after the PTP master clock is disconnected before PTP events are triggered. `holdOverTimeout` is the time value in seconds before the PTP clock event state changes to `FREERUN` when the PTP master clock is disconnected. The `maxOffsetThreshold` and `minOffsetThreshold` settings configure offset values in nanoseconds that compare against the values for `CLOCK_REALTIME` (`phc2sys`) or master offset (`ptp4l`). When the `ptp4l` or `phc2sys` offset value is outside this range, the PTP clock state is set to `FREERUN`. When the offset value is within this range, the PTP clock state is set to `LOCKED`.
+
+|`recommend`
+|Specify an array of one or more `recommend` objects that define rules on how the `profile` should be applied to nodes.
+
+|`.recommend.profile`
+|Specify the `.recommend.profile` object name defined in the `profile` section.
+
+|`.recommend.priority`
+|Specify the `priority` with an integer value between `0` and `99`. A larger number gets lower priority, so a priority of `99` is lower than a priority of `10`. If a node can be matched with multiple profiles according to rules defined in the `match` field, the profile with the higher priority is applied to that node.
+
+|`.recommend.match`
+|Specify `.recommend.match` rules with `nodeLabel` or `nodeName`.
+
+|`.recommend.match.nodeLabel`
+|Update `nodeLabel` with the `key` of `node.Labels` from the node object by using the `oc get nodes --show-labels` command. For example: `node-role.kubernetes.io/worker`.
+
+|`.recommend.match.nodeLabel`
+|Update `nodeName` with value of `node.Name` from the node object by using the `oc get nodes` command. For example: `compute-0.example.com`.
+|====
+
+. Create the CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f boundary-clock-ptp-config.yaml
+----
+
+.Verification
+
+. Check that the `PtpConfig` profile is applied to the node.
+
+.. Get the list of pods in the `openshift-ptp` namespace by running the following command:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-ptp -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                            READY   STATUS    RESTARTS   AGE   IP               NODE
+linuxptp-daemon-4xkbb           1/1     Running   0          43m   10.1.196.24      compute-0.example.com
+linuxptp-daemon-tdspf           1/1     Running   0          43m   10.1.196.25      compute-1.example.com
+ptp-operator-657bbb64c8-2f8sj   1/1     Running   0          43m   10.129.0.61      control-plane-1.example.com
+----
+
+.. Check that the profile is correct. Examine the logs of the `linuxptp` daemon that corresponds to the node you specified in the `PtpConfig` profile. Run the following command:
++
+[source,terminal]
+----
+$ oc logs linuxptp-daemon-4xkbb -n openshift-ptp -c linuxptp-daemon-container
+----
++
+.Example output
+[source,terminal]
+----
+I1115 09:41:17.117596 4143292 daemon.go:107] in applyNodePTPProfile
+I1115 09:41:17.117604 4143292 daemon.go:109] updating NodePTPProfile to:
+I1115 09:41:17.117607 4143292 daemon.go:110] ------------------------------------
+I1115 09:41:17.117612 4143292 daemon.go:102] Profile Name: profile1
+I1115 09:41:17.117616 4143292 daemon.go:102] Interface:
+I1115 09:41:17.117620 4143292 daemon.go:102] Ptp4lOpts: -2
+I1115 09:41:17.117623 4143292 daemon.go:102] Phc2sysOpts: -a -r -n 24
+I1115 09:41:17.117626 4143292 daemon.go:116] ------------------------------------
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For more information about FIFO priority scheduling on PTP hardware, see xref:../networking/using-ptp.adoc#cnf-configuring-fifo-priority-scheduling-for-ptp_using-ptp[Configuring FIFO priority scheduling for PTP hardware].
+
+* For more information about configuring PTP fast events, see xref:../networking/using-ptp.adoc#cnf-configuring-the-ptp-fast-event-publisher_using-ptp[Configuring the PTP fast event notifications publisher].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ptp-configuring-linuxptp-services-as-bc-for-dual-nic_{context}"]
+= Configuring linuxptp services as boundary clocks for dual NIC hardware
+
+:FeatureName: Precision Time Protocol (PTP) hardware with dual NIC configured as boundary clocks
+:leveloffset: +1
+
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+:leveloffset: 2
+
+You can configure the `linuxptp` services (`ptp4l`, `phc2sys`) as boundary clocks for dual NIC hardware by creating a `PtpConfig` custom resource (CR) object for each NIC.
+
+Dual NIC hardware allows you to connect each NIC to the same upstream leader clock with separate `ptp4l` instances for each NIC feeding the downstream clocks.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+* Install the PTP Operator.
+
+.Procedure
+
+. Create two separate `PtpConfig` CRs, one for each NIC, using the reference CR in "Configuring linuxptp services as a boundary clock" as the basis for each CR. For example:
+
+.. Create `boundary-clock-ptp-config-nic1.yaml`, specifying values for `phc2sysOpts`:
++
+[source,yaml]
+----
+apiVersion: ptp.openshift.io/v1
+kind: PtpConfig
+metadata:
+  name: boundary-clock-ptp-config-nic1
+  namespace: openshift-ptp
+spec:
+  profile:
+  - name: "profile1"
+    ptp4lOpts: "-2 --summary_interval -4"
+    ptp4lConf: | <1>
+      [ens5f1]
+      masterOnly 1
+      [ens5f0]
+      masterOnly 0
+    ...
+    phc2sysOpts: "-a -r -m -n 24 -N 8 -R 16" <2>
+----
+<1> Specify the required interfaces to start `ptp4l` as a boundary clock. For example, `ens5f0` synchronizes from a grandmaster clock and `ens5f1` synchronizes connected devices.
+<2> Required `phc2sysOpts` values. `-m` prints messages to `stdout`. The `linuxptp-daemon` `DaemonSet` parses the logs and generates Prometheus metrics.
+
+.. Create `boundary-clock-ptp-config-nic2.yaml`, removing the `phc2sysOpts` field altogether to disable the `phc2sys` service for the second NIC:
++
+[source,yaml]
+----
+apiVersion: ptp.openshift.io/v1
+kind: PtpConfig
+metadata:
+  name: boundary-clock-ptp-config-nic2
+  namespace: openshift-ptp
+spec:
+  profile:
+  - name: "profile2"
+    ptp4lOpts: "-2 --summary_interval -4"
+    ptp4lConf: | <1>
+      [ens7f1]
+      masterOnly 1
+      [ens7f0]
+      masterOnly 0
+...
+----
+<1> Specify the required interfaces to start `ptp4l` as a boundary clock on the second NIC.
++
+[NOTE]
+====
+You must completely remove the `phc2sysOpts` field from the second `PtpConfig` CR to disable the `phc2sys` service on the second NIC.
+====
+
+. Create the dual NIC `PtpConfig` CRs by running the following commands:
+
+.. Create the CR that configures PTP for the first NIC:
++
+[source,terminal]
+----
+$ oc create -f boundary-clock-ptp-config-nic1.yaml
+----
+
+.. Create the CR that configures PTP for the second NIC:
++
+[source,terminal]
+----
+$ oc create -f boundary-clock-ptp-config-nic2.yaml
+----
+
+.Verification
+
+* Check that the PTP Operator has applied the `PtpConfig` CRs for both NICs. Examine the logs for the `linuxptp` daemon corresponding to the node that has the dual NIC hardware installed. For example, run the following command:
++
+[source,terminal]
+----
+$ oc logs linuxptp-daemon-cvgr6 -n openshift-ptp -c linuxptp-daemon-container
+----
++
+.Example output
+[source,terminal]
+----
+ptp4l[80828.335]: [ptp4l.1.config] master offset          5 s2 freq   -5727 path delay       519
+ptp4l[80828.343]: [ptp4l.0.config] master offset         -5 s2 freq  -10607 path delay       533
+phc2sys[80828.390]: [ptp4l.0.config] CLOCK_REALTIME phc offset         1 s2 freq  -87239 delay    539
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="nw-columbiaville-ptp-config-refererence_{context}"]
+= Intel Columbiaville E800 series NIC as PTP ordinary clock reference
+
+The following table describes the changes that you must make to the reference PTP configuration in order to use Intel Columbiaville E800 series NICs as ordinary clocks. Make the changes in a `PtpConfig` custom resource (CR) that you apply to the cluster.
+
+.Recommended PTP settings for Intel Columbiaville NIC
+[options="header"]
+|====
+|PTP configuration|Recommended setting
+|`phc2sysOpts`|`-a -r -m -n 24 -N 8 -R 16`
+|`tx_timestamp_timeout`|`50`
+|`boundary_clock_jbod`|`0`
+|====
+
+[NOTE]
+====
+For `phc2sysOpts`, `-m` prints messages to `stdout`. The `linuxptp-daemon` `DaemonSet` parses the logs and generates Prometheus metrics.
+====
+
+
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For a complete example CR that configures `linuxptp` services as an ordinary clock with PTP fast events, see xref:../networking/using-ptp.adoc#configuring-linuxptp-services-as-ordinary-clock_using-ptp[Configuring linuxptp services as ordinary clock].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-configuring-fifo-priority-scheduling-for-ptp_{context}"]
+= Configuring FIFO priority scheduling for PTP hardware
+
+In telco or other deployment configurations that require low latency performance, PTP daemon threads run in a constrained CPU footprint alongside the rest of the infrastructure components. By default, PTP threads run with the `SCHED_OTHER` policy. Under high load, these threads might not get the scheduling latency they require for error-free operation.
+
+To mitigate against potential scheduling latency errors, you can configure the PTP Operator `linuxptp` services to allow threads to run with a `SCHED_FIFO` policy. If `SCHED_FIFO` is set for a `PtpConfig` CR, then `ptp4l` and `phc2sys` will run in the parent container under `chrt` with a priority set by the `ptpSchedulingPriority` field of the `PtpConfig` CR.
+
+[NOTE]
+====
+Setting `ptpSchedulingPolicy` is optional, and is only required if you are experiencing latency errors.
+====
+
+.Procedure
+
+. Edit the `PtpConfig` CR profile:
++
+[source,terminal]
+----
+$ oc edit PtpConfig -n openshift-ptp
+----
+
+. Change the `ptpSchedulingPolicy` and `ptpSchedulingPriority` fields:
++
+[source,yaml]
+----
+apiVersion: ptp.openshift.io/v1
+kind: PtpConfig
+metadata:
+  name: <ptp_config_name>
+  namespace: openshift-ptp
+...
+spec:
+  profile:
+  - name: "profile1"
+...
+    ptpSchedulingPolicy: SCHED_FIFO <1>
+    ptpSchedulingPriority: 10 <2>
+----
+<1> Scheduling policy for `ptp4l` and `phc2sys` processes. Use `SCHED_FIFO` on systems that support FIFO scheduling.
+<2> Required. Sets the integer value 1-65 used to configure FIFO priority for `ptp4l` and `phc2sys` processes.
+
+. Save and exit to apply the changes to the `PtpConfig` CR.
+
+.Verification
+
+. Get the name of the `linuxptp-daemon` pod and corresponding node where the `PtpConfig` CR has been applied:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-ptp -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                            READY   STATUS    RESTARTS   AGE     IP            NODE
+linuxptp-daemon-gmv2n           3/3     Running   0          1d17h   10.1.196.24   compute-0.example.com
+linuxptp-daemon-lgm55           3/3     Running   0          1d17h   10.1.196.25   compute-1.example.com
+ptp-operator-3r4dcvf7f4-zndk7   1/1     Running   0          1d7h    10.129.0.61   control-plane-1.example.com
+----
+
+. Check that the `ptp4l` process is running with the updated `chrt` FIFO priority:
++
+[source,terminal]
+----
+$ oc -n openshift-ptp logs linuxptp-daemon-lgm55 -c linuxptp-daemon-container|grep chrt
+----
++
+.Example output
+[source,terminal]
+----
+I1216 19:24:57.091872 1600715 daemon.go:285] /bin/chrt -f 65 /usr/sbin/ptp4l -f /var/run/ptp4l.0.config -2  --summary_interval -4 -m
+----
+
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-configuring-log-filtering-for-linuxptp_{context}"]
+= Configuring log filtering for linuxptp services
+
+The `linuxptp` daemon generates logs that you can use for debugging purposes. In telco or other deployment configurations that feature a limited storage capacity, these logs can add to the storage demand.
+
+To reduce the number log messages, you can configure the `PtpConfig` custom resource (CR) to exclude log messages that report the `master offset` value. The `master offset` log message reports the difference between the current node's clock and the master clock in nanoseconds.
+
+.Prerequisites
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+* Install the PTP Operator.
+
+.Procedure
+
+. Edit the `PtpConfig` CR:
++
+[source,terminal]
+----
+$ oc edit PtpConfig -n openshift-ptp
+----
+
+. In `spec.profile`, add the `ptpSettings.logReduce` specification and set the value to `true`:
++
+[source,yaml]
+----
+apiVersion: ptp.openshift.io/v1
+kind: PtpConfig
+metadata:
+  name: <ptp_config_name>
+  namespace: openshift-ptp
+...
+spec:
+  profile:
+  - name: "profile1"
+...
+    ptpSettings:
+      logReduce: "true"
+----
++
+[NOTE]
+====
+For debugging purposes, you can revert this specification to `False` to include the master offset messages.
+====
+
+. Save and exit to apply the changes to the `PtpConfig` CR.
+
+.Verification
+
+. Get the name of the `linuxptp-daemon` pod and corresponding node where the `PtpConfig` CR has been applied:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-ptp -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                            READY   STATUS    RESTARTS   AGE     IP            NODE
+linuxptp-daemon-gmv2n           3/3     Running   0          1d17h   10.1.196.24   compute-0.example.com
+linuxptp-daemon-lgm55           3/3     Running   0          1d17h   10.1.196.25   compute-1.example.com
+ptp-operator-3r4dcvf7f4-zndk7   1/1     Running   0          1d7h    10.129.0.61   control-plane-1.example.com
+----
+
+. Verify that master offset messages are excluded from the logs by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-ptp logs <linux_daemon_container> -c linuxptp-daemon-container | grep "master offset" <1>
+----
+<1> <linux_daemon_container> is the name of the `linuxptp-daemon` pod, for example `linuxptp-daemon-gmv2n`.
++
+When you configure the `logReduce` specification, this command does not report any instances of `master offset` in the logs of the `linuxptp` daemon.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-troubleshooting-common-ptp-operator-issues_{context}"]
+= Troubleshooting common PTP Operator issues
+
+Troubleshoot common problems with the PTP Operator by performing the following steps.
+
+.Prerequisites
+
+* Install the {product-title} CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+* Install the PTP Operator on a bare-metal cluster with hosts that support PTP.
+
+.Procedure
+
+. Check the Operator and operands are successfully deployed in the cluster for the configured nodes.
++
+[source,terminal]
+----
+$ oc get pods -n openshift-ptp -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                            READY   STATUS    RESTARTS   AGE     IP            NODE
+linuxptp-daemon-lmvgn           3/3     Running   0          4d17h   10.1.196.24   compute-0.example.com
+linuxptp-daemon-qhfg7           3/3     Running   0          4d17h   10.1.196.25   compute-1.example.com
+ptp-operator-6b8dcbf7f4-zndk7   1/1     Running   0          5d7h    10.129.0.61   control-plane-1.example.com
+----
++
+[NOTE]
+====
+When the PTP fast event bus is enabled, the number of ready `linuxptp-daemon` pods is `3/3`. If the PTP fast event bus is not enabled, `2/2` is displayed.
+====
+
+. Check that supported hardware is found in the cluster.
++
+[source,terminal]
+----
+$ oc -n openshift-ptp get nodeptpdevices.ptp.openshift.io
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                  AGE
+control-plane-0.example.com           10d
+control-plane-1.example.com           10d
+compute-0.example.com                 10d
+compute-1.example.com                 10d
+compute-2.example.com                 10d
+----
+
+. Check the available PTP network interfaces for a node:
++
+[source,terminal]
+----
+$ oc -n openshift-ptp get nodeptpdevices.ptp.openshift.io <node_name> -o yaml
+----
++
+where:
++
+<node_name>:: Specifies the node you want to query, for example, `compute-0.example.com`.
++
+.Example output
+[source,yaml]
+----
+apiVersion: ptp.openshift.io/v1
+kind: NodePtpDevice
+metadata:
+  creationTimestamp: "2021-09-14T16:52:33Z"
+  generation: 1
+  name: compute-0.example.com
+  namespace: openshift-ptp
+  resourceVersion: "177400"
+  uid: 30413db0-4d8d-46da-9bef-737bacd548fd
+spec: {}
+status:
+  devices:
+  - name: eno1
+  - name: eno2
+  - name: eno3
+  - name: eno4
+  - name: enp5s0f0
+  - name: enp5s0f1
+----
+
+. Check that the PTP interface is successfully synchronized to the primary clock by accessing the `linuxptp-daemon` pod for the corresponding node.
+
+.. Get the name of the `linuxptp-daemon` pod and corresponding node you want to troubleshoot by running the following command:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-ptp -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                            READY   STATUS    RESTARTS   AGE     IP            NODE
+linuxptp-daemon-lmvgn           3/3     Running   0          4d17h   10.1.196.24   compute-0.example.com
+linuxptp-daemon-qhfg7           3/3     Running   0          4d17h   10.1.196.25   compute-1.example.com
+ptp-operator-6b8dcbf7f4-zndk7   1/1     Running   0          5d7h    10.129.0.61   control-plane-1.example.com
+----
+
+.. Remote shell into the required `linuxptp-daemon` container:
++
+[source,terminal]
+----
+$ oc rsh -n openshift-ptp -c linuxptp-daemon-container <linux_daemon_container>
+----
++
+where:
++
+<linux_daemon_container>:: is the container you want to diagnose, for example `linuxptp-daemon-lmvgn`.
+
+.. In the remote shell connection to the `linuxptp-daemon` container, use the PTP Management Client (`pmc`) tool to diagnose the network interface. Run the following `pmc` command to check the sync status of the PTP device, for example `ptp4l`.
++
+[source,terminal]
+----
+# pmc -u -f /var/run/ptp4l.0.config -b 0 'GET PORT_DATA_SET'
+----
++
+.Example output when the node is successfully synced to the primary clock
+[source,terminal]
+----
+sending: GET PORT_DATA_SET
+    40a6b7.fffe.166ef0-1 seq 0 RESPONSE MANAGEMENT PORT_DATA_SET
+        portIdentity            40a6b7.fffe.166ef0-1
+        portState               SLAVE
+        logMinDelayReqInterval  -4
+        peerMeanPathDelay       0
+        logAnnounceInterval     -3
+        announceReceiptTimeout  3
+        logSyncInterval         -4
+        delayMechanism          1
+        logMinPdelayReqInterval -4
+        versionNumber           2
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-about-collecting-nro-data_{context}"]
+= Collecting Precision Time Protocol (PTP) Operator data
+
+You can use the `oc adm must-gather` CLI command to collect information about your cluster, including features and objects associated with Precision Time Protocol (PTP) Operator.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+
+* You have installed the {oc-first}.
+
+* You have installed the PTP Operator.
+
+.Procedure
+
+* To collect PTP Operator data with `must-gather`, you must specify the PTP Operator `must-gather` image.
++
+[source,terminal,subs="attributes+"]
+----
+$ oc adm must-gather --image=registry.redhat.io/openshift4/ptp-must-gather-rhel8:v{product-version}
+----
+
+:leveloffset!:
+
+== PTP hardware fast event notifications framework
+
+Cloud native applications such as virtual RAN (vRAN) require access to notifications about hardware timing events that are critical to the functioning of the overall network.
+PTP clock synchronization errors can negatively affect the performance and reliability of your low-latency application, for example, a vRAN application running in a distributed unit (DU).
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cnf-about-ptp-and-clock-synchronization_{context}"]
+= About PTP and clock synchronization error events
+
+Loss of PTP synchronization is a critical error for a RAN network. If synchronization is lost on a node, the radio might be shut down and the network Over the Air (OTA) traffic might be shifted to another node in the wireless network. Fast event notifications mitigate against workload errors by allowing cluster nodes to communicate PTP clock sync status to the vRAN application running in the DU.
+
+Event notifications are available to vRAN applications running on the same DU node. A publish-subscribe REST API passes events notifications to the messaging bus. Publish-subscribe messaging, or pub-sub messaging, is an asynchronous service-to-service communication architecture where any message published to a topic is immediately received by all of the subscribers to the topic.
+
+The PTP Operator generates fast event notifications for every PTP-capable network interface. You can access the events by using a `cloud-event-proxy` sidecar container over an HTTP or Advanced Message Queuing Protocol (AMQP) message bus.
+
+[NOTE]
+====
+PTP fast event notifications are available for network interfaces configured to use PTP ordinary clocks or PTP boundary clocks.
+====
+
+[NOTE]
+====
+Use HTTP transport instead of AMQP for PTP and bare-metal events where possible.
+AMQ Interconnect is EOL from 30 June 2024.
+Extended life cycle support (ELS) for AMQ Interconnect ends 29 November 2029.
+For more information see, link:https://access.redhat.com/support/policy/updates/jboss_notes#p_Interconnect[Red Hat AMQ Interconnect support status].
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cnf-about-ptp-fast-event-notifications-framework_{context}"]
+= About the PTP fast event notifications framework
+
+Use the Precision Time Protocol (PTP) fast event notifications framework to subscribe cluster applications to PTP events that the bare-metal cluster node generates.
+
+[NOTE]
+====
+The fast events notifications framework uses a REST API for communication. The REST API is based on the _O-RAN O-Cloud Notification API Specification for Event Consumers 3.0_ that is available from link:https://orandownloadsweb.azurewebsites.net/specifications[O-RAN ALLIANCE Specifications].
+====
+
+The framework consists of a publisher, subscriber, and an AMQ or HTTP messaging protocol to handle communications between the publisher and subscriber applications.
+Applications run the `cloud-event-proxy` container in a sidecar pattern to subscribe to PTP events.
+The `cloud-event-proxy` sidecar container can access the same resources as the primary application container without using any of the resources of the primary application and with no significant latency.
+
+[NOTE]
+====
+Use HTTP transport instead of AMQP for PTP and bare-metal events where possible.
+AMQ Interconnect is EOL from 30 June 2024.
+Extended life cycle support (ELS) for AMQ Interconnect ends 29 November 2029.
+For more information see, link:https://access.redhat.com/support/policy/updates/jboss_notes#p_Interconnect[Red Hat AMQ Interconnect support status].
+====
+
+.Overview of PTP fast events
+image::319_OpenShift_PTP_bare-metal_OCP_nodes_0323_4.13.png[Overview of PTP fast events]
+
+image:darkcircle-1.png[20,20] Event is generated on the cluster host::
+`linuxptp-daemon` in the PTP Operator-managed pod runs as a Kubernetes `DaemonSet` and manages the various `linuxptp` processes (`ptp4l`, `phc2sys`, and optionally for grandmaster clocks, `ts2phc`).
+The `linuxptp-daemon` passes the event to the UNIX domain socket.
+
+image:darkcircle-2.png[20,20] Event is passed to the cloud-event-proxy sidecar::
+The PTP plugin reads the event from the UNIX domain socket and passes it to the `cloud-event-proxy` sidecar in the PTP Operator-managed pod.
+`cloud-event-proxy` delivers the event from the Kubernetes infrastructure to Cloud-Native Network Functions (CNFs) with low latency.
+
+image:darkcircle-3.png[20,20] Event is persisted::
+The `cloud-event-proxy` sidecar in the PTP Operator-managed pod processes the event and publishes the cloud-native event by using a REST API.
+
+image:darkcircle-4.png[20,20] Message is transported::
+The message transporter transports the event to the `cloud-event-proxy` sidecar in the application pod over HTTP or AMQP 1.0 QPID.
+
+image:darkcircle-5.png[20,20] Event is available from the REST API::
+The `cloud-event-proxy` sidecar in the Application pod processes the event and makes it available by using the REST API.
+
+image:darkcircle-6.png[20,20] Consumer application requests a subscription and receives the subscribed event::
+The consumer application sends an API request to the `cloud-event-proxy` sidecar in the application pod to create a PTP events subscription.
+The `cloud-event-proxy` sidecar creates an AMQ or HTTP messaging listener protocol for the resource specified in the subscription.
+
+The `cloud-event-proxy` sidecar in the application pod receives the event from the PTP Operator-managed pod, unwraps the cloud events object to retrieve the data, and posts the event to the consumer application.
+The consumer application listens to the address specified in the resource qualifier and receives and processes the PTP event.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-configuring-the-ptp-fast-event-publisher_{context}"]
+= Configuring the PTP fast event notifications publisher
+
+To start using PTP fast event notifications for a network interface in your cluster, you must enable the fast event publisher in the PTP Operator `PtpOperatorConfig` custom resource (CR) and configure `ptpClockThreshold` values in a `PtpConfig` CR that you create.
+
+.Prerequisites
+
+* You have installed the {product-title} CLI (`oc`).
+
+* You have logged in as a user with `cluster-admin` privileges.
+
+* You have installed the PTP Operator.
+
+.Procedure
+
+. Modify the default PTP Operator config to enable PTP fast events.
+
+.. Save the following YAML in the `ptp-operatorconfig.yaml` file:
++
+[source,yaml]
+----
+apiVersion: ptp.openshift.io/v1
+kind: PtpOperatorConfig
+metadata:
+  name: default
+  namespace: openshift-ptp
+spec:
+  daemonNodeSelector:
+    node-role.kubernetes.io/worker: ""
+  ptpEventConfig:
+    enableEventPublisher: true <1>
+----
+<1> Set `enableEventPublisher` to `true` to enable PTP fast event notifications.
+
++
+[NOTE]
+====
+In {product-title} 4.13 or later, you do not need to set the `spec.ptpEventConfig.transportHost` field in the `PtpOperatorConfig` resource when you use HTTP transport for PTP events.
+Set `transportHost` only when you use AMQP transport for PTP events.
+====
+
+.. Update the `PtpOperatorConfig` CR:
++
+[source,terminal]
+----
+$ oc apply -f ptp-operatorconfig.yaml
+----
+
+. Create a `PtpConfig` custom resource (CR) for the PTP enabled interface, and set the required values for `ptpClockThreshold` and `ptp4lOpts`.
+The following YAML illustrates the required values that you must set in the `PtpConfig` CR:
++
+[source,yaml]
+----
+spec:
+  profile:
+  - name: "profile1"
+    interface: "enp5s0f0"
+    ptp4lOpts: "-2 -s --summary_interval -4" <1>
+    phc2sysOpts: "-a -r -m -n 24 -N 8 -R 16" <2>
+    ptp4lConf: "" <3>
+    ptpClockThreshold: <4>
+      holdOverTimeout: 5
+      maxOffsetThreshold: 100
+      minOffsetThreshold: -100
+----
+<1> Append `--summary_interval -4` to use PTP fast events.
+<2> Required `phc2sysOpts` values. `-m` prints messages to `stdout`. The `linuxptp-daemon` `DaemonSet` parses the logs and generates Prometheus metrics.
+<3> Specify a string that contains the configuration to replace the default `/etc/ptp4l.conf` file. To use the default configuration, leave the field empty.
+<4> Optional. If the `ptpClockThreshold` stanza is not present, default values are used for the `ptpClockThreshold` fields. The stanza shows default `ptpClockThreshold` values. The `ptpClockThreshold` values configure how long after the PTP master clock is disconnected before PTP events are triggered. `holdOverTimeout` is the time value in seconds before the PTP clock event state changes to `FREERUN` when the PTP master clock is disconnected. The `maxOffsetThreshold` and `minOffsetThreshold` settings configure offset values in nanoseconds that compare against the values for `CLOCK_REALTIME` (`phc2sys`) or master offset (`ptp4l`). When the `ptp4l` or `phc2sys` offset value is outside this range, the PTP clock state is set to `FREERUN`. When the offset value is within this range, the PTP clock state is set to `LOCKED`.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For a complete example CR that configures `linuxptp` services as an ordinary clock with PTP fast events, see xref:../networking/using-ptp.adoc#configuring-linuxptp-services-as-ordinary-clock_using-ptp[Configuring linuxptp services as ordinary clock].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * monitoring/using-rfhe.adoc
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-migrating-from-amqp-to-http-transport_{context}"]
+= Migrating consumer applications to use HTTP transport for PTP or bare-metal events
+
+If you have previously deployed PTP or bare-metal events consumer applications, you need to update the applications to use HTTP message transport.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in as a user with `cluster-admin` privileges.
+
+* You have updated the PTP Operator or {redfish-operator} to version 4.13+ which uses HTTP transport by default.
+
+.Procedure
+
+. Update your events consumer application to use HTTP transport.
+Set the `http-event-publishers` variable for the cloud event sidecar deployment.
++
+For example, in a cluster with PTP events configured, the following YAML snippet illustrates a cloud event sidecar deployment:
++
+[source,yaml]
+----
+containers:
+  - name: cloud-event-sidecar
+    image: cloud-event-sidecar
+    args:
+      - "--metrics-addr=127.0.0.1:9091"
+      - "--store-path=/store"
+      - "--transport-host=consumer-events-subscription-service.cloud-events.svc.cluster.local:9043"
+      - "--http-event-publishers=ptp-event-publisher-service-NODE_NAME.openshift-ptp.svc.cluster.local:9043" <1>
+      - "--api-port=8089"
+----
+<1> The PTP Operator automatically resolves `NODE_NAME` to the host that is generating the PTP events.
+For example, `compute-1.example.com`.
++
+In a cluster with bare-metal events configured, set the `http-event-publishers` field to `hw-event-publisher-service.openshift-bare-metal-events.svc.cluster.local:9043` in the cloud event sidecar deployment CR.
+
+. Deploy the `consumer-events-subscription-service` service alongside the events consumer application.
+For example:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    service.alpha.openshift.io/serving-cert-secret-name: sidecar-consumer-secret
+  name: consumer-events-subscription-service
+  namespace: cloud-events
+  labels:
+    app: consumer-service
+spec:
+  ports:
+    - name: sub-port
+      port: 9043
+  selector:
+    app: consumer
+  clusterIP: None
+  sessionAffinity: None
+  type: ClusterIP
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-installing-amq-interconnect-messaging-bus_{context}"]
+= Installing the AMQ messaging bus
+
+To pass PTP fast event notifications between publisher and subscriber on a node, you can install and configure an AMQ messaging bus to run locally on the node.
+To use AMQ messaging, you must install the AMQ Interconnect Operator.
+
+[NOTE]
+====
+Use HTTP transport instead of AMQP for PTP and bare-metal events where possible.
+AMQ Interconnect is EOL from 30 June 2024.
+Extended life cycle support (ELS) for AMQ Interconnect ends 29 November 2029.
+For more information see, link:https://access.redhat.com/support/policy/updates/jboss_notes#p_Interconnect[Red Hat AMQ Interconnect support status].
+====
+
+.Prerequisites
+
+* Install the {product-title} CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+* Install the AMQ Interconnect Operator to its own `amq-interconnect` namespace. See link:https://access.redhat.com/documentation/en-us/red_hat_amq/2021.q1/html/deploying_amq_interconnect_on_openshift/adding-operator-router-ocp[Adding the Red Hat Integration - AMQ Interconnect Operator].
+
+.Verification
+
+. Check that the AMQ Interconnect Operator is available and the required pods are running:
++
+[source,terminal]
+----
+$ oc get pods -n amq-interconnect
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                    READY   STATUS    RESTARTS   AGE
+amq-interconnect-645db76c76-k8ghs       1/1     Running   0          23h
+interconnect-operator-5cb5fc7cc-4v7qm   1/1     Running   0          23h
+----
+
+. Check that the required `linuxptp-daemon` PTP event producer pods are running in the `openshift-ptp` namespace.
++
+[source,terminal]
+----
+$ oc get pods -n openshift-ptp
+----
++
+.Example output
+[source,terminal]
+----
+NAME                     READY   STATUS    RESTARTS       AGE
+linuxptp-daemon-2t78p    3/3     Running   0              12h
+linuxptp-daemon-k8n88    3/3     Running   0              12h
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+[id="cnf-fast-event-notifications-api-refererence_{context}"]
+= Subscribing DU applications to PTP events REST API reference
+
+Use the PTP event notifications REST API to subscribe a distributed unit (DU) application to the PTP events that are generated on the parent node.
+
+Subscribe applications to PTP events by using the resource address `/cluster/node/<node_name>/ptp`, where `<node_name>` is the cluster node running the DU application.
+
+Deploy your `cloud-event-consumer` DU application container and `cloud-event-proxy` sidecar container in a separate DU application pod. The `cloud-event-consumer` DU application subscribes to the `cloud-event-proxy` container in the application pod.
+
+Use the following API endpoints to subscribe the `cloud-event-consumer` DU application to PTP events posted by the `cloud-event-proxy` container at [x-]`http://localhost:8089/api/ocloudNotifications/v1/` in the DU application pod:
+
+* `/api/ocloudNotifications/v1/subscriptions`
+- `POST`: Creates a new subscription
+- `GET`: Retrieves a list of subscriptions
+
+* `/api/ocloudNotifications/v1/subscriptions/<subscription_id>`
+- `GET`: Returns details for the specified subscription ID
+
+* `api/ocloudNotifications/v1/subscriptions/status/<subscription_id>`
+- `PUT`: Creates a new status ping request for the specified subscription ID
+
+* `/api/ocloudNotifications/v1/health`
+- `GET`: Returns the health status of `ocloudNotifications` API
+
+* `api/ocloudNotifications/v1/publishers`
+- `GET`: Returns an array of `os-clock-sync-state`, `ptp-clock-class-change`, and `lock-state` messages for the cluster node
+
+* `/api/ocloudnotifications/v1/<resource_address>/CurrentState`
+-  `GET`: Returns the current state of one the following event types: `os-clock-sync-state`, `ptp-clock-class-change`, or `lock-state` events
+
+[NOTE]
+====
+`9089` is the default port for the `cloud-event-consumer` container deployed in the application pod. You can configure a different port for your DU application as required.
+====
+
+== api/ocloudNotifications/v1/subscriptions
+
+[discrete]
+=== HTTP method
+
+`GET api/ocloudNotifications/v1/subscriptions`
+
+[discrete]
+==== Description
+
+Returns a list of subscriptions. If subscriptions exist, a `200 OK` status code is returned along with the list of subscriptions.
+
+.Example API response
+[source,json]
+----
+[
+ {
+  "id": "75b1ad8f-c807-4c23-acf5-56f4b7ee3826",
+  "endpointUri": "http://localhost:9089/event",
+  "uriLocation": "http://localhost:8089/api/ocloudNotifications/v1/subscriptions/75b1ad8f-c807-4c23-acf5-56f4b7ee3826",
+  "resource": "/cluster/node/compute-1.example.com/ptp"
+ }
+]
+----
+
+[discrete]
+=== HTTP method
+
+`POST api/ocloudNotifications/v1/subscriptions`
+
+[discrete]
+==== Description
+
+Creates a new subscription. If a subscription is successfully created, or if it already exists, a `201 Created` status code is returned.
+
+.Query parameters
+|===
+| Parameter | Type
+
+| subscription
+| data
+|===
+
+.Example payload
+[source,json]
+----
+{
+  "uriLocation": "http://localhost:8089/api/ocloudNotifications/v1/subscriptions",
+  "resource": "/cluster/node/compute-1.example.com/ptp"
+}
+----
+
+== api/ocloudNotifications/v1/subscriptions/<subscription_id>
+
+[discrete]
+=== HTTP method
+
+`GET api/ocloudNotifications/v1/subscriptions/<subscription_id>`
+
+[discrete]
+==== Description
+
+Returns details for the subscription with ID `<subscription_id>`
+
+.Query parameters
+|===
+| Parameter | Type
+
+| `<subscription_id>`
+| string
+|===
+
+.Example API response
+[source,json]
+----
+{
+  "id":"48210fb3-45be-4ce0-aa9b-41a0e58730ab",
+  "endpointUri": "http://localhost:9089/event",
+  "uriLocation":"http://localhost:8089/api/ocloudNotifications/v1/subscriptions/48210fb3-45be-4ce0-aa9b-41a0e58730ab",
+  "resource":"/cluster/node/compute-1.example.com/ptp"
+}
+----
+
+== api/ocloudNotifications/v1/subscriptions/status/<subscription_id>
+
+[discrete]
+=== HTTP method
+
+`PUT api/ocloudNotifications/v1/subscriptions/status/<subscription_id>`
+
+[discrete]
+==== Description
+
+Creates a new status ping request for subscription with ID `<subscription_id>`. If a subscription is present, the status request is successful and a `202 Accepted` status code is returned.
+
+.Query parameters
+|===
+| Parameter | Type
+
+| `<subscription_id>`
+| string
+|===
+
+.Example API response
+[source,json]
+----
+{"status":"ping sent"}
+----
+
+== api/ocloudNotifications/v1/health/
+
+[discrete]
+=== HTTP method
+
+`GET api/ocloudNotifications/v1/health/`
+
+[discrete]
+==== Description
+
+Returns the health status for the `ocloudNotifications` REST API.
+
+.Example API response
+[source,terminal]
+----
+OK
+----
+
+== api/ocloudNotifications/v1/publishers
+
+[discrete]
+=== HTTP method
+
+`GET api/ocloudNotifications/v1/publishers`
+
+[discrete]
+==== Description
+
+Returns an array of `os-clock-sync-state`, `ptp-clock-class-change`, and `lock-state` details for the cluster node. The system generates notifications when the relevant equipment state changes.
+
+* `os-clock-sync-state` notifications describe the host operating system clock synchronization state. Can be in `LOCKED` or `FREERUN` state.
+* `ptp-clock-class-change` notifications describe the current state of the PTP clock class.
+* `lock-state` notifications describe the current status of the PTP equipment lock state. Can be in `LOCKED`, `HOLDOVER` or `FREERUN` state.
+
+.Example API response
+[source,json]
+----
+[
+  {
+    "id": "0fa415ae-a3cf-4299-876a-589438bacf75",
+    "endpointUri": "http://localhost:9085/api/ocloudNotifications/v1/dummy",
+    "uriLocation": "http://localhost:9085/api/ocloudNotifications/v1/publishers/0fa415ae-a3cf-4299-876a-589438bacf75",
+    "resource": "/cluster/node/compute-1.example.com/sync/sync-status/os-clock-sync-state"
+  },
+  {
+    "id": "28cd82df-8436-4f50-bbd9-7a9742828a71",
+    "endpointUri": "http://localhost:9085/api/ocloudNotifications/v1/dummy",
+    "uriLocation": "http://localhost:9085/api/ocloudNotifications/v1/publishers/28cd82df-8436-4f50-bbd9-7a9742828a71",
+    "resource": "/cluster/node/compute-1.example.com/sync/ptp-status/ptp-clock-class-change"
+  },
+  {
+    "id": "44aa480d-7347-48b0-a5b0-e0af01fa9677",
+    "endpointUri": "http://localhost:9085/api/ocloudNotifications/v1/dummy",
+    "uriLocation": "http://localhost:9085/api/ocloudNotifications/v1/publishers/44aa480d-7347-48b0-a5b0-e0af01fa9677",
+    "resource": "/cluster/node/compute-1.example.com/sync/ptp-status/lock-state"
+  }
+]
+----
+
+You can find `os-clock-sync-state`, `ptp-clock-class-change` and `lock-state` events in the logs for the `cloud-event-proxy` container. For example:
+
+[source,terminal]
+----
+$ oc logs -f linuxptp-daemon-cvgr6 -n openshift-ptp -c cloud-event-proxy
+----
+
+.Example os-clock-sync-state event
+[source,json]
+----
+{
+   "id":"c8a784d1-5f4a-4c16-9a81-a3b4313affe5",
+   "type":"event.sync.sync-status.os-clock-sync-state-change",
+   "source":"/cluster/compute-1.example.com/ptp/CLOCK_REALTIME",
+   "dataContentType":"application/json",
+   "time":"2022-05-06T15:31:23.906277159Z",
+   "data":{
+      "version":"v1",
+      "values":[
+         {
+            "resource":"/sync/sync-status/os-clock-sync-state",
+            "dataType":"notification",
+            "valueType":"enumeration",
+            "value":"LOCKED"
+         },
+         {
+            "resource":"/sync/sync-status/os-clock-sync-state",
+            "dataType":"metric",
+            "valueType":"decimal64.3",
+            "value":"-53"
+         }
+      ]
+   }
+}
+----
+
+.Example ptp-clock-class-change event
+[source,json]
+----
+{
+   "id":"69eddb52-1650-4e56-b325-86d44688d02b",
+   "type":"event.sync.ptp-status.ptp-clock-class-change",
+   "source":"/cluster/compute-1.example.com/ptp/ens2fx/master",
+   "dataContentType":"application/json",
+   "time":"2022-05-06T15:31:23.147100033Z",
+   "data":{
+      "version":"v1",
+      "values":[
+         {
+            "resource":"/sync/ptp-status/ptp-clock-class-change",
+            "dataType":"metric",
+            "valueType":"decimal64.3",
+            "value":"135"
+         }
+      ]
+   }
+}
+----
+
+.Example lock-state event
+[source,json]
+----
+{
+   "id":"305ec18b-1472-47b3-aadd-8f37933249a9",
+   "type":"event.sync.ptp-status.ptp-state-change",
+   "source":"/cluster/compute-1.example.com/ptp/ens2fx/master",
+   "dataContentType":"application/json",
+   "time":"2022-05-06T15:31:23.467684081Z",
+   "data":{
+      "version":"v1",
+      "values":[
+         {
+            "resource":"/sync/ptp-status/lock-state",
+            "dataType":"notification",
+            "valueType":"enumeration",
+            "value":"LOCKED"
+         },
+         {
+            "resource":"/sync/ptp-status/lock-state",
+            "dataType":"metric",
+            "valueType":"decimal64.3",
+            "value":"62"
+         }
+      ]
+   }
+}
+----
+
+== /api/ocloudnotifications/v1/<resource_address>/CurrentState
+
+[discrete]
+=== HTTP method
+
+`GET api/ocloudNotifications/v1/cluster/node/<node_name>/sync/ptp-status/lock-state/CurrentState`
+
+`GET api/ocloudNotifications/v1/cluster/node/<node_name>/sync/sync-status/os-clock-sync-state/CurrentState`
+
+`GET api/ocloudNotifications/v1/cluster/node/<node_name>/sync/ptp-status/ptp-clock-class-change/CurrentState`
+
+[discrete]
+==== Description
+
+Configure the `CurrentState` API endpoint to return the current state of the `os-clock-sync-state`, `ptp-clock-class-change`, or `lock-state` events for the cluster node.
+
+* `os-clock-sync-state` notifications describe the host operating system clock synchronization state. Can be in `LOCKED` or `FREERUN` state.
+* `ptp-clock-class-change` notifications describe the current state of the PTP clock class.
+* `lock-state` notifications describe the current status of the PTP equipment lock state. Can be in `LOCKED`, `HOLDOVER` or `FREERUN` state.
+
+.Query parameters
+|===
+| Parameter | Type
+
+| `<resource_address>`
+| string
+|===
+
+.Example lock-state API response
+[source,json]
+----
+{
+  "id": "c1ac3aa5-1195-4786-84f8-da0ea4462921",
+  "type": "event.sync.ptp-status.ptp-state-change",
+  "source": "/cluster/node/compute-1.example.com/sync/ptp-status/lock-state",
+  "dataContentType": "application/json",
+  "time": "2023-01-10T02:41:57.094981478Z",
+  "data": {
+    "version": "v1",
+    "values": [
+      {
+        "resource": "/cluster/node/compute-1.example.com/ens5fx/master",
+        "dataType": "notification",
+        "valueType": "enumeration",
+        "value": "LOCKED"
+      },
+      {
+        "resource": "/cluster/node/compute-1.example.com/ens5fx/master",
+        "dataType": "metric",
+        "valueType": "decimal64.3",
+        "value": "29"
+      }
+    ]
+  }
+}
+----
+
+.Example os-clock-sync-state API response
+[source,json]
+----
+{
+  "specversion": "0.3",
+  "id": "4f51fe99-feaa-4e66-9112-66c5c9b9afcb",
+  "source": "/cluster/node/compute-1.example.com/sync/sync-status/os-clock-sync-state",
+  "type": "event.sync.sync-status.os-clock-sync-state-change",
+  "subject": "/cluster/node/compute-1.example.com/sync/sync-status/os-clock-sync-state",
+  "datacontenttype": "application/json",
+  "time": "2022-11-29T17:44:22.202Z",
+  "data": {
+    "version": "v1",
+    "values": [
+      {
+        "resource": "/cluster/node/compute-1.example.com/CLOCK_REALTIME",
+        "dataType": "notification",
+        "valueType": "enumeration",
+        "value": "LOCKED"
+      },
+      {
+        "resource": "/cluster/node/compute-1.example.com/CLOCK_REALTIME",
+        "dataType": "metric",
+        "valueType": "decimal64.3",
+        "value": "27"
+      }
+    ]
+  }
+}
+----
+
+.Example ptp-clock-class-change API response
+[source,json]
+----
+{
+  "id": "064c9e67-5ad4-4afb-98ff-189c6aa9c205",
+  "type": "event.sync.ptp-status.ptp-clock-class-change",
+  "source": "/cluster/node/compute-1.example.com/sync/ptp-status/ptp-clock-class-change",
+  "dataContentType": "application/json",
+  "time": "2023-01-10T02:41:56.785673989Z",
+  "data": {
+    "version": "v1",
+    "values": [
+      {
+        "resource": "/cluster/node/compute-1.example.com/ens5fx/master",
+        "dataType": "metric",
+        "valueType": "decimal64.3",
+        "value": "165"
+      }
+    ]
+  }
+}
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/using-ptp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-monitoring-fast-events-metrics_{context}"]
+= Monitoring PTP fast event metrics
+
+You can monitor PTP fast events metrics from cluster nodes where the `linuxptp-daemon` is running.
+You can also monitor PTP fast event metrics in the {product-title} web console by using the preconfigured and self-updating Prometheus monitoring stack.
+
+.Prerequisites
+
+* Install the {product-title} CLI `oc`.
+
+* Log in as a user with `cluster-admin` privileges.
+
+* Install and configure the PTP Operator on a node with PTP-capable hardware.
+
+.Procedure
+
+. Check for exposed PTP metrics on any node where the `linuxptp-daemon` is running. For example, run the following command:
++
+[source,terminal]
+----
+$ curl http://<node_name>:9091/metrics
+----
++
+.Example output
+----
+# HELP openshift_ptp_clock_state 0 = FREERUN, 1 = LOCKED, 2 = HOLDOVER
+# TYPE openshift_ptp_clock_state gauge
+openshift_ptp_clock_state{iface="ens1fx",node="compute-1.example.com",process="ptp4l"} 1
+openshift_ptp_clock_state{iface="ens3fx",node="compute-1.example.com",process="ptp4l"} 1
+openshift_ptp_clock_state{iface="ens5fx",node="compute-1.example.com",process="ptp4l"} 1
+openshift_ptp_clock_state{iface="ens7fx",node="compute-1.example.com",process="ptp4l"} 1
+# HELP openshift_ptp_delay_ns
+# TYPE openshift_ptp_delay_ns gauge
+openshift_ptp_delay_ns{from="master",iface="ens1fx",node="compute-1.example.com",process="ptp4l"} 842
+openshift_ptp_delay_ns{from="master",iface="ens3fx",node="compute-1.example.com",process="ptp4l"} 480
+openshift_ptp_delay_ns{from="master",iface="ens5fx",node="compute-1.example.com",process="ptp4l"} 584
+openshift_ptp_delay_ns{from="master",iface="ens7fx",node="compute-1.example.com",process="ptp4l"} 482
+openshift_ptp_delay_ns{from="phc",iface="CLOCK_REALTIME",node="compute-1.example.com",process="phc2sys"} 547
+# HELP openshift_ptp_offset_ns
+# TYPE openshift_ptp_offset_ns gauge
+openshift_ptp_offset_ns{from="master",iface="ens1fx",node="compute-1.example.com",process="ptp4l"} -2
+openshift_ptp_offset_ns{from="master",iface="ens3fx",node="compute-1.example.com",process="ptp4l"} -44
+openshift_ptp_offset_ns{from="master",iface="ens5fx",node="compute-1.example.com",process="ptp4l"} -8
+openshift_ptp_offset_ns{from="master",iface="ens7fx",node="compute-1.example.com",process="ptp4l"} 3
+openshift_ptp_offset_ns{from="phc",iface="CLOCK_REALTIME",node="compute-1.example.com",process="phc2sys"} 12
+----
+
+. To view the PTP event in the {product-title} web console, copy the name of the PTP metric you want to query, for example, `openshift_ptp_offset_ns`.
+
+. In the {product-title} web console, click *Observe* -> *Metrics*.
+
+. Paste the PTP metric name into the *Expression* field, and click *Run queries*.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../monitoring/managing-metrics.adoc#managing-metrics[Managing metrics]
+
+//# includes=_attributes/common-attributes,modules/nw-ptp-introduction,modules/ptp-dual-nics,modules/ptp-linuxptp-introduction,modules/nw-ptp-installing-operator-cli,modules/nw-ptp-installing-operator-web-console,modules/nw-ptp-device-discovery,modules/nw-ptp-configuring-linuxptp-services-as-grandmaster-clock,modules/nw-ptp-grandmaster-clock-configuration-reference,modules/nw-ptp-configuring-linuxptp-services-as-ordinary-clock,modules/nw-ptp-configuring-linuxptp-services-as-boundary-clock,modules/ptp-configuring-linuxptp-services-as-boundary-clock-dual-nic,modules/snippets/technology-preview,modules/nw-columbiaville-ptp-config-refererence,modules/cnf-configuring-fifo-priority-scheduling-for-ptp,modules/cnf-configuring-log-filtering-for-linuxptp,modules/cnf-troubleshooting-common-ptp-operator-issues,modules/cnf-about-collecting-ptp-data,modules/cnf-about-ptp-and-clock-synchronization,modules/snippets/ptp-amq-interconnect-eol,modules/cnf-about-ptp-fast-event-notifications-framework,modules/cnf-configuring-the-ptp-fast-event-publisher,modules/cnf-migrating-from-amqp-to-http-transport,modules/cnf-installing-amq-interconnect-messaging-bus,modules/cnf-fast-event-notifications-api-refererence,modules/cnf-monitoring-fast-events-metrics

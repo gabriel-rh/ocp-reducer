@@ -1,0 +1,895 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="metallb-configure-bgp-peers"]
+= Configuring MetalLB BGP peers
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: configure-metallb-bgp-peers
+
+toc::[]
+
+As a cluster administrator, you can add, modify, and delete Border Gateway Protocol (BGP) peers.
+The MetalLB Operator uses the BGP peer custom resources to identify which peers that MetalLB `speaker` pods contact to start BGP sessions.
+The peers receive the route advertisements for the load-balancer IP addresses that MetalLB assigns to services.
+
+// Dear reviewers and maintainers, I capitalized Autonomous System (AS)
+// to match the capitalization that is shown in the common terms section
+// of the foll RFC: https://datatracker.ietf.org/doc/html/rfc4271
+
+// BGP peer custom resource
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/metallb/metallb-configure-bgp-peers.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="nw-metallb-bgppeer-cr_{context}"]
+= About the BGP peer custom resource
+
+The fields for the BGP peer custom resource are described in the following table.
+
+.MetalLB BGP peer custom resource
+[cols="1,1,3",options="header"]
+|===
+
+|Field
+|Type
+|Description
+
+|`metadata.name`
+|`string`
+|Specifies the name for the BGP peer custom resource.
+
+|`metadata.namespace`
+|`string`
+|Specifies the namespace for the BGP peer custom resource.
+
+|`spec.myASN`
+|`integer`
+|Specifies the Autonomous System number for the local end of the BGP session.
+Specify the same value in all BGP peer custom resources that you add.
+The range is `0` to `4294967295`.
+
+|`spec.peerASN`
+|`integer`
+|Specifies the Autonomous System number for the remote end of the BGP session.
+The range is `0` to `4294967295`.
+
+|`spec.peerAddress`
+|`string`
+|Specifies the IP address of the peer to contact for establishing the BGP session.
+
+|`spec.sourceAddress`
+|`string`
+|Optional: Specifies the IP address to use when establishing the BGP session.
+The value must be an IPv4 address.
+
+|`spec.peerPort`
+|`integer`
+|Optional: Specifies the network port of the peer to contact for establishing the BGP session.
+The range is `0` to `16384`.
+
+|`spec.holdTime`
+|`string`
+|Optional: Specifies the duration for the hold time to propose to the BGP peer.
+The minimum value is 3 seconds (`3s`).
+The common units are seconds and minutes, such as `3s`, `1m`, and `5m30s`.
+To detect path failures more quickly, also configure BFD.
+
+|`spec.keepaliveTime`
+|`string`
+|Optional: Specifies the maximum interval between sending keep-alive messages to the BGP peer.
+If you specify this field, you must also specify a value for the `holdTime` field.
+The specified value must be less than the value for the `holdTime` field.
+
+|`spec.routerID`
+|`string`
+|Optional: Specifies the router ID to advertise to the BGP peer.
+If you specify this field, you must specify the same value in every BGP peer custom resource that you add.
+
+|`spec.password`
+|`string`
+|Optional: Specifies the MD5 password to send to the peer for routers that enforce TCP MD5 authenticated BGP sessions.
+
+|`spec.passwordSecret`
+|`string`
+|Optional: Specifies name of the authentication secret for the BGP Peer. The secret must live in the `metallb` namespace and be of type basic-auth.
+
+|`spec.bfdProfile`
+|`string`
+|Optional: Specifies the name of a BFD profile.
+
+|`spec.nodeSelectors`
+|`object[]`
+|Optional: Specifies a selector, using match expressions and match labels, to control which nodes can connect to the BGP peer.
+
+|`spec.ebgpMultiHop`
+|`boolean`
+|Optional: Specifies that the BGP peer is multiple network hops away.
+If the BGP peer is not directly connected to the same network, the speaker cannot establish a BGP session unless this field is set to `true`.
+This field applies to _external BGP_.
+External BGP is the term that is used to describe when a BGP peer belongs to a different Autonomous System.
+
+|===
+
+[NOTE]
+====
+The `passwordSecret` field is mutually exclusive with the `password` field, and contains a reference to a secret containing the password to use. Setting both fields results in a failure of the parsing.
+====
+
+:leveloffset!:
+
+// Add a BGP peer
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/metallb/metallb-configure-bgp-peers.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-metallb-configure-bgppeer_{context}"]
+= Configuring a BGP peer
+
+As a cluster administrator, you can add a BGP peer custom resource to exchange routing information with network routers and advertise the IP addresses for services.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+* Configure MetalLB with a BGP advertisement.
+
+.Procedure
+
+. Create a file, such as `bgppeer.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  namespace: metallb-system
+  name: doc-example-peer
+spec:
+  peerAddress: 10.0.0.1
+  peerASN: 64501
+  myASN: 64500
+  routerID: 10.10.10.10
+----
+
+. Apply the configuration for the BGP peer:
++
+[source,terminal]
+----
+$ oc apply -f bgppeer.yaml
+----
+
+:leveloffset!:
+
+// Add a BGP peer
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/metallb/metallb-configure-bgp-peers.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-metallb-example-assign-specific-address-pools-specific-bgp-peers_{context}"]
+= Configure a specific set of BGP peers for a given address pool
+
+This procedure illustrates how to:
+
+* Configure a set of address pools (`pool1` and `pool2`).
+* Configure a set of BGP peers (`peer1` and `peer2`).
+* Configure BGP advertisement to assign `pool1` to `peer1` and `pool2` to `peer2`.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create address pool `pool1`.
+
+.. Create a file, such as `ipaddresspool1.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  namespace: metallb-system
+  name: pool1
+spec:
+  addresses:
+    - 4.4.4.100-4.4.4.200
+    - 2001:100:4::200-2001:100:4::400
+----
+
+.. Apply the configuration for the IP address pool `pool1`:
++
+[source,terminal]
+----
+$ oc apply -f ipaddresspool1.yaml
+----
+
+. Create address pool `pool2`.
+
+.. Create a file, such as `ipaddresspool2.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  namespace: metallb-system
+  name: pool2
+spec:
+  addresses:
+    - 5.5.5.100-5.5.5.200
+    - 2001:100:5::200-2001:100:5::400
+----
+
+.. Apply the configuration for the IP address pool `pool2`:
++
+[source,terminal]
+----
+$ oc apply -f ipaddresspool2.yaml
+----
+. Create BGP `peer1`.
+
+.. Create a file, such as `bgppeer1.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  namespace: metallb-system
+  name: peer1
+spec:
+  peerAddress: 10.0.0.1
+  peerASN: 64501
+  myASN: 64500
+  routerID: 10.10.10.10
+----
+
+.. Apply the configuration for the BGP peer:
++
+[source,terminal]
+----
+$ oc apply -f bgppeer1.yaml
+----
+
+. Create BGP `peer2`.
+
+.. Create a file, such as `bgppeer2.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  namespace: metallb-system
+  name: peer2
+spec:
+  peerAddress: 10.0.0.2
+  peerASN: 64501
+  myASN: 64500
+  routerID: 10.10.10.10
+----
+
+.. Apply the configuration for the BGP peer2:
++
+[source,terminal]
+----
+$ oc apply -f bgppeer2.yaml
+----
+
+. Create BGP advertisement 1.
+
+.. Create a file, such as `bgpadvertisement1.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta1
+kind: BGPAdvertisement
+metadata:
+  name: bgpadvertisement-1
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - pool1
+  peers:
+    - peer1
+  communities:
+    - 65535:65282
+  aggregationLength: 32
+  aggregationLengthV6: 128
+  localPref: 100
+----
+
+.. Apply the configuration:
++
+[source,terminal]
+----
+$ oc apply -f bgpadvertisement1.yaml
+----
+
+. Create BGP advertisement 2.
+
+.. Create a file, such as `bgpadvertisement2.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta1
+kind: BGPAdvertisement
+metadata:
+  name: bgpadvertisement-2
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - pool2
+  peers:
+    - peer2
+  communities:
+    - 65535:65282
+  aggregationLength: 32
+  aggregationLengthV6: 128
+  localPref: 100
+----
+
+.. Apply the configuration:
++
+[source,terminal]
+----
+$ oc apply -f bgpadvertisement2.yaml
+----
+
+:leveloffset!:
+
+// Add a BGP peer with VRF
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/metallb/metallb-configure-bgp-peers.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-metallb-bgp-peer-vrf_{context}"]
+= Exposing a service through a network VRF
+
+You can expose a service through a virtual routing and forwarding (VRF) instance by associating a VRF on a network interface with a BGP peer.
+
+:FeatureName: Exposing a service through a VRF on a BGP peer
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+By using a VRF on a network interface to expose a service through a BGP peer, you can segregate traffic to the service, configure independent routing decisions, and enable multi-tenancy support on a network interface.
+
+[NOTE]
+====
+By establishing a BGP session through an interface belonging to a network VRF, MetalLB can advertise services through that interface and enable external traffic to reach the service through this interface. However, the network VRF routing table is different from the default VRF routing table used by OVN-Kubernetes. Therefore, the traffic cannot reach the OVN-Kubernetes network infrastructure.
+
+To enable the traffic directed to the service to reach the OVN-Kubernetes network infrastructure, you must configure routing rules to define the next hops for network traffic. See the `NodeNetworkConfigurationPolicy` resource in "Managing symmetric routing with MetalLB" in the _Additional resources_ section for more information.
+====
+
+These are the high-level steps to expose a service through a network VRF with a BGP peer:
+
+. Define a BGP peer and add a network VRF instance.
+. Specify an IP address pool for MetalLB.
+. Configure a BGP route advertisement for MetalLB to advertise a route using the specified IP address pool and the BGP peer associated with the VRF instance.
+. Deploy a service to test the configuration.
+
+.Prerequisites
+
+* You installed the OpenShift CLI (`oc`).
+* You logged in as a user with `cluster-admin` privileges.
+* You defined a `NodeNetworkConfigurationPolicy` to associate a Virtual Routing and Forwarding (VRF) instance with a network interface. For more information about completing this prerequisite, see the _Additional resources_ section.
+* You installed MetalLB on your cluster.
+
+.Procedure
+
+. Create a `BGPPeer` custom resources (CR):
+
+.. Create a file, such as `frrviavrf.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: frrviavrf
+  namespace: metallb-system
+spec:
+  myASN: 100
+  peerASN: 200
+  peerAddress: 192.168.130.1
+  vrf: ens4vrf <1>
+----
+<1> Specifies the network VRF instance to associate with the BGP peer. MetalLB can advertise services and make routing decisions based on the routing information in the VRF.
++
+[NOTE]
+====
+You must configure this network VRF instance in a `NodeNetworkConfigurationPolicy` CR. See the _Additional resources_ for more information.
+====
+
+.. Apply the configuration for the BGP peer by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f frrviavrf.yaml
+----
+
+. Create an `IPAddressPool` CR:
+
+.. Create a file, such as `first-pool.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: first-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.169.10.0/32
+----
+
+.. Apply the configuration for the IP address pool by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f first-pool.yaml
+----
+
+. Create a `BGPAdvertisement` CR:
+
+.. Create a file, such as `first-adv.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta1
+kind: BGPAdvertisement
+metadata:
+  name: first-adv
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - first-pool
+  peers:
+    - frrviavrf <1>
+----
+<1> In this example, MetalLB advertises a range of IP addresses from the `first-pool` IP address pool to the `frrviavrf` BGP peer.
+
+.. Apply the configuration for the BGP advertisement by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f first-adv.yaml
+----
+
+. Create a `Namespace`, `Deployment`, and `Service` CR:
+
+.. Create a file, such as `deploy-service.yaml`, with content like the following example:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  namespace: test
+spec:
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+      - name: server
+        image: registry.redhat.io/ubi9/ubi
+        ports:
+        - name: http
+          containerPort: 30100
+        command: ["/bin/sh", "-c"]
+        args: ["sleep INF"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server1
+  namespace: test
+spec:
+  ports:
+  - name: http
+    port: 30100
+    protocol: TCP
+    targetPort: 30100
+  selector:
+    app: server
+  type: LoadBalancer
+----
+
+.. Apply the configuration for the namespace, deployment, and service by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f deploy-service.yaml
+----
+
+.Verification
+
+. Identify a MetalLB speaker pod by running the following command:
++
+[source,terminal]
+----
+$ oc get -n metallb-system pods -l component=speaker
+----
++
+.Example output
+[source,terminal]
+----
+NAME            READY   STATUS    RESTARTS   AGE
+speaker-c6c5f   6/6     Running   0          69m
+----
+
+. Verify that the state of the BGP session is `Established` in the speaker pod by running the following command, replacing the variables to match your configuration:
++
+[source,terminal]
+----
+$ oc exec -n metallb-system <speaker_pod> -c frr -- vtysh -c "show bgp vrf <vrf_name> neigh"
+----
++
+.Example output
+[source,terminal]
+----
+BGP neighbor is 192.168.30.1, remote AS 200, local AS 100, external link
+  BGP version 4, remote router ID 192.168.30.1, local router ID 192.168.30.71
+  BGP state = Established, up for 04:20:09
+
+...
+----
+
+. Verify that the service is advertised correctly by running the following command:
++
+[source,terminal]
+----
+$ oc exec -n metallb-system <speaker_pod> -c frr -- vtysh -c "show bgp vrf <vrf_name> ipv4"
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../networking/multiple_networks/about-virtual-routing-and-forwarding.adoc#cnf-about-virtual-routing-and-forwarding_about-virtual-routing-and-forwarding[About virtual routing and forwarding]
+
+* xref:../../networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc#virt-example-host-vrf_k8s_nmstate-updating-node-network-config[Example: Network interface with a VRF instance node network configuration policy]
+
+* xref:../../networking/ovn_kubernetes_network_provider/configuring-egress-traffic-for-vrf-loadbalancer-services.adoc#configuring-egress-traffic-loadbalancer-services[Configuring an egress service]
+
+* xref:../../networking/metallb/metallb-configure-return-traffic.adoc#metallb-configure-return-traffic[Managing symmetric routing with MetalLB]
+
+// Examples
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/metallb/metallb-configure-bgp-peers.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-metallb-example-bgppeer_{context}"]
+= Example BGP peer configurations
+
+[id="nw-metallb-example-limit-nodes-bgppeer_{context}"]
+== Example: Limit which nodes connect to a BGP peer
+
+You can specify the node selectors field to control which nodes can connect to a BGP peer.
+
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: doc-example-nodesel
+  namespace: metallb-system
+spec:
+  peerAddress: 10.0.20.1
+  peerASN: 64501
+  myASN: 64500
+  nodeSelectors:
+  - matchExpressions:
+    - key: kubernetes.io/hostname
+      operator: In
+      values: [compute-1.example.com, compute-2.example.com]
+----
+
+[id="nw-metallb-example-specify-bfd-profile_{context}"]
+== Example: Specify a BFD profile for a BGP peer
+
+You can specify a BFD profile to associate with BGP peers.
+BFD compliments BGP by providing more rapid detection of communication failures between peers than BGP alone.
+
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: doc-example-peer-bfd
+  namespace: metallb-system
+spec:
+  peerAddress: 10.0.20.1
+  peerASN: 64501
+  myASN: 64500
+  holdTime: "10s"
+  bfdProfile: doc-example-bfd-profile-full
+----
+//Dependency on RHEL bug 2054160 being addressed.Remove note when fixed.
+[NOTE]
+====
+Deleting the bidirectional forwarding detection (BFD) profile and removing the `bfdProfile` added to the border gateway protocol (BGP) peer resource does not disable the BFD. Instead, the BGP peer starts using the default BFD profile. To disable BFD from a BGP peer resource, delete the BGP peer configuration and recreate it without a BFD profile. For more information, see link:https://bugzilla.redhat.com/show_bug.cgi?id=2050824[*BZ#2050824*].
+====
+
+[id="nw-metallb-example-dual-stack_{context}"]
+== Example: Specify BGP peers for dual-stack networking
+
+To support dual-stack networking, add one BGP peer custom resource for IPv4 and one BGP peer custom resource for IPv6.
+
+[source,yaml]
+----
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: doc-example-dual-stack-ipv4
+  namespace: metallb-system
+spec:
+  peerAddress: 10.0.20.1
+  peerASN: 64500
+  myASN: 64500
+---
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: doc-example-dual-stack-ipv6
+  namespace: metallb-system
+spec:
+  peerAddress: 2620:52:0:88::104
+  peerASN: 64500
+  myASN: 64500
+----
+
+:leveloffset!:
+
+[id="next-steps_{context}"]
+== Next steps
+
+* xref:../../networking/metallb/metallb-configure-services.adoc#metallb-configure-services[Configuring services to use MetalLB]
+
+//# includes=_attributes/common-attributes,modules/nw-metallb-bgppeer-cr,modules/nw-metallb-configure-bgppeer,modules/nw-metallb-configure-specificpools-to-bgppeer,modules/nw-metallb-configure-vrf-bgppeer,modules/snippets/technology-preview,modules/nw-metallb-example-bgppeer

@@ -1,0 +1,747 @@
+:_mod-docs-content-type: ASSEMBLY
+:context: cluster-logging-elasticsearch
+[id="cluster-logging-log-store-status"]
+= Viewing the status of the Elasticsearch log store
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+
+toc::[]
+
+You can view the status of the OpenShift Elasticsearch Operator and for a number of Elasticsearch components.
+
+// The following include statements pull in the module files that comprise
+// the assembly. Include any combination of concept, procedure, or reference
+// modules required to cover the user story. You can also include other
+// assemblies.
+
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * logging/cluster-logging-log-store.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cluster-logging-log-store-comp-viewing_{context}"]
+= Viewing the status of the log store
+
+You can view the status of your log store.
+
+.Prerequisites
+
+* The Red Hat OpenShift Logging and Elasticsearch Operators must be installed.
+
+.Procedure
+
+. Change to the `openshift-logging` project.
++
+[source,terminal]
+----
+$ oc project openshift-logging
+----
+
+. To view the status:
+
+.. Get the name of the log store instance:
++
+[source,terminal]
+----
+$ oc get Elasticsearch
+----
++
+.Example output
+[source,terminal]
+----
+NAME            AGE
+elasticsearch   5h9m
+----
+
+.. Get the log store status:
++
+[source,terminal]
+----
+$ oc get Elasticsearch <Elasticsearch-instance> -o yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc get Elasticsearch elasticsearch -n openshift-logging -o yaml
+----
++
+The output includes information similar to the following:
++
+.Example output
+[source,terminal]
+----
+status: <1>
+  cluster: <2>
+    activePrimaryShards: 30
+    activeShards: 60
+    initializingShards: 0
+    numDataNodes: 3
+    numNodes: 3
+    pendingTasks: 0
+    relocatingShards: 0
+    status: green
+    unassignedShards: 0
+  clusterHealth: ""
+  conditions: [] <3>
+  nodes: <4>
+  - deploymentName: elasticsearch-cdm-zjf34ved-1
+    upgradeStatus: {}
+  - deploymentName: elasticsearch-cdm-zjf34ved-2
+    upgradeStatus: {}
+  - deploymentName: elasticsearch-cdm-zjf34ved-3
+    upgradeStatus: {}
+  pods: <5>
+    client:
+      failed: []
+      notReady: []
+      ready:
+      - elasticsearch-cdm-zjf34ved-1-6d7fbf844f-sn422
+      - elasticsearch-cdm-zjf34ved-2-dfbd988bc-qkzjz
+      - elasticsearch-cdm-zjf34ved-3-c8f566f7c-t7zkt
+    data:
+      failed: []
+      notReady: []
+      ready:
+      - elasticsearch-cdm-zjf34ved-1-6d7fbf844f-sn422
+      - elasticsearch-cdm-zjf34ved-2-dfbd988bc-qkzjz
+      - elasticsearch-cdm-zjf34ved-3-c8f566f7c-t7zkt
+    master:
+      failed: []
+      notReady: []
+      ready:
+      - elasticsearch-cdm-zjf34ved-1-6d7fbf844f-sn422
+      - elasticsearch-cdm-zjf34ved-2-dfbd988bc-qkzjz
+      - elasticsearch-cdm-zjf34ved-3-c8f566f7c-t7zkt
+  shardAllocationEnabled: all
+----
+<1> In the output, the cluster status fields appear in the `status` stanza.
+<2> The status of the log store:
++
+* The number of active primary shards.
+* The number of active shards.
+* The number of shards that are initializing.
+* The number of log store data nodes.
+* The total number of log store nodes.
+* The number of pending tasks.
+* The log store status: `green`, `red`, `yellow`.
+* The number of unassigned shards.
+<3> Any status conditions, if present. The log store status indicates the reasons from the scheduler if a pod could not be placed. Any events related to the following conditions are shown:
+* Container Waiting for both the log store and proxy containers.
+* Container Terminated for both the log store and proxy containers.
+* Pod unschedulable.
+Also, a condition is shown for a number of issues; see *Example condition messages*.
+<4> The log store nodes in the cluster, with `upgradeStatus`.
+<5> The log store client, data, and master pods in the cluster, listed under 'failed`, `notReady`, or `ready` state.
+
+[id="cluster-logging-elasticsearch-status-message_{context}"]
+== Example condition messages
+
+The following are examples of some condition messages from the `Status` section of the Elasticsearch instance.
+
+// https://github.com/openshift/elasticsearch-operator/pull/92
+
+The following status message indicates that a node has exceeded the configured low watermark, and no shard will be allocated to this node.
+
+[source,yaml]
+----
+status:
+  nodes:
+  - conditions:
+    - lastTransitionTime: 2019-03-15T15:57:22Z
+      message: Disk storage usage for node is 27.5gb (36.74%). Shards will be not
+        be allocated on this node.
+      reason: Disk Watermark Low
+      status: "True"
+      type: NodeStorage
+    deploymentName: example-elasticsearch-cdm-0-1
+    upgradeStatus: {}
+----
+
+The following status message indicates that a node has exceeded the configured high watermark, and shards will be relocated to other nodes.
+
+[source,yaml]
+----
+status:
+  nodes:
+  - conditions:
+    - lastTransitionTime: 2019-03-15T16:04:45Z
+      message: Disk storage usage for node is 27.5gb (36.74%). Shards will be relocated
+        from this node.
+      reason: Disk Watermark High
+      status: "True"
+      type: NodeStorage
+    deploymentName: example-elasticsearch-cdm-0-1
+    upgradeStatus: {}
+----
+
+The following status message indicates that the log store node selector in the CR does not match any nodes in the cluster:
+
+[source,yaml]
+----
+status:
+    nodes:
+    - conditions:
+      - lastTransitionTime: 2019-04-10T02:26:24Z
+        message: '0/8 nodes are available: 8 node(s) didn''t match node selector.'
+        reason: Unschedulable
+        status: "True"
+        type: Unschedulable
+----
+
+The following status message indicates that the log store CR uses a non-existent persistent volume claim (PVC).
+
+[source,yaml]
+----
+status:
+   nodes:
+   - conditions:
+     - last Transition Time:  2019-04-10T05:55:51Z
+       message:               pod has unbound immediate PersistentVolumeClaims (repeated 5 times)
+       reason:                Unschedulable
+       status:                True
+       type:                  Unschedulable
+----
+
+The following status message indicates that your log store cluster does not have enough nodes to support the redundancy policy.
+
+[source,yaml]
+----
+status:
+  clusterHealth: ""
+  conditions:
+  - lastTransitionTime: 2019-04-17T20:01:31Z
+    message: Wrong RedundancyPolicy selected. Choose different RedundancyPolicy or
+      add more nodes with data roles
+    reason: Invalid Settings
+    status: "True"
+    type: InvalidRedundancy
+----
+
+This status message indicates your cluster has too many control plane nodes:
+
+[source,yaml]
+----
+status:
+  clusterHealth: green
+  conditions:
+    - lastTransitionTime: '2019-04-17T20:12:34Z'
+      message: >-
+        Invalid master nodes count. Please ensure there are no more than 3 total
+        nodes with master roles
+      reason: Invalid Settings
+      status: 'True'
+      type: InvalidMasters
+----
+
+
+The following status message indicates that Elasticsearch storage does not support the change you tried to make.
+
+For example:
+[source,yaml]
+----
+status:
+  clusterHealth: green
+  conditions:
+    - lastTransitionTime: "2021-05-07T01:05:13Z"
+      message: Changing the storage structure for a custom resource is not supported
+      reason: StorageStructureChangeIgnored
+      status: 'True'
+      type: StorageStructureChangeIgnored
+----
+
+The `reason` and `type` fields specify the type of unsupported change:
+
+`StorageClassNameChangeIgnored`:: Unsupported change to the storage class name.
+`StorageSizeChangeIgnored`:: Unsupported change the storage size.
+`StorageStructureChangeIgnored`:: Unsupported change between ephemeral and persistent storage structures.
++
+[IMPORTANT]
+====
+If you try to configure the `ClusterLogging` custom resource (CR) to switch from ephemeral to persistent storage, the OpenShift Elasticsearch Operator creates a persistent volume claim (PVC) but does not create a persistent volume (PV). To clear the `StorageStructureChangeIgnored` status, you must revert the change to the `ClusterLogging` CR and delete the PVC.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * logging/cluster-logging-elasticsearch.adoc
+
+[id="cluster-logging-elasticsearch-status-comp_{context}"]
+= Viewing the status of the log store components
+
+You can view the status for a number of the log store components.
+
+Elasticsearch indices::
+You can view the status of the Elasticsearch indices.
+
+. Get the name of an Elasticsearch pod:
++
+[source,terminal]
+----
+$ oc get pods --selector component=elasticsearch -o name
+----
++
+.Example output
+[source,terminal]
+----
+pod/elasticsearch-cdm-1godmszn-1-6f8495-vp4lw
+pod/elasticsearch-cdm-1godmszn-2-5769cf-9ms2n
+pod/elasticsearch-cdm-1godmszn-3-f66f7d-zqkz7
+----
+
+. Get the status of the indices:
++
+[source,terminal]
+----
+$ oc exec elasticsearch-cdm-4vjor49p-2-6d4d7db474-q2w7z -- indices
+----
++
+.Example output
+[source,terminal]
+----
+Defaulting container name to elasticsearch.
+Use 'oc describe pod/elasticsearch-cdm-4vjor49p-2-6d4d7db474-q2w7z -n openshift-logging' to see all of the containers in this pod.
+
+green  open   infra-000002                                                     S4QANnf1QP6NgCegfnrnbQ   3   1     119926            0        157             78
+green  open   audit-000001                                                     8_EQx77iQCSTzFOXtxRqFw   3   1          0            0          0              0
+green  open   .security                                                        iDjscH7aSUGhIdq0LheLBQ   1   1          5            0          0              0
+green  open   .kibana_-377444158_kubeadmin                                     yBywZ9GfSrKebz5gWBZbjw   3   1          1            0          0              0
+green  open   infra-000001                                                     z6Dpe__ORgiopEpW6Yl44A   3   1     871000            0        874            436
+green  open   app-000001                                                       hIrazQCeSISewG3c2VIvsQ   3   1       2453            0          3              1
+green  open   .kibana_1                                                        JCitcBMSQxKOvIq6iQW6wg   1   1          0            0          0              0
+green  open   .kibana_-1595131456_user1                                        gIYFIEGRRe-ka0W3okS-mQ   3   1          1            0          0              0
+----
+
+
+Log store pods::
+You can view the status of the pods that host the log store.
+
+. Get the name of a pod:
++
+[source,terminal]
+----
+$ oc get pods --selector component=elasticsearch -o name
+----
++
+.Example output
+[source,terminal]
+----
+pod/elasticsearch-cdm-1godmszn-1-6f8495-vp4lw
+pod/elasticsearch-cdm-1godmszn-2-5769cf-9ms2n
+pod/elasticsearch-cdm-1godmszn-3-f66f7d-zqkz7
+----
+
+. Get the status of a pod:
++
+[source,terminal]
+----
+$ oc describe pod elasticsearch-cdm-1godmszn-1-6f8495-vp4lw
+----
++
+The output includes the following status information:
++
+.Example output
+[source,terminal]
+----
+....
+Status:             Running
+
+....
+
+Containers:
+  elasticsearch:
+    Container ID:   cri-o://b7d44e0a9ea486e27f47763f5bb4c39dfd2
+    State:          Running
+      Started:      Mon, 08 Jun 2020 10:17:56 -0400
+    Ready:          True
+    Restart Count:  0
+    Readiness:  exec [/usr/share/elasticsearch/probe/readiness.sh] delay=10s timeout=30s period=5s #success=1 #failure=3
+
+....
+
+  proxy:
+    Container ID:  cri-o://3f77032abaddbb1652c116278652908dc01860320b8a4e741d06894b2f8f9aa1
+    State:          Running
+      Started:      Mon, 08 Jun 2020 10:18:38 -0400
+    Ready:          True
+    Restart Count:  0
+
+....
+
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+
+....
+
+Events:          <none>
+----
+
+Log storage pod deployment configuration::
+You can view the status of the log store deployment configuration.
+
+. Get the name of a deployment configuration:
++
+[source,terminal]
+----
+$ oc get deployment --selector component=elasticsearch -o name
+----
++
+.Example output
+[source,terminal]
+----
+deployment.extensions/elasticsearch-cdm-1gon-1
+deployment.extensions/elasticsearch-cdm-1gon-2
+deployment.extensions/elasticsearch-cdm-1gon-3
+----
+
+. Get the deployment configuration status:
++
+[source,terminal]
+----
+$ oc describe deployment elasticsearch-cdm-1gon-1
+----
++
+The output includes the following status information:
++
+.Example output
+[source,terminal]
+----
+....
+  Containers:
+   elasticsearch:
+    Image:      registry.redhat.io/openshift-logging/elasticsearch6-rhel8
+    Readiness:  exec [/usr/share/elasticsearch/probe/readiness.sh] delay=10s timeout=30s period=5s #success=1 #failure=3
+
+....
+
+Conditions:
+  Type           Status   Reason
+  ----           ------   ------
+  Progressing    Unknown  DeploymentPaused
+  Available      True     MinimumReplicasAvailable
+
+....
+
+Events:          <none>
+----
+
+Log store replica set::
+You can view the status of the log store replica set.
+
+. Get the name of a replica set:
++
+[source,terminal]
+----
+$ oc get replicaSet --selector component=elasticsearch -o name
+
+replicaset.extensions/elasticsearch-cdm-1gon-1-6f8495
+replicaset.extensions/elasticsearch-cdm-1gon-2-5769cf
+replicaset.extensions/elasticsearch-cdm-1gon-3-f66f7d
+----
+
+. Get the status of the replica set:
++
+[source,terminal]
+----
+$ oc describe replicaSet elasticsearch-cdm-1gon-1-6f8495
+----
++
+The output includes the following status information:
++
+.Example output
+[source,terminal]
+----
+....
+  Containers:
+   elasticsearch:
+    Image:      registry.redhat.io/openshift-logging/elasticsearch6-rhel8@sha256:4265742c7cdd85359140e2d7d703e4311b6497eec7676957f455d6908e7b1c25
+    Readiness:  exec [/usr/share/elasticsearch/probe/readiness.sh] delay=10s timeout=30s period=5s #success=1 #failure=3
+
+....
+
+Events:          <none>
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+:_module-type: REFERENCE
+
+[id="ref_cluster-logging-elasticsearch-cluster-status_{context}"]
+= Elasticsearch cluster status
+
+[role="_abstract"]
+A dashboard in the *Observe* section of the
+{product-title} web console
+displays the status of the Elasticsearch cluster.
+
+To get the status of the OpenShift Elasticsearch cluster, visit the dashboard in the *Observe* section of the
+{product-title} web console
+at
+`<cluster_url>/monitoring/dashboards/grafana-dashboard-cluster-logging`.
+
+.Elasticsearch status fields
+
+`eo_elasticsearch_cr_cluster_management_state`:: Shows whether the Elasticsearch cluster is in a managed or unmanaged state. For example:
++
+[source,terminal]
+----
+eo_elasticsearch_cr_cluster_management_state{state="managed"} 1
+eo_elasticsearch_cr_cluster_management_state{state="unmanaged"} 0
+----
+
+`eo_elasticsearch_cr_restart_total`:: Shows the number of times the Elasticsearch nodes have restarted for certificate restarts, rolling restarts, or scheduled restarts. For example:
++
+[source,terminal]
+----
+eo_elasticsearch_cr_restart_total{reason="cert_restart"} 1
+eo_elasticsearch_cr_restart_total{reason="rolling_restart"} 1
+eo_elasticsearch_cr_restart_total{reason="scheduled_restart"} 3
+----
+
+`es_index_namespaces_total`:: Shows the total number of Elasticsearch index namespaces. For example:
++
+[source,terminal]
+----
+Total number of Namespaces.
+es_index_namespaces_total 5
+----
+
+`es_index_document_count`:: Shows the number of records for each namespace. For example:
++
+[source,terminal]
+----
+es_index_document_count{namespace="namespace_1"} 25
+es_index_document_count{namespace="namespace_2"} 10
+es_index_document_count{namespace="namespace_3"} 5
+----
+
+.The "Secret Elasticsearch fields are either missing or empty" message
+
+If Elasticsearch is missing the `admin-cert`, `admin-key`, `logging-es.crt`, or `logging-es.key` files, the dashboard shows a status message similar to the following example:
+
+[source,terminal]
+----
+message": "Secret \"elasticsearch\" fields are either missing or empty: [admin-cert, admin-key, logging-es.crt, logging-es.key]",
+"reason": "Missing Required Secrets",
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/cluster-logging-log-store-status-viewing,modules/cluster-logging-log-store-status-comp,modules/ref_cluster-logging-elasticsearch-cluster-status

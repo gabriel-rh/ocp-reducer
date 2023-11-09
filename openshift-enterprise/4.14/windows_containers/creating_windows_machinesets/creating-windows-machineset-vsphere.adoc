@@ -1,0 +1,723 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="creating-windows-machineset-vsphere"]
+= Creating a Windows machine set on vSphere
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: creating-windows-machineset-vsphere
+
+toc::[]
+
+You can create a Windows `MachineSet` object to serve a specific purpose in your {product-title} cluster on VMware vSphere. For example, you might create infrastructure Windows machine sets and related machines so that you can move supporting Windows workloads to the new Windows machines.
+
+[discrete]
+== Prerequisites
+
+* You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).
+* You are using a supported Windows Server as the operating system image.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/index.adoc
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-osp.adoc
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-aws.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-azure.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-vsphere.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-gcp.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="machine-api-overview_{context}"]
+= Machine API overview
+
+The Machine API is a combination of primary resources that are based on the upstream Cluster API project and custom {product-title} resources.
+
+For {product-title} {product-version} clusters, the Machine API performs all node host provisioning management actions after the cluster installation finishes. Because of this system, {product-title} {product-version} offers an elastic, dynamic provisioning method on top of public or private cloud infrastructure.
+
+The two primary resources are:
+
+Machines:: A fundamental unit that describes the host for a node. A machine has a `providerSpec` specification, which describes the types of compute nodes that are offered for different cloud platforms. For example, a machine type for a compute node might define a specific machine type and required metadata.
+
+Machine sets:: `MachineSet` resources are groups of compute machines. Compute machine sets are to compute machines as replica sets are to pods. If you need more compute machines or must scale them down, you change the `replicas` field on the `MachineSet` resource to meet your compute need.
++
+[WARNING]
+====
+Control plane machines cannot be managed by compute machine sets.
+
+Control plane machine sets provide management capabilities for supported control plane machines that are similar to what compute machine sets provide for compute machines.
+
+For more information, see “Managing control plane machines".
+====
+
+The following custom resources add more capabilities to your cluster:
+
+Machine autoscaler:: The `MachineAutoscaler` resource automatically scales compute machines in a cloud. You can set the minimum and maximum scaling boundaries for nodes in a specified compute machine set, and the machine autoscaler maintains that range of nodes.
++
+The `MachineAutoscaler` object takes effect after a `ClusterAutoscaler` object exists. Both `ClusterAutoscaler` and `MachineAutoscaler` resources are made available by the `ClusterAutoscalerOperator` object.
+
+Cluster autoscaler:: This resource is based on the upstream cluster autoscaler project. In the {product-title} implementation, it is integrated with the Machine API by extending the compute machine set API. You can use the cluster autoscaler to manage your cluster in the following ways:
++
+* Set cluster-wide scaling limits for resources such as cores, nodes, memory, and GPU
+* Set the priority so that the cluster prioritizes pods and new nodes are not brought online for less important pods
+* Set the scaling policy so that you can scale up nodes but not scale them down
+
+Machine health check:: The `MachineHealthCheck` resource detects when a machine is unhealthy, deletes it, and, on supported platforms, makes a new machine.
+
+// Should this paragraph still be in here in 2022? Or at least should it be rephrased to avoid comparing to 3.11?
+In {product-title} version 3.11, you could not roll out a multi-zone architecture easily because the cluster did not manage machine provisioning. Beginning with {product-title} version 4.1, this process is easier. Each compute machine set is scoped to a single zone, so the installation program sends out compute machine sets across availability zones on your behalf. And then because your compute is dynamic, and in the face of a zone failure, you always have a zone for when you must rebalance your machines. In global Azure regions that do not have multiple availability zones, you can use availability sets to ensure high availability. The autoscaler provides best-effort balancing over the life of a cluster.
+
+:leveloffset!:
+
+[id="preparing-vsphere-for-windows-containers"]
+== Preparing your vSphere environment for Windows container workloads
+
+You must prepare your vSphere environment for Windows container workloads by creating the vSphere Windows VM golden image and enabling communication with the internal API server for the WMCO.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-vsphere.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="creating-the-vsphere-windows-vm-golden-image_{context}"]
+= Creating the vSphere Windows VM golden image
+
+Create a vSphere Windows virtual machine (VM) golden image.
+
+.Prerequisites
+
+* You have created a private/public key pair, which is used to configure key-based authentication in the OpenSSH server. The private key must also be configured in the Windows Machine Config Operator (WMCO) namespace. This is required to allow the WMCO to communicate with the Windows VM. See the "Configuring a secret for the Windows Machine Config Operator" section for more details.
+
+[NOTE]
+====
+You must use link:https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell[Microsoft PowerShell] commands in several cases when creating your Windows VM. PowerShell commands in this guide are distinguished by the `PS C:\>` prefix.
+====
+
+.Procedure
+
+.  Select a compatible Windows Server version. Currently, the Windows Machine Config Operator (WMCO) stable version supports Windows Server 2022 Long-Term Servicing Channel with the OS-level container networking patch link:https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d[KB5012637].
+
+. Create a new VM in the vSphere client using the VM golden image with a compatible Windows Server version. For more information about compatible versions, see the "Windows Machine Config Operator prerequisites" section of the "Red Hat OpenShift support for Windows Containers release notes."
++
+[IMPORTANT]
+====
+The virtual hardware version for your VM must meet the infrastructure requirements for {product-title}. For more information, see the "VMware vSphere infrastructure requirements" section in the {product-title} documentation. Also, you can refer to VMware's documentation on link:https://kb.vmware.com/s/article/1003746[virtual machine hardware versions].
+====
+
+. Install and configure VMware Tools version 11.0.6 or greater on the Windows VM. See the link:https://docs.vmware.com/en/VMware-Tools/index.html[VMware Tools documentation] for more information.
+
+. After installing VMware Tools on the Windows VM, verify the following:
+
+.. The `C:\ProgramData\VMware\VMware Tools\tools.conf` file exists with the following entry:
++
+[source,ini]
+----
+exclude-nics=
+----
++
+If the `tools.conf` file does not exist, create it with the `exclude-nics` option uncommented and set as an empty value.
++
+This entry ensures the cloned vNIC generated on the Windows VM by the hybrid-overlay is not ignored.
+
+.. The Windows VM has a valid IP address in vCenter:
++
+[source,terminal]
+----
+C:\> ipconfig
+----
+
+.. The VMTools Windows service is running:
++
+[source,posh]
+----
+PS C:\> Get-Service -Name VMTools | Select Status, StartType
+----
+
+. Install and configure the OpenSSH Server on the Windows VM. See Microsoft's documentation on link:https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse[installing OpenSSH] for more details.
+
+. Set up SSH access for an administrative user. See Microsoft's documentation on the link:https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement#administrative-user[Administrative user] to do this.
++
+[IMPORTANT]
+====
+The public key used in the instructions must correspond to the private key you create later in the WMCO namespace that holds your secret. See the "Configuring a secret for the Windows Machine Config Operator" section for more details.
+====
+
+. You must create a new firewall rule in the Windows VM that allows incoming connections for container logs. Run the following PowerShell command to create the firewall rule on TCP port 10250:
++
+[source,posh]
+----
+PS C:\> New-NetFirewallRule -DisplayName "ContainerLogsPort" -LocalPort 10250 -Enabled True -Direction Inbound -Protocol TCP -Action Allow -EdgeTraversalPolicy Allow
+----
+
+. Clone the Windows VM so it is a reusable image. Follow the VMware documentation on how to link:https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.vm_admin.doc/GUID-1E185A80-0B97-4B46-A32B-3EF8F309BEED.html[clone an existing virtual machine] for more details.
+
+. In the cloned Windows VM, run the link:+++https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/sysprep--generalize--a-windows-installation+++[Windows Sysprep tool]:
++
+[source,terminal]
+----
+C:\> C:\Windows\System32\Sysprep\sysprep.exe /generalize /oobe /shutdown /unattend:<path_to_unattend.xml> <1>
+----
+<1> Specify the path to your `unattend.xml` file.
++
+[NOTE]
+====
+There is a limit on how many times you can run the `sysprep` command on a Windows image. Consult Microsoft's link:+++https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/sysprep--generalize--a-windows-installation#limits-on-how-many-times-you-can-run-sysprep+++[documentation] for more information.
+====
++
+An example `unattend.xml` is provided, which maintains all the changes needed for the WMCO. You must modify this example; it cannot be used directly.
++
+.Example `unattend.xml`
+[%collapsible]
+====
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+   <settings pass="specialize">
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <InputLocale>0409:00000409</InputLocale>
+         <SystemLocale>en-US</SystemLocale>
+         <UILanguage>en-US</UILanguage>
+         <UILanguageFallback>en-US</UILanguageFallback>
+         <UserLocale>en-US</UserLocale>
+      </component>
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Security-SPP-UX" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <SkipAutoActivation>true</SkipAutoActivation>
+      </component>
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-SQMApi" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <CEIPEnabled>0</CEIPEnabled>
+      </component>
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <ComputerName>winhost</ComputerName> <1>
+      </component>
+   </settings>
+   <settings pass="oobeSystem">
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <AutoLogon>
+            <Enabled>false</Enabled> <2>
+         </AutoLogon>
+         <OOBE>
+            <HideEULAPage>true</HideEULAPage>
+            <HideLocalAccountScreen>true</HideLocalAccountScreen>
+            <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
+            <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+            <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+            <NetworkLocation>Work</NetworkLocation>
+            <ProtectYourPC>1</ProtectYourPC>
+            <SkipMachineOOBE>true</SkipMachineOOBE>
+            <SkipUserOOBE>true</SkipUserOOBE>
+         </OOBE>
+         <RegisteredOrganization>Organization</RegisteredOrganization>
+         <RegisteredOwner>Owner</RegisteredOwner>
+         <DisableAutoDaylightTimeSet>false</DisableAutoDaylightTimeSet>
+         <TimeZone>Eastern Standard Time</TimeZone>
+         <UserAccounts>
+            <AdministratorPassword>
+               <Value>MyPassword</Value> <3>
+               <PlainText>true</PlainText>
+            </AdministratorPassword>
+         </UserAccounts>
+      </component>
+   </settings>
+</unattend>
+----
+<1> Specify the `ComputerName`, which must follow the link:https://kubernetes.io/docs/concepts/overview/working-with-objects/names[Kubernetes' names specification]. These specifications also apply to Guest OS customization performed on the resulting template while creating new VMs.
+<2> Disable the automatic logon to avoid the security issue of leaving an open terminal with Administrator privileges at boot. This is the default value and must not be changed.
+<3> Replace the `MyPassword` placeholder with the password for the Administrator account. This prevents the built-in Administrator account from having a blank password by default. Follow Microsoft's link:https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements[best practices for choosing a password].
+====
++
+After the Sysprep tool has completed, the Windows VM will power off. You must not use or power on this VM anymore.
+
+. Convert the Windows VM to link:https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.vm_admin.doc/GUID-5B3737CC-28DB-4334-BD18-6E12011CDC9F.html[a template in vCenter].
+
+:leveloffset!:
+
+[id="additional-resources_creating-windows-machineset-vsphere"]
+[role="_additional-resources"]
+==== Additional resources
+
+* xref:../../windows_containers/enabling-windows-container-workloads.adoc#configuring-secret-for-wmco_enabling-windows-container-workloads[Configuring a secret for the Windows Machine Config Operator]
+* xref:../../installing/installing_vsphere/preparing-to-install-on-vsphere.adoc#installation-vsphere-infrastructure_preparing-to-install-on-vsphere[VMware vSphere infrastructure requirements]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-vsphere.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="enabling-internal-api-server-vsphere_{context}"]
+= Enabling communication with the internal API server for the WMCO on vSphere
+
+The Windows Machine Config Operator (WMCO) downloads the Ignition config files from the internal API server endpoint. You must enable communication with the internal API server so that your Windows virtual machine (VM) can download the Ignition config files, and the kubelet on the configured VM can only communicate with the internal API server.
+
+.Prerequisites
+
+* You have installed a cluster on vSphere.
+
+.Procedure
+
+* Add a new DNS entry for `api-int.<cluster_name>.<base_domain>` that points to the external API server URL `api.<cluster_name>.<base_domain>`. This can be a CNAME or an additional A record.
+
+[NOTE]
+====
+The external API endpoint was already created as part of the initial cluster installation on vSphere.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-vsphere.adoc
+
+[id="windows-machineset-vsphere_{context}"]
+= Sample YAML for a Windows MachineSet object on vSphere
+
+This sample YAML defines a Windows `MachineSet` object running on VMware vSphere that the Windows Machine Config Operator (WMCO) can react upon.
+
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+  name: <windows_machine_set_name> <2>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+      machine.openshift.io/cluster-api-machineset: <windows_machine_set_name> <2>
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: <windows_machine_set_name> <2>
+        machine.openshift.io/os-id: Windows <3>
+    spec:
+      metadata:
+        labels:
+          node-role.kubernetes.io/worker: "" <4>
+      providerSpec:
+        value:
+          apiVersion: vsphereprovider.openshift.io/v1beta1
+          credentialsSecret:
+            name: vsphere-cloud-credentials
+          diskGiB: 128 <5>
+          kind: VSphereMachineProviderSpec
+          memoryMiB: 16384
+          network:
+            devices:
+            - networkName: "<vm_network_name>" <6>
+          numCPUs: 4
+          numCoresPerSocket: 1
+          snapshot: ""
+          template: <windows_vm_template_name> <7>
+          userDataSecret:
+            name: windows-user-data <8>
+          workspace:
+             datacenter: <vcenter_datacenter_name> <9>
+             datastore: <vcenter_datastore_name> <10>
+             folder: <vcenter_vm_folder_path> <11>
+             resourcePool: <vsphere_resource_pool> <12>
+             server: <vcenter_server_ip> <13>
+----
+<1> Specify the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. You can obtain the infrastructure ID by running the following command:
++
+[source,terminal]
+----
+$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster
+----
+<2> Specify the Windows compute machine set name. The compute machine set name cannot be more than 9 characters long, due to the way machine names are generated in vSphere.
+<3> Configure the compute machine set as a Windows machine.
+<4> Configure the Windows node as a compute machine.
+<5> Specify the size of the vSphere Virtual Machine Disk (VMDK).
++
+[NOTE]
+====
+This parameter does not set the size of the Windows partition. You can resize the Windows partition by using the `unattend.xml` file or by creating the vSphere Windows virtual machine (VM) golden image with the required disk size.
+====
++
+<6> Specify the vSphere VM network to deploy the compute machine set to. This VM network must be where other Linux compute machines reside in the cluster.
+<7> Specify the full path of the Windows vSphere VM template to use, such as `golden-images/windows-server-template`. The name must be unique.
++
+[IMPORTANT]
+====
+Do not specify the original VM template. The VM template must remain off and must be cloned for new Windows machines. Starting the VM template configures the VM template as a VM on the platform, which prevents it from being used as a template that compute machine sets can apply configurations to.
+====
++
+<8> The `windows-user-data` is created by the WMCO when the first Windows machine is configured. After that, the `windows-user-data` is available for all subsequent compute machine sets to consume.
+<9> Specify the vCenter Datacenter to deploy the compute machine set on.
+<10> Specify the vCenter Datastore to deploy the compute machine set on.
+<11> Specify the path to the vSphere VM folder in vCenter, such as `/dc1/vm/user-inst-5ddjd`.
+<12> Optional: Specify the vSphere resource pool for your Windows VMs.
+<13> Specify the vCenter server IP or fully qualified domain name.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-osp.adoc
+// * machine_management/creating_machinesets/creating-machineset-vsphere.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-aws.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-azure.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-vsphere.adoc
+// * windows_containers/creating_windows_machinesets/creating-windows-machineset-gcp.adoc
+// * post_installation_configuration/cluster-tasks.adoc
+// * post_installation_configuration/installation-creating-aws-subnet-localzone.adoc
+// * post_installation_configuration/aws-compute-edge-tasks.adoc
+
+:win:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-creating_{context}"]
+= Creating a compute machine set
+
+In addition to the compute machine sets created by the installation program, you can create your own to dynamically manage the machine compute resources for specific workloads of your choice.
+
+
+.Prerequisites
+
+* Deploy an {product-title} cluster.
+* Install the OpenShift CLI (`oc`).
+* Log in to `oc` as a user with `cluster-admin` permission.
+
+.Procedure
+
+. Create a new YAML file that contains the compute machine set custom resource (CR) sample and is named `<file_name>.yaml`.
++
+Ensure that you set the `<clusterID>` and `<role>` parameter values.
+
+. Optional: If you are not sure which value to set for a specific field, you can check an existing compute machine set from your cluster.
+
+.. To list the compute machine sets in your cluster, run the following command:
++
+[source,terminal]
+----
+$ oc get machinesets -n openshift-machine-api
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m
+----
+
+.. To view values of a specific compute machine set custom resource (CR), run the following command:
++
+[source,terminal]
+----
+$ oc get machineset <machineset_name> \
+  -n openshift-machine-api -o yaml
+----
++
+--
+.Example output
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: <infrastructure_id> <1>
+  name: <infrastructure_id>-<role> <2>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: <infrastructure_id>
+      machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: <infrastructure_id>
+        machine.openshift.io/cluster-api-machine-role: <role>
+        machine.openshift.io/cluster-api-machine-type: <role>
+        machine.openshift.io/cluster-api-machineset: <infrastructure_id>-<role>
+    spec:
+      providerSpec: <3>
+        ...
+----
+<1> The cluster infrastructure ID.
+<2> A default node label.
++
+[NOTE]
+====
+For clusters that have user-provisioned infrastructure, a compute machine set can only create `worker` and `infra` type machines.
+====
+<3> The values in the `<providerSpec>` section of the compute machine set CR are platform-specific. For more information about `<providerSpec>` parameters in the CR, see the sample compute machine set CR configuration for your provider.
+--
+
+
+. Create a `MachineSet` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <file_name>.yaml
+----
+
+
+.Verification
+
+* View the list of compute machine sets by running the following command:
++
+[source,terminal]
+----
+$ oc get machineset -n openshift-machine-api
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                       DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-windows-worker-us-east-1a  1         1         1       1           11m
+agl030519-vplxk-worker-us-east-1a          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d          0         0                             55m
+agl030519-vplxk-worker-us-east-1e          0         0                             55m
+agl030519-vplxk-worker-us-east-1f          0         0                             55m
+----
++
+When the new compute machine set is available, the `DESIRED` and `CURRENT` values match. If the compute machine set is not available, wait a few minutes and run the command again.
+
+
+:!win:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+== Additional resources
+
+* xref:../../machine_management/index.adoc#overview-of-machine-management[Overview of machine management]
+
+//# includes=_attributes/common-attributes,modules/machine-api-overview,modules/creating-the-vsphere-windows-vm-golden-image,modules/enabling-internal-api-server-vsphere,modules/windows-machineset-vsphere,modules/machineset-creating

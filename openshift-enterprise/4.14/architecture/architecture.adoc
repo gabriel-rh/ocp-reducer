@@ -1,0 +1,554 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="architecture"]
+= {product-title} architecture
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: architecture
+
+toc::[]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// * architecture/architecture.adoc
+
+[id="architecture-platform-introduction_{context}"]
+= Introduction to {product-title}
+
+{product-title} is a platform for developing and running containerized
+applications. It is designed to allow applications and the data centers
+that support them to expand from just a few machines and applications to
+thousands of machines that serve millions of clients.
+
+With its foundation in Kubernetes, {product-title} incorporates the same
+technology that serves as the engine for massive telecommunications, streaming
+video, gaming, banking, and other applications. Its implementation in open
+Red Hat technologies lets you extend your containerized applications beyond a
+single cloud to on-premise and multi-cloud environments.
+
+image::oke-arch-ocp-stack.png[Red Hat {oke}]
+
+// The architecture presented here is meant to give you insights into how {product-title} works. It does this by stepping you through the process of installing an {product-title} cluster, managing the cluster, and developing and deploying applications on it. Along the way, this architecture describes:
+
+// * Major components of  {product-title}
+// * Ways of exploring different aspects of {product-title} yourself
+// * Available frontdoors (and backdoors) to modify the installation and management of your {product-title} cluster
+// * Different types of container application types
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * architecture/architecture.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="architecture-kubernetes-introduction_{context}"]
+= About Kubernetes
+
+Although container images and the containers that run from them are the
+primary building blocks for modern application development, to run them at scale
+requires a reliable and flexible distribution system. Kubernetes is the
+defacto standard for orchestrating containers.
+
+Kubernetes is an open source container orchestration engine for automating
+deployment, scaling, and management of containerized applications. The general
+concept of Kubernetes is fairly simple:
+
+* Start with one or more worker nodes to run the container workloads.
+* Manage the deployment of those workloads from one or more control plane nodes.
+* Wrap containers in a deployment unit called a pod. Using pods provides extra
+metadata with the container and offers the ability to group several containers
+in a single deployment entity.
+* Create special kinds of assets. For example, services are represented by a
+set of pods and a policy that defines how they are accessed. This policy
+allows containers to connect to the services that they need even if they do not
+have the specific IP addresses for the services. Replication controllers are
+another special asset that indicates how many pod replicas are required to run
+at a time. You can use this capability to automatically scale your application
+to adapt to its current demand.
+
+In only a few years, Kubernetes has seen massive cloud and on-premise adoption.
+The open source development model allows many people to extend Kubernetes
+by implementing different technologies for components such as networking,
+storage, and authentication.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * architecture/architecture.adoc
+
+[id="architecture-container-application-benefits_{context}"]
+= The benefits of containerized applications
+
+Using containerized applications offers many advantages over using traditional deployment methods. Where applications were once expected to be installed on operating systems that included all their dependencies, containers let an application carry their dependencies with them. Creating containerized applications offers many benefits.
+
+[id="operating-system-benefits_{context}"]
+== Operating system benefits
+
+Containers use small, dedicated Linux operating systems without a kernel. Their file system, networking, cgroups, process tables, and namespaces are separate from the host Linux system, but the containers can integrate with the hosts seamlessly when necessary. Being based on Linux allows containers to use all the advantages that come with the open source development model of rapid innovation.
+
+Because each container uses a dedicated operating system, you can deploy applications that require conflicting software dependencies on the same host. Each container carries its own dependent software and manages its own interfaces, such as networking and file systems, so applications never need to compete for those assets.
+
+[id="deployment-scaling-benefits_{context}"]
+== Deployment and scaling benefits
+
+If you employ rolling upgrades between major releases of your application, you can continuously improve your applications without downtime and still maintain compatibility with the current release.
+
+You can also deploy and test a new version of an application alongside the existing version. If the container passes your tests, simply deploy more new containers and remove the old ones. 
+
+Since all the software dependencies for an application are resolved within the container itself, you can use a standardized operating system on each host in your data center. You do not need to configure a specific operating system for each application host. When your data center needs more capacity, you can deploy another generic host system.
+
+Similarly, scaling containerized applications is simple. {product-title} offers a simple, standard way of scaling any containerized service. For example, if you build applications as a set of microservices rather than large, monolithic applications, you can scale the individual microservices individually to meet demand. This capability allows you to scale only the required services instead of the entire application, which can allow you to meet application demands while using minimal resources.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * architecture/architecture.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="architecture-platform-benefits_{context}"]
+= {product-title} overview
+
+////
+Red Hat was one of the early contributors of Kubernetes and quickly integrated
+it as the centerpiece of its {product-title} product line. Today, Red Hat
+continues as one of the largest contributors to Kubernetes across a wide range
+of technology areas.
+////
+
+{product-title} provides enterprise-ready enhancements to Kubernetes, including the following enhancements:
+
+* Integrated Red Hat technology. Major components in {product-title} come from {op-system-base-full} and related Red Hat technologies. {product-title} benefits from the intense testing and certification initiatives for Red Hat's enterprise quality software.
+* Open source development model. Development is completed in the open, and the source code is available from public software repositories. This open collaboration fosters rapid innovation and development.
+
+Although Kubernetes excels at managing your applications, it does not specify
+or manage platform-level requirements or deployment processes. Powerful and
+flexible platform management tools and processes are important benefits that
+{product-title} {product-version} offers. The following sections describe some
+unique features and benefits of {product-title}.
+
+[id="architecture-custom-os_{context}"]
+== Custom operating system
+
+{product-title} uses {op-system-first}, a container-oriented operating system that is specifically designed for running containerized applications from {product-title} and works with new tools to provide fast installation, Operator-based management, and simplified upgrades.
+
+{op-system} includes:
+
+* Ignition, which {product-title} uses as a firstboot system configuration for initially bringing up and configuring machines.
+* CRI-O, a Kubernetes native container runtime implementation that integrates closely with the operating system to deliver an efficient and optimized Kubernetes experience. CRI-O provides facilities for running, stopping, and restarting containers. It fully replaces the Docker Container Engine, which was used in {product-title} 3.
+* Kubelet, the primary node agent for Kubernetes that is responsible for
+launching and monitoring containers.
+
+In {product-title} {product-version}, you must use {op-system} for all control
+plane machines, but you can use Red Hat Enterprise Linux (RHEL) as the operating
+system for compute machines, which are also known as worker machines. If you choose to use RHEL workers, you
+must perform more system maintenance than if you use {op-system} for all of the
+cluster machines.
+
+[id="architecture-platform-management_{context}"]
+== Simplified installation and update process
+
+With {product-title} {product-version}, if you have an account with the right
+permissions, you can deploy a production cluster in supported clouds by running
+a single command and providing a few values. You can also customize your cloud
+installation or install your cluster in your data center if you use a supported
+platform.
+
+For clusters that use {op-system} for all machines, updating, or
+upgrading, {product-title} is a simple, highly-automated process. Because
+{product-title} completely controls the systems and services that run on each
+machine, including the operating system itself, from a central control plane,
+upgrades are designed to become automatic events. If your cluster contains
+RHEL worker machines, the control plane benefits from the streamlined update
+process, but you must perform more tasks to upgrade the RHEL machines.
+
+[id="architecture-key-features_{context}"]
+== Other key features
+
+Operators are both the fundamental unit of the {product-title} {product-version}
+code base and a convenient way to deploy applications and software components
+for your applications to use. In {product-title}, Operators serve as the platform foundation and remove the need for manual upgrades of operating systems and control plane applications. {product-title} Operators such as the
+Cluster Version Operator and Machine Config Operator allow simplified,
+cluster-wide management of those critical components.
+
+Operator Lifecycle Manager (OLM) and the OperatorHub provide facilities for
+storing and distributing Operators to people developing and deploying applications.
+
+The Red Hat Quay Container Registry is a Quay.io container registry that serves
+most of the container images and Operators to {product-title} clusters.
+Quay.io is a public registry version of Red Hat Quay that stores millions of images
+and tags.
+
+Other enhancements to Kubernetes in {product-title} include improvements in
+software defined networking (SDN), authentication, log aggregation, monitoring,
+and routing. {product-title} also offers a comprehensive web console and the
+custom OpenShift CLI (`oc`) interface.
+
+
+////
+{product-title} includes the following infrastructure components:
+
+* OpenShift API server
+* Kubernetes API server
+* Kubernetes controller manager
+* Kubernetes nodes/kubelet
+* CRI-O
+* {op-system}
+* Infrastructure Operators
+* Networking (SDN/Router/DNS)
+* Storage
+* Monitoring
+* Telemetry
+* Security
+* Authorization/Authentication/Oauth
+* Logging
+
+It also offers the following user interfaces:
+* Web Console
+* OpenShift CLI (`oc`)
+* Rest API
+////
+
+
+[id="architecture-overview-image_{context}"]
+== {product-title} lifecycle
+
+The following figure illustrates the basic {product-title} lifecycle:
+
+* Creating an {product-title} cluster
+* Managing the cluster
+* Developing and deploying applications
+* Scaling up applications
+
+.High level {product-title} overview
+image::product-workflow-overview.png[High-level {product-title} flow]
+
+:leveloffset!:
+////
+== User facing components
+* Workloads (Deployments, Jobs, ReplicaSets, etc)
+* Operator Lifecycle Manager
+* xref:../cicd/builds/understanding-image-builds.adoc[Builds] - The build component
+provides an API and infrastructure for producing new container images using a
+variety of techniques including industry standard Dockerfiles and publishing
+them to either the cluster image registry, or an external registry. It also
+provides integration with Jenkins based pipeline continuous integration
+workflows.
+* xref:../registry/index.adoc[Image Registry] -
+The image registry provides a scalable repository for storing and retrieving
+container images that are produced by and run on the cluster. Image access is
+integrated with the cluster's role-based access controls and user authentication
+system.
+* xref:../openshift_images/images-understand.adoc[Image
+streams] - The imagestream API provides an abstraction over container images
+that exist in registries. It allows workloads to reference an image indirectly,
+retains a history of the images that have been referenced, and allows
+notification when an image is updated with a new version.
+////
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-china-region.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-user-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_openstack/installing-openstack-installer-sr-iov.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-network-customizations.adoc
+// * architecture/architecture.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-installer-provisioned.adoc
+
+
+
+:_mod-docs-content-type: CONCEPT
+[id="cluster-entitlements_{context}"]
+= Internet access for {product-title}
+
+In {product-title} {product-version}, you require access to the internet to
+install
+your cluster.
+
+You must have internet access to:
+
+* Access {cluster-manager-url} to download the installation program and perform subscription management. If the cluster has internet access and you do not disable Telemetry, that service automatically entitles your cluster.
+* Access link:http://quay.io[Quay.io] to obtain the packages that are required to install your cluster.
+* Obtain the packages that are required to perform cluster updates.
+
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/architecture-platform-introduction,modules/architecture-kubernetes-introduction,modules/architecture-container-application-benefits,modules/architecture-platform-benefits,modules/cluster-entitlements

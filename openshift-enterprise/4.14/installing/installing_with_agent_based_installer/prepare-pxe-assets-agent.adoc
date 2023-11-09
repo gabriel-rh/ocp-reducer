@@ -1,0 +1,503 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="prepare-pxe-assets-agent"]
+= Preparing PXE assets for {product-title}
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: prepare-pxe-assets-agent
+
+toc::[]
+
+Use the following procedures to create the assets needed to PXE boot an {product-title} cluster using the Agent-based Installer.
+
+The assets you create in these procedures will deploy a single-node {product-title} installation. You can use these procedures as a basis and modify configurations according to your requirements.
+
+[id="prerequisites_prepare-pxe-assets-agent"]
+== Prerequisites
+
+* You reviewed details about the xref:../../architecture/architecture-installation.adoc#architecture-installation[{product-title} installation and update] processes.
+
+// Downloading the Agent-based Installer
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing-with-agent-based-installer/installing-with-agent-based-installer.adoc
+// * installing/installing_with_agent_based_installer/prepare-pxe-infra-agent.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installing-ocp-agent-retrieve_{context}"]
+= Downloading the Agent-based Installer
+
+Use this procedure to download the Agent-based Installer and the CLI needed for your installation.
+
+.Procedure
+
+. Log in to the {product-title} web console using your login credentials.
+
+. Navigate to link:https://console.redhat.com/openshift/create/datacenter[Datacenter].
+
+. Click *Run Agent-based Installer locally*.
+
+. Select the operating system and architecture for the *OpenShift Installer* and *Command line interface*.
+
+. Click *Download Installer* to download and extract the install program.
+
+. You can either download or copy the pull secret by clicking on *Download pull secret* or *Copy pull secret*.
+
+. Click *Download command-line tools* and place the `openshift-install` binary in a directory that is on your `PATH`.
+
+:leveloffset!:
+
+// Creating the preferred configuration inputs
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing-with-agent-based-installer/installing-with-agent-based-installer.adoc
+// *installing/installing_with_agent_based_installer/prepare-pxe-infra-agent.adoc
+
+:pxe-boot:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installing-ocp-agent-inputs_{context}"]
+= Creating the preferred configuration inputs
+
+Use this procedure to create the preferred configuration inputs used to create the PXE files.
+
+.Procedure
+
+. Install `nmstate` dependency by running the following command:
++
+[source,terminal]
+----
+$ sudo dnf install /usr/bin/nmstatectl -y
+----
+
+. Place the `openshift-install` binary in a directory that is on your PATH.
+
+. Create a directory to store the install configuration by running the following command:
++
+[source,terminal]
+----
+$ mkdir ~/<directory_name>
+----
+
++
+[NOTE]
+====
+This is the preferred method for the Agent-based installation. Using {ztp} manifests is optional.
+====
+
+. Create the `install-config.yaml` file:
++
+[source,terminal]
+----
+$ cat << EOF > ./my-cluster/install-config.yaml
+apiVersion: v1
+baseDomain: test.example.com
+compute:
+- architecture: amd64 <1>
+  hyperthreading: Enabled
+  name: worker
+  replicas: 0
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  replicas: 1
+metadata:
+  name: sno-cluster <2>
+networking:
+  clusterNetwork:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: 192.168.0.0/16
+  networkType: OVNKubernetes <3>
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  none: {}
+pullSecret: '<pull_secret>' <4>
+sshKey: '<ssh_pub_key>' <5>
+EOF
+----
++
+<1> Specify the system architecture, valid values are `amd64` and `arm64`.
+<2> Required. Specify your cluster name.
+<3> Specify the cluster network plugin to install. The supported values are `OVNKubernetes` and `OpenShiftSDN`. The default value is `OVNKubernetes`.
+<4> Specify your pull secret.
+<5> Specify your SSH public key.
+
++
+[NOTE]
+====
+If you set the platform to `vSphere` or `baremetal`, you can configure IP address endpoints for cluster nodes in three ways:
+
+* IPv4
+* IPv6
+* IPv4 and IPv6 in parallel (dual-stack)
+
+IPv6 is supported only on bare metal platforms.
+====
++
+.Example of dual-stack networking
+[source,yaml]
+----
+networking:
+  clusterNetwork:
+    - cidr: 172.21.0.0/16
+      hostPrefix: 23
+    - cidr: fd02::/48
+      hostPrefix: 64
+  machineNetwork:
+    - cidr: 192.168.11.0/16
+    - cidr: 2001:DB8::/32
+  serviceNetwork:
+    - 172.22.0.0/16
+    - fd03::/112
+  networkType: OVNKubernetes
+platform:
+  baremetal:
+    apiVIPs:
+    - 192.168.11.3
+    - 2001:DB8::4
+    ingressVIPs:
+    - 192.168.11.4
+    - 2001:DB8::5
+----
+
+. Create the `agent-config.yaml` file:
++
+[source,terminal]
+----
+$ cat > agent-config.yaml << EOF
+apiVersion: v1beta1
+kind: AgentConfig
+metadata:
+  name: sno-cluster
+rendezvousIP: 192.168.111.80 <1>
+hosts: <2>
+  - hostname: master-0 <3>
+    interfaces:
+      - name: eno1
+        macAddress: 00:ef:44:21:e6:a5
+    rootDeviceHints: <4>
+      deviceName: /dev/sdb
+    networkConfig: <5>
+      interfaces:
+        - name: eno1
+          type: ethernet
+          state: up
+          mac-address: 00:ef:44:21:e6:a5
+          ipv4:
+            enabled: true
+            address:
+              - ip: 192.168.111.80
+                prefix-length: 23
+            dhcp: false
+      dns-resolver:
+        config:
+          server:
+            - 192.168.111.1
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 192.168.111.2
+            next-hop-interface: eno1
+            table-id: 254
+EOF
+----
++
+<1> This IP address is used to determine which node performs the bootstrapping process as well as running the `assisted-service` component.
+You must provide the rendezvous IP address when you do not specify at least one host's IP address in the `networkConfig` parameter. If this address is not provided, one IP address is selected from the provided hosts' `networkConfig`.
+<2> Optional: Host configuration. The number of hosts defined must not exceed the total number of hosts defined in the `install-config.yaml` file, which is the sum of the values of the `compute.replicas` and `controlPlane.replicas` parameters.
+<3> Optional: Overrides the hostname obtained from either the Dynamic Host Configuration Protocol (DHCP) or a reverse DNS lookup. Each host must have a unique hostname supplied by one of these methods.
+<4> Enables provisioning of the Red Hat Enterprise Linux CoreOS (RHCOS) image to a particular device. It examines the devices in the order it discovers them, and compares the discovered values with the hint values. It uses the first discovered device that matches the hint value.
+<5> Optional: Configures the network interface of a host in NMState format.
+
+
+. Optional: To create an iPXE script, add the `bootArtifactsBaseURL` to the `agent-config.yaml` file:
++
+[source,yaml]
+----
+apiVersion: v1beta1
+kind: AgentConfig
+metadata:
+  name: sno-cluster
+rendezvousIP: 192.168.111.80
+bootArtifactsBaseURL: <asset_server_URL>
+----
++
+Where `<asset_server_URL>` is the URL of the server you will upload the PXE assets to.
+
+:!pxe-boot:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc#modifying-install-config-for-dual-stack-network_ipi-install-installation-workflow[Deploying with dual-stack networking].
+* xref:../../installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc#configuring-the-install-config-file_ipi-install-installation-workflow[Configuring the install-config yaml file].
+* See xref:../../installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc#installation-three-node-cluster_installing-restricted-networks-bare-metal[Configuring a three-node cluster] to deploy three-node clusters in bare metal environments.
+* xref:../../installing/installing_with_agent_based_installer/preparing-to-install-with-agent-based-installer.adoc#root-device-hints_preparing-to-install-with-agent-based-installer[About root device hints].
+* link:https://nmstate.io/examples.html[NMState state examples].
+
+// Creating the PXE assets
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_with_agent_based_installer/prepare-pxe-infra-agent.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="pxe-assets-ocp-agent_{context}"]
+= Creating the PXE assets
+
+Use the following procedure to create the assets and optional script to implement in your PXE infrastructure.
+
+.Procedure
+
+. Create the PXE assets by running the following command:
++
+[source,terminal]
+----
+$ openshift-install agent create pxe-files
+----
++
+The generated PXE assets and optional iPXE script can be found in the `boot-artifacts` directory.
++
+.Example filesystem with PXE assets and optional iPXE script
+[source,terminal]
+----
+boot-artifacts
+    ├─ agent.x86_64-initrd.img
+    ├─ agent.x86_64.ipxe
+    ├─ agent.x86_64-rootfs.img
+    └─ agent.x86_64-vmlinuz
+----
++
+[NOTE]
+====
+Red Hat Enterprise Linux CoreOS (RHCOS) supports multipathing on the primary disk, allowing stronger resilience to hardware failure to achieve higher host availability. Multipathing is enabled by default in the agent ISO image, with a default `/etc/multipath.conf` configuration.
+====
+
+. Upload the PXE assets and optional script to your infrastructure where they will be accessible during the boot process.
++
+[NOTE]
+====
+If you generated an iPXE script, the location of the assets must match the `bootArtifactsBaseURL` you added to the `agent-config.yaml` file.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_prepare-pxe-assets-agent"]
+== Additional resources
+* See xref:../../installing/installing_with_agent_based_installer/installing-with-agent-based-installer.adoc#installing-with-agent-based-installer[Installing an {product-title} cluster with the Agent-based Installer] to learn about more configurations available with the Agent-based Installer.
+
+//# includes=_attributes/common-attributes,modules/installing-ocp-agent-download,modules/installing-ocp-agent-inputs,modules/pxe-assets-ocp-agent

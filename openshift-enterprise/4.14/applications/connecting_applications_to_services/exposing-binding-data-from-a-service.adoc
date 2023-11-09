@@ -1,0 +1,1034 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="exposing-binding-data-from-a-service"]
+= Exposing binding data from a service
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+// Standard document attributes to be used in the documentation
+//
+// The following are shared by all documents:
+:toc:
+:toclevels: 4
+:experimental:
+//
+// Product content attributes, that is, substitution variables in the files.
+//
+:servicebinding-title: Service Binding Operator
+:servicebinding-shortname: Service Binding
+:servicebinding-ver: servicebinding-1.0
+:context: exposing-binding-data-from-a-service
+
+toc::[]
+
+[role="_abstract"]
+Application developers need access to backing services to build and connect workloads. Connecting workloads to backing services is always a challenge because each service provider requires a different way to access their secrets and consume them in a workload.
+
+The {servicebinding-title} enables application developers to easily bind workloads together with operator-managed backing services, without any manual procedures to configure the binding connection. For the {servicebinding-title} to provide the binding data, as an Operator provider or user who creates backing services, you must expose the binding data to be automatically detected by the {servicebinding-title}. Then, the {servicebinding-title} automatically collects the binding data from the backing service and shares it with a workload to provide a consistent and predictable experience.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * /applications/connecting_applications_to_services/exposing-binding-data-from-a-service.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="sbo-methods-of-exposing-binding-data_{context}"]
+= Methods of exposing binding data
+
+[role="_abstract"]
+This section describes the methods you can use to expose the binding data.
+
+Ensure that you know and understand your workload requirements and environment, and how it works with the provided services.
+
+Binding data is exposed under the following circumstances:
+
+* Backing service is available as a provisioned service resource.
++
+The service you intend to connect to is compliant with the Service Binding specification. You must create a `Secret` resource with all the required binding data values and reference it in the backing service custom resource (CR). The detection of all the binding data values is automatic.
+
+* Backing service is not available as a provisioned service resource.
++
+You must expose the binding data from the backing service. Depending on your workload requirements and environment, you can choose any of the following methods to expose the binding data:
++
+** Direct secret reference
+** Declaring binding data through custom resource definition (CRD) or CR annotations
+// ** Declaring binding data through Operator Lifecycle Manager (OLM) descriptors
+// When the OLM descriptors are supported again, add this sentence.
+** Detection of binding data through owned resources
+
+[id="provisioned-service_{context}"]
+== Provisioned service
+Provisioned service represents a backing service CR with a reference to a `Secret` resource placed in the `.status.binding.name` field of the backing service CR.
+
+As an Operator provider or the user who creates backing services, you can use this method to be compliant with the Service Binding specification, by creating a `Secret` resource and referencing it in the `.status.binding.name` section of the backing service CR. This `Secret` resource must provide all the binding data values required for a workload to connect to the backing service.
+
+The following examples show an `AccountService` CR that represents a backing service and a `Secret` resource referenced from the CR.
+
+.Example: `AccountService` CR
+[source,yaml]
+----
+apiVersion: example.com/v1alpha1
+kind: AccountService
+name: prod-account-service
+spec:
+  ...
+status:
+  binding:
+    name: hippo-pguser-hippo
+----
+
+.Example: Referenced `Secret` resource
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hippo-pguser-hippo
+data:
+  password: "<password>"
+  user: "<username>"
+  ...
+----
+
+When creating a service binding resource, you can directly give the details of the `AccountService` resource in the `ServiceBinding` specification as follows:
+
+.Example: `ServiceBinding` resource
+[source,yaml]
+----
+apiVersion: binding.operators.coreos.com/v1alpha1
+kind: ServiceBinding
+metadata:
+  name: account-service
+spec:
+  ...
+  services:
+  - group: "example.com"
+    version: v1alpha1
+    kind: AccountService
+    name: prod-account-service
+  application:
+    name: spring-petclinic
+    group: apps
+    version: v1
+    resource: deployments
+----
+
+.Example: `ServiceBinding` resource in Specification API
+[source,yaml]
+----
+apiVersion: servicebinding.io/v1beta1
+kind: ServiceBinding
+metadata:
+  name: account-service
+spec:
+  ...
+  service:
+    apiVersion: example.com/v1alpha1
+    kind: AccountService
+    name: prod-account-service
+  workload:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: spring-petclinic
+----
+
+This method exposes all the keys in the `hippo-pguser-hippo` referenced `Secret` resource as binding data that is to be projected into the workload.
+
+[id="direct-secret-reference_{context}"]
+== Direct secret reference
+You can use this method, if all the required binding data values are available in a `Secret` resource that you can reference in your Service Binding definition. In this method, a `ServiceBinding` resource directly references a `Secret` resource to connect to a service. All the keys in the `Secret` resource are exposed as binding data.
+
+.Example: Specification with the `binding.operators.coreos.com` API
+[source,yaml]
+----
+apiVersion: binding.operators.coreos.com/v1alpha1
+kind: ServiceBinding
+metadata:
+  name: account-service
+spec:
+  ...
+  services:
+  - group: ""
+    version: v1
+    kind: Secret
+    name: hippo-pguser-hippo
+----
+
+.Example: Specification that is compliant with the `servicebinding.io` API
+[source,yaml]
+----
+apiVersion: servicebinding.io/v1beta1
+kind: ServiceBinding
+metadata:
+  name: account-service
+spec:
+  ...
+  service:
+    apiVersion: v1
+    kind: Secret
+    name: hippo-pguser-hippo
+----
+
+[id="declaring-binding-data-through-CRD-or-CR-annotations_{context}"]
+== Declaring binding data through CRD or CR annotations
+You can use this method to annotate the resources of the backing service to expose the binding data with specific annotations. Adding annotations under the `metadata` section alters the CRs and CRDs of the backing services. {servicebinding-title} detects the annotations added to the CRs and CRDs and then creates a `Secret` resource with the values extracted based on the annotations.
+
+The following examples show the annotations that are added under the `metadata` section and a referenced `ConfigMap` object from a resource:
+
+.Example: Exposing binding data from a `Secret` object defined in the CR annotations
+[source,yaml]
+----
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: hippo
+  namespace: my-petclinic
+  annotations:
+    service.binding: 'path={.metadata.name}-pguser-{.metadata.name},objectType=Secret'
+    ...
+----
+
+The previous example places the name of the secret name in the `{.metadata.name}-pguser-{.metadata.name}` template that resolves to `hippo-pguser-hippo`. The template can contain multiple JSONPath expressions.
+
+.Example: Referenced `Secret` object from a resource
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hippo-pguser-hippo
+data:
+  password: "<password>"
+  user: "<username>"
+----
+
+.Example: Exposing binding data from a `ConfigMap` object defined in the CR annotations
+[source,yaml]
+----
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: hippo
+  namespace: my-petclinic
+  annotations:
+    service.binding: 'path={.metadata.name}-config,objectType=ConfigMap'
+    ...
+----
+
+The previous example places the name of the config map in the `{.metadata.name}-config` template that resolves to `hippo-config`. The template can contain multiple JSONPath expressions.
+
+.Example: Referenced `ConfigMap` object from a resource
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hippo-config
+data:
+  db_timeout: "10s"
+  user: "hippo"
+----
+
+////
+[id="declaring-binding-data-through-olm-descriptors_{context}"]
+== Declaring binding data through OLM descriptors
+You can use this method if your backing service is provided by an Operator. If your Operator is distributed as an OLM bundle, you can add OLM descriptors to describe the binding data that is to be exposed. The OLM descriptors are part of Cluster Service Version resources. The {servicebinding-title} detects the OLM descriptors and then creates a `Secret` resource with the values extracted based on the detected OLM descriptors.
+
+You can expose the binding data by using the `specDescriptors` array and `statusDescriptors` array. The `specDescriptors` array specifies a path under the `.spec` section of a CR. The `statusDescriptors` array specifies a path under the `.status` section of a CR.
+
+Following are the only two fields that are used for binding the data:
+
+* `Path`: A dot-delimited path of the field on the object as described by the descriptor.
+*  `X-Descriptors`: Defines the binding data.
+
+The following examples show how to define an X-Descriptor depending on the resource to which you point the path:
+
+.Example: X-Descriptor definition for exposing a secret
+[source,yaml]
+----
+- path: data.dbConfiguration
+  x-descriptors:
+  - urn:alm:descriptor:io.kubernetes:Secret
+  - service.binding
+----
+
+.Example: X-Descriptor definition for exposing a config map
+[source,yaml]
+----
+- path: data.dbConfiguration
+  x-descriptors:
+  - urn:alm:descriptor:io.kubernetes:ConfigMap
+  - service.binding
+----
+
+[NOTE]
+====
+* You must have a `service.binding` entry in the X-Descriptors to identify that it is a configuration for service binding.
+* The absence of the `Secret` or `ConfigMap` specific X-Descriptors indicates that the descriptor is referencing the binding data value at the given path.
+====
+////
+// When the OLM descriptors are supported again, add this section.
+
+[id="detection-of-binding-data-through-owned-resources_{context}"]
+== Detection of binding data through owned resources
+You can use this method if your backing service owns one or more Kubernetes resources such as route, service, config map, or secret that you can use to detect the binding data. In this method, the {servicebinding-title} detects the binding data from resources owned by the backing service CR.
+
+The following examples show the `detectBindingResources` API option set to `true` in the `ServiceBinding` CR:
+
+.Example
+[source,yaml]
+----
+apiVersion: binding.operators.coreos.com/v1alpha1
+kind: ServiceBinding
+metadata:
+  name: spring-petclinic-detect-all
+  namespace: my-petclinic
+spec:
+  detectBindingResources: true
+  services:
+    - group: postgres-operator.crunchydata.com
+      version: v1beta1
+      kind: PostgresCluster
+      name: hippo
+  application:
+    name: spring-petclinic
+    group: apps
+    version: v1
+    resource: deployments
+----
+
+In the previous example, `PostgresCluster` custom service resource owns one or more Kubernetes resources such as route, service, config map, or secret.
+
+The {servicebinding-title} automatically detects the binding data exposed on each of the owned resources.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * /applications/connecting_applications_to_services/exposing-binding-data-from-a-service.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="sbo-data-model_{context}"]
+= Data model
+
+[role="_abstract"]
+// The data model used in the annotations and OLM descriptors follow specific conventions.
+// When the OLM descriptors are supported again, add this sentence.
+
+The data model used in the annotations follows specific conventions.
+
+Service binding annotations must use the following convention:
+
+[source,yaml]
+----
+service.binding(/<NAME>)?:
+    "<VALUE>|(path=<JSONPATH_TEMPLATE>(,objectType=<OBJECT_TYPE>)?(,elementType=<ELEMENT_TYPE>)?(,sourceKey=<SOURCE_KEY>)?(,sourceValue=<SOURCE_VALUE>)?)"
+----
+where:
+[horizontal]
+`<NAME>`:: Specifies the name under which the binding value is to be exposed. You can exclude it only when the `objectType` parameter is set to `Secret` or `ConfigMap`.
+`<VALUE>`:: Specifies the constant value exposed when no `path` is set.
+
+// Although, the data model is the same for custom resource definitions (CRD), custom resource (CR) annotations, and Operator Lifecycle Manager (OLM) descriptors, the syntax for each one differs.
+// When the OLM descriptors are supported again, add this sentence.
+
+The data model provides the details on the allowed values and semantic for the `path`, `elementType`, `objectType`, `sourceKey`, and `sourceValue` parameters.
+
+.Parameters and their descriptions
+[cols="3,6,4",options="header"]
+|===
+|Parameter
+|Description
+|Default value
+
+|`path`
+|JSONPath template that consists JSONPath expressions enclosed by curly braces {}.
+|N/A
+
+|`elementType`
+a|Specifies whether the value of the element referenced in the `path` parameter complies with any one of the following types:
+
+* `string`
+* `sliceOfStrings`
+* `sliceOfMaps`
+|`string`
+
+|`objectType`
+|Specifies whether the value of the element indicated in the `path` parameter refers to a `ConfigMap`, `Secret`, or plain string in the current namespace.
+|`Secret`, if `elementType` is non-string.
+
+
+|`sourceKey`
+a|Specifies the key in the `ConfigMap` or `Secret` resource to be added to the binding secret when collecting the binding data. +
+
+Note:
+
+* When used in conjunction with `elementType`=`sliceOfMaps`, the `sourceKey` parameter specifies the key in the slice of maps whose value is used as a key in the binding secret.
+* Use this optional parameter to expose a specific entry in the referenced `Secret` or `ConfigMap` resource as binding data.
+* When not specified, all keys and values from the `Secret` or `ConfigMap` resource are exposed and are added to the binding secret.
+|N/A
+
+|`sourceValue`
+a|Specifies the key in the slice of maps. +
+
+Note:
+
+* The value of this key is used as the base to generate the value of the entry for the key-value pair to be added to the binding secret.
+* In addition, the value of the `sourceKey` is used as the key of the entry for the key-value pair to be added to the binding secret.
+* It is mandatory only if `elementType`=`sliceOfMaps`.
+|N/A
+|===
+
+[NOTE]
+====
+The `sourceKey` and `sourceValue` parameters are applicable only if the element indicated in the `path` parameter refers to a `ConfigMap` or `Secret` resource.
+====
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * applications/connecting_applications_to_services/exposing-binding-data-from-a-service.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="sbo-setting-annotations-mapping-optional_{context}"]
+= Setting annotations mapping to be optional
+
+You can have optional fields in the annotations. For example, a path to the credentials might not be present if the service endpoint does not require authentication. In such cases, a field might not exist in the target path of the annotations. As a result, {servicebinding-title} generates an error, by default.
+
+As a service provider, to indicate whether you require annotations mapping, you can set a value for the `optional` flag in your annotations when enabling services. {servicebinding-title} provides annotations mapping only if the target path is available. When the target path is not available, the {servicebinding-title} skips the optional mapping and continues with the projection of the existing mappings without throwing any errors.
+
+.Procedure
+
+* To make a field in the annotations optional, set the `optional` flag value to `true`:
++
+.Example
+[source,yaml]
+----
+apiVersion: apps.example.org/v1beta1
+kind: Database
+metadata:
+  name: my-db
+  namespace: my-petclinic
+  annotations:
+    service.binding/username: path={.spec.name},optional=true
+    ...
+----
+
+[NOTE]
+====
+* If you set the `optional` flag value to `false` and the {servicebinding-title} is unable to find the target path, the Operator fails the annotations mapping.
+* If the `optional` flag has no value set, the {servicebinding-title} considers the value as `false` by default and fails the annotations mapping.
+====
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * /applications/connecting_applications_to_services/exposing-binding-data-from-a-service.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="sbo-rbac-requirements_{context}"]
+= RBAC requirements
+
+[role="_abstract"]
+To expose the backing service binding data using the {servicebinding-title}, you require certain Role-based access control (RBAC) permissions. Specify certain verbs under the `rules` field of the `ClusterRole` resource to grant the RBAC permissions for the backing service resources. When you define these `rules`, you allow the {servicebinding-title} to read the binding data of the backing service resources throughout the cluster. If the users do not have permissions to read binding data or modify application resource, the {servicebinding-title} prevents such users to bind services to application. Adhering to the RBAC requirements avoids unnecessary permission elevation for the user and prevents access to unauthorized services or applications.
+
+The {servicebinding-title} performs requests against the Kubernetes API using a dedicated service account. By default, this account has permissions to bind services to workloads, both represented by the following standard Kubernetes or OpenShift objects:
+
+* `Deployments`
+* `DaemonSets`
+* `ReplicaSets`
+* `StatefulSets`
+* `DeploymentConfigs`
+
+The Operator service account is bound to an aggregated cluster role, allowing Operator providers or cluster administrators to enable binding custom service resources to workloads. To grant the required permissions within a `ClusterRole`, label it with the `servicebinding.io/controller` flag and set the flag value to `true`. The following example shows how to allow the {servicebinding-title} to `get`, `watch`, and `list` the custom resources (CRs) of Crunchy PostgreSQL Operator:
+
+.Example: Enable binding to PostgreSQL database instances provisioned by Crunchy PostgreSQL Operator
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: postgrescluster-reader
+  labels:
+     servicebinding.io/controller: "true"
+rules:
+- apiGroups:
+    - postgres-operator.crunchydata.com
+  resources:
+    - postgresclusters
+  verbs:
+    - get
+    - watch
+    - list
+  ...
+----
+
+This cluster role can be deployed during the installation of the backing service Operator.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * /applications/connecting_applications_to_services/exposing-binding-data-from-a-service.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="sbo-categories-of-exposable-binding-data_{context}"]
+= Categories of exposable binding data
+
+[role="_abstract"]
+The {servicebinding-title} enables you to expose the binding data values from the backing service resources and custom resource definitions (CRDs).
+
+This section provides examples to show how you can use the various categories of exposable binding data. You must modify these examples to suit your work environment and requirements.
+
+[id="exposing-a-string-from-a-resource_{context}"]
+== Exposing a string from a resource
+The following example shows how to expose the string from the `metadata.name` field of the `PostgresCluster` custom resource (CR) as a username:
+
+.Example
+[source,yaml]
+----
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: hippo
+  namespace: my-petclinic
+  annotations:
+    service.binding/username: path={.metadata.name}
+    ...
+----
+
+[id="exposing-a-constant-value-as-the-binding-item_{context}"]
+== Exposing a constant value as the binding item
+The following examples show how to expose a constant value from the `PostgresCluster` custom resource (CR):
+
+.Example: Exposing a constant value
+[source,yaml]
+----
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: hippo
+  namespace: my-petclinic
+  annotations:
+    "service.binding/type": "postgresql" <1>
+----
+<1> Binding `type` to be exposed with the `postgresql` value.
+
+[id="exposing-an-entire-config-map-or-secret-that-is-referenced-from-a-resource_{context}"]
+== Exposing an entire config map or secret that is referenced from a resource
+The following examples show how to expose an entire secret through annotations:
+
+.Example: Exposing an entire secret through annotations
+[source,yaml]
+----
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: hippo
+  namespace: my-petclinic
+  annotations:
+    service.binding: 'path={.metadata.name}-pguser-{.metadata.name},objectType=Secret'
+----
+
+.Example: The referenced secret from the backing service resource
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hippo-pguser-hippo
+data:
+  password: "<password>"
+  user: "<username>"
+----
+
+////
+The following example shows how to expose an entire config map through OLM descriptors:
+
+.Example: Exposing an entire config map through OLM descriptors
+[source,yaml]
+----
+- path: data.dbConfiguration
+  x-descriptors:
+  - urn:alm:descriptor:io.kubernetes:ConfigMap
+  - service.binding
+----
+
+This example uses the `path` attribute with a `urn:alm:descriptor:io.kubernetes:ConfigMap` entry to indicate that the path points to the `ConfigMap` service resource.
+
+If you intend to project all the values from a `ConfigMap` service resource, you must specify it as an attribute in the backing service CR. For example, if the attribute is part of the `.spec` section, you can create and use a `specDescriptors` array. Or, if the attribute is part of the `.status` section, you can create and use a `statusDescriptors` array.
+////
+// When the OLM descriptors are supported again, add this example.
+
+[id="exposing-a-specific-entry-from-a-config-map-or-secret-that-is-referenced-from-a-resource_{context}"]
+== Exposing a specific entry from a config map or secret that is referenced from a resource
+The following examples show how to expose a specific entry from a config map through annotations:
+
+.Example: Exposing an entry from a config map through annotations
+[source,yaml]
+----
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: hippo
+  namespace: my-petclinic
+  annotations:
+    service.binding: 'path={.metadata.name}-config,objectType=ConfigMap,sourceKey=user'
+----
+
+.Example: The referenced config map from the backing service resource
+The binding data should have a key with name as `db_timeout` and value as `10s`:
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hippo-config
+data:
+  db_timeout: "10s"
+  user: "hippo"
+----
+
+////
+The following example shows how to expose a specific entry from a config map through OLM descriptors:
+
+.Example: Exposing an entry from a config map through OLM descriptors
+[source,yaml]
+----
+- path: data.dbConfiguration
+  x-descriptors:
+  - urn:alm:descriptor:io.kubernetes:ConfigMap
+  - service.binding:my_certificate:sourceKey=certificate
+----
+
+This example uses the `path` attribute with an `X-Descriptors` update for `service.binding` and `sourceKey` by providing the following information:
+
+* Name of the binding key that is to be projected
+* Name of the key in the Secret service resource
+////
+// When the OLM descriptors are supported again, add this example.
+
+[id="exposing-a-resource-definition-value_{context}"]
+== Exposing a resource definition value
+The following example shows how to expose a resource definition value through annotations:
+
+.Example: Exposing a resource definition value through annotations
+[source,yaml]
+----
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: hippo
+  namespace: my-petclinic
+  annotations:
+    service.binding/username: path={.metadata.name}
+    ...
+----
+
+////
+The following example shows how to expose a resource definition value through OLM descriptors:
+
+.Example: Exposing a resource definition value through OLM descriptors
+[source,yaml]
+----
+- path: data.connectionURL
+  x-descriptors:
+  - service.binding:uri
+----
+
+The previous example uses the `connectionURL` attribute that points to the required resource definition value that is to be projected as `uri`.
+
+If required values are available as attributes of backing service resources, annotating these values using `X-Descriptors` identifies them as the binding data.
+////
+// When the OLM descriptors are supported again, add this example.
+
+[id="exposing-entries-of-a-collection-with-the-key-and-value-from-each-entry_{context}"]
+== Exposing entries of a collection with the key and value from each entry
+The following example shows how to expose the entries of a collection with the key and value from each entry through annotations:
+
+.Example: Exposing the entries of a collection through annotations
+[source,yaml]
+----
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: hippo
+  namespace: my-petclinic
+  annotations:
+    "service.binding/uri": "path={.status.connections},elementType=sliceOfMaps,sourceKey=type,sourceValue=url"
+spec:
+  ...
+status:
+  connections:
+    - type: primary
+      url: primary.example.com
+    - type: secondary
+      url: secondary.example.com
+    - type: '404'
+      url: black-hole.example.com
+----
+
+The following example shows how the previous entries of a collection in annotations are projected into the bound application.
+
+.Example: Binding data files
+[source,text]
+----
+/bindings/<binding-name>/uri_primary => primary.example.com
+/bindings/<binding-name>/uri_secondary => secondary.example.com
+/bindings/<binding-name>/uri_404 => black-hole.example.com
+----
+
+////
+The following example shows how to expose the entries of a collection with the key and value from each entry through OLM descriptors:
+
+.Example: Exposing the entries of a collection through OLM descriptors
+[source,yaml]
+----
+- path: bootstrap
+  x-descriptors:
+  - service.binding:endpoints:elementType=sliceOfMaps:sourceKey=type:sourceValue=url
+----
+
+The previous example uses the `path` attribute with an `X-Descriptors` update for the required entries of a collection.
+////
+// When the OLM descriptors are supported again, add this example.
+
+.Example: Configuration from a backing service resource
+[source,yaml]
+----
+status:
+  connections:
+    - type: primary
+      url: primary.example.com
+    - type: secondary
+      url: secondary.example.com
+    - type: '404'
+      url: black-hole.example.com
+----
+
+The previous example helps you to project all those values with keys such as `primary`,
+`secondary`, and so on.
+
+[id="exposing-items-of-a-collection-with-one-key-per-item_{context}"]
+== Exposing items of a collection with one key per item
+The following example shows how to expose the items of a collection with one key per item through annotations:
+
+.Example: Exposing the items of a collection through annotations
+[source,yaml]
+----
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: hippo
+  namespace: my-petclinic
+  annotations:
+    "service.binding/tags": "path={.spec.tags},elementType=sliceOfStrings"
+spec:
+    tags:
+      - knowledge
+      - is
+      - power
+----
+
+The following example shows how the previous items of a collection in annotations are projected into the bound application.
+
+.Example: Binding data files
+[source,text]
+----
+/bindings/<binding-name>/tags_0 => knowledge
+/bindings/<binding-name>/tags_1 => is
+/bindings/<binding-name>/tags_2 => power
+----
+
+////
+The following example shows how to expose the items of a collection with one key per item through OLM descriptors:
+
+.Example: Exposing the items of a collection through OLM descriptors
+[source,yaml]
+----
+- path: spec.tags
+  x-descriptors:
+  - service.binding:tags:elementType=sliceOfStrings
+----
+
+The previous example uses the `path` attribute with an `X-Descriptors` update for the required items of a collection.
+////
+// When the OLM descriptors are supported again, add this example.
+
+.Example: Configuration from a backing service resource
+[source,yaml]
+----
+spec:
+  tags:
+  - knowledge
+  - is
+  - power
+----
+
+[id="exposing-values-of-collection-entries-with-one-key-per-entry-value_{context}"]
+== Exposing values of collection entries with one key per entry value
+The following example shows how to expose the values of collection entries with one key per entry value through annotations:
+
+.Example: Exposing the values of collection entries through annotations
+[source,yaml]
+----
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: hippo
+  namespace: my-petclinic
+  annotations:
+    "service.binding/url": "path={.spec.connections},elementType=sliceOfStrings,sourceValue=url"
+spec:
+  connections:
+    - type: primary
+      url: primary.example.com
+    - type: secondary
+      url: secondary.example.com
+    - type: '404'
+      url: black-hole.example.com
+----
+
+The following example shows how the previous values of a collection in annotations are projected into the bound application.
+
+.Example: Binding data files
+[source,text]
+----
+/bindings/<binding-name>/url_0 => primary.example.com
+/bindings/<binding-name>/url_1 => secondary.example.com
+/bindings/<binding-name>/url_2 => black-hole.example.com
+----
+
+////
+The following example shows how to expose the values of collection entries with one key per entry value through OLM descriptors:
+
+.Example: Exposing the values of collection entries through OLM descriptors
+[source,yaml]
+----
+- path: bootstrap
+  x-descriptors:
+  - service.binding:endpoints:elementType=sliceOfStrings:sourceValue=url
+----
+////
+// When the OLM descriptors are supported again, add this example.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_exposing-binding-data"]
+== Additional resources
+// * link:https://github.com/openshift/console/blob/master/frontend/packages/operator-lifecycle-manager/src/components/descriptors/reference/reference.md[OLM Descriptor Reference].
+// When OLM descriptors are supported again, add this additional resource.
+* xref:../../operators/operator_sdk/osdk-generating-csvs.adoc#osdk-generating-csvs[Defining cluster service versions (CSVs)].
+* xref:../../applications/connecting_applications_to_services/projecting-binding-data.adoc#projecting-binding-data[Projecting binding data].
+
+//# includes=_attributes/common-attributes,_attributes/servicebinding-document-attributes,modules/sbo-methods-of-exposing-binding-data,modules/sbo-data-model,modules/sbo-setting-annotations-mapping-optional,modules/sbo-rbac-requirements,modules/sbo-categories-of-exposable-binding-data

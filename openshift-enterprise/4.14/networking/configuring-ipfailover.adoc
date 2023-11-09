@@ -1,0 +1,918 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="configuring-ipfailover"]
+= Configuring IP failover
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: configuring-ipfailover
+
+toc::[]
+
+This topic describes configuring IP failover for pods and services on your {product-title} cluster.
+
+IP failover manages a pool of Virtual IP (VIP) addresses on a set of nodes. Every VIP in the set is serviced by a node selected from the set. As long a single node is available, the VIPs are served. There is no way to explicitly distribute the VIPs over the nodes, so there can be nodes with no VIPs and other nodes with many VIPs. If there is only one node, all VIPs are on it.
+
+[NOTE]
+====
+The VIPs must be routable from outside the cluster.
+====
+
+IP failover monitors a port on each VIP to determine whether the port is reachable on the node. If the port is not reachable, the VIP is not assigned to the node. If the port is set to `0`, this check is suppressed. The check script does the needed testing.
+
+IP failover uses link:http://www.keepalived.org/[Keepalived] to host a set of externally accessible VIP addresses on a set of hosts. Each VIP is only serviced by a single host at a time. Keepalived uses the Virtual Router Redundancy Protocol (VRRP) to determine which host, from the set of hosts, services which VIP. If a host becomes unavailable, or if the service that Keepalived is watching does not respond, the VIP is switched to another host from the set. This means a VIP is always serviced as long as a host is available.
+
+When a node running Keepalived passes the check script, the VIP on that node can enter the `master` state based on its priority and the priority of the current master and as determined by the preemption strategy.
+
+A cluster administrator can provide a script through the `OPENSHIFT_HA_NOTIFY_SCRIPT` variable, and this script is called whenever the state of the VIP on the node changes. Keepalived uses the `master` state when it is servicing the VIP, the `backup` state when another node is servicing the VIP, or in the `fault` state when the check script fails. The notify script is called with the new state whenever the state changes.
+
+You can create an IP failover deployment configuration on {product-title}. The IP failover deployment configuration specifies the set of VIP addresses, and the set of nodes on which to service them. A cluster can have multiple IP failover deployment configurations, with each managing its own set of unique VIP addresses. Each node in the IP failover configuration runs an IP failover pod, and this pod runs Keepalived.
+
+When using VIPs to access a pod with host networking, the application pod runs on all nodes that are running the IP failover pods. This enables any of the IP failover nodes to become the master and service the VIPs when needed. If application pods are not running on all nodes with IP failover, either some IP failover nodes never service the VIPs or some application pods never receive any traffic. Use the same selector and replication count, for both IP failover and the application pods, to avoid this mismatch.
+
+While using VIPs to access a service, any of the nodes can be in the IP failover set of nodes, since the service is reachable on all nodes, no matter where the application pod is running. Any of the IP failover nodes can become master at any time. The service can either use external IPs and a service port or it can use a `NodePort`.
+
+When using external IPs in the service definition, the VIPs are set to the external IPs, and the IP failover monitoring port is set to the service port. When using a node port, the port is open on every node in the cluster, and the service load-balances traffic from whatever node currently services the VIP. In this case, the IP failover monitoring port is set to the `NodePort` in the service definition.
+
+[IMPORTANT]
+====
+Setting up a `NodePort` is a privileged operation.
+====
+
+[IMPORTANT]
+====
+Even though a service VIP is highly available, performance can still be affected. Keepalived makes sure that each of the VIPs is serviced by some node in the configuration, and several VIPs can end up on the same node even when other nodes have none. Strategies that externally load-balance across a set of VIPs can be thwarted when IP failover puts multiple VIPs on the same node.
+====
+
+When you use `ingressIP`, you can set up IP failover to have the same VIP range as the `ingressIP` range. You can also disable the monitoring port. In this case, all the VIPs appear on same node in the cluster. Any user can set up a service with an `ingressIP` and have it highly available.
+
+[IMPORTANT]
+====
+There are a maximum of 254 VIPs in the cluster.
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/configuring-ipfailover.adoc
+
+[id="nw-ipfailover-environment-variables_{context}"]
+= IP failover environment variables
+
+The following table contains the variables used to configure IP failover.
+
+.IP failover environment variables
+[cols="3a,1a,4a",options="header"]
+|===
+
+| Variable Name | Default | Description
+
+|`OPENSHIFT_HA_MONITOR_PORT`
+|`80`
+|The IP failover pod tries to open a TCP connection to this port on each Virtual IP (VIP). If connection is established, the service is considered to be running. If this port is set to `0`, the test always passes.
+
+|`OPENSHIFT_HA_NETWORK_INTERFACE`
+|
+|The interface name that IP failover uses to send Virtual Router Redundancy Protocol (VRRP) traffic. The default value is `eth0`.
+
+|`OPENSHIFT_HA_REPLICA_COUNT`
+|`2`
+|The number of replicas to create. This must match `spec.replicas` value in IP failover deployment configuration.
+
+|`OPENSHIFT_HA_VIRTUAL_IPS`
+|
+|The list of IP address ranges to replicate. This must be provided. For example, `1.2.3.4-6,1.2.3.9`.
+
+|`OPENSHIFT_HA_VRRP_ID_OFFSET`
+|`0`
+|The offset value used to set the virtual router IDs. Using different offset values allows multiple IP failover configurations to exist within the same cluster. The default offset is `0`, and the allowed range is `0` through `255`.
+
+|`OPENSHIFT_HA_VIP_GROUPS`
+|
+|The number of groups to create for VRRP. If not set, a group is created for each virtual IP range specified with the `OPENSHIFT_HA_VIP_GROUPS` variable.
+
+|`OPENSHIFT_HA_IPTABLES_CHAIN`
+|INPUT
+|The name of the iptables chain, to automatically add an `iptables` rule to allow the VRRP traffic on. If the value is not set, an `iptables` rule is not added. If the chain does not exist, it is not created.
+
+|`OPENSHIFT_HA_CHECK_SCRIPT`
+|
+|The full path name in the pod file system of a script that is periodically run to verify the application is operating.
+
+|`OPENSHIFT_HA_CHECK_INTERVAL`
+|`2`
+|The period, in seconds, that the check script is run.
+
+|`OPENSHIFT_HA_NOTIFY_SCRIPT`
+|
+|The full path name in the pod file system of a script that is run whenever the state changes.
+
+|`OPENSHIFT_HA_PREEMPTION`
+|`preempt_nodelay 300`
+|The strategy for handling a new higher priority host. The `nopreempt` strategy does not move master from the lower priority host to the higher priority host.
+|===
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/configuring-ipfailover.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ipfailover-configuration_{context}"]
+= Configuring IP failover
+
+As a cluster administrator, you can configure IP failover on an entire cluster, or on a subset of nodes, as defined by the label selector. You can also configure multiple IP failover deployment configurations in your cluster, where each one is independent of the others.
+
+The IP failover deployment configuration ensures that a failover pod runs on each of the nodes matching the constraints or the label used.
+
+This pod runs Keepalived, which can monitor an endpoint and use Virtual Router Redundancy Protocol (VRRP) to fail over the virtual IP (VIP) from one node to another if the first node cannot reach the service or endpoint.
+
+For production use, set a `selector` that selects at least two nodes, and set `replicas` equal to the number of selected nodes.
+
+.Prerequisites
+
+* You are logged in to the cluster with a user with `cluster-admin` privileges.
+* You created a pull secret.
+
+.Procedure
+
+//. Create an {product-title} pull secret
+//+
+. Create an IP failover service account:
++
+[source,terminal]
+----
+$ oc create sa ipfailover
+----
++
+. Update security context constraints (SCC) for `hostNetwork`:
++
+[source,terminal]
+----
+$ oc adm policy add-scc-to-user privileged -z ipfailover
+$ oc adm policy add-scc-to-user hostnetwork -z ipfailover
+----
++
+. Create a deployment YAML file to configure IP failover:
++
+.Example deployment YAML for IP failover configuration
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipfailover-keepalived <1>
+  labels:
+    ipfailover: hello-openshift
+spec:
+  strategy:
+    type: Recreate
+  replicas: 2
+  selector:
+    matchLabels:
+      ipfailover: hello-openshift
+  template:
+    metadata:
+      labels:
+        ipfailover: hello-openshift
+    spec:
+      serviceAccountName: ipfailover
+      privileged: true
+      hostNetwork: true
+      nodeSelector:
+        node-role.kubernetes.io/worker: ""
+      containers:
+      - name: openshift-ipfailover
+        image: quay.io/openshift/origin-keepalived-ipfailover
+        ports:
+        - containerPort: 63000
+          hostPort: 63000
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: lib-modules
+          mountPath: /lib/modules
+          readOnly: true
+        - name: host-slash
+          mountPath: /host
+          readOnly: true
+          mountPropagation: HostToContainer
+        - name: etc-sysconfig
+          mountPath: /etc/sysconfig
+          readOnly: true
+        - name: config-volume
+          mountPath: /etc/keepalive
+        env:
+        - name: OPENSHIFT_HA_CONFIG_NAME
+          value: "ipfailover"
+        - name: OPENSHIFT_HA_VIRTUAL_IPS <2>
+          value: "1.1.1.1-2"
+        - name: OPENSHIFT_HA_VIP_GROUPS <3>
+          value: "10"
+        - name: OPENSHIFT_HA_NETWORK_INTERFACE <4>
+          value: "ens3" #The host interface to assign the VIPs
+        - name: OPENSHIFT_HA_MONITOR_PORT <5>
+          value: "30060"
+        - name: OPENSHIFT_HA_VRRP_ID_OFFSET <6>
+          value: "0"
+        - name: OPENSHIFT_HA_REPLICA_COUNT <7>
+          value: "2" #Must match the number of replicas in the deployment
+        - name: OPENSHIFT_HA_USE_UNICAST
+          value: "false"
+        #- name: OPENSHIFT_HA_UNICAST_PEERS
+          #value: "10.0.148.40,10.0.160.234,10.0.199.110"
+        - name: OPENSHIFT_HA_IPTABLES_CHAIN <8>
+          value: "INPUT"
+        #- name: OPENSHIFT_HA_NOTIFY_SCRIPT <9>
+        #  value: /etc/keepalive/mynotifyscript.sh
+        - name: OPENSHIFT_HA_CHECK_SCRIPT <10>
+          value: "/etc/keepalive/mycheckscript.sh"
+        - name: OPENSHIFT_HA_PREEMPTION <11>
+          value: "preempt_delay 300"
+        - name: OPENSHIFT_HA_CHECK_INTERVAL <12>
+          value: "2"
+        livenessProbe:
+          initialDelaySeconds: 10
+          exec:
+            command:
+            - pgrep
+            - keepalived
+      volumes:
+      - name: lib-modules
+        hostPath:
+          path: /lib/modules
+      - name: host-slash
+        hostPath:
+          path: /
+      - name: etc-sysconfig
+        hostPath:
+          path: /etc/sysconfig
+      # config-volume contains the check script
+      # created with `oc create configmap keepalived-checkscript --from-file=mycheckscript.sh`
+      - configMap:
+          defaultMode: 0755
+          name: keepalived-checkscript
+        name: config-volume
+      imagePullSecrets:
+        - name: openshift-pull-secret <13>
+----
+<1> The name of the IP failover deployment.
+<2> The list of IP address ranges to replicate. This must be provided. For example, `1.2.3.4-6,1.2.3.9`.
+<3> The number of groups to create for VRRP. If not set, a group is created for each virtual IP range specified with the `OPENSHIFT_HA_VIP_GROUPS` variable.
+<4> The interface name that IP failover uses to send VRRP traffic. By default, `eth0` is used.
+<5> The IP failover pod tries to open a TCP connection to this port on each VIP. If connection is established, the service is considered to be running. If this port is set to `0`, the test always passes. The default value is `80`.
+<6> The offset value used to set the virtual router IDs. Using different offset values allows multiple IP failover configurations to exist within the same cluster. The default offset is `0`, and the allowed range is `0` through `255`.
+<7> The number of replicas to create. This must match `spec.replicas` value in IP failover deployment configuration. The default value is `2`.
+<8> The name of the `iptables` chain to automatically add an `iptables` rule to allow the VRRP traffic on. If the value is not set, an `iptables` rule is not added. If the chain does not exist, it is not created, and Keepalived operates in unicast mode. The default is `INPUT`.
+<9> The full path name in the pod file system of a script that is run whenever the state changes.
+<10> The full path name in the pod file system of a script that is periodically run to verify the application is operating.
+<11> The strategy for handling a new higher priority host. The default value is `preempt_delay 300`, which causes a Keepalived instance to take over a VIP after 5 minutes if a lower-priority master is holding the VIP.
+<12> The period, in seconds, that the check script is run. The default value is `2`.
+<13> Create the pull secret before creating the deployment, otherwise you will get an error when creating the deployment.
+////
++
+.Example service YAML for IP failover configuration
+[source,yaml]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipfailover-keepalived-service
+spec:
+  ports:
+    - port: 1985
+      targetPort: 1985
+      name: todo
+    - port: 112
+      targetPort: 112
+      name: vrrp
+  selector:
+    ipfailover: hello-openshift
+  externalIPs:
+  - 1.1.1.1
+  - 1.1.1.2
+----
+////
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/configuring-ipfailover.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-ipfailover-virtual-ip-addresses-concept_{context}"]
+= About virtual IP addresses
+
+Keepalived manages a set of virtual IP addresses (VIP). The administrator must make sure that all of these addresses:
+
+* Are accessible on the configured hosts from outside the cluster.
+* Are not used for any other purpose within the cluster.
+
+Keepalived on each node determines whether the needed service is running. If it is, VIPs are supported and Keepalived participates in the negotiation to determine which node serves the VIP. For a node to participate, the service must be listening on the watch port on a VIP or the check must be disabled.
+
+[NOTE]
+====
+Each VIP in the set may end up being served by a different node.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/configuring-ipfailover.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ipfailover-configuring-check-notify-scripts_{context}"]
+= Configuring check and notify scripts
+
+Keepalived monitors the health of the application by periodically running an optional user supplied check script. For example, the script can test a web server by issuing a request and verifying the response.
+
+When a check script is not provided, a simple default script is run that tests the TCP connection. This default test is suppressed when the monitor port is `0`.
+
+Each IP failover pod manages a Keepalived daemon that manages one or more virtual IPs (VIP) on the node where the pod is running. The Keepalived daemon keeps the state of each VIP for that node. A particular VIP on a particular node may be in `master`, `backup`, or `fault` state.
+
+When the check script for that VIP on the node that is in `master` state fails, the VIP on that node enters the `fault` state, which triggers a renegotiation. During renegotiation, all VIPs on a node that are not in the `fault` state participate in deciding which node takes over the VIP. Ultimately, the VIP enters the `master` state on some node, and the VIP stays in the `backup` state on the other nodes.
+
+When a node with a VIP in `backup` state fails, the VIP on that node enters the `fault` state. When the check script passes again for a VIP on a node in the `fault` state, the VIP on that node exits the `fault` state and negotiates to enter the `master` state. The VIP on that node may then enter either the `master` or the `backup` state.
+
+As cluster administrator, you can provide an optional notify script, which is called whenever the state changes. Keepalived passes the following three parameters to the script:
+
+* `$1` - `group` or `instance`
+* `$2` - Name of the `group` or `instance`
+* `$3` - The new state: `master`, `backup`, or `fault`
+
+The check and notify scripts run in the IP failover pod and use the pod file system, not the host file system. However, the IP failover pod makes the host file system available under the `/hosts` mount path. When configuring a check or notify script, you must provide the full path to the script. The recommended approach for providing the scripts is to use a config map.
+
+The full path names of the check and notify scripts are added to the Keepalived configuration file, `_/etc/keepalived/keepalived.conf`, which is loaded every time Keepalived starts. The scripts can be added to the pod with a config map as follows.
+
+.Prerequisites
+
+* You installed the OpenShift CLI (`oc`).
+* You are logged in to the cluster with a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create the desired script and create a config map to hold it. The script has no input arguments and must return `0` for `OK` and `1` for `fail`.
++
+The check script, `_mycheckscript.sh_`:
++
+[source,bash]
+----
+#!/bin/bash
+    # Whatever tests are needed
+    # E.g., send request and verify response
+exit 0
+----
+
+. Create the config map:
++
+[source,terminal]
+----
+$ oc create configmap mycustomcheck --from-file=mycheckscript.sh
+----
++
+. Add the script to the pod. The `defaultMode` for the mounted config map files must able to run by using `oc` commands or by editing the deployment configuration. A value of `0755`, `493` decimal, is typical:
++
+[source,terminal]
+----
+$ oc set env deploy/ipfailover-keepalived \
+    OPENSHIFT_HA_CHECK_SCRIPT=/etc/keepalive/mycheckscript.sh
+----
++
+[source,terminal]
+----
+$ oc set volume deploy/ipfailover-keepalived --add --overwrite \
+    --name=config-volume \
+    --mount-path=/etc/keepalive \
+    --source='{"configMap": { "name": "mycustomcheck", "defaultMode": 493}}'
+----
++
+[NOTE]
+====
+The `oc set env` command is whitespace sensitive. There must be no whitespace on either side of the `=` sign.
+====
++
+[TIP]
+====
+You can alternatively edit the `ipfailover-keepalived` deployment configuration:
+
+[source,terminal]
+----
+$ oc edit deploy ipfailover-keepalived
+----
+
+[source,yaml]
+----
+    spec:
+      containers:
+      - env:
+        - name: OPENSHIFT_HA_CHECK_SCRIPT  <1>
+          value: /etc/keepalive/mycheckscript.sh
+...
+        volumeMounts: <2>
+        - mountPath: /etc/keepalive
+          name: config-volume
+      dnsPolicy: ClusterFirst
+...
+      volumes: <3>
+      - configMap:
+          defaultMode: 0755 <4>
+          name: customrouter
+        name: config-volume
+...
+----
+<1> In the `spec.container.env` field, add the `OPENSHIFT_HA_CHECK_SCRIPT` environment variable to point to the mounted script file.
+<2> Add the `spec.container.volumeMounts` field to create the mount point.
+<3> Add a new `spec.volumes` field to mention the config map.
+<4> This sets run permission on the files. When read back, it is displayed in decimal, `493`.
+
+Save the changes and exit the editor. This restarts `ipfailover-keepalived`.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/configuring-ipfailover.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ipfailover-configuring-vrrp-preemption_{context}"]
+= Configuring VRRP preemption
+
+When a Virtual IP (VIP) on a node leaves the `fault` state by passing the check script, the VIP on the node enters the `backup` state if it has lower priority than the VIP on the node that is currently in the `master` state. However, if the VIP on the node that is leaving `fault` state has a higher priority, the preemption strategy determines its role in the cluster.
+
+The `nopreempt` strategy does not move `master` from the lower priority VIP on the host to the higher priority VIP on the host. With `preempt_delay 300`, the default, Keepalived waits the specified 300 seconds and moves `master` to the higher priority VIP on the host.
+
+.Prerequisites
+
+* You installed the OpenShift CLI (`oc`).
+
+.Procedure
+
+* To specify preemption enter `oc edit deploy ipfailover-keepalived` to edit the router deployment configuration:
++
+[source,terminal]
+----
+$ oc edit deploy ipfailover-keepalived
+----
++
+[source,yaml]
+----
+...
+    spec:
+      containers:
+      - env:
+        - name: OPENSHIFT_HA_PREEMPTION  <1>
+          value: preempt_delay 300
+...
+----
+<1> Set the `OPENSHIFT_HA_PREEMPTION` value:
+- `preempt_delay 300`: Keepalived waits the specified 300 seconds and moves `master` to the higher priority VIP on the host. This is the default value.
+- `nopreempt`: does not move `master` from the lower priority VIP on the host to the higher priority VIP on the host.
+
+:leveloffset!:
+
+//Omitted the following procedure for now. We can update it to use `oc debug` if needed.
+//include::modules/nw-ipfailover-configuring-keepalived-multicast.adoc[leveloffset=+1]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/configuring-ipfailover.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-ipfailover-vrrp-ip-offset_{context}"]
+= About VRRP ID offset
+
+Each IP failover pod managed by the IP failover deployment configuration, `1` pod per node or replica, runs a Keepalived daemon. As more IP failover deployment configurations are configured, more pods are created and more daemons join into the common Virtual Router Redundancy Protocol (VRRP) negotiation. This negotiation is done by all the Keepalived daemons and it determines which nodes service which virtual IPs (VIP).
+
+Internally, Keepalived assigns a unique `vrrp-id` to each VIP. The negotiation uses this set of `vrrp-ids`, when a decision is made, the VIP corresponding to the winning `vrrp-id` is serviced on the winning node.
+
+Therefore, for every VIP defined in the IP failover deployment configuration, the IP failover pod must assign a corresponding `vrrp-id`. This is done by starting at `OPENSHIFT_HA_VRRP_ID_OFFSET` and sequentially assigning the `vrrp-ids` to the list of VIPs. The `vrrp-ids` can have values in the range `1..255`.
+
+When there are multiple IP failover deployment configurations, you must specify `OPENSHIFT_HA_VRRP_ID_OFFSET` so that there is room to increase the number of VIPs in the deployment configuration and none of the `vrrp-id` ranges overlap.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/configuring-ipfailover.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ipfailover-configuring-more-than-254_{context}"]
+= Configuring IP failover for more than 254 addresses
+
+IP failover management is limited to 254 groups of Virtual IP (VIP) addresses. By default {product-title} assigns one IP address to each group. You can use the `OPENSHIFT_HA_VIP_GROUPS` variable to change this so multiple IP addresses are in each group and define the number of VIP groups available for each Virtual Router Redundancy Protocol (VRRP) instance when configuring IP failover.
+
+Grouping VIPs creates a wider range of allocation of VIPs per VRRP in the case of VRRP failover events, and is useful when all hosts in the cluster have access to a service locally. For example, when a service is being exposed with an `ExternalIP`.
+
+[NOTE]
+====
+As a rule for failover, do not limit services, such as the router, to one specific host. Instead, services should be replicated to each host so that in the case of IP failover, the services do not have to be recreated on the new host.
+====
+
+[NOTE]
+====
+If you are using {product-title} health checks, the nature of IP failover and groups means that all instances in the group are not checked. For that reason, link:https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/[the Kubernetes health checks] must be used to ensure that services are live.
+====
+
+.Prerequisites
+
+* You are logged in to the cluster with a user with `cluster-admin` privileges.
+
+.Procedure
+
+* To change the number of IP addresses assigned to each group, change the value for the `OPENSHIFT_HA_VIP_GROUPS` variable, for example:
++
+.Example `Deployment` YAML for IP failover configuration
+[source,yaml]
+----
+...
+    spec:
+        env:
+        - name: OPENSHIFT_HA_VIP_GROUPS <1>
+          value: "3"
+...
+----
+<1> If `OPENSHIFT_HA_VIP_GROUPS` is set to `3` in an environment with seven VIPs, it creates three groups, assigning three VIPs to the first group, and two VIPs to the two remaining groups.
+
+[NOTE]
+====
+If the number of groups set by `OPENSHIFT_HA_VIP_GROUPS` is fewer than the number of IP addresses set to fail over, the group contains more than one IP address, and all of the addresses move as a single unit.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/configuring-ipfailover.adoc
+
+[id="nw-ipfailover-cluster-ha-ingress_{context}"]
+= High availability For ingressIP
+
+In non-cloud clusters, IP failover and `ingressIP` to a service can be combined. The result is high availability services for users that create services using `ingressIP`.
+
+The approach is to specify an `ingressIPNetworkCIDR` range and then use the same range in creating the ipfailover configuration.
+
+Because IP failover can support up to a maximum of 255 VIPs for the entire cluster, the `ingressIPNetworkCIDR` needs to be `/24` or smaller.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/configuring-ipfailover.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ipfailover-remove_{context}"]
+= Removing IP failover
+
+When IP failover is initially configured, the worker nodes in the cluster are modified with an `iptables` rule that explicitly allows multicast packets on `224.0.0.18` for Keepalived. Because of the change to the nodes, removing IP failover requires running a job to remove the `iptables` rule and removing the virtual IP addresses used by Keepalived.
+
+.Procedure
+
+. Optional: Identify and delete any check and notify scripts that are stored as config maps:
+
+.. Identify whether any pods for IP failover use a config map as a volume:
++
+[source,terminal]
+----
+$ oc get pod -l ipfailover \
+  -o jsonpath="\
+{range .items[?(@.spec.volumes[*].configMap)]}
+{'Namespace: '}{.metadata.namespace}
+{'Pod:       '}{.metadata.name}
+{'Volumes that use config maps:'}
+{range .spec.volumes[?(@.configMap)]}  {'volume:    '}{.name}
+  {'configMap: '}{.configMap.name}{'\n'}{end}
+{end}"
+----
++
+.Example output
+----
+Namespace: default
+Pod:       keepalived-worker-59df45db9c-2x9mn
+Volumes that use config maps:
+  volume:    config-volume
+  configMap: mycustomcheck
+----
+
+.. If the preceding step provided the names of config maps that are used as volumes, delete the config maps:
++
+[source,terminal]
+----
+$ oc delete configmap <configmap_name>
+----
+
+. Identify an existing deployment for IP failover:
++
+[source,terminal]
+----
+$ oc get deployment -l ipfailover
+----
++
+.Example output
+[source,terminal]
+----
+NAMESPACE   NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+default     ipfailover   2/2     2            2           105d
+----
+
+. Delete the deployment:
++
+[source,terminal]
+----
+$ oc delete deployment <ipfailover_deployment_name>
+----
+
+. Remove the `ipfailover` service account:
++
+[source,terminal]
+----
+$ oc delete sa ipfailover
+----
+
+. Run a job that removes the IP tables rule that was added when IP failover was initially configured:
+
+.. Create a file such as `remove-ipfailover-job.yaml` with contents that are similar to the following example:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: remove-ipfailover-
+  labels:
+    app: remove-ipfailover
+spec:
+  template:
+    metadata:
+      name: remove-ipfailover
+    spec:
+      containers:
+      - name: remove-ipfailover
+        image: quay.io/openshift/origin-keepalived-ipfailover:{product-version}
+        command: ["/var/lib/ipfailover/keepalived/remove-failover.sh"]
+      nodeSelector:
+        kubernetes.io/hostname: <host_name>  <.>
+      restartPolicy: Never
+----
+<.> Run the job for each node in your cluster that was configured for IP failover and replace the hostname each time.
+
+.. Run the job:
++
+[source,terminal]
+----
+$ oc create -f remove-ipfailover-job.yaml
+----
++
+.Example output
+----
+job.batch/remove-ipfailover-2h8dm created
+----
+
+.Verification
+
+* Confirm that the job removed the initial configuration for IP failover.
++
+[source,terminal]
+----
+$ oc logs job/remove-ipfailover-2h8dm
+----
++
+.Example output
+[source,terminal]
+----
+remove-failover.sh: OpenShift IP Failover service terminating.
+  - Removing ip_vs module ...
+  - Cleaning up ...
+  - Releasing VIPs  (interface eth0) ...
+----
+
+:leveloffset!:
+
+//[role="_additional-resources"]
+//== Additional resources
+//TCP connection
+
+//# includes=_attributes/common-attributes,modules/nw-ipfailover-environment-variables,modules/nw-ipfailover-configuration,modules/nw-ipfailover-virtual-ip-addresses-concept,modules/nw-ipfailover-configuring-check-notify-scripts,modules/nw-ipfailover-configuring-vrrp-preemption,modules/nw-ipfailover-vrrp-ip-offset,modules/nw-ipfailover-configuring-more-than-254,modules/nw-ipfailover-cluster-ha-ingress,modules/nw-ipfailover-remove

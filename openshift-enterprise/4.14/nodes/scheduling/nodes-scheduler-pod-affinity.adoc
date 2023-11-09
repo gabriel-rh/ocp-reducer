@@ -1,0 +1,823 @@
+:_mod-docs-content-type: ASSEMBLY
+:context: nodes-scheduler-pod-affinity
+[id="nodes-scheduler-pod-affinity"]
+= Placing pods relative to other pods using affinity and anti-affinity rules
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+
+toc::[]
+
+// Snippets included in the following assemblies and modules:
+//
+// * /nodes/scheduling/nodes-scheduler-pod-affinity.adoc
+// * /modules/logging-loki-reliability-hardening.adoc
+
+:_mod-docs-content-type: SNIPPET
+
+Affinity is a property of pods that controls the nodes on which they prefer to be scheduled. Anti-affinity is a property of pods
+that prevents a pod from being scheduled on a node.
+
+In {product-title}, _pod affinity_ and _pod anti-affinity_ allow you to constrain which nodes your pod is eligible to be scheduled on based on the key-value labels on other pods.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-scheduler-pod-affinity.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-scheduler-pod-affinity-about_{context}"]
+= Understanding pod affinity
+
+_Pod affinity_ and _pod anti-affinity_ allow you to constrain which nodes your pod is eligible to be scheduled on based on the key/value labels on other pods.
+
+* Pod affinity can tell the scheduler to locate a new pod on the same node as other pods if the label selector on the new pod matches the label on the current pod.
+* Pod anti-affinity can prevent the scheduler from locating a new pod on the same node as pods with the same labels if the label selector on the new pod matches the label on the current pod.
+
+For example, using affinity rules, you could spread or pack pods within a service or relative to pods in other services. Anti-affinity rules allow you to prevent pods of a particular service  from scheduling  on the same nodes as pods of another service that are known to interfere with the performance of the pods of the first service. Or, you could spread the pods of a service across nodes, availability zones, or availability sets to reduce correlated failures.
+
+[NOTE]
+====
+A label selector might match pods with multiple pod deployments. Use unique combinations of labels when configuring anti-affinity rules to avoid matching pods.
+====
+
+There are two types of pod affinity rules: _required_ and _preferred_.
+
+Required rules *must* be met before a pod can be scheduled on a node. Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.
+
+[NOTE]
+====
+Depending on your pod priority and preemption settings, the scheduler might not be able to find an appropriate node for a pod without violating affinity
+requirements. If so, a pod might not be scheduled.
+
+To prevent this situation, carefully configure pod affinity with equal-priority pods.
+====
+
+You configure pod affinity/anti-affinity through the `Pod` spec files. You can specify a required rule, a preferred rule, or both. If you specify both, the node must first meet the required rule, then attempts to meet the preferred rule.
+
+The following example shows a `Pod` spec configured for pod affinity and anti-affinity.
+
+In this example, the pod affinity rule indicates that the pod can schedule onto a node only if that node has at least one already-running pod with a label that has the key `security` and value `S1`. The pod anti-affinity rule says that the pod prefers to not schedule onto a node if that node is already running a pod with label having key `security` and value `S2`.
+
+.Sample `Pod` config file with pod affinity
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-pod-affinity
+spec:
+  affinity:
+    podAffinity: <1>
+      requiredDuringSchedulingIgnoredDuringExecution: <2>
+      - labelSelector:
+          matchExpressions:
+          - key: security <3>
+            operator: In <4>
+            values:
+            - S1 <3>
+        topologyKey: topology.kubernetes.io/zone
+  containers:
+  - name: with-pod-affinity
+    image: docker.io/ocpqe/hello-pod
+----
+
+<1> Stanza to configure pod affinity.
+<2> Defines a required rule.
+<3> The key and value (label) that must be matched to apply the rule.
+<4> The operator represents the relationship between the label on the existing pod and the set of values in the `matchExpression` parameters in the specification for the new pod.  Can be `In`, `NotIn`, `Exists`, or `DoesNotExist`.
+
+.Sample `Pod` config file with pod anti-affinity
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-pod-antiaffinity
+spec:
+  affinity:
+    podAntiAffinity: <1>
+      preferredDuringSchedulingIgnoredDuringExecution: <2>
+      - weight: 100  <3>
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: security <4>
+              operator: In <5>
+              values:
+              - S2
+          topologyKey: kubernetes.io/hostname
+  containers:
+  - name: with-pod-affinity
+    image: docker.io/ocpqe/hello-pod
+----
+
+<1> Stanza to configure pod anti-affinity.
+<2> Defines a preferred rule.
+<3> Specifies a weight for a preferred rule. The node with the highest weight is preferred.
+<4> Description of the pod label that determines when the anti-affinity rule applies. Specify a key and value for the label.
+<5> The operator represents the relationship between the label on the existing pod and the set of values in the `matchExpression` parameters in the specification for the new pod. Can be `In`, `NotIn`, `Exists`, or `DoesNotExist`.
+
+[NOTE]
+====
+If labels on a node change at runtime such that the affinity rules on a pod are no longer met, the pod continues to run on the node.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-scheduler-pod-affinity.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-scheduler-pod-affinity-configuring_{context}"]
+= Configuring a pod affinity rule
+
+The following steps demonstrate a simple two-pod configuration that creates pod with a label and a pod that uses affinity to allow scheduling with that pod.
+
+[NOTE]
+====
+You cannot add an affinity directly to a scheduled pod.
+====
+
+.Procedure
+
+. Create a pod with a specific label in the pod spec:
++
+.. Create a YAML file with the following content:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-s1
+  labels:
+    security: S1
+spec:
+  containers:
+  - name: security-s1
+    image: docker.io/ocpqe/hello-pod
+----
++
+.. Create the pod.
++
+[source,terminal]
+----
+$ oc create -f <pod-spec>.yaml
+----
+
+. When creating other pods, configure the following parameters to add the affinity:
++
+.. Create a YAML file with the following content:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-s1-east
+#...
+spec
+  affinity <1>
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution: <2>
+      - labelSelector:
+          matchExpressions:
+          - key: security <3>
+            values:
+            - S1
+            operator: In <4>
+        topologyKey: topology.kubernetes.io/zone <5>
+#...
+----
++
+--
+<1> Adds a pod affinity.
+<2> Configures the `requiredDuringSchedulingIgnoredDuringExecution` parameter or the `preferredDuringSchedulingIgnoredDuringExecution` parameter.
+<3> Specifies the `key` and `values` that must be met. If you want the new pod to be scheduled with the other pod, use the same `key` and `values` parameters as the label on the first pod.
+<4> Specifies an `operator`. The operator can be `In`, `NotIn`, `Exists`, or `DoesNotExist`. For example, use the operator `In` to require the label to be in the node.
+<5> Specify a `topologyKey`, which is a prepopulated link:https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#interlude-built-in-node-labels[Kubernetes label] that the system uses to denote such a topology domain.
+--
+
+.. Create the pod.
++
+[source,terminal]
+----
+$ oc create -f <pod-spec>.yaml
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-scheduler-pod-affinity.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-scheduler-pod-anti-affinity-configuring_{context}"]
+= Configuring a pod anti-affinity rule
+
+The following steps demonstrate a simple two-pod configuration that creates pod with a label and a pod that uses an anti-affinity preferred rule to attempt to prevent scheduling with that pod.
+
+[NOTE]
+====
+You cannot add an affinity directly to a scheduled pod.
+====
+
+.Procedure
+
+. Create a pod with a specific label in the pod spec:
++
+.. Create a YAML file with the following content:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-s1
+  labels:
+    security: S1
+spec:
+  containers:
+  - name: security-s1
+    image: docker.io/ocpqe/hello-pod
+----
++
+.. Create the pod.
++
+[source,terminal]
+----
+$ oc create -f <pod-spec>.yaml
+----
+
+. When creating other pods, configure the following parameters:
++
+.. Create a YAML file with the following content:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-s2-east
+#...
+spec
+  affinity <1>
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution: <2>
+      - weight: 100 <3>
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: security <4>
+              values:
+              - S1
+              operator: In <5>
+          topologyKey: kubernetes.io/hostname <6>
+#...
+----
+<1> Adds a pod anti-affinity.
+<2> Configures the `requiredDuringSchedulingIgnoredDuringExecution` parameter or the `preferredDuringSchedulingIgnoredDuringExecution` parameter.
+<3> For a preferred rule, specifies a weight for the node, 1-100. The node that with highest weight is preferred.
+<4> Specifies the `key` and `values` that must be met. If you want the new pod to not be scheduled with the other pod, use the same `key` and `values` parameters as the label on the first pod.
+<5> Specifies an `operator`. The operator can be `In`, `NotIn`, `Exists`, or `DoesNotExist`. For example, use the operator `In` to require the label to be in the node.
+<6> Specifies a `topologyKey`, which is a prepopulated link:https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#interlude-built-in-node-labels[Kubernetes label] that the system uses to denote such a topology domain.
+
+.. Create the pod.
++
+[source,terminal]
+----
+$ oc create -f <pod-spec>.yaml
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-scheduler-node-affinity.adoc
+
+[id="nodes-scheduler-pod-affinity-example_{context}"]
+= Sample pod affinity and anti-affinity rules
+
+The following examples demonstrate pod affinity and pod anti-affinity.
+
+[id="nodes-scheduler-pod-affinity-example-affinity_{context}"]
+== Pod Affinity
+
+The following example demonstrates pod affinity for pods with matching labels and label selectors.
+
+* The pod *team4* has the label `team:4`.
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: team4
+  labels:
+     team: "4"
+#...
+spec:
+  containers:
+  - name: ocp
+    image: docker.io/ocpqe/hello-pod
+#...
+----
+
+* The pod *team4a* has the label selector `team:4` under `podAffinity`.
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: team4a
+#...
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: team
+            operator: In
+            values:
+            - "4"
+        topologyKey: kubernetes.io/hostname
+  containers:
+  - name: pod-affinity
+    image: docker.io/ocpqe/hello-pod
+#...
+----
+
+* The *team4a* pod is scheduled on the same node as the *team4* pod.
+
+[id="nodes-scheduler-pod-affinity-example-antiaffinity_{context}"]
+== Pod Anti-affinity
+
+The following example demonstrates pod anti-affinity for pods with matching labels and label selectors.
+
+* The pod *pod-s1* has the label `security:s1`.
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-s1
+  labels:
+    security: s1
+#...
+spec:
+  containers:
+  - name: ocp
+    image: docker.io/ocpqe/hello-pod
+#...
+----
+
+* The pod *pod-s2* has the label selector `security:s1` under `podAntiAffinity`.
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-s2
+#...
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: security
+            operator: In
+            values:
+            - s1
+        topologyKey: kubernetes.io/hostname
+  containers:
+  - name: pod-antiaffinity
+    image: docker.io/ocpqe/hello-pod
+#...
+----
+
+* The pod *pod-s2* cannot be scheduled on the same node as `pod-s1`.
+
+[id="nodes-scheduler-pod-affinity-example-no-labels_{context}"]
+== Pod Affinity with no Matching Labels
+
+The following example demonstrates pod affinity for pods without matching labels and label selectors.
+
+* The pod *pod-s1* has the label `security:s1`.
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-s1
+  labels:
+    security: s1
+#...
+spec:
+  containers:
+  - name: ocp
+    image: docker.io/ocpqe/hello-pod
+#...
+----
+
+* The pod *pod-s2* has the label selector `security:s2`.
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-s2
+#...
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: security
+            operator: In
+            values:
+            - s2
+        topologyKey: kubernetes.io/hostname
+  containers:
+  - name: pod-affinity
+    image: docker.io/ocpqe/hello-pod
+#...
+----
+
+* The pod *pod-s2* is not scheduled unless there is a node with a pod that has the `security:s2` label. If there is no other pod with that label, the new pod remains in a pending state:
++
+.Example output
+[source,terminal]
+----
+NAME      READY     STATUS    RESTARTS   AGE       IP        NODE
+pod-s2    0/1       Pending   0          32s       <none>
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/scheduling/nodes-scheduler-node-affinity.adoc
+// * nodes/scheduling/nodes-scheduler-pod-affinity.adoc
+// * operators/admin/olm-adding-operators-to-cluster.adoc
+
+:pod:
+
+:_mod-docs-content-type: PROCEDURE
+[id="olm-overriding-operator-pod-affinity_{context}"]
+
+
+= Using pod affinity and anti-affinity to control where an Operator is installed
+
+
+By default, when you install an Operator, {product-title} installs the Operator pod to one of your worker nodes randomly. However, there might be situations where you want that pod scheduled on a specific node or set of nodes.
+
+The following examples describe situations where you might want to schedule an Operator pod to a specific node or set of nodes:
+
+* If an Operator requires a particular platform, such as `amd64` or `arm64`
+* If an Operator requires a particular operating system, such as Linux or Windows
+* If you want Operators that work together scheduled on the same host or on hosts located on the same rack
+* If you want Operators dispersed throughout the infrastructure to avoid downtime due to network or hardware issues
+
+
+You can control where an Operator pod is installed by adding a pod affinity or anti-affinity to the Operator's `Subscription` object.
+
+
+
+
+The following example shows how to use pod anti-affinity to prevent the installation the Custom Metrics Autoscaler Operator from any node that has pods with a specific label:
+
+.Pod affinity example that places the Operator pod on one or more specific nodes
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: openshift-custom-metrics-autoscaler-operator
+  namespace: openshift-keda
+spec:
+  name: my-package
+  source: my-operators
+  sourceNamespace: operator-registries
+  config:
+    affinity:
+      podAffinity: <1>
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+            - key: app
+              operator: In
+              values:
+              - test
+          topologyKey: kubernetes.io/hostname
+#...
+----
+<1> A pod affinity that places the Operator's pod on a node that has pods with the `app=test` label.
+
+.Pod anti-affinity example that prevents the Operator pod from one or more specific nodes
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: openshift-custom-metrics-autoscaler-operator
+  namespace: openshift-keda
+spec:
+  name: my-package
+  source: my-operators
+  sourceNamespace: operator-registries
+  config:
+    affinity:
+      podAntiAffinity: <1>
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+            - key: cpu
+              operator: In
+              values:
+              - high
+          topologyKey: kubernetes.io/hostname
+#...
+----
+<1> A pod anti-affinity that prevents the Operator's pod from being scheduled on a node that has pods with the `cpu=high` label.
+
+.Procedure
+
+To control the placement of an Operator pod, complete the following steps:
+
+. Install the Operator as usual.
+
+. If needed, ensure that your nodes are labeled to properly respond to the affinity.
+
+. Edit the Operator `Subscription` object to add an affinity:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: openshift-custom-metrics-autoscaler-operator
+  namespace: openshift-keda
+spec:
+  name: my-package
+  source: my-operators
+  sourceNamespace: operator-registries
+  config:
+    affinity:
+      podAntiAffinity: <1>
+        requiredDuringSchedulingIgnoredDuringExecution:
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - ip-10-0-185-229.ec2.internal
+            topologyKey: topology.kubernetes.io/zone
+#...
+----
+<1> Add a `podAffinity` or `podAntiAffinity`.
+
+.Verification
+
+* To ensure that the pod is deployed on the specific node, run the following command:
++
+[source,yaml]
+----
+$ oc get pods -o wide
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME                                                  READY   STATUS    RESTARTS   AGE   IP            NODE                           NOMINATED NODE   READINESS GATES
+custom-metrics-autoscaler-operator-5dcc45d656-bhshg   1/1     Running   0          50s   10.131.0.20   ip-10-0-185-229.ec2.internal   <none>           <none>
+----
+
+:!pod:
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,snippets/about-pod-affinity,modules/nodes-scheduler-pod-affinity-about,modules/nodes-scheduler-pod-affinity-configuring,modules/nodes-scheduler-pod-anti-affinity-configuring,modules/nodes-scheduler-pod-affinity-example,modules/olm-overriding-operator-pod-affinity

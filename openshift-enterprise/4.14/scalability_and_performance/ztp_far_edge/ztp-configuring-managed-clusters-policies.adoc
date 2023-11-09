@@ -1,0 +1,982 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ztp-configuring-managed-clusters-policies"]
+= Configuring managed clusters with policies and PolicyGenTemplate resources
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: ztp-configuring-managed-clusters-policies
+
+toc::[]
+
+Applied policy custom resources (CRs) configure the managed clusters that you provision. You can customize how {rh-rhacm-first} uses `PolicyGenTemplate` CRs to generate the applied policy CRs.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-configuring-managed-clusters-policies.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="ztp-the-policygentemplate_{context}"]
+= About the PolicyGenTemplate CRD
+
+The `PolicyGenTemplate` custom resource definition (CRD) tells the `PolicyGen` policy generator what custom resources (CRs) to include in the cluster configuration, how to combine the CRs into the generated policies, and what items in those CRs need to be updated with overlay content.
+
+The following example shows a `PolicyGenTemplate` CR (`common-du-ranGen.yaml`) extracted from the `ztp-site-generate` reference container. The `common-du-ranGen.yaml` file defines two {rh-rhacm-first} policies. The polices manage a collection of configuration CRs, one for each unique value of `policyName` in the CR. `common-du-ranGen.yaml` creates a single placement binding and a placement rule to bind the policies to clusters based on the labels listed in the `bindingRules` section.
+
+.Example PolicyGenTemplate CR - common-du-ranGen.yaml
+[source,yaml]
+----
+---
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "common"
+  namespace: "ztp-common"
+spec:
+  bindingRules:
+    common: "true" <1>
+  sourceFiles: <2>
+    - fileName: SriovSubscription.yaml
+      policyName: "subscriptions-policy"
+    - fileName: SriovSubscriptionNS.yaml
+      policyName: "subscriptions-policy"
+    - fileName: SriovSubscriptionOperGroup.yaml
+      policyName: "subscriptions-policy"
+    - fileName: SriovOperatorStatus.yaml
+      policyName: "subscriptions-policy"
+    - fileName: PtpSubscription.yaml
+      policyName: "subscriptions-policy"
+    - fileName: PtpSubscriptionNS.yaml
+      policyName: "subscriptions-policy"
+    - fileName: PtpSubscriptionOperGroup.yaml
+      policyName: "subscriptions-policy"
+    - fileName: PtpOperatorStatus.yaml
+      policyName: "subscriptions-policy"
+    - fileName: ClusterLogNS.yaml
+      policyName: "subscriptions-policy"
+    - fileName: ClusterLogOperGroup.yaml
+      policyName: "subscriptions-policy"
+    - fileName: ClusterLogSubscription.yaml
+      policyName: "subscriptions-policy"
+    - fileName: ClusterLogOperatorStatus.yaml
+      policyName: "subscriptions-policy"
+    - fileName: StorageNS.yaml
+      policyName: "subscriptions-policy"
+    - fileName: StorageOperGroup.yaml
+      policyName: "subscriptions-policy"
+    - fileName: StorageSubscription.yaml
+      policyName: "subscriptions-policy"
+    - fileName: StorageOperatorStatus.yaml
+      policyName: "subscriptions-policy"
+    - fileName: ReduceMonitoringFootprint.yaml
+      policyName: "config-policy"
+    - fileName: OperatorHub.yaml <3>
+      policyName: "config-policy"
+    - fileName: DefaultCatsrc.yaml <4>
+      policyName: "config-policy" <5>
+      metadata:
+        name: redhat-operators
+      spec:
+        displayName: disconnected-redhat-operators
+        image: registry.example.com:5000/disconnected-redhat-operators/disconnected-redhat-operator-index:v4.9
+    - fileName: DisconnectedICSP.yaml
+      policyName: "config-policy"
+      spec:
+        repositoryDigestMirrors:
+        - mirrors:
+          - registry.example.com:5000
+          source: registry.redhat.io
+----
+<1> `common: "true"` applies the policies to all clusters with this label.
+<2> Files listed under `sourceFiles` create the Operator policies for installed clusters.
+<3> `OperatorHub.yaml` configures the OperatorHub for the disconnected registry.
+<4> `DefaultCatsrc.yaml` configures the catalog source for the disconnected registry.
+<5> `policyName: "config-policy"` configures Operator subscriptions. The `OperatorHub` CR disables the default and this CR replaces `redhat-operators` with a `CatalogSource` CR that points to the disconnected registry.
+
+A `PolicyGenTemplate` CR can be constructed with any number of included CRs. Apply the following example CR in the hub cluster to generate a policy containing a single CR:
+
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "group-du-sno"
+  namespace: "ztp-group"
+spec:
+  bindingRules:
+    group-du-sno: ""
+  mcp: "master"
+  sourceFiles:
+    - fileName: PtpConfigSlave.yaml
+      policyName: "config-policy"
+      metadata:
+        name: "du-ptp-slave"
+      spec:
+        profile:
+        - name: "slave"
+          interface: "ens5f0"
+          ptp4lOpts: "-2 -s --summary_interval -4"
+          phc2sysOpts: "-a -r -n 24"
+----
+
+Using the source file `PtpConfigSlave.yaml` as an example, the file defines a `PtpConfig` CR. The generated policy for the `PtpConfigSlave` example is named `group-du-sno-config-policy`. The `PtpConfig` CR defined in the generated `group-du-sno-config-policy` is named `du-ptp-slave`. The `spec` defined in `PtpConfigSlave.yaml` is placed under `du-ptp-slave` along with the other `spec` items defined under the source file.
+
+The following example shows the `group-du-sno-config-policy` CR:
+
+[source,yaml]
+----
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: group-du-ptp-config-policy
+  namespace: groups-sub
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+spec:
+    remediationAction: inform
+    disabled: false
+    policy-templates:
+        - objectDefinition:
+            apiVersion: policy.open-cluster-management.io/v1
+            kind: ConfigurationPolicy
+            metadata:
+                name: group-du-ptp-config-policy-config
+            spec:
+                remediationAction: inform
+                severity: low
+                namespaceselector:
+                    exclude:
+                        - kube-*
+                    include:
+                        - '*'
+                object-templates:
+                    - complianceType: musthave
+                      objectDefinition:
+                        apiVersion: ptp.openshift.io/v1
+                        kind: PtpConfig
+                        metadata:
+                            name: du-ptp-slave
+                            namespace: openshift-ptp
+                        spec:
+                            recommend:
+                                - match:
+                                - nodeLabel: node-role.kubernetes.io/worker-du
+                                  priority: 4
+                                  profile: slave
+                            profile:
+                                - interface: ens5f0
+                                  name: slave
+                                  phc2sysOpts: -a -r -n 24
+                                  ptp4lConf: |
+                                    [global]
+                                    #
+                                    # Default Data Set
+                                    #
+                                    twoStepFlag 1
+                                    slaveOnly 0
+                                    priority1 128
+                                    priority2 128
+                                    domainNumber 24
+                                    .....
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-configuring-managed-clusters-policies.adoc
+
+:_module-type: CONCEPT
+[id="ztp-pgt-config-best-practices_{context}"]
+= Recommendations when customizing PolicyGenTemplate CRs
+
+Consider the following best practices when customizing site configuration `PolicyGenTemplate` custom resources (CRs):
+
+* Use as few policies as are necessary. Using fewer policies requires less resources. Each additional policy creates overhead for the hub cluster and the deployed managed cluster. CRs are combined into policies based on the `policyName` field in the `PolicyGenTemplate` CR. CRs in the same `PolicyGenTemplate` which have the same value for `policyName` are managed under a single policy.
+
+* In disconnected environments, use a single catalog source for all Operators by configuring the registry as a single index containing all Operators. Each additional `CatalogSource` CR on the managed clusters increases CPU usage.
+
+* `MachineConfig` CRs should be included as `extraManifests` in the `SiteConfig` CR so that they are applied during installation. This can reduce the overall time taken until the cluster is ready to deploy applications.
+
+* `PolicyGenTemplates` should override the channel field to explicitly identify the desired version. This ensures that changes in the source CR during upgrades does not update the generated subscription.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For recommendations about scaling clusters with {rh-rhacm}, see link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/install/installing#performance-and-scalability[Performance and scalability].
+
+[NOTE]
+====
+When managing large numbers of spoke clusters on the hub cluster, minimize the number of policies to reduce resource consumption.
+
+Grouping multiple configuration CRs into a single or limited number of policies is one way to reduce the overall number of policies on the hub cluster. When using the common, group, and site hierarchy of policies for managing site configuration, it is especially important to combine site-specific configuration into a single policy.
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-configuring-managed-clusters-policies.adoc
+
+:_module-type: CONCEPT
+[id="ztp-policygentemplates-for-ran_{context}"]
+= PolicyGenTemplate CRs for RAN deployments
+
+Use `PolicyGenTemplate` (PGT) custom resources (CRs) to customize the configuration applied to the cluster by using the {ztp-first} pipeline. The PGT CR allows you to generate one or more policies to manage the set of configuration CRs on your fleet of clusters. The PGT identifies the set of managed CRs, bundles them into policies, builds the policy wrapping around those CRs, and associates the policies with clusters by using label binding rules.
+
+The reference configuration, obtained from the {ztp} container, is designed to provide a set of critical features and node tuning settings that ensure the cluster can support the stringent performance and resource utilization constraints typical of RAN (Radio Access Network) Distributed Unit (DU) applications. Changes or omissions from the baseline configuration can affect feature availability, performance, and resource utilization. Use the reference `PolicyGenTemplate` CRs as the basis to create a hierarchy of configuration files tailored to your specific site requirements.
+
+The baseline `PolicyGenTemplate` CRs that are defined for RAN DU cluster configuration can be extracted from the {ztp} `ztp-site-generate` container. See "Preparing the {ztp} site configuration repository" for further details.
+
+The `PolicyGenTemplate` CRs can be found in the `./out/argocd/example/policygentemplates` folder. The reference architecture has common, group, and site-specific configuration CRs. Each `PolicyGenTemplate` CR refers to other CRs that can be found in the `./out/source-crs` folder.
+
+The `PolicyGenTemplate` CRs relevant to RAN cluster configuration are described below. Variants are provided for the group `PolicyGenTemplate` CRs to account for differences in single-node, three-node compact, and standard cluster configurations. Similarly, site-specific configuration variants are provided for single-node clusters and multi-node (compact or standard) clusters. Use the group and site-specific configuration variants that are relevant for your deployment.
+
+.PolicyGenTemplate CRs for RAN deployments
+[cols=2*, options="header"]
+|====
+|PolicyGenTemplate CR
+|Description
+
+|`example-multinode-site.yaml`
+|Contains a set of CRs that get applied to multi-node clusters. These CRs configure SR-IOV features typical for RAN installations.
+
+|`example-sno-site.yaml`
+|Contains a set of CRs that get applied to {sno} clusters. These CRs configure SR-IOV features typical for RAN installations.
+
+|`common-ranGen.yaml`
+|Contains a set of common RAN CRs that get applied to all clusters. These CRs subscribe to a set of operators providing cluster features typical for RAN as well as baseline cluster tuning.
+
+|`group-du-3node-ranGen.yaml`
+|Contains the RAN policies for three-node clusters only.
+
+|`group-du-sno-ranGen.yaml`
+|Contains the RAN policies for single-node clusters only.
+
+|`group-du-standard-ranGen.yaml`
+|Contains the RAN policies for standard three control-plane clusters.
+
+|`group-du-3node-validator-ranGen.yaml`
+|`PolicyGenTemplate` CR used to generate the various policies required for three-node clusters.
+
+|`group-du-standard-validator-ranGen.yaml`
+|`PolicyGenTemplate` CR used to generate the various policies required for standard clusters.
+
+|`group-du-sno-validator-ranGen.yaml`
+|`PolicyGenTemplate` CR used to generate the various policies required for {sno} clusters.
+|====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc#ztp-preparing-the-ztp-git-repository_ztp-preparing-the-hub-cluster[Preparing the {ztp} site configuration repository]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-configuring-managed-clusters-policies.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-customizing-a-managed-site-using-pgt_{context}"]
+= Customizing a managed cluster with PolicyGenTemplate CRs
+
+Use the following procedure to customize the policies that get applied to the managed cluster that you provision using the {ztp-first} pipeline.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+* You configured the hub cluster for generating the required installation and policy CRs.
+
+* You created a Git repository where you manage your custom site configuration data. The repository must be accessible from the hub cluster and be defined as a source repository for the Argo CD application.
+
+.Procedure
+
+. Create a `PolicyGenTemplate` CR for site-specific configuration CRs.
+
+.. Choose the appropriate example for your CR from the `out/argocd/example/policygentemplates` folder, for example, `example-sno-site.yaml` or `example-multinode-site.yaml`.
+
+.. Change the `bindingRules` field in the example file to match the site-specific label included in the `SiteConfig` CR. In the example `SiteConfig` file, the site-specific label is `sites: example-sno`.
++
+[NOTE]
+====
+Ensure that the labels defined in your `PolicyGenTemplate` `bindingRules` field correspond to the labels that are defined in the related managed clusters `SiteConfig` CR.
+====
+
+.. Change the content in the example file to match the desired configuration.
+
+. Optional: Create a `PolicyGenTemplate` CR for any common configuration CRs that apply to the entire fleet of clusters.
+
+.. Select the appropriate example for your CR from the `out/argocd/example/policygentemplates` folder, for example, `common-ranGen.yaml`.
+
+.. Change the content in the example file to match the desired configuration.
+
+. Optional: Create a `PolicyGenTemplate` CR for any group configuration CRs that apply to the certain groups of clusters in the fleet.
++
+Ensure that the content of the overlaid spec files matches your desired end state. As a reference, the out/source-crs directory contains the full list of source-crs available to be included and overlaid by your PolicyGenTemplate templates.
++
+[NOTE]
+====
+Depending on the specific requirements of your clusters, you might need more than a single group policy per cluster type, especially considering that the example group policies each have a single PerformancePolicy.yaml file that can only be shared across a set of clusters if those clusters consist of identical hardware configurations.
+====
+
+.. Select the appropriate example for your CR from the `out/argocd/example/policygentemplates` folder, for example, `group-du-sno-ranGen.yaml`.
+
+.. Change the content in the example file to match the desired configuration.
+
+. Optional. Create a validator inform policy `PolicyGenTemplate` CR to signal when the {ztp} installation and configuration of the deployed cluster is complete. For more information, see "Creating a validator inform policy".
+
+. Define all the policy namespaces in a YAML file similar to the example `out/argocd/example/policygentemplates/ns.yaml` file.
++
+[IMPORTANT]
+====
+Do not include the `Namespace` CR in the same file with the `PolicyGenTemplate` CR.
+====
+
+. Add the `PolicyGenTemplate` CRs and `Namespace` CR to the `kustomization.yaml` file in the generators section, similar to the example shown in `out/argocd/example/policygentemplates/kustomization.yaml`.
+
+. Commit the `PolicyGenTemplate` CRs, `Namespace` CR, and associated `kustomization.yaml` file in your Git repository and push the changes.
++
+The ArgoCD pipeline detects the changes and begins the managed cluster deployment. You can push the changes to the `SiteConfig` CR and the `PolicyGenTemplate` CR simultaneously.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-advanced-policy-config.adoc#ztp-creating-a-validator-inform-policy_ztp-advanced-policy-config[Signalling ZTP cluster deployment completion with validator inform policies]
+
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-configuring-managed-clusters-policies.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-monitoring-policy-deployment-progress_{context}"]
+= Monitoring managed cluster policy deployment progress
+
+The ArgoCD pipeline uses `PolicyGenTemplate` CRs in Git to generate the {rh-rhacm} policies and then sync them to the hub cluster. You can monitor the progress of the managed cluster policy synchronization after the assisted service installs {product-title} on the managed cluster.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. The {cgu-operator-first} applies the configuration policies that are bound to the cluster.
++
+After the cluster installation is complete and the cluster becomes `Ready`, a `ClusterGroupUpgrade` CR corresponding to this cluster, with a list of ordered policies defined by the `ran.openshift.io/ztp-deploy-wave annotations`, is automatically created by the {cgu-operator}. The cluster's policies are applied in the order listed in `ClusterGroupUpgrade` CR.
++
+You can monitor the high-level progress of configuration policy reconciliation by using the following commands:
++
+[source,terminal]
+----
+$ export CLUSTER=<clusterName>
+----
++
+[source,terminal]
+----
+$ oc get clustergroupupgrades -n ztp-install $CLUSTER -o jsonpath='{.status.conditions[-1:]}' | jq
+----
++
+.Example output
+[source,terminal]
+----
+{
+  "lastTransitionTime": "2022-11-09T07:28:09Z",
+  "message": "Remediating non-compliant policies",
+  "reason": "InProgress",
+  "status": "True",
+  "type": "Progressing"
+}
+----
+
+. You can monitor the detailed cluster policy compliance status by using the {rh-rhacm} dashboard or the command line.
+
+.. To check policy compliance by using `oc`, run the following command:
++
+[source,terminal]
+----
+$ oc get policies -n $CLUSTER
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                     REMEDIATION ACTION   COMPLIANCE STATE   AGE
+ztp-common.common-config-policy                          inform               Compliant          3h42m
+ztp-common.common-subscriptions-policy                   inform               NonCompliant       3h42m
+ztp-group.group-du-sno-config-policy                     inform               NonCompliant       3h42m
+ztp-group.group-du-sno-validator-du-policy               inform               NonCompliant       3h42m
+ztp-install.example1-common-config-policy-pjz9s          enforce              Compliant          167m
+ztp-install.example1-common-subscriptions-policy-zzd9k   enforce              NonCompliant       164m
+ztp-site.example1-config-policy                          inform               NonCompliant       3h42m
+ztp-site.example1-perf-policy                            inform               NonCompliant       3h42m
+----
+
+.. To check policy status from the {rh-rhacm} web console, perform the following actions:
+
+... Click *Governance* -> *Find policies*.
+... Click on a cluster policy to check it's status.
+
+When all of the cluster policies become compliant, {ztp} installation and configuration for the cluster is complete. The `ztp-done` label is added to the cluster.
+
+In the reference configuration, the final policy that becomes compliant is the one defined in the `*-du-validator-policy` policy. This policy, when compliant on a cluster, ensures that all cluster configuration, Operator installation, and Operator configuration is complete.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-configuring-managed-clusters-policies.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-validating-the-generation-of-configuration-policy-crs_{context}"]
+= Validating the generation of configuration policy CRs
+
+Policy custom resources (CRs) are generated in the same namespace as the `PolicyGenTemplate` from which they are created. The same troubleshooting flow applies to all policy CRs generated from a `PolicyGenTemplate` regardless of whether they are `ztp-common`, `ztp-group`, or `ztp-site` based, as shown using the following commands:
+
+[source,terminal]
+----
+$ export NS=<namespace>
+----
+
+[source,terminal]
+----
+$ oc get policy -n $NS
+----
+
+The expected set of policy-wrapped CRs should be displayed.
+
+If the policies failed synchronization, use the following troubleshooting steps.
+
+.Procedure
+
+. To display detailed information about the policies, run the following command:
++
+[source,terminal]
+----
+$ oc describe -n openshift-gitops application policies
+----
+
+. Check for `Status: Conditions:` to show the error logs. For example, setting an invalid `sourceFile→fileName:` generates the error shown below:
++
+[source,text]
+----
+Status:
+  Conditions:
+    Last Transition Time:  2021-11-26T17:21:39Z
+    Message:               rpc error: code = Unknown desc = `kustomize build /tmp/https___git.com/ran-sites/policies/ --enable-alpha-plugins` failed exit status 1: 2021/11/26 17:21:40 Error could not find test.yaml under source-crs/: no such file or directory Error: failure in plugin configured via /tmp/kust-plugin-config-52463179; exit status 1: exit status 1
+    Type:  ComparisonError
+----
+
+. Check for `Status: Sync:`. If there are log errors at `Status: Conditions:`, the `Status: Sync:` shows `Unknown` or `Error`:
++
+[source,text]
+----
+Status:
+  Sync:
+    Compared To:
+      Destination:
+        Namespace:  policies-sub
+        Server:     https://kubernetes.default.svc
+      Source:
+        Path:             policies
+        Repo URL:         https://git.com/ran-sites/policies/.git
+        Target Revision:  master
+    Status:               Error
+----
+
+. When {rh-rhacm-first} recognizes that policies apply to a `ManagedCluster` object, the policy CR objects are applied to the cluster namespace. Check to see if the policies were copied to the cluster namespace:
++
+[source,terminal]
+----
+$ oc get policy -n $CLUSTER
+----
++
+.Example output:
++
+[source,terminal]
+----
+NAME                                         REMEDIATION ACTION   COMPLIANCE STATE   AGE
+ztp-common.common-config-policy              inform               Compliant          13d
+ztp-common.common-subscriptions-policy       inform               Compliant          13d
+ztp-group.group-du-sno-config-policy         inform               Compliant          13d
+Ztp-group.group-du-sno-validator-du-policy   inform               Compliant          13d
+ztp-site.example-sno-config-policy           inform               Compliant          13d
+----
++
+{rh-rhacm} copies all applicable policies into the cluster namespace. The copied policy names have the format: `<policyGenTemplate.Namespace>.<policyGenTemplate.Name>-<policyName>`.
+
+. Check the placement rule for any policies not copied to the cluster namespace. The `matchSelector` in the `PlacementRule` for those policies should match labels on the `ManagedCluster` object:
++
+[source,terminal]
+----
+$ oc get placementrule -n $NS
+----
+
+. Note the `PlacementRule` name appropriate for the missing policy, common, group, or site, using the following command:
++
+[source,terminal]
+----
+$ oc get placementrule -n $NS <placementRuleName> -o yaml
+----
++
+* The status-decisions should include your cluster name.
+* The key-value pair of the `matchSelector` in the spec must match the labels on your managed cluster.
+
+. Check the labels on the `ManagedCluster` object using the following command:
++
+[source,terminal]
+----
+$ oc get ManagedCluster $CLUSTER -o jsonpath='{.metadata.labels}' | jq
+----
+
+. Check to see which policies are compliant using the following command:
++
+[source,terminal]
+----
+$ oc get policy -n $CLUSTER
+----
++
+If the `Namespace`, `OperatorGroup`, and `Subscription` policies are compliant but the Operator configuration policies are not, it is likely that the Operators did not install on the managed cluster. This causes the Operator configuration policies to fail to apply because the CRD is not yet applied to the spoke.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-configuring-managed-clusters-policies.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-restarting-policies-reconciliation_{context}"]
+= Restarting policy reconciliation
+
+You can restart policy reconciliation when unexpected compliance issues occur, for example, when the `ClusterGroupUpgrade` custom resource (CR) has timed out.
+
+.Procedure
+
+. A `ClusterGroupUpgrade` CR is generated in the namespace `ztp-install` by the {cgu-operator-full} after the managed cluster becomes `Ready`:
++
+[source,terminal]
+----
+$ export CLUSTER=<clusterName>
+----
++
+[source,terminal]
+----
+$ oc get clustergroupupgrades -n ztp-install $CLUSTER
+----
+
+. If there are unexpected issues and the policies fail to become complaint within the configured timeout (the default is 4 hours), the status of the `ClusterGroupUpgrade` CR shows `UpgradeTimedOut`:
++
+[source,terminal]
+----
+$ oc get clustergroupupgrades -n ztp-install $CLUSTER -o jsonpath='{.status.conditions[?(@.type=="Ready")]}'
+----
+
+. A `ClusterGroupUpgrade` CR in the `UpgradeTimedOut` state automatically restarts its policy reconciliation every hour. If you have changed your policies, you can start a retry immediately by deleting the existing `ClusterGroupUpgrade` CR. This triggers the automatic creation of a new `ClusterGroupUpgrade` CR that begins reconciling the policies immediately:
++
+[source,terminal]
+----
+$ oc delete clustergroupupgrades -n ztp-install $CLUSTER
+----
+
+Note that when the `ClusterGroupUpgrade` CR completes with status `UpgradeCompleted` and the managed cluster has the label `ztp-done` applied, you can make additional configuration changes using `PolicyGenTemplate`. Deleting the existing `ClusterGroupUpgrade` CR will not make the {cgu-operator} generate a new CR.
+
+At this point, {ztp} has completed its interaction with the cluster and any further interactions should be treated as an update and a new `ClusterGroupUpgrade` CR created for remediation of the policies.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For information about using {cgu-operator-first} to construct your own `ClusterGroupUpgrade` CR, see xref:../../scalability_and_performance/ztp_far_edge/cnf-talm-for-cluster-upgrades.adoc#talo-about-cgu-crs_cnf-topology-aware-lifecycle-manager[About the ClusterGroupUpgrade CR].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-configuring-managed-clusters-policies.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-removing-content-from-managed-clusters_{context}"]
+= Changing applied managed cluster CRs using policies
+
+You can remove content from a custom resource (CR) that is deployed in a managed cluster through a policy.
+
+By default, all `Policy` CRs created from a `PolicyGenTemplate` CR have the `complianceType` field set to `musthave`.
+A `musthave` policy without the removed content is still compliant because the CR on the managed cluster has all the specified content.
+With this configuration, when you remove content from a CR, {cgu-operator} removes the content from the policy but the content is not removed from the CR on the managed cluster.
+
+With the `complianceType` field to `mustonlyhave`, the policy ensures that the CR on the cluster is an exact match of what is specified in the policy.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+* You have deployed a managed cluster from a hub cluster running {rh-rhacm}.
+
+* You have installed {cgu-operator-full} on the hub cluster.
+
+.Procedure
+
+. Remove the content that you no longer need from the affected CRs. In this example, the `disableDrain: false` line was removed from the `SriovOperatorConfig` CR.
++
+.Example CR
+
+[source,yaml]
+----
+apiVersion: sriovnetwork.openshift.io/v1
+kind: SriovOperatorConfig
+metadata:
+  name: default
+  namespace: openshift-sriov-network-operator
+spec:
+  configDaemonNodeSelector:
+    "node-role.kubernetes.io/$mcp": ""
+  disableDrain: true
+  enableInjector: true
+  enableOperatorWebhook: true
+----
+
+. Change the `complianceType` of the affected policies to `mustonlyhave` in the `group-du-sno-ranGen.yaml` file.
++
+.Example YAML
+[source,yaml]
+----
+# ...
+- fileName: SriovOperatorConfig.yaml
+  policyName: "config-policy"
+  complianceType: mustonlyhave
+# ...
+----
+
+. Create a `ClusterGroupUpdates` CR and specify the clusters that must receive the CR changes::
++
+.Example ClusterGroupUpdates CR
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: cgu-remove
+  namespace: default
+spec:
+  managedPolicies:
+    - ztp-group.group-du-sno-config-policy
+  enable: false
+  clusters:
+  - spoke1
+  - spoke2
+  remediationStrategy:
+    maxConcurrency: 2
+    timeout: 240
+  batchTimeoutAction:
+----
+
+. Create the `ClusterGroupUpgrade` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f cgu-remove.yaml
+----
+
+. When you are ready to apply the changes, for example, during an appropriate maintenance window, change the value of the `spec.enable` field to `true` by running the following command:
++
+[source,terminal]
+----
+$ oc --namespace=default patch clustergroupupgrade.ran.openshift.io/cgu-remove \
+--patch '{"spec":{"enable":true}}' --type=merge
+----
+
+.Verification
+
+. Check the status of the policies by running the following command:
++
+[source,terminal]
+----
+$ oc get <kind> <changed_cr_name>
+----
+
++
+.Example output
+[source,terminal]
+----
+NAMESPACE   NAME                                                   REMEDIATION ACTION   COMPLIANCE STATE   AGE
+default     cgu-ztp-group.group-du-sno-config-policy               enforce                                 17m
+default     ztp-group.group-du-sno-config-policy                   inform               NonCompliant       15h
+----
+
++
+When the `COMPLIANCE STATE` of the policy is `Compliant`, it means that the CR is updated and the unwanted content is removed.
+
+. Check that the policies are removed from the targeted clusters by running the following command on the managed clusters:
++
+[source,terminal]
+----
+$ oc get <kind> <changed_cr_name>
+----
+
++
+If there are no results, the CR is removed from the managed cluster.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-configuring-managed-clusters-policies.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="ztp-definition-of-done-for-ztp-installations_{context}"]
+= Indication of done for {ztp} installations
+
+{ztp-first} simplifies the process of checking the {ztp} installation status for a cluster. The {ztp} status moves through three phases: cluster installation, cluster configuration, and {ztp} done.
+
+Cluster installation phase::
+The cluster installation phase is shown by the `ManagedClusterJoined` and  `ManagedClusterAvailable` conditions in the `ManagedCluster` CR . If the `ManagedCluster` CR does not have these conditions, or the condition is set to `False`, the cluster is still in the installation phase. Additional details about installation are available from the `AgentClusterInstall` and `ClusterDeployment` CRs. For more information, see "Troubleshooting {ztp}".
+
+Cluster configuration phase::
+The cluster configuration phase is shown by a `ztp-running` label applied the `ManagedCluster` CR for the cluster.
+
+{ztp} done::
+Cluster installation and configuration is complete in the {ztp} done phase. This is shown by the removal of the `ztp-running` label and addition of the `ztp-done` label to the `ManagedCluster` CR. The `ztp-done` label shows that the configuration has been applied and the baseline DU configuration has completed cluster tuning.
++
+The transition to the {ztp} done state is conditional on the compliant state of a {rh-rhacm-first} validator inform policy. This policy captures the existing criteria for a completed installation and validates that it moves to a compliant state only when {ztp} provisioning of the managed cluster is complete.
++
+The validator inform policy ensures the configuration of the cluster is fully applied and Operators have completed their initialization. The policy validates the following:
++
+* The target `MachineConfigPool` contains the expected entries and has finished updating. All nodes are available and not degraded.
+
+* The SR-IOV Operator has completed initialization as indicated by at least one `SriovNetworkNodeState` with `syncStatus: Succeeded`.
+
+* The PTP Operator daemon set exists.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/ztp-the-policygentemplate,modules/ztp-pgt-config-best-practices,modules/ztp-policygentemplates-for-ran,modules/ztp-customizing-a-managed-site-using-pgt,modules/ztp-monitoring-policy-deployment-progress,modules/ztp-validating-the-generation-of-configuration-policy-crs,modules/ztp-restarting-policies-reconciliation,modules/ztp-removing-content-from-managed-clusters,modules/ztp-definition-of-done-for-ztp-installations

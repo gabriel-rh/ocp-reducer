@@ -1,0 +1,556 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="rollback-to-openshift-sdn"]
+= Rolling back to the OpenShift SDN network provider
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: rollback-to-openshift-sdn
+
+toc::[]
+
+As a cluster administrator, you can rollback to the OpenShift SDN network plugin from the OVN-Kubernetes network plugin if the migration to OVN-Kubernetes is unsuccessful.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/rollback-to-openshift-sdn.adoc
+// * networking/openshift_sdn/migrate-to-openshift-sdn.adoc
+
+// This procedure applies to both a roll back and a migration
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ovn-kubernetes-rollback_{context}"]
+= Migrating to the OpenShift SDN network plugin
+
+As a cluster administrator, you can migrate to the OpenShift SDN Container Network Interface (CNI) network plugin.
+During the migration you must reboot every node in your cluster.
+
+[IMPORTANT]
+====
+Rollback to OpenShift SDN if the migration to OVN-Kubernetes fails.
+====
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Access to the cluster as a user with the `cluster-admin` role.
+* A cluster installed on infrastructure configured with the OVN-Kubernetes network plugin.
+* A recent backup of the etcd database is available.
+* A reboot can be triggered manually for each node.
+* The cluster is in a known good state, without any errors.
+
+.Procedure
+
+. Stop all of the machine configuration pools managed by the Machine Config Operator (MCO):
+
+** Stop the master configuration pool:
++
+[source,terminal]
+----
+$ oc patch MachineConfigPool master --type='merge' --patch \
+  '{ "spec": { "paused": true } }'
+----
+
+** Stop the worker machine configuration pool:
++
+[source,terminal]
+----
+$ oc patch MachineConfigPool worker --type='merge' --patch \
+  '{ "spec":{ "paused": true } }'
+----
+
+. To prepare for the migration, set the migration field to `null` by entering the following command:
++
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type='merge' \
+  --patch '{ "spec": { "migration": null } }'
+----
+
+. To start the migration, set the network plugin back to OpenShift SDN by entering the following commands:
++
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type='merge' \
+  --patch '{ "spec": { "migration": { "networkType": "OpenShiftSDN" } } }'
+
+$ oc patch Network.config.openshift.io cluster --type='merge' \
+  --patch '{ "spec": { "networkType": "OpenShiftSDN" } }'
+----
+
+. Optional: You can disable automatic migration of several OVN-Kubernetes capabilities to the OpenShift SDN equivalents:
++
+--
+* Egress IPs
+* Egress firewall
+* Multicast
+--
++
+To disable automatic migration of the configuration for any of the previously noted OpenShift SDN features, specify the following keys:
++
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type='merge' \
+  --patch '{
+    "spec": {
+      "migration": {
+        "networkType": "OpenShiftSDN",
+        "features": {
+          "egressIP": <bool>,
+          "egressFirewall": <bool>,
+          "multicast": <bool>
+        }
+      }
+    }
+  }'
+----
++
+where:
++
+--
+`bool`: Specifies whether to enable migration of the feature. The default is `true`.
+--
+
+. Optional: You can customize the following settings for OpenShift SDN to meet your network infrastructure requirements:
++
+--
+* Maximum transmission unit (MTU)
+* VXLAN port
+--
++
+To customize either or both of the previously noted settings, customize and enter the following command. If you do not need to change the default value, omit the key from the patch.
++
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type=merge \
+  --patch '{
+    "spec":{
+      "defaultNetwork":{
+        "openshiftSDNConfig":{
+          "mtu":<mtu>,
+          "vxlanPort":<port>
+    }}}}'
+----
++
+--
+`mtu`::
+The MTU for the VXLAN overlay network. This value is normally configured automatically, but if the nodes in your cluster do not all use the same MTU, then you must set this explicitly to `50` less than the smallest node MTU value.
+`port`::
+The UDP port for the VXLAN overlay network. If a value is not specified, the default is `4789`. The port cannot be the same as the Geneve port that is used by OVN-Kubernetes. The default value for the Geneve port is `6081`.
+--
++
+.Example patch command
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type=merge \
+  --patch '{
+    "spec":{
+      "defaultNetwork":{
+        "openshiftSDNConfig":{
+          "mtu":1200
+    }}}}'
+----
+
+. Wait until the Multus daemon set rollout completes.
++
+[source,terminal]
+----
+$ oc -n openshift-multus rollout status daemonset/multus
+----
++
+The name of the Multus pods is in form of `multus-<xxxxx>` where `<xxxxx>` is a random sequence of letters. It might take several moments for the pods to restart.
++
+.Example output
+[source,text]
+----
+Waiting for daemon set "multus" rollout to finish: 1 out of 6 new pods have been updated...
+...
+Waiting for daemon set "multus" rollout to finish: 5 of 6 updated pods are available...
+daemon set "multus" successfully rolled out
+----
+
+. To complete changing the network plugin, reboot each node in your cluster. You can reboot the nodes in your cluster with either of the following approaches:
+
+** With the `oc rsh` command, you can use a bash script similar to the following:
++
+[source,bash]
+----
+#!/bin/bash
+readarray -t POD_NODES <<< "$(oc get pod -n openshift-machine-config-operator -o wide| grep daemon|awk '{print $1" "$7}')"
+
+for i in "${POD_NODES[@]}"
+do
+  read -r POD NODE <<< "$i"
+  until oc rsh -n openshift-machine-config-operator "$POD" chroot /rootfs shutdown -r +1
+    do
+      echo "cannot reboot node $NODE, retry" && sleep 3
+    done
+done
+----
+
+** With the `ssh` command, you can use a bash script similar to the following. The script assumes that you have configured sudo to not prompt for a password.
++
+[source,bash]
+----
+#!/bin/bash
+
+for ip in $(oc get nodes  -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}')
+do
+   echo "reboot node $ip"
+   ssh -o StrictHostKeyChecking=no core@$ip sudo shutdown -r -t 3
+done
+----
+
+. After the nodes in your cluster have rebooted, start all of the machine configuration pools:
++
+--
+* Start the master configuration pool:
++
+[source,terminal]
+----
+$ oc patch MachineConfigPool master --type='merge' --patch \
+  '{ "spec": { "paused": false } }'
+----
+
+* Start the worker configuration pool:
++
+[source,terminal]
+----
+$ oc patch MachineConfigPool worker --type='merge' --patch \
+  '{ "spec": { "paused": false } }'
+----
+--
++
+As the MCO updates machines in each config pool, it reboots each node.
++
+By default the MCO updates a single machine per pool at a time, so the time that the migration requires to complete grows with the size of the cluster.
+
+. Confirm the status of the new machine configuration on the hosts:
+.. To list the machine configuration state and the name of the applied machine configuration, enter the following command:
++
+[source,terminal]
+----
+$ oc describe node | egrep "hostname|machineconfig"
+----
++
+.Example output
+[source,terminal]
+----
+kubernetes.io/hostname=master-0
+machineconfiguration.openshift.io/currentConfig: rendered-master-c53e221d9d24e1c8bb6ee89dd3d8ad7b
+machineconfiguration.openshift.io/desiredConfig: rendered-master-c53e221d9d24e1c8bb6ee89dd3d8ad7b
+machineconfiguration.openshift.io/reason:
+machineconfiguration.openshift.io/state: Done
+----
++
+Verify that the following statements are true:
++
+--
+ * The value of `machineconfiguration.openshift.io/state` field is `Done`.
+ * The value of the `machineconfiguration.openshift.io/currentConfig` field is equal to the value of the `machineconfiguration.openshift.io/desiredConfig` field.
+--
+
+.. To confirm that the machine config is correct, enter the following command:
++
+[source,terminal]
+----
+$ oc get machineconfig <config_name> -o yaml
+----
++
+where `<config_name>` is the name of the machine config from the `machineconfiguration.openshift.io/currentConfig` field.
+
+. Confirm that the migration succeeded:
+
+.. To confirm that the network plugin is OpenShift SDN, enter the following command.  The value of `status.networkType` must be `OpenShiftSDN`.
++
+[source,terminal]
+----
+$ oc get network.config/cluster -o jsonpath='{.status.networkType}{"\n"}'
+----
+
+.. To confirm that the cluster nodes are in the `Ready` state, enter the following command:
++
+[source,terminal]
+----
+$ oc get nodes
+----
+
+.. If a node is stuck in the `NotReady` state, investigate the machine config daemon pod logs and resolve any errors.
+
+... To list the pods, enter the following command:
++
+[source,terminal]
+----
+$ oc get pod -n openshift-machine-config-operator
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                         READY   STATUS    RESTARTS   AGE
+machine-config-controller-75f756f89d-sjp8b   1/1     Running   0          37m
+machine-config-daemon-5cf4b                  2/2     Running   0          43h
+machine-config-daemon-7wzcd                  2/2     Running   0          43h
+machine-config-daemon-fc946                  2/2     Running   0          43h
+machine-config-daemon-g2v28                  2/2     Running   0          43h
+machine-config-daemon-gcl4f                  2/2     Running   0          43h
+machine-config-daemon-l5tnv                  2/2     Running   0          43h
+machine-config-operator-79d9c55d5-hth92      1/1     Running   0          37m
+machine-config-server-bsc8h                  1/1     Running   0          43h
+machine-config-server-hklrm                  1/1     Running   0          43h
+machine-config-server-k9rtx                  1/1     Running   0          43h
+----
++
+The names for the config daemon pods are in the following format: `machine-config-daemon-<seq>`. The `<seq>` value is a random five character alphanumeric sequence.
+
+... To display the pod log for each machine config daemon pod shown in the previous output, enter the following command:
++
+[source,terminal]
+----
+$ oc logs <pod> -n openshift-machine-config-operator
+----
++
+where `pod` is the name of a machine config daemon pod.
+
+... Resolve any errors in the logs shown by the output from the previous command.
+
+.. To confirm that your pods are not in an error state, enter the following command:
++
+[source,terminal]
+----
+$ oc get pods --all-namespaces -o wide --sort-by='{.spec.nodeName}'
+----
++
+If pods on a node are in an error state, reboot that node.
+
+. Complete the following steps only if the migration succeeds and your cluster is in a good state:
+
+.. To remove the migration configuration from the Cluster Network Operator configuration object, enter the following command:
++
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type='merge' \
+  --patch '{ "spec": { "migration": null } }'
+----
+
+.. To remove the OVN-Kubernetes configuration, enter the following command:
++
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type='merge' \
+  --patch '{ "spec": { "defaultNetwork": { "ovnKubernetesConfig":null } } }'
+----
+
+.. To remove the OVN-Kubernetes network provider namespace, enter the following command:
++
+[source,terminal]
+----
+$ oc delete namespace openshift-ovn-kubernetes
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/nw-ovn-kubernetes-rollback

@@ -1,0 +1,464 @@
+:_mod-docs-content-type: ASSEMBLY
+:context: cluster-logging-moving
+[id="cluster-logging-moving"]
+= Moving {logging} resources with node selectors
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+
+toc::[]
+
+
+
+
+
+You can use node selectors to deploy the Elasticsearch and Kibana pods to different nodes.
+
+// The following include statements pull in the module files that comprise
+// the assembly. Include any combination of concept, procedure, or reference
+// modules required to cover the user story. You can also include other
+// assemblies.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-infrastructure-machinesets.adoc
+// * logging/cluster-logging-moving.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="infrastructure-moving-logging_{context}"]
+= Moving OpenShift Logging resources
+
+You can configure the Cluster Logging Operator to deploy the pods for {logging} components, such as Elasticsearch and Kibana, to different nodes. You cannot move the Cluster Logging Operator pod from its installed location.
+
+For example, you can move the Elasticsearch pods to a separate node because of high CPU, memory, and disk requirements.
+
+.Prerequisites
+
+* The Red Hat OpenShift Logging and Elasticsearch Operators must be installed. These features are not installed by default.
+
+.Procedure
+
+. Edit the `ClusterLogging` custom resource (CR) in the `openshift-logging` project:
++
+[source,terminal]
+----
+$ oc edit ClusterLogging instance
+----
++
+[source,yaml]
+----
+apiVersion: logging.openshift.io/v1
+kind: ClusterLogging
+
+...
+
+spec:
+  collection:
+    logs:
+      fluentd:
+        resources: null
+      type: fluentd
+  logStore:
+    elasticsearch:
+      nodeCount: 3
+      nodeSelector: <1>
+        node-role.kubernetes.io/infra: ''
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/infra
+        value: reserved
+      - effect: NoExecute
+        key: node-role.kubernetes.io/infra
+        value: reserved
+      redundancyPolicy: SingleRedundancy
+      resources:
+        limits:
+          cpu: 500m
+          memory: 16Gi
+        requests:
+          cpu: 500m
+          memory: 16Gi
+      storage: {}
+    type: elasticsearch
+  managementState: Managed
+  visualization:
+    kibana:
+      nodeSelector: <1>
+        node-role.kubernetes.io/infra: ''
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/infra
+        value: reserved
+      - effect: NoExecute
+        key: node-role.kubernetes.io/infra
+        value: reserved
+      proxy:
+        resources: null
+      replicas: 1
+      resources: null
+    type: kibana
+
+...
+----
+<1> Add a `nodeSelector` parameter with the appropriate value to the component you want to move. You can use a `nodeSelector` in the format shown or use `<key>: <value>` pairs, based on the value specified for the node.  If you added a taint to the infrasructure node, also add a matching toleration.
+
+.Verification
+
+To verify that a component has moved, you can use the `oc get pod -o wide` command.
+
+For example:
+
+* You want to move the Kibana pod from the `ip-10-0-147-79.us-east-2.compute.internal` node:
++
+[source,terminal]
+----
+$ oc get pod kibana-5b8bdf44f9-ccpq9 -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                      READY   STATUS    RESTARTS   AGE   IP            NODE                                        NOMINATED NODE   READINESS GATES
+kibana-5b8bdf44f9-ccpq9   2/2     Running   0          27s   10.129.2.18   ip-10-0-147-79.us-east-2.compute.internal   <none>           <none>
+----
+
+* You want to move the Kibana pod to the `ip-10-0-139-48.us-east-2.compute.internal` node, a dedicated infrastructure node:
++
+[source,terminal]
+----
+$ oc get nodes
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                         STATUS   ROLES          AGE   VERSION
+ip-10-0-133-216.us-east-2.compute.internal   Ready    master         60m   v1.27.3
+ip-10-0-139-146.us-east-2.compute.internal   Ready    master         60m   v1.27.3
+ip-10-0-139-192.us-east-2.compute.internal   Ready    worker         51m   v1.27.3
+ip-10-0-139-241.us-east-2.compute.internal   Ready    worker         51m   v1.27.3
+ip-10-0-147-79.us-east-2.compute.internal    Ready    worker         51m   v1.27.3
+ip-10-0-152-241.us-east-2.compute.internal   Ready    master         60m   v1.27.3
+ip-10-0-139-48.us-east-2.compute.internal    Ready    infra          51m   v1.27.3
+----
++
+Note that the node has a `node-role.kubernetes.io/infra: ''` label:
++
+[source,terminal]
+----
+$ oc get node ip-10-0-139-48.us-east-2.compute.internal -o yaml
+----
++
+.Example output
+[source,yaml]
+----
+kind: Node
+apiVersion: v1
+metadata:
+  name: ip-10-0-139-48.us-east-2.compute.internal
+  selfLink: /api/v1/nodes/ip-10-0-139-48.us-east-2.compute.internal
+  uid: 62038aa9-661f-41d7-ba93-b5f1b6ef8751
+  resourceVersion: '39083'
+  creationTimestamp: '2020-04-13T19:07:55Z'
+  labels:
+    node-role.kubernetes.io/infra: ''
+...
+----
+
+* To move the Kibana pod, edit the `ClusterLogging` CR to add a node selector:
++
+[source,yaml]
+----
+apiVersion: logging.openshift.io/v1
+kind: ClusterLogging
+
+...
+
+spec:
+
+...
+
+  visualization:
+    kibana:
+      nodeSelector: <1>
+        node-role.kubernetes.io/infra: ''
+      proxy:
+        resources: null
+      replicas: 1
+      resources: null
+    type: kibana
+----
+<1> Add a node selector to match the label in the node specification.
+
+* After you save the CR, the current Kibana pod is terminated and new pod is deployed:
++
+[source,terminal]
+----
+$ oc get pods
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                            READY   STATUS        RESTARTS   AGE
+cluster-logging-operator-84d98649c4-zb9g7       1/1     Running       0          29m
+elasticsearch-cdm-hwv01pf7-1-56588f554f-kpmlg   2/2     Running       0          28m
+elasticsearch-cdm-hwv01pf7-2-84c877d75d-75wqj   2/2     Running       0          28m
+elasticsearch-cdm-hwv01pf7-3-f5d95b87b-4nx78    2/2     Running       0          28m
+fluentd-42dzz                                   1/1     Running       0          28m
+fluentd-d74rq                                   1/1     Running       0          28m
+fluentd-m5vr9                                   1/1     Running       0          28m
+fluentd-nkxl7                                   1/1     Running       0          28m
+fluentd-pdvqb                                   1/1     Running       0          28m
+fluentd-tflh6                                   1/1     Running       0          28m
+kibana-5b8bdf44f9-ccpq9                         2/2     Terminating   0          4m11s
+kibana-7d85dcffc8-bfpfp                         2/2     Running       0          33s
+----
+
+* The new pod is on the `ip-10-0-139-48.us-east-2.compute.internal` node:
++
+[source,terminal]
+----
+$ oc get pod kibana-7d85dcffc8-bfpfp -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                      READY   STATUS        RESTARTS   AGE   IP            NODE                                        NOMINATED NODE   READINESS GATES
+kibana-7d85dcffc8-bfpfp   2/2     Running       0          43s   10.131.0.22   ip-10-0-139-48.us-east-2.compute.internal   <none>           <none>
+----
+
+* After a few moments, the original Kibana pod is removed.
++
+[source,terminal]
+----
+$ oc get pods
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                            READY   STATUS    RESTARTS   AGE
+cluster-logging-operator-84d98649c4-zb9g7       1/1     Running   0          30m
+elasticsearch-cdm-hwv01pf7-1-56588f554f-kpmlg   2/2     Running   0          29m
+elasticsearch-cdm-hwv01pf7-2-84c877d75d-75wqj   2/2     Running   0          29m
+elasticsearch-cdm-hwv01pf7-3-f5d95b87b-4nx78    2/2     Running   0          29m
+fluentd-42dzz                                   1/1     Running   0          29m
+fluentd-d74rq                                   1/1     Running   0          29m
+fluentd-m5vr9                                   1/1     Running   0          29m
+fluentd-nkxl7                                   1/1     Running   0          29m
+fluentd-pdvqb                                   1/1     Running   0          29m
+fluentd-tflh6                                   1/1     Running   0          29m
+kibana-7d85dcffc8-bfpfp                         2/2     Running   0          62s
+----
+
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/infrastructure-moving-logging

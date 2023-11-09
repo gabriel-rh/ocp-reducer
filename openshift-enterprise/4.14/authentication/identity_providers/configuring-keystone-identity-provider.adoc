@@ -1,0 +1,481 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="configuring-keystone-identity-provider"]
+= Configuring a Keystone identity provider
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: configuring-keystone-identity-provider
+
+toc::[]
+
+Configure the `keystone` identity provider to integrate your {product-title} cluster with Keystone to enable shared authentication with an OpenStack Keystone v3 server configured to store users in an internal database. This configuration allows users to log in to {product-title} with their Keystone credentials.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/configuring-identity-provider.adoc
+// * authentication/identity_providers/configuring-allow-all-identity-provider.adoc
+// * authentication/identity_providers/configuring-deny-all-identity-provider.adoc
+// * authentication/identity_providers/configuring-htpasswd-identity-provider.adoc
+// * authentication/identity_providers/configuring-keystone-identity-provider.adoc
+// * authentication/identity_providers/configuring-ldap-identity-provider.adoc
+// * authentication/identity_providers/configuring-basic-authentication-identity-provider.adoc
+// * authentication/identity_providers/configuring-request-header-identity-provider.adoc
+// * authentication/identity_providers/configuring-github-identity-provider.adoc
+// * authentication/identity_providers/configuring-gitlab-identity-provider.adoc
+// * authentication/identity_providers/configuring-google-identity-provider.adoc
+// * authentication/identity_providers/configuring-oidc-identity-provider.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="identity-provider-overview_{context}"]
+= About identity providers in {product-title}
+
+By default, only a `kubeadmin` user exists on your cluster. To specify an
+identity provider, you must create a custom resource (CR) that describes
+that identity provider and add it to the cluster.
+
+[NOTE]
+====
+{product-title} user names containing `/`, `:`, and `%` are not supported.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/identity_providers/configuring-keystone-identity-provider.adoc
+
+[id="identity-provider-keystone-about_{context}"]
+= About Keystone authentication
+
+link:http://docs.openstack.org/developer/keystone/[Keystone] is an OpenStack project that provides identity, token, catalog, and policy services.
+
+You can configure the integration with Keystone so that the new {product-title} users are based on either the Keystone user names or unique Keystone IDs. With both methods, users log in by entering their Keystone user name and password. Basing the {product-title} users on the Keystone ID is more secure because if you delete a Keystone user and create a new Keystone user with that user name, the new user might have access to the old user's resources.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/identity_providers/configuring-basic-authentication-identity-provider.adoc
+// * authentication/identity_providers/configuring-keystone-identity-provider.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="identity-provider-creating-secret-tls_{context}"]
+= Creating the secret
+
+Identity providers use {product-title} `Secret` objects in the `openshift-config` namespace to contain the client secret, client certificates, and keys.
+
+.Procedure
+
+* Create a `Secret` object that contains the key and certificate by using the following command:
++
+[source,terminal]
+----
+$ oc create secret tls <secret_name> --key=key.pem --cert=cert.pem -n openshift-config
+----
++
+[TIP]
+====
+You can alternatively apply the following YAML to create the secret:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: <secret_name>
+  namespace: openshift-config
+type: kubernetes.io/tls
+data:
+  tls.crt: <base64_encoded_cert>
+  tls.key: <base64_encoded_key>
+----
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/identity_providers/configuring-basic-authentication-identity-provider.adoc
+// * authentication/identity_providers/configuring-github-identity-provider.adoc
+// * authentication/identity_providers/configuring-gitlab-identity-provider.adoc
+// * authentication/identity_providers/configuring-ldap-identity-provider.adoc
+// * authentication/identity_providers/configuring-oidc-identity-provider.adoc
+// * authentication/identity_providers/configuring-request-header-identity-provider.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="identity-provider-creating-configmap_{context}"]
+= Creating a config map
+
+Identity providers use {product-title} `ConfigMap` objects in the `openshift-config`
+namespace to contain the certificate authority bundle. These are primarily
+used to contain certificate bundles needed by the identity provider.
+
+
+.Procedure
+
+* Define an {product-title} `ConfigMap` object containing the
+certificate authority by using the following command. The certificate
+authority must be stored in the `ca.crt` key of the `ConfigMap` object.
++
+[source,terminal]
+----
+$ oc create configmap ca-config-map --from-file=ca.crt=/path/to/ca -n openshift-config
+----
++
+[TIP]
+====
+You can alternatively apply the following YAML to create the config map:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ca-config-map
+  namespace: openshift-config
+data:
+  ca.crt: |
+    <CA_certificate_PEM>
+----
+====
+
+// Undefining attributes
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/identity_providers/configuring-keystone-identity-provider.adoc
+
+[id="identity-provider-keystone-CR_{context}"]
+= Sample Keystone CR
+
+The following custom resource (CR) shows the parameters and acceptable values for a
+Keystone identity provider.
+
+.Keystone CR
+
+[source,yaml]
+----
+apiVersion: config.openshift.io/v1
+kind: OAuth
+metadata:
+  name: cluster
+spec:
+  identityProviders:
+  - name: keystoneidp <1>
+    mappingMethod: claim <2>
+    type: Keystone
+    keystone:
+      domainName: default <3>
+      url: https://keystone.example.com:5000 <4>
+      ca: <5>
+        name: ca-config-map
+      tlsClientCert: <6>
+        name: client-cert-secret
+      tlsClientKey: <7>
+        name: client-key-secret
+----
+<1> This provider name is prefixed to provider user names to form an identity name.
+<2> Controls how mappings are established between this provider's identities and `User` objects.
+<3> Keystone domain name. In Keystone, usernames are domain-specific. Only a single domain is supported.
+<4> The URL to use to connect to the Keystone server (required). This must
+use https.
+<5> Optional: Reference to an {product-title} `ConfigMap` object containing the
+PEM-encoded certificate authority bundle to use in validating server
+certificates for the configured URL.
+<6> Optional: Reference to an {product-title} `Secret` object containing the client
+certificate to present when making requests to the configured URL.
+<7> Reference to an {product-title} `Secret` object containing the key for the
+client certificate. Required if `tlsClientCert` is specified.
+
+:leveloffset!:
+
+// Included here so that it is associated with the above module
+[role="_additional-resources"]
+.Additional resources
+
+* See xref:../../authentication/understanding-identity-provider.adoc#identity-provider-parameters_understanding-identity-provider[Identity provider parameters] for information on parameters, such as `mappingMethod`, that are common to all identity providers.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/identity_providers/configuring-allow-all-identity-provider.adoc
+// * authentication/identity_providers/configuring-deny-all-identity-provider.adoc
+// * authentication/identity_providers/configuring-htpasswd-identity-provider.adoc
+// * authentication/identity_providers/configuring-keystone-identity-provider.adoc
+// * authentication/identity_providers/configuring-ldap-identity-provider.adoc
+// * authentication/identity_providers/configuring-basic-authentication-identity-provider.adoc
+// * authentication/identity_providers/configuring-request-header-identity-provider.adoc
+// * authentication/identity_providers/configuring-github-identity-provider.adoc
+// * authentication/identity_providers/configuring-gitlab-identity-provider.adoc
+// * authentication/identity_providers/configuring-google-identity-provider.adoc
+// * authentication/identity_providers/configuring-oidc-identity-provider.adoc
+
+// GitHub and Google IDPs do not support username/password login commands
+// Only some OIDC IDPs support username/password login commands
+
+:_mod-docs-content-type: PROCEDURE
+[id="add-identity-provider_{context}"]
+= Adding an identity provider to your cluster
+
+After you install your cluster, add an identity provider to it so your
+users can authenticate.
+
+.Prerequisites
+
+* Create an {product-title} cluster.
+* Create the custom resource (CR) for your identity providers.
+* You must be logged in as an administrator.
+
+.Procedure
+
+. Apply the defined CR:
++
+[source,terminal]
+----
+$ oc apply -f </path/to/CR>
+----
++
+[NOTE]
+====
+If a CR does not exist, `oc apply` creates a new CR and might trigger the following warning: `Warning: oc apply should be used on resources created by either oc create --save-config or oc apply`. In this case you can safely ignore this warning.
+====
+
+. Log in to the cluster as a user from your identity provider, entering the
+password when prompted.
++
+[source,terminal]
+----
+$ oc login -u <username>
+----
+
+
+. Confirm that the user logged in successfully, and display the user name.
++
+[source,terminal]
+----
+$ oc whoami
+----
+
+// Undefining attributes
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/identity-provider-overview,modules/identity-provider-keystone-about,modules/identity-provider-secret-tls,modules/identity-provider-config-map,modules/identity-provider-keystone-CR,modules/identity-provider-add

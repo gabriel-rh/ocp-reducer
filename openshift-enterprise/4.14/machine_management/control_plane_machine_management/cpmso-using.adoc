@@ -1,0 +1,1832 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="cpmso-using"]
+= Managing control plane machines with control plane machine sets
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: cpmso-using
+
+toc::[]
+
+Control plane machine sets automate several essential aspects of control plane management.
+
+//Replacing a control plane machine
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cpmso-feat-replace_{context}"]
+= Replacing a control plane machine
+
+To replace a control plane machine in a cluster that has a control plane machine set, you delete the machine manually. The control plane machine set replaces the deleted machine with one using the specification in the control plane machine set custom resource (CR).
+
+.Prerequisites
+
+* If your cluster runs on {rh-openstack-first} and you need to evacuate a compute server, such as for an upgrade, you must disable the {rh-openstack} compute node that the machine runs on by running the following command:
++
+[source,terminal]
+----
+$ openstack compute service set <target_node_host_name> nova-compute --disable
+----
++
+For more information, see link:https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/17.1/html/configuring_the_compute_service_for_instance_creation/assembly_managing-instances_managing-instances#proc_preparing-to-migrate_migrating-instances[Preparing to migrate] in the {rh-openstack} documentation.
+
+.Procedure
+
+. List the control plane machines in your cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get machines \
+  -l machine.openshift.io/cluster-api-machine-role==master \
+  -n openshift-machine-api
+----
+
+. Delete a control plane machine by running the following command:
++
+[source,terminal]
+----
+$ oc delete machine \
+  -n openshift-machine-api \
+  <control_plane_machine_name> <1>
+----
+<1> Specify the name of the control plane machine to delete.
++
+[NOTE]
+====
+If you delete multiple control plane machines, the control plane machine set replaces them according to the configured update strategy:
+
+* For clusters that use the default `RollingUpdate` update strategy, the Operator replaces one machine at a time until each machine is replaced.
+
+* For clusters that are configured to use the `OnDelete` update strategy, the Operator creates all of the required replacement machines simultaneously.
+
+Both strategies maintain etcd health during control plane machine replacement.
+====
+
+:leveloffset!:
+
+//Vertical resizing of the control plane
+//include::modules/cpmso-feat-vertical-resize.adoc[leveloffset=+1]
+
+//Updating the control plane configuration
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cpmso-feat-config-update_{context}"]
+= Updating the control plane configuration
+
+You can make changes to the configuration of the machines in the control plane by updating the specification in the control plane machine set custom resource (CR).
+
+The Control Plane Machine Set Operator monitors the control plane machines and compares their configuration with the specification in the control plane machine set CR. When there is a discrepancy between the specification in the CR and the configuration of a control plane machine, the Operator marks that control plane machine for replacement.
+
+[NOTE]
+====
+For more information about the parameters in the CR, see "Control plane machine set configuration".
+====
+
+.Prerequisites
+
+* Your cluster has an activated and functioning Control Plane Machine Set Operator.
+
+.Procedure
+
+. Edit your control plane machine set CR by running the following command:
++
+[source,terminal]
+----
+$ oc edit controlplanemachineset.machine.openshift.io cluster \
+  -n openshift-machine-api
+----
+
+. Change the values of any fields that you want to update in your cluster configuration.
+
+. Save your changes.
+
+.Next steps
+
+* For clusters that use the default `RollingUpdate` update strategy, the control plane machine set propagates changes to your control plane configuration automatically.
+
+* For clusters that are configured to use the `OnDelete` update strategy, you must replace your control plane machines manually.
+
+:leveloffset!:
+
+//Automatic updates to the control plane configuration
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cpmso-feat-auto-update_{context}"]
+= Automatic updates to the control plane configuration
+
+The `RollingUpdate` update strategy automatically propagates changes to your control plane configuration. This update strategy is the default configuration for the control plane machine set.
+
+For clusters that use the `RollingUpdate` update strategy, the Operator creates a replacement control plane machine with the configuration that is specified in the CR. When the replacement control plane machine is ready, the Operator deletes the control plane machine that is marked for replacement. The replacement machine then joins the control plane.
+
+If multiple control plane machines are marked for replacement, the Operator protects etcd health during replacement by repeating this replacement process one machine at a time until it has replaced each machine.
+
+:leveloffset!:
+
+//Manual updates to the control plane configuration
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cpmso-feat-ondelete-update_{context}"]
+= Manual updates to the control plane configuration
+
+You can use the `OnDelete` update strategy to propagate changes to your control plane configuration by replacing machines manually. Manually replacing machines allows you to test changes to your configuration on a single machine before applying the changes more broadly.
+
+For clusters that are configured to use the `OnDelete` update strategy, the Operator creates a replacement control plane machine when you delete an existing machine. When the replacement control plane machine is ready, the etcd Operator allows the existing machine to be deleted. The replacement machine then joins the control plane.
+
+If multiple control plane machines are deleted, the Operator creates all of the required replacement machines simultaneously. The Operator maintains etcd health by preventing more than one machine being removed from the control plane at once.
+
+:leveloffset!:
+
+[id="cpmso-supported-features-aws_{context}"]
+== Enabling Amazon Web Services features for control plane machines
+
+You can enable Amazon Web Services (AWS) features on control plane machines by changing the configuration of your control plane machine set. When you save an update to the control plane machine set, the Control Plane Machine Set Operator updates the control plane machines according to your configured update strategy.
+
+:context: cpmso-using-aws
+//Restricting the API server to private (AWS control plane machine set version)
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * post_installation_configuration/configuring-private-cluster.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso-using-aws:
+
+:_mod-docs-content-type: PROCEDURE
+[id="private-clusters-setting-api-private_{context}"]
+= Restricting the API server to private
+
+After you deploy a cluster to
+Amazon Web Services (AWS),
+Amazon Web Services (AWS) or
+Microsoft Azure,
+you can reconfigure the API server to use only the private zone.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Have access to the web console as a user with `admin` privileges.
+
+.Procedure
+
+. In the web portal or console for your cloud provider, take the following actions:
+
+.. Locate and delete the appropriate load balancer component:
+*** For AWS, delete the external load balancer. The API DNS entry in the private zone already points to the internal load balancer, which uses an identical configuration, so you do not need to modify the internal load balancer.
+
+.. Delete the `api.$clustername.$yourdomain` DNS entry in the public zone.
+
+. Remove the external load balancers by deleting the following lines in the control plane machine set custom resource:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+    loadBalancers:
+    - name: lk4pj-ext <1>
+      type: network <1>
+    - name: lk4pj-int
+      type: network
+----
+<1> Delete this line.
+
+
+:!cpmso-using-aws:
+
+:leveloffset!:
+:context: cpmso-using
+
+//Selecting a larger Amazon Web Services instance type for control plane machines
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/recommended-performance-scale-practices/recommended-control-plane-practices.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso-using:
+
+:_mod-docs-content-type: PROCEDURE
+[id="cpms-changing-aws-instance-type_{context}"]
+= Changing the Amazon Web Services instance type by using a control plane machine set
+
+You can change the Amazon Web Services (AWS) instance type that your control plane machines use by updating the specification in the control plane machine set custom resource (CR).
+
+.Prerequisites
+
+* Your AWS cluster uses a control plane machine set.
+
+.Procedure
+
+
+. Edit the following line under the `providerSpec` field:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+    ...
+    instanceType: <compatible_aws_instance_type> <1>
+----
+<1> Specify a larger AWS instance type with the same base as the previous selection. For example, you can change `m6i.xlarge` to `m6i.2xlarge` or `m6i.4xlarge`.
+
+. Save your changes.
+
+
+:!cpmso-using:
+
+:leveloffset!:
+
+//Assigning machines to placement groups by using machine sets
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating-machinesets/creating-machineset-aws.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-aws-existing-placement-group_{context}"]
+= Assigning machines to placement groups for Elastic Fabric Adapter instances by using machine sets
+
+You can configure a machine set to deploy machines on link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html[Elastic Fabric Adapter] (EFA) instances within an existing AWS placement group.
+
+EFA instances do not require placement groups, and you can use placement groups for purposes other than configuring an EFA. This example uses both to demonstrate a configuration that can improve network performance for machines within the specified placement group.
+
+.Prerequisites
+
+* You created a placement group in the AWS console.
++
+[NOTE]
+====
+Ensure that the link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html#limitations-placement-groups[rules and limitations] for the type of placement group that you create are compatible with your intended use case.
+The control plane machine set spreads the control plane machines across multiple failure domains when possible. To use placement groups for the control plane, you must use a placement group type that can span multiple Availability Zones.
+====
+
+.Procedure
+
+. In a text editor, open the YAML file for an existing machine set or create a new one.
+
+. Edit the following lines under the `providerSpec` field:
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1
+kind: ControlPlaneMachineSet
+# ...
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          instanceType: <supported_instance_type> # <1>
+          networkInterfaceType: EFA # <2>
+          placement:
+            availabilityZone: <zone> # <3>
+            region: <region> # <4>
+          placementGroupName: <placement_group> # <5>
+# ...
+----
+<1> Specify an instance type that link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-instance-types[supports EFAs].
+<2> Specify the `EFA` network interface type.
+<3> Specify the zone, for example, `us-east-1a`.
+<4> Specify the region, for example, `us-east-1`.
+<5> Specify the name of the existing AWS placement group to deploy machines in.
+
+.Verification
+
+* In the AWS console, find a machine that the machine set created and verify the following in the machine properties:
+
+** The placement group field has the value that you specified for the `placementGroupName` parameter in the machine set.
+
+** The interface type field indicates that it uses an EFA.
+
+:!cpmso:
+
+:leveloffset!:
+
+//Machine sets that enable the Amazon EC2 Instance Metadata Service
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso:
+
+:_mod-docs-content-type: CONCEPT
+[id="machineset-imds-options_{context}"]
+= Machine set options for the Amazon EC2 Instance Metadata Service
+
+You can use machine sets to create machines that use a specific version of the Amazon EC2 Instance Metadata Service (IMDS). Machine sets can create machines that allow the use of both IMDSv1 and link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html[IMDSv2] or machines that require the use of IMDSv2.
+
+[NOTE]
+====
+Using IMDSv2 is only supported on AWS clusters that were created with {product-title} version 4.7 or later.
+====
+
+To change the IMDS configuration for existing machines, edit the machine set YAML file that manages those machines.
+
+[IMPORTANT]
+====
+Before configuring a machine set to create machines that require IMDSv2, ensure that any workloads that interact with the AWS metadata service support IMDSv2.
+====
+
+:!cpmso:
+
+:leveloffset!:
+
+//Creating machines that use the Amazon EC2 Instance Metadata Service
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-creating-imds-options_{context}"]
+= Configuring IMDS by using machine sets
+
+You can specify whether to require the use of IMDSv2 by adding or editing the value of `metadataServiceOptions.authentication` in the machine set YAML file for your machines.
+
+.Prerequisites
+* To use IMDSv2, your AWS cluster must have been created with {product-title} version 4.7 or later.
+
+.Procedure
+* Add or edit the following lines under the `providerSpec` field:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+    metadataServiceOptions:
+      authentication: Required <1>
+----
+<1> To require IMDSv2, set the parameter value to `Required`. To allow the use of both IMDSv1 and IMDSv2, set the parameter value to `Optional`. If no value is specified, both IMDSv1 and IMDSv2 are allowed.
+
+:leveloffset!:
+
+//Machine sets that deploy machines as Dedicated Instances
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+[id="machineset-dedicated-instance_{context}"]
+= Machine sets that deploy machines as Dedicated Instances
+
+You can create a machine set running on AWS that deploys machines as Dedicated Instances. Dedicated Instances run in a virtual private cloud (VPC) on hardware that is dedicated to a single customer. These Amazon EC2 instances are physically isolated at the host hardware level. The isolation of Dedicated Instances occurs even if the instances belong to different AWS accounts that are linked to a single payer account. However, other instances that are not dedicated can share hardware with Dedicated Instances if they belong to the same AWS account.
+
+Instances with either public or dedicated tenancy are supported by the Machine API. Instances with public tenancy run on shared hardware. Public tenancy is the default tenancy. Instances with dedicated tenancy run on single-tenant hardware.
+
+:leveloffset!:
+
+//Creating Dedicated Instances by using machine sets
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-aws.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-creating-dedicated-instance_{context}"]
+= Creating Dedicated Instances by using machine sets
+
+You can run a machine that is backed by a Dedicated Instance by using Machine API integration. Set the `tenancy` field in your machine set YAML file to launch a Dedicated Instance on AWS.
+
+.Procedure
+
+* Specify a dedicated tenancy under the `providerSpec` field:
++
+[source,yaml]
+----
+providerSpec:
+  placement:
+    tenancy: dedicated
+----
+
+:leveloffset!:
+
+[id="cpmso-supported-features-azure_{context}"]
+== Enabling Microsoft Azure features for control plane machines
+
+You can enable Microsoft Azure features on control plane machines by changing the configuration of your control plane machine set. When you save an update to the control plane machine set, the Control Plane Machine Set Operator updates the control plane machines according to your configured update strategy.
+
+:context: cpmso-using-azure
+//Restricting the API server to private (Azure control plane machine set version)
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * post_installation_configuration/configuring-private-cluster.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso-using-azure:
+
+:_mod-docs-content-type: PROCEDURE
+[id="private-clusters-setting-api-private_{context}"]
+= Restricting the API server to private
+
+After you deploy a cluster to
+Amazon Web Services (AWS),
+Amazon Web Services (AWS) or
+Microsoft Azure,
+you can reconfigure the API server to use only the private zone.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Have access to the web console as a user with `admin` privileges.
+
+.Procedure
+
+. In the web portal or console for your cloud provider, take the following actions:
+
+.. Locate and delete the appropriate load balancer component:
+*** For Azure, delete the `api-internal` rule for the load balancer.
+
+.. Delete the `api.$clustername.$yourdomain` DNS entry in the public zone.
+
+. Remove the external load balancers by deleting the following lines in the control plane machine set custom resource:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+    loadBalancers:
+    - name: lk4pj-ext <1>
+      type: network <1>
+    - name: lk4pj-int
+      type: network
+----
+<1> Delete this line.
+
+
+:!cpmso-using-azure:
+
+:leveloffset!:
+:context: cpmso-using
+
+//Selecting an Azure Marketplace image
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-azure-customizations.adoc
+// * installing/installing_aws/installing-azure-user-infra.adoc
+// * machine_management/creating-machineset-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:mapi:
+
+//mpytlak: The procedure differs depending on whether this module is used in an IPI or UPI assembly.
+//jrouth: Also some variations for when it appears in the machine management content (`mapi`).
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-azure-marketplace-subscribe_{context}"]
+= Using the Azure Marketplace offering
+You can create a machine set running on Azure that deploys machines that use the Azure Marketplace offering. To use this offering, you must first obtain the Azure Marketplace image. When obtaining your image, consider the following:
+
+* While the images are the same, the Azure Marketplace publisher is different depending on your region. If you are located in North America, specify `redhat` as the publisher. If you are located in EMEA, specify `redhat-limited` as the publisher.
+* The offer includes a `rh-ocp-worker` SKU and a `rh-ocp-worker-gen1` SKU. The `rh-ocp-worker` SKU represents a Hyper-V generation version 2 VM image. The default instance types used in {product-title} are version 2 compatible. If you plan to use an instance type that is only version 1 compatible, use the image associated with the `rh-ocp-worker-gen1` SKU. The `rh-ocp-worker-gen1` SKU represents a Hyper-V version 1 VM image.
+//What happens with control plane machines? "worker" SKU seems incorrect
+
+[IMPORTANT]
+====
+Installing images with the Azure marketplace is not supported on clusters with 64-bit ARM instances.
+====
+
+.Prerequisites
+
+* You have installed the Azure CLI client `(az)`.
+* Your Azure account is entitled for the offer and you have logged into this account with the Azure CLI client.
+
+.Procedure
+
+. Display all of the available {product-title} images by running one of the following commands:
++
+--
+** North America:
++
+[source,terminal]
+----
+$  az vm image list --all --offer rh-ocp-worker --publisher redhat -o table
+----
++
+.Example output
+[source,terminal]
+----
+Offer          Publisher       Sku                 Urn                                                             Version
+-------------  --------------  ------------------  --------------------------------------------------------------  -----------------
+rh-ocp-worker  RedHat          rh-ocp-worker       RedHat:rh-ocp-worker:rh-ocp-worker:413.92.2023101700            413.92.2023101700
+rh-ocp-worker  RedHat          rh-ocp-worker-gen1  RedHat:rh-ocp-worker:rh-ocp-worker-gen1:413.92.2023101700       413.92.2023101700
+----
+** EMEA:
++
+[source,terminal]
+----
+$  az vm image list --all --offer rh-ocp-worker --publisher redhat-limited -o table
+----
++
+.Example output
+[source,terminal]
+----
+Offer          Publisher       Sku                 Urn                                                                     Version
+-------------  --------------  ------------------  --------------------------------------------------------------          -----------------
+rh-ocp-worker  redhat-limited  rh-ocp-worker       redhat-limited:rh-ocp-worker:rh-ocp-worker:413.92.2023101700            413.92.2023101700
+rh-ocp-worker  redhat-limited  rh-ocp-worker-gen1  redhat-limited:rh-ocp-worker:rh-ocp-worker-gen1:413.92.2023101700       413.92.2023101700
+----
+--
++
+[NOTE]
+====
+Regardless of the version of {product-title} that you install, the correct version of the Azure Marketplace image to use is 4.13. If required, your VMs are automatically upgraded as part of the installation process.
+====
+. Inspect the image for your offer by running one of the following commands:
+** North America:
++
+[source,terminal]
+----
+$ az vm image show --urn redhat:rh-ocp-worker:rh-ocp-worker:<version>
+----
+** EMEA:
++
+[source,terminal]
+----
+$ az vm image show --urn redhat-limited:rh-ocp-worker:rh-ocp-worker:<version>
+----
+. Review the terms of the offer by running one of the following commands:
+** North America:
++
+[source,terminal]
+----
+$ az vm image terms show --urn redhat:rh-ocp-worker:rh-ocp-worker:<version>
+----
+** EMEA:
++
+[source,terminal]
+----
+$ az vm image terms show --urn redhat-limited:rh-ocp-worker:rh-ocp-worker:<version>
+----
+. Accept the terms of the offering by running one of the following commands:
+** North America:
++
+[source,terminal]
+----
+$ az vm image terms accept --urn redhat:rh-ocp-worker:rh-ocp-worker:<version>
+----
+** EMEA:
++
+[source,terminal]
+----
+$ az vm image terms accept --urn redhat-limited:rh-ocp-worker:rh-ocp-worker:<version>
+----
+. Record the image details of your offer, specifically the values for `publisher`, `offer`, `sku`, and `version`.
+
+. Add the following parameters to the `providerSpec` section of your machine set YAML file using the image details for your offer:
++
+.Sample `providerSpec` image values for Azure Marketplace machines
+[source,yaml]
+----
+providerSpec:
+  value:
+    image:
+      offer: rh-ocp-worker
+      publisher: redhat
+      resourceID: ""
+      sku: rh-ocp-worker
+      type: MarketplaceWithPlan
+      version: 413.92.2023101700
+----
+//offer also has "worker"
+
+:!mapi:
+
+:leveloffset!:
+
+//Enabling Azure boot diagnostics
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-azure-boot-diagnostics_{context}"]
+= Enabling Azure boot diagnostics
+
+You can enable boot diagnostics on Azure machines that your machine set creates.
+
+.Prerequisites
+
+* Have an existing Microsoft Azure
+Stack Hub
+cluster.
+
+.Procedure
+
+* Add the `diagnostics` configuration that is applicable to your storage type to the `providerSpec` field in your machine set YAML file:
+
+** For an Azure Managed storage account:
++
+[source,yaml]
+----
+providerSpec:
+  diagnostics:
+    boot:
+      storageAccountType: AzureManaged <1>
+----
++
+<1> Specifies an Azure Managed storage account.
+
+** For an Azure Unmanaged storage account:
++
+[source,yaml]
+----
+providerSpec:
+  diagnostics:
+    boot:
+      storageAccountType: CustomerManaged <1>
+      customerManaged:
+        storageAccountURI: https://<storage-account>.blob.core.windows.net <2>
+----
++
+<1> Specifies an Azure Unmanaged storage account.
+<2> Replace `<storage-account>` with the name of your storage account.
++
+[NOTE]
+====
+Only the Azure Blob Storage data service is supported.
+====
+
+.Verification
+
+* On the Microsoft Azure portal, review the *Boot diagnostics* page for a machine deployed by the machine set, and verify that you can see the serial logs for the machine.
+
+
+:leveloffset!:
+
+//Machine sets that deploy machines on ultra disks as data disks
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * storage/persistent_storage/persistent-storage-azure.adoc
+// * storage/persistent_storage/persistent-storage-csi-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso:
+
+:_mod-docs-content-type: CONCEPT
+[id="machineset-azure-ultra-disk_{context}"]
+= Machine sets that deploy machines with ultra disks as data disks
+= Machine sets that deploy machines with ultra disks using PVCs
+
+You can create a machine set running on Azure that deploys machines with ultra disks. Ultra disks are high-performance storage that are intended for use with the most demanding data workloads.
+
+
+
+:!cpmso:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* link:https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types#ultra-disks[Microsoft Azure ultra disks documentation]
+
+//Creating machines on ultra disks by using machine sets
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * storage/persistent_storage/persistent-storage-azure.adoc
+// * storage/persistent_storage/persistent-storage-csi-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso:
+
+:machine-role: worker
+:machine-role: master
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-creating-azure-ultra-disk_{context}"]
+= Creating machines with ultra disks by using machine sets
+
+You can deploy machines with ultra disks on Azure by editing your machine set YAML file.
+
+.Prerequisites
+
+* Have an existing Microsoft Azure cluster.
+
+.Procedure
+
+. Create a custom secret in the `openshift-machine-api` namespace using the `{machine-role}` data secret by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-machine-api \
+get secret <role>-user-data \ <1>
+--template='{{index .data.userData | base64decode}}' | jq > userData.txt <2>
+----
+<1> Replace `<role>` with `{machine-role}`.
+<2> Specify `userData.txt` as the name of the new custom secret.
+
+. In a text editor, open the `userData.txt` file and locate the final `}` character in the file.
+
+.. On the immediately preceding line, add a `,`.
+
+.. Create a new line after the `,` and add the following configuration details:
++
+[source,json]
+----
+"storage": {
+  "disks": [ <1>
+    {
+      "device": "/dev/disk/azure/scsi1/lun0", <2>
+      "partitions": [ <3>
+        {
+          "label": "lun0p1", <4>
+          "sizeMiB": 1024, <5>
+          "startMiB": 0
+        }
+      ]
+    }
+  ],
+  "filesystems": [ <6>
+    {
+      "device": "/dev/disk/by-partlabel/lun0p1",
+      "format": "xfs",
+      "path": "/var/lib/lun0p1"
+    }
+  ]
+},
+"systemd": {
+  "units": [ <7>
+    {
+      "contents": "[Unit]\nBefore=local-fs.target\n[Mount]\nWhere=/var/lib/lun0p1\nWhat=/dev/disk/by-partlabel/lun0p1\nOptions=defaults,pquota\n[Install]\nWantedBy=local-fs.target\n", <8>
+      "enabled": true,
+      "name": "var-lib-lun0p1.mount"
+    }
+  ]
+}
+----
+<1> The configuration details for the disk that you want to attach to a node as an ultra disk.
+<2> Specify the `lun` value that is defined in the `dataDisks` stanza of the machine set you are using. For example, if the machine set contains `lun: 0`, specify `lun0`. You can initialize multiple data disks by specifying multiple `"disks"` entries in this configuration file. If you specify multiple `"disks"` entries, ensure that the `lun` value for each matches the value in the machine set.
+<3> The configuration details for a new partition on the disk.
+<4> Specify a label for the partition. You might find it helpful to use hierarchical names, such as `lun0p1` for the first partition of `lun0`.
+<5> Specify the total size in MiB of the partition.
+<6> Specify the filesystem to use when formatting a partition. Use the partition label to specify the partition.
+<7> Specify a `systemd` unit to mount the partition at boot. Use the partition label to specify the partition. You can create multiple partitions by specifying multiple `"partitions"` entries in this configuration file. If you specify multiple `"partitions"` entries, you must specify a `systemd` unit for each.
+<8> For `Where`, specify the value of `storage.filesystems.path`. For `What`, specify the value of `storage.filesystems.device`.
+
+. Extract the disabling template value to a file called `disableTemplating.txt` by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-machine-api get secret <role>-user-data \ <1>
+--template='{{index .data.disableTemplating | base64decode}}' | jq > disableTemplating.txt
+----
+<1> Replace `<role>` with `{machine-role}`.
+
+. Combine the `userData.txt` file and `disableTemplating.txt` file to create a data secret file by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-machine-api create secret generic <role>-user-data-x5 \ <1>
+--from-file=userData=userData.txt \
+--from-file=disableTemplating=disableTemplating.txt
+----
+<1> For `<role>-user-data-x5`, specify the name of the secret. Replace `<role>` with `{machine-role}`.
+
+
+. Edit your control plane machine set CR by running the following command:
++
+[source,terminal]
+----
+$ oc --namespace openshift-machine-api edit controlplanemachineset.machine.openshift.io cluster
+----
+
+. Add the following lines in the positions indicated:
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: ControlPlaneMachineSet
+spec:
+  template:
+    spec:
+      metadata:
+        labels:
+          disk: ultrassd <1>
+      providerSpec:
+        value:
+          ultraSSDCapability: Enabled <2>
+          dataDisks: <2>
+          - nameSuffix: ultrassd
+            lun: 0
+            diskSizeGB: 4
+            deletionPolicy: Delete
+            cachingType: None
+            managedDisk:
+              storageAccountType: UltraSSD_LRS
+          userDataSecret:
+            name: <role>-user-data-x5 <3>
+----
+<1> Specify a label to use to select a node that is created by this machine set. This procedure uses `disk.ultrassd` for this value.
+<2> These lines enable the use of ultra disks. For `dataDisks`, include the entire stanza.
+<3> Specify the user data secret created earlier. Replace `<role>` with `{machine-role}`.
+
+. Save your changes.
+
+** For clusters that use the default `RollingUpdate` update strategy, the Operator automatically propagates the changes to your control plane configuration.
+
+** For clusters that are configured to use the `OnDelete` update strategy, you must replace your control plane machines manually.
+
+
+.Verification
+
+. Validate that the machines are created by running the following command:
++
+[source,terminal]
+----
+$ oc get machines
+----
++
+The machines should be in the `Running` state.
+
+. For a machine that is running and has a node attached, validate the partition by running the following command:
++
+[source,terminal]
+----
+$ oc debug node/<node-name> -- chroot /host lsblk
+----
++
+In this command, `oc debug node/<node-name>` starts a debugging shell on the node `<node-name>` and passes a command with `--`. The passed command `chroot /host` provides access to the underlying host OS binaries, and `lsblk` shows the block devices that are attached to the host OS machine.
+
+.Next steps
+
+
+* To use an ultra disk on the control plane, reconfigure your workload to use the control plane's ultra disk mount point.
+
+:!cpmso:
+
+:leveloffset!:
+
+//Troubleshooting resources for machine sets that enable ultra disks
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * storage/persistent_storage/persistent-storage-azure.adoc
+// * storage/persistent_storage/persistent-storage-csi-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:mapi:
+
+:_mod-docs-content-type: REFERENCE
+[id="machineset-troubleshooting-azure-ultra-disk_{context}"]
+= Troubleshooting resources for machine sets that enable ultra disks
+
+Use the information in this section to understand and recover from issues you might encounter.
+
+
+[id="ts-mapi-attach-misconfigure_{context}"]
+== Incorrect ultra disk configuration
+
+If an incorrect configuration of the `ultraSSDCapability` parameter is specified in the machine set, the machine provisioning fails.
+
+For example, if the `ultraSSDCapability` parameter is set to `Disabled`, but an ultra disk is specified in the `dataDisks` parameter, the following error message appears:
+
+[source,terminal]
+----
+StorageAccountType UltraSSD_LRS can be used only when additionalCapabilities.ultraSSDEnabled is set.
+----
+
+* To resolve this issue, verify that your machine set configuration is correct.
+
+[id="ts-mapi-attach-unsupported_{context}"]
+== Unsupported disk parameters
+
+If a region, availability zone, or instance size that is not compatible with ultra disks is specified in the machine set, the machine provisioning fails. Check the logs for the following error message:
+
+[source,terminal]
+----
+failed to create vm <machine_name>: failure sending request for machine <machine_name>: cannot create vm: compute.VirtualMachinesClient#CreateOrUpdate: Failure sending request: StatusCode=400 -- Original Error: Code="BadRequest" Message="Storage Account type 'UltraSSD_LRS' is not supported <more_information_about_why>."
+----
+
+* To resolve this issue, verify that you are using this feature in a supported environment and that your machine set configuration is correct.
+
+[id="ts-mapi-delete_{context}"]
+== Unable to delete disks
+
+If the deletion of ultra disks as data disks is not working as expected, the machines are deleted and the data disks are orphaned. You must delete the orphaned disks manually if desired.
+
+
+:!mapi:
+
+:leveloffset!:
+
+//Enabling customer-managed encryption keys for a machine set
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/creating_machinesets/creating-machineset-azure-stack-hub.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-enabling-customer-managed-encryption-azure_{context}"]
+= Enabling customer-managed encryption keys for a machine set
+
+You can supply an encryption key to Azure to encrypt data on managed disks at rest. You can enable server-side encryption with customer-managed keys by using the Machine API.
+
+An Azure Key Vault, a disk encryption set, and an encryption key are required to use a customer-managed key. The disk encryption set must be in a resource group where the Cloud Credential Operator (CCO) has granted permissions. If not, an additional reader role is required to be granted on the disk encryption set.
+
+.Prerequisites
+
+* link:https://docs.microsoft.com/en-us/azure/aks/azure-disk-customer-managed-keys#create-an-azure-key-vault-instance[Create an Azure Key Vault instance].
+* link:https://docs.microsoft.com/en-us/azure/aks/azure-disk-customer-managed-keys#create-an-instance-of-a-diskencryptionset[Create an instance of a disk encryption set].
+* link:https://docs.microsoft.com/en-us/azure/aks/azure-disk-customer-managed-keys#grant-the-diskencryptionset-access-to-key-vault[Grant the disk encryption set access to key vault].
+
+.Procedure
+
+* Configure the disk encryption set under the `providerSpec` field in your machine set YAML file. For example:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+    osDisk:
+      diskSizeGB: 128
+      managedDisk:
+        diskEncryptionSet:
+          id: /subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/providers/Microsoft.Compute/diskEncryptionSets/<disk_encryption_set_name>
+        storageAccountType: Premium_LRS
+----
+
+[role="_additional-resources"]
+.Additional resources
+* https://docs.microsoft.com/en-us/azure/virtual-machines/disk-encryption#customer-managed-keys[Azure documentation about customer-managed keys]
+
+:leveloffset!:
+
+//Configuring trusted launch for Azure virtual machines by using machine sets
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-azure-trusted-launch_{context}"]
+= Configuring trusted launch for Azure virtual machines by using machine sets
+
+:FeatureName: Using trusted launch for Azure virtual machines
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+{product-title} {product-version} supports trusted launch for Azure virtual machines (VMs). By editing the machine set YAML file, you can configure the trusted launch options that a machine set uses for machines that it deploys. For example, you can configure these machines to use UEFI security features such as Secure Boot or a dedicated virtual Trusted Platform Module (vTPM) instance.
+
+[NOTE]
+====
+Some feature combinations result in an invalid configuration.
+====
+
+.UEFI feature combination compatibility
+|====
+|Secure Boot^[1]^ |vTPM^[2]^ |Valid configuration
+
+|Enabled
+|Enabled
+|Yes
+
+|Enabled
+|Disabled
+|Yes
+
+|Enabled
+|Omitted
+|Yes
+
+|Disabled
+|Enabled
+|Yes
+
+|Omitted
+|Enabled
+|Yes
+
+|Disabled
+|Disabled
+|No
+
+|Omitted
+|Disabled
+|No
+
+|Omitted
+|Omitted
+|No
+|====
+[.small]
+--
+1. Using the `secureBoot` field.
+2. Using the `virtualizedTrustedPlatformModule` field.
+--
+
+For more information about related features and functionality, see the Microsoft Azure documentation about link:https://learn.microsoft.com/en-us/azure/virtual-machines/trusted-launch[Trusted launch for Azure virtual machines].
+
+.Procedure
+
+. In a text editor, open the YAML file for an existing machine set or create a new one.
+
+. Edit the following section under the `providerSpec` field to provide a valid configuration:
++
+.Sample valid configuration with UEFI Secure Boot and vTPM enabled
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1
+kind: ControlPlaneMachineSet
+# ...
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          securityProfile:
+            settings:
+              securityType: TrustedLaunch # <1>
+              trustedLaunch:
+                uefiSettings: # <2>
+                  secureBoot: Enabled # <3>
+                  virtualizedTrustedPlatformModule: Enabled # <4>
+# ...
+----
+<1> Enables the use of trusted launch for Azure virtual machines. This value is required for all valid configurations.
+<2> Specifies which UEFI security features to use. This section is required for all valid configurations.
+<3> Enables UEFI Secure Boot.
+<4> Enables the use of a vTPM.
+
+.Verification
+
+* On the Azure portal, review the details for a machine deployed by the machine set and verify that the trusted launch options match the values that you configured.
+
+:!cpmso:
+
+:leveloffset!:
+
+//Configuring Azure confidential virtual machines by using machine sets
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-azure-confidential-vms_{context}"]
+= Configuring Azure confidential virtual machines by using machine sets
+
+:FeatureName: Using Azure confidential virtual machines
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+{product-title} {product-version} supports Azure confidential virtual machines (VMs).
+
+[NOTE]
+====
+Confidential VMs are currently not supported on 64-bit ARM architectures.
+====
+
+By editing the machine set YAML file, you can configure the confidential VM options that a machine set uses for machines that it deploys. For example, you can configure these machines to use UEFI security features such as Secure Boot or a dedicated virtual Trusted Platform Module (vTPM) instance.
+
+[WARNING]
+====
+Not all instance types support confidential VMs. Do not change the instance type for a control plane machine set that is configured to use confidential VMs to a type that is incompatible. Using an incompatible instance type can cause your cluster to become unstable.
+====
+
+For more information about related features and functionality, see the Microsoft Azure documentation about link:https://learn.microsoft.com/en-us/azure/confidential-computing/confidential-vm-overview[Confidential virtual machines].
+
+.Procedure
+
+. In a text editor, open the YAML file for an existing machine set or create a new one.
+
+. Edit the following section under the `providerSpec` field:
++
+--
+.Sample configuration
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1
+kind: ControlPlaneMachineSet
+# ...
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          osDisk:
+            # ...
+            managedDisk:
+              securityProfile: # <1>
+                securityEncryptionType: VMGuestStateOnly # <2>
+            # ...
+          securityProfile: # <3>
+            settings:
+                securityType: ConfidentialVM # <4>
+                confidentialVM:
+                  uefiSettings: # <5>
+                    secureBoot: Disabled # <6>
+                    virtualizedTrustedPlatformModule: Enabled # <7>
+          vmSize: Standard_DC16ads_v5 # <8>
+# ...
+----
+<1> Specifies security profile settings for the managed disk when using a confidential VM.
+<2> Enables encryption of the Azure VM Guest State (VMGS) blob. This setting requires the use of vTPM.
+<3> Specifies security profile settings for the confidential VM.
+<4> Enables the use of confidential VMs. This value is required for all valid configurations.
+<5> Specifies which UEFI security features to use. This section is required for all valid configurations.
+<6> Disables UEFI Secure Boot.
+<7> Enables the use of a vTPM.
+<8> Specifies an instance type that supports confidential VMs.
+--
+
+.Verification
+
+* On the Azure portal, review the details for a machine deployed by the machine set and verify that the confidential VM options match the values that you configured.
+
+:!cpmso:
+
+:leveloffset!:
+
+// Accelerated Networking for Microsoft Azure VMs
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso:
+
+[id="machineset-azure-accelerated-networking_{context}"]
+= Accelerated Networking for Microsoft Azure VMs
+
+Accelerated Networking uses single root I/O virtualization (SR-IOV) to provide Microsoft Azure VMs with a more direct path to the switch. This enhances network performance. This feature can be enabled
+during or 
+after installation.
+
+[id="machineset-azure-accelerated-networking-limits_{context}"]
+== Limitations
+
+Consider the following limitations when deciding whether to use Accelerated Networking:
+
+* Accelerated Networking is only supported on clusters where the Machine API is operational.
+
+* {empty}
++
+Although the minimum requirement for an Azure worker node is two vCPUs, 
+Accelerated Networking requires an Azure VM size that includes at least four vCPUs. To satisfy this requirement, you can change the value of `vmSize` in your machine set. For information about Azure VM sizes, see link:https://docs.microsoft.com/en-us/azure/virtual-machines/sizes[Microsoft Azure documentation].
+
+//iiuc, this is not true for control planes since the operator will roll out changes according to the update strategy
+
+:!cpmso:
+
+:leveloffset!:
+
+//Not applicable for 4.12, possibly 4.13?
+//[role="_additional-resources"]
+//.Additional resources
+//* xref:../../installing/installing_azure/installing-azure-customizations.adoc#machineset-azure-enabling-accelerated-networking-new-install_installing-azure-customizations[Enabling Accelerated Networking during installation]
+
+// Enabling Accelerated Networking on an existing Microsoft Azure cluster
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-azure.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-azure-enabling-accelerated-networking-existing_{context}"]
+= Enabling Accelerated Networking on an existing Microsoft Azure cluster
+
+You can enable Accelerated Networking on Azure by adding `acceleratedNetworking` to your machine set YAML file.
+
+.Prerequisites
+
+* Have an existing Microsoft Azure cluster where the Machine API is operational.
+
+.Procedure
+////
+//Trying to move towards a more streamlined approach, but leaving this in in case needed
+. List the compute machine sets in your cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get machinesets -n openshift-machine-api
+----
++
+The compute machine sets are listed in the form of `<cluster-id>-worker-<region>`.
++
+.Example output
+[source,terminal]
+----
+NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+jmywbfb-8zqpx-worker-centralus1     1         1         1       1           15m
+jmywbfb-8zqpx-worker-centralus2     1         1         1       1           15m
+jmywbfb-8zqpx-worker-centralus3     1         1         1       1           15m
+----
+
+. For each compute machine set:
+
+.. Edit the custom resource (CR) by running the following command:
++
+[source,terminal]
+----
+$ oc edit machineset <machine-set-name>
+----
+
+.. Add the following to the `providerSpec` field:
+////
+* Add the following to the `providerSpec` field:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+    acceleratedNetworking: true <1>
+    vmSize: <azure-vm-size> <2>
+----
++
+<1> This line enables Accelerated Networking.
+<2> Specify an Azure VM size that includes at least four vCPUs. For information about VM sizes, see link:https://docs.microsoft.com/en-us/azure/virtual-machines/sizes[Microsoft Azure documentation].
+
+
+.Verification
+
+* On the Microsoft Azure portal, review the *Networking* settings page for a machine provisioned by the machine set, and verify that the `Accelerated networking` field is set to `Enabled`.
+
+:!cpmso:
+
+:leveloffset!:
+
+[id="cpmso-supported-features-gcp_{context}"]
+== Enabling Google Cloud Platform features for control plane machines
+
+You can enable Google Cloud Platform (GCP) features on control plane machines by changing the configuration of your control plane machine set. When you save an update to the control plane machine set, the Control Plane Machine Set Operator updates the control plane machines according to your configured update strategy.
+
+//Note: GCP GPU features should be compatible with CPMS, but dev cannot think of a use case. Leaving them out to keep things less cluttered. If a customer use case emerges, we can just add the necessary modules in here.
+
+//Configuring persistent disk types by using machine sets
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-gcp-pd-disk-types_{context}"]
+= Configuring persistent disk types by using machine sets
+
+You can configure the type of persistent disk that a machine set deploys machines on by editing the machine set YAML file.
+
+For more information about persistent disk types, compatibility, regional availability, and limitations, see the GCP Compute Engine documentation about link:https://cloud.google.com/compute/docs/disks#pdspecs[persistent disks].
+
+.Procedure
+
+. In a text editor, open the YAML file for an existing machine set or create a new one.
+
+. Edit the following line under the `providerSpec` field:
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1
+kind: ControlPlaneMachineSet
+...
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          disks:
+            type: <pd-disk-type> <1>
+----
+<1> Specify the disk persistent type. Valid values are `pd-ssd`, `pd-standard`, and `pd-balanced`. The default value is `pd-standard`.
+
+.Verification
+
+* Using the Google Cloud console, review the details for a machine deployed by the machine set and verify that the `Type` field matches the configured disk type.
+
+:!cpmso:
+
+:leveloffset!:
+
+//Configuring Confidential VM by using machine sets
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-gcp-confidential-vm_{context}"]
+= Configuring Confidential VM by using machine sets
+
+By editing the machine set YAML file, you can configure the Confidential VM options that a machine set uses for machines that it deploys.
+
+For more information about Confidential VM features, functions, and compatibility, see the GCP Compute Engine documentation about link:https://cloud.google.com/confidential-computing/confidential-vm/docs/about-cvm#confidential-vm[Confidential VM].
+
+[NOTE]
+====
+Confidential VMs are currently not supported on 64-bit ARM architectures.
+====
+[IMPORTANT]
+====
+{product-title} {product-version} does not support some Confidential Compute features, such as Confidential VMs with AMD Secure Encrypted Virtualization Secure Nested Paging (SEV-SNP).
+====
+
+.Procedure
+
+. In a text editor, open the YAML file for an existing machine set or create a new one.
+
+. Edit the following section under the `providerSpec` field:
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1
+kind: ControlPlaneMachineSet
+...
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          confidentialCompute: Enabled <1>
+          onHostMaintenance: Terminate <2>
+          machineType: n2d-standard-8 <3>
+...
+----
+<1> Specify whether Confidential VM is enabled. Valid values are `Disabled` or `Enabled`.
+<2> Specify the behavior of the VM during a host maintenance event, such as a hardware or software update. For a machine that uses Confidential VM, this value must be set to `Terminate`, which stops the VM. Confidential VM does not support live VM migration.
+<3> Specify a machine type that supports Confidential VM. Confidential VM supports the N2D and C2D series of machine types.
+
+.Verification
+
+* On the Google Cloud console, review the details for a machine deployed by the machine set and verify that the Confidential VM options match the values that you configured.
+
+:!cpmso:
+
+:leveloffset!:
+
+//Configuring Shielded VM options by using machine sets
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+
+:cpmso:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-gcp-shielded-vms_{context}"]
+= Configuring Shielded VM options by using machine sets
+
+By editing the machine set YAML file, you can configure the Shielded VM options that a machine set uses for machines that it deploys.
+
+For more information about Shielded VM features and functionality, see the GCP Compute Engine documentation about link:https://cloud.google.com/compute/shielded-vm/docs/shielded-vm[Shielded VM].
+
+.Procedure
+
+. In a text editor, open the YAML file for an existing machine set or create a new one.
+
+. Edit the following section under the `providerSpec` field:
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1
+kind: ControlPlaneMachineSet
+# ...
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          shieldedInstanceConfig: <1>
+            integrityMonitoring: Enabled <2>
+            secureBoot: Disabled <3>
+            virtualizedTrustedPlatformModule: Enabled <4>
+# ...
+----
++
+--
+<1> In this section, specify any Shielded VM options that you want.
+<2> Specify whether integrity monitoring is enabled. Valid values are `Disabled` or `Enabled`.
++
+[NOTE]
+====
+When integrity monitoring is enabled, you must not disable virtual trusted platform module (vTPM).
+====
+
+<3> Specify whether UEFI Secure Boot is enabled. Valid values are `Disabled` or `Enabled`.
+<4> Specify whether vTPM is enabled. Valid values are `Disabled` or `Enabled`.
+--
+
+.Verification
+
+* Using the Google Cloud console, review the details for a machine deployed by the machine set and verify that the Shielded VM options match the values that you configured.
+
+:!cpmso:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* link:https://cloud.google.com/compute/shielded-vm/docs/shielded-vm[What is Shielded VM?]
+** link:https://cloud.google.com/compute/shielded-vm/docs/shielded-vm#secure-boot[Secure Boot]
+** link:https://cloud.google.com/compute/shielded-vm/docs/shielded-vm#vtpm[Virtual Trusted Platform Module (vTPM)]
+** link:https://cloud.google.com/compute/shielded-vm/docs/shielded-vm#integrity-monitoring[Integrity monitoring]
+
+//Enabling customer-managed encryption keys for a machine set
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/creating_machinesets/creating-machineset-gcp.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:cpmso:
+
+:_mod-docs-content-type: PROCEDURE
+[id="machineset-gcp-enabling-customer-managed-encryption_{context}"]
+= Enabling customer-managed encryption keys for a machine set
+
+Google Cloud Platform (GCP) Compute Engine allows users to supply an encryption key to encrypt data on disks at rest. The key is used to encrypt the data encryption key, not to encrypt the customer's data. By default, Compute Engine encrypts this data by using Compute Engine keys.
+
+You can enable encryption with a customer-managed key in clusters that use the Machine API. You must first link:https://cloud.google.com/compute/docs/disks/customer-managed-encryption#before_you_begin[create a KMS key] and assign the correct permissions to a service account. The KMS key name, key ring name, and location are required to allow a service account to use your key.
+
+[NOTE]
+====
+If you do not want to use a dedicated service account for the KMS encryption, the Compute Engine default service account is used instead. You must grant the default service account permission to access the keys if you do not use a dedicated service account. The Compute Engine default service account name follows the `service-<project_number>@compute-system.iam.gserviceaccount.com` pattern.
+====
+
+.Procedure
+
+. To allow a specific service account to use your KMS key and to grant the service account the correct IAM role, run the following command with your KMS key name, key ring name, and location:
++
+[source,terminal]
+----
+$ gcloud kms keys add-iam-policy-binding <key_name> \
+  --keyring <key_ring_name> \
+  --location <key_ring_location> \
+  --member "serviceAccount:service-<project_number>@compute-system.iam.gserviceaccount.com” \
+  --role roles/cloudkms.cryptoKeyEncrypterDecrypter
+----
+
+. Configure the encryption key under the `providerSpec` field in your machine set YAML file. For example:
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1
+kind: ControlPlaneMachineSet
+...
+spec:
+  template:
+    spec:
+      providerSpec:
+        value:
+          disks:
+          - type:
+            encryptionKey:
+              kmsKey:
+                name: machine-encryption-key <1>
+                keyRing: openshift-encrpytion-ring <2>
+                location: global <3>
+                projectID: openshift-gcp-project <4>
+              kmsKeyServiceAccount: openshift-service-account@openshift-gcp-project.iam.gserviceaccount.com <5>
+----
+<1> The name of the customer-managed encryption key that is used for the disk encryption.
+<2> The name of the KMS key ring that the KMS key belongs to.
+<3> The GCP location in which the KMS key ring exists.
+<4> Optional: The ID of the project in which the KMS key ring exists. If a project ID is not set, the machine set `projectID` in which the machine set was created is used.
+<5> Optional: The service account that is used for the encryption request for the given KMS key. If a service account is not set, the Compute Engine default service account is used.
++
+When a new machine is created by using the updated `providerSpec` object configuration, the disk encryption key is encrypted with the KMS key.
+
+:!cpmso:
+
+:leveloffset!:
+
+[id="cpmso-supported-features-openstack_{context}"]
+== Updating the configuration for {rh-openstack} control plane machines
+
+You can configure {rh-openstack-first} control plane machines by changing the configuration of your control plane machine set. When you save an update to the control plane machine set, the Control Plane Machine Set Operator updates the control plane machines according to your configured update strategy.
+
+//Changing the OpenStack Nova flavor by using a control plane machine set
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cpms-changing-openstack-flavor-type_{context}"]
+= Changing the {rh-openstack} compute flavor by using a control plane machine set
+
+You can change the {rh-openstack-first} compute service (Nova) flavor that your control plane machines use by updating the specification in the control plane machine set custom resource.
+
+In {rh-openstack}, flavors define the compute, memory, and storage capacity of computing instances. By increasing or decreasing the flavor size, you can scale your control plane vertically.
+
+.Prerequisites
+
+* Your {rh-openstack} cluster uses a control plane machine set.
+
+.Procedure
+
+. Edit the following line under the `providerSpec` field:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+# ...
+    flavor: m1.xlarge <1>
+----
+<1> Specify a {rh-openstack} flavor type that has the same base as the existing selection. For example, you can change `m6i.xlarge` to `m6i.2xlarge` or `m6i.4xlarge`. You can choose larger or smaller flavors depending on your vertical scaling needs.
+
+. Save your changes.
+
+After you save your changes, machines are replaced with ones that use the flavor you chose.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/cpmso-feat-replace,modules/cpmso-feat-config-update,modules/cpmso-feat-auto-update,modules/cpmso-feat-ondelete-update,modules/private-clusters-setting-api-private,modules/cpms-changing-aws-instance-type,modules/machineset-aws-existing-placement-group,modules/machineset-imds-options,modules/machineset-creating-imds-options,modules/machineset-dedicated-instances,modules/machineset-creating-dedicated-instances,modules/installation-azure-marketplace-subscribe,modules/machineset-azure-boot-diagnostics,modules/machineset-azure-ultra-disk,modules/machineset-creating-azure-ultra-disk,modules/machineset-troubleshooting-azure-ultra-disk,modules/machineset-customer-managed-encryption-azure,modules/machineset-azure-trusted-launch,modules/snippets/technology-preview,modules/machineset-azure-confidential-vms,modules/machineset-azure-accelerated-networking,modules/machineset-azure-enabling-accelerated-networking-existing,modules/machineset-gcp-pd-disk-types,modules/machineset-gcp-confidential-vm,modules/machineset-gcp-shielded-vms,modules/machineset-gcp-enabling-customer-managed-encryption,modules/cpms-changing-openstack-flavor-type

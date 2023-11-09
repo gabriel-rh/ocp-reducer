@@ -1,0 +1,867 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ztp-sno-additional-worker-node"]
+= Expanding {sno} clusters with {ztp}
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: sno-additional-worker
+
+toc::[]
+
+You can expand {sno} clusters with {ztp-first}. When you add worker nodes to {sno} clusters, the original {sno} cluster retains the control plane node role. Adding worker nodes does not require any downtime for the existing {sno} cluster.
+
+[NOTE]
+====
+Although there is no specified limit on the number of worker nodes that you can add to a {sno} cluster, you must revaluate the reserved CPU allocation on the control plane node for the additional worker nodes.
+====
+
+If you require workload partitioning on the worker node, you must deploy and remediate the managed cluster policies on the hub cluster before installing the node. This way, the workload partitioning `MachineConfig` objects are rendered and associated with the `worker` machine config pool before the {ztp} workflow applies the `MachineConfig` ignition file to the worker node.
+
+It is recommended that you first remediate the policies, and then install the worker node.
+If you create the workload partitioning manifests after installing the worker node, you must drain the node manually and delete all the pods managed by daemon sets. When the managing daemon sets create the new pods, the new pods undergo the workload partitioning process.
+
+:FeatureName: Adding worker nodes to {sno} clusters with {ztp}
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For more information about {sno} clusters tuned for vDU application deployments, see xref:../../scalability_and_performance/ztp_far_edge/ztp-reference-cluster-configuration-for-vdu.adoc#sno-configure-for-vdu[Reference configuration for deploying vDUs on {sno}].
+
+* For more information about worker nodes, see xref:../../nodes/nodes/nodes-sno-worker-nodes.adoc[Adding worker nodes to single-node OpenShift clusters].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-sno-additional-worker-node.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="ztp-additional-worker-apply-du-profile_{context}"]
+= Applying profiles to the worker node
+
+You can configure the additional worker node with a DU profile.
+
+You can apply a RAN distributed unit (DU) profile to the worker node cluster using the {ztp-first} common, group, and site-specific `PolicyGenTemplate` resources. The {ztp} pipeline that is linked to the ArgoCD `policies` application includes the following CRs that you can find in the `out/argocd/example/policygentemplates` folder when you extract the `ztp-site-generate` container:
+
+* `common-ranGen.yaml`
+* `group-du-sno-ranGen.yaml`
+* `example-sno-site.yaml`
+* `ns.yaml`
+* `kustomization.yaml`
+
+Configuring the DU profile on the worker node is considered an upgrade. To initiate the upgrade flow, you must update the existing policies or create additional ones. Then, you must create a `ClusterGroupUpgrade` CR to reconcile the policies in the group of clusters.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-sno-additional-worker-node.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-additional-worker-daemon-selector-comp_{context}"]
+= (Optional) Ensuring PTP and SR-IOV daemon selector compatibility
+
+If the DU profile was deployed using the {ztp-first} plugin version 4.11 or earlier, the PTP and SR-IOV Operators might be configured to place the daemons only on nodes labelled as `master`. This configuration prevents the PTP and SR-IOV daemons from operating on the worker node. If the PTP and SR-IOV daemon node selectors are incorrectly configured on your system, you must change the daemons before proceeding with the worker DU profile configuration.
+
+.Procedure
+
+. Check the daemon node selector settings of the PTP Operator on one of the spoke clusters:
++
+[source,terminal]
+----
+$ oc get ptpoperatorconfig/default -n openshift-ptp -ojsonpath='{.spec}' | jq
+----
++
+.Example output for PTP Operator
++
+[source,json]
+----
+{"daemonNodeSelector":{"node-role.kubernetes.io/master":""}} <1>
+----
+<1> If the node selector is set to `master`, the spoke was deployed with the version of the {ztp} plugin that requires changes.
+
+. Check the daemon node selector settings of the SR-IOV Operator on one of the spoke clusters:
++
+[source,terminal]
+----
+$  oc get sriovoperatorconfig/default -n \
+openshift-sriov-network-operator -ojsonpath='{.spec}' | jq
+----
++
+.Example output for SR-IOV Operator
++
+[source,json]
+----
+{"configDaemonNodeSelector":{"node-role.kubernetes.io/worker":""},"disableDrain":false,"enableInjector":true,"enableOperatorWebhook":true} <1>
+----
+<1> If the node selector is set to `master`, the spoke was deployed with the version of the {ztp} plugin that requires changes.
+
+. In the group policy, add the following `complianceType` and `spec` entries:
++
+[source,yaml]
+----
+spec:
+    - fileName: PtpOperatorConfig.yaml
+      policyName: "config-policy"
+      complianceType: mustonlyhave
+      spec:
+        daemonNodeSelector:
+          node-role.kubernetes.io/worker: ""
+    - fileName: SriovOperatorConfig.yaml
+      policyName: "config-policy"
+      complianceType: mustonlyhave
+      spec:
+        configDaemonNodeSelector:
+          node-role.kubernetes.io/worker: ""
+----
++
+[IMPORTANT]
+====
+Changing the `daemonNodeSelector` field causes temporary PTP synchronization loss and SR-IOV connectivity loss.
+====
+
+. Commit the changes in Git, and then push to the Git repository being monitored by the {ztp} ArgoCD application.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-sno-additional-worker-node.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="ztp-additional-worker-node-selector-comp_{context}"]
+= PTP and SR-IOV node selector compatibility
+
+The PTP configuration resources and SR-IOV network node policies use `node-role.kubernetes.io/master: ""` as the node selector. If the additional worker nodes have the same NIC configuration as the control plane node, the policies used to configure the control plane node can be reused for the worker nodes. However, the node selector must be changed to select both node types, for example with the `"node-role.kubernetes.io/worker"` label.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-sno-additional-worker-node.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-additional-worker-policies_{context}"]
+= Using PolicyGenTemplate CRs to apply worker node policies to worker nodes
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+
+You can create policies for worker nodes.
+
+.Procedure
+
+. Create the following policy template:
++
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "example-sno-workers"
+  namespace: "example-sno"
+spec:
+  bindingRules:
+    sites: "example-sno" <1>
+  mcp: "worker" <2>
+  sourceFiles:
+    - fileName: MachineConfigGeneric.yaml <3>
+      policyName: "config-policy"
+      metadata:
+        labels:
+          machineconfiguration.openshift.io/role: worker
+        name: enable-workload-partitioning
+      spec:
+        config:
+          storage:
+            files:
+            - contents:
+                source: data:text/plain;charset=utf-8;base64,W2NyaW8ucnVudGltZS53b3JrbG9hZHMubWFuYWdlbWVudF0KYWN0aXZhdGlvbl9hbm5vdGF0aW9uID0gInRhcmdldC53b3JrbG9hZC5vcGVuc2hpZnQuaW8vbWFuYWdlbWVudCIKYW5ub3RhdGlvbl9wcmVmaXggPSAicmVzb3VyY2VzLndvcmtsb2FkLm9wZW5zaGlmdC5pbyIKcmVzb3VyY2VzID0geyAiY3B1c2hhcmVzIiA9IDAsICJjcHVzZXQiID0gIjAtMyIgfQo=
+              mode: 420
+              overwrite: true
+              path: /etc/crio/crio.conf.d/01-workload-partitioning
+              user:
+                name: root
+            - contents:
+                source: data:text/plain;charset=utf-8;base64,ewogICJtYW5hZ2VtZW50IjogewogICAgImNwdXNldCI6ICIwLTMiCiAgfQp9Cg==
+              mode: 420
+              overwrite: true
+              path: /etc/kubernetes/openshift-workload-pinning
+              user:
+                name: root
+    - fileName: PerformanceProfile.yaml
+      policyName: "config-policy"
+      metadata:
+        name: openshift-worker-node-performance-profile
+      spec:
+        cpu: <4>
+          isolated: "4-47"
+          reserved: "0-3"
+        hugepages:
+          defaultHugepagesSize: 1G
+          pages:
+            - size: 1G
+              count: 32
+        realTimeKernel:
+          enabled: true
+    - fileName: TunedPerformancePatch.yaml
+      policyName: "config-policy"
+      metadata:
+        name: performance-patch-worker
+      spec:
+        profile:
+          - name: performance-patch-worker
+            data: |
+              [main]
+              summary=Configuration changes profile inherited from performance created tuned
+              include=openshift-node-performance-openshift-worker-node-performance-profile
+              [bootloader]
+              cmdline_crash=nohz_full=4-47 <5>
+              [sysctl]
+              kernel.timer_migration=1
+              [scheduler]
+              group.ice-ptp=0:f:10:*:ice-ptp.*
+              [service]
+              service.stalld=start,enable
+              service.chronyd=stop,disable
+        recommend:
+        - profile: performance-patch-worker
+----
+<1> The policies are applied to all clusters with this label.
+<2> The `MCP` field must be set to `worker`.
+<3> This generic `MachineConfig` CR is used to configure workload partitioning on the worker node.
+<4> The `cpu.isolated` and `cpu.reserved` fields must be configured for each particular hardware platform.
+<5> The `cmdline_crash` CPU set must match the `cpu.isolated` set in the `PerformanceProfile` section.
+
++
+A generic `MachineConfig` CR is used to configure workload partitioning on the worker node. You can generate the content of `crio` and `kubelet` configuration files.
+
+. Add the created policy template to the Git repository monitored by the ArgoCD `policies` application.
+
+. Add the policy in the `kustomization.yaml` file.
+
+. Commit the changes in Git, and then push to the Git repository being monitored by the {ztp} ArgoCD application.
+
+. To remediate the new policies to your spoke cluster, create a TALM custom resource:
++
+[source,terminal]
+----
+$ cat <<EOF | oc apply -f -
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: example-sno-worker-policies
+  namespace: default
+spec:
+  backup: false
+  clusters:
+  - example-sno
+  enable: true
+  managedPolicies:
+  - group-du-sno-config-policy
+  - example-sno-workers-config-policy
+  - example-sno-config-policy
+  preCaching: false
+  remediationStrategy:
+    maxConcurrency: 1
+EOF
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-sno-additional-worker-node.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-additional-worker-sno-proc_{context}"]
+= Adding worker nodes to {sno} clusters with {ztp}
+
+You can add one or more worker nodes to existing {sno} clusters to increase available CPU resources in the cluster.
+
+.Prerequisites
+
+* Install and configure {rh-rhacm} 2.6 or later in an {product-title} 4.11 or later bare-metal hub cluster
+* Install {cgu-operator-full} in the hub cluster
+* Install {gitops-title} in the hub cluster
+* Use the {ztp} `ztp-site-generate` container image version 4.12 or later
+* Deploy a managed {sno} cluster with {ztp}
+* Configure the Central Infrastructure Management as described in the {rh-rhacm} documentation
+* Configure the DNS serving the cluster to resolve the internal API endpoint `api-int.<cluster_name>.<base_domain>`
+
+.Procedure
+
+. If you deployed your cluster by using the `example-sno.yaml` `SiteConfig` manifest, add your new worker node to the `spec.clusters['example-sno'].nodes` list:
++
+[source,yaml]
+----
+nodes:
+- hostName: "example-node2.example.com"
+  role: "worker"
+  bmcAddress: "idrac-virtualmedia+https://[1111:2222:3333:4444::bbbb:1]/redfish/v1/Systems/System.Embedded.1"
+  bmcCredentialsName:
+    name: "example-node2-bmh-secret"
+  bootMACAddress: "AA:BB:CC:DD:EE:11"
+  bootMode: "UEFI"
+  nodeNetwork:
+    interfaces:
+      - name: eno1
+        macAddress: "AA:BB:CC:DD:EE:11"
+    config:
+      interfaces:
+        - name: eno1
+          type: ethernet
+          state: up
+          macAddress: "AA:BB:CC:DD:EE:11"
+          ipv4:
+            enabled: false
+          ipv6:
+            enabled: true
+            address:
+            - ip: 1111:2222:3333:4444::1
+              prefix-length: 64
+      dns-resolver:
+        config:
+          search:
+          - example.com
+          server:
+          - 1111:2222:3333:4444::2
+      routes:
+        config:
+        - destination: ::/0
+          next-hop-interface: eno1
+          next-hop-address: 1111:2222:3333:4444::1
+          table-id: 254
+----
+
+. Create a BMC authentication secret for the new host, as referenced by the `bmcCredentialsName` field in the `spec.nodes` section of your `SiteConfig` file:
++
+[source,yaml]
+----
+apiVersion: v1
+data:
+  password: "password"
+  username: "username"
+kind: Secret
+metadata:
+  name: "example-node2-bmh-secret"
+  namespace: example-sno
+type: Opaque
+----
+
+. Commit the changes in Git, and then push to the Git repository that is being monitored by the {ztp} ArgoCD application.
++
+When the ArgoCD `cluster` application synchronizes, two new manifests appear on the hub cluster generated by the {ztp} plugin:
++
+* `BareMetalHost`
+* `NMStateConfig`
++
+[IMPORTANT]
+====
+The `cpuset` field should not be configured for the worker node. Workload partitioning for worker nodes is added through management policies after the node installation is complete.
+====
+
+.Verification
+
+You can monitor the installation process in several ways.
+
+* Check if the preprovisioning images are created by running the following command:
++
+[source,terminal]
+----
+$ oc get ppimg -n example-sno
+----
++
+.Example output
+[source,terminal]
+----
+NAMESPACE       NAME            READY   REASON
+example-sno     example-sno     True    ImageCreated
+example-sno     example-node2   True    ImageCreated
+----
+
+* Check the state of the bare-metal hosts:
++
+[source,terminal]
+----
+$ oc get bmh -n example-sno
+----
++
+.Example output
+[source,terminal]
+----
+NAME            STATE          CONSUMER   ONLINE   ERROR   AGE
+example-sno     provisioned               true             69m
+example-node2   provisioning              true             4m50s <1>
+----
+<1> The `provisioning` state indicates that node booting from the installation media is in progress.
+
+* Continuously monitor the installation process:
+
+.. Watch the agent install process by running the following command:
++
+[source,terminal]
+----
+$ oc get agent -n example-sno --watch
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                   CLUSTER   APPROVED   ROLE     STAGE
+671bc05d-5358-8940-ec12-d9ad22804faa   example-sno   true       master   Done
+[...]
+14fd821b-a35d-9cba-7978-00ddf535ff37   example-sno   true       worker   Starting installation
+14fd821b-a35d-9cba-7978-00ddf535ff37   example-sno   true       worker   Installing
+14fd821b-a35d-9cba-7978-00ddf535ff37   example-sno   true       worker   Writing image to disk
+[...]
+14fd821b-a35d-9cba-7978-00ddf535ff37   example-sno   true       worker   Waiting for control plane
+[...]
+14fd821b-a35d-9cba-7978-00ddf535ff37   example-sno   true       worker   Rebooting
+14fd821b-a35d-9cba-7978-00ddf535ff37   example-sno   true       worker   Done
+----
+
+.. When the worker node installation is finished, the worker node certificates are approved automatically. At this point, the worker appears in the `ManagedClusterInfo` status. Run the following command to see the status:
++
+[source,terminal]
+----
+$ oc get managedclusterinfo/example-sno -n example-sno -o \
+jsonpath='{range .status.nodeList[*]}{.name}{"\t"}{.conditions}{"\t"}{.labels}{"\n"}{end}'
+----
++
+.Example output
+[source,terminal]
+----
+example-sno	[{"status":"True","type":"Ready"}]	{"node-role.kubernetes.io/master":"","node-role.kubernetes.io/worker":""}
+example-node2	[{"status":"True","type":"Ready"}]	{"node-role.kubernetes.io/worker":""}
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,snippets/technology-preview,modules/ztp-worker-node-applying-du-profile,modules/ztp-worker-node-daemon-selector-compatibility,modules/ztp-worker-node-node-selector-compatibility,modules/ztp-worker-node-preparing-policies,modules/ztp-adding-worker-nodes

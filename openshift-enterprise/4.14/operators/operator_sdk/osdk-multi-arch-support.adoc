@@ -1,0 +1,576 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="osdk-multi-platform-support"]
+= Configuring Operator projects for multi-platform support
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: osdk-multi-arch
+
+toc::[]
+
+Operator projects that support multiple architectures and operating systems, or _platforms_, can run on more Kubernetes and {product-title} clusters than Operator projects that support only a single platform. Example architectures include `amd64`, `arm64`, `ppc64le`, and `s390x`. Example operating systems include Linux and Windows.
+
+Perform the following actions to ensure your Operator project can run on multiple {product-title} platforms:
+
+* Build a manifest list that specifies the platforms that your Operator supports.
+* Set your Operator's node affinity to support multi-architecture compute machines.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-multi-arch-support.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-multi-arch-building-images_{context}"]
+= Building a manifest list of the platforms your Operator supports
+
+You can use the `make docker-buildx` command to build a manifest list of the platforms supported by your Operator and operands. A manifest list references specific image manifests for one or more architectures. An image manifest specifies the platforms that an image supports.
+
+For more information, see link:https://specs.opencontainers.org/image-spec/image-index[OpenContainers Image Index Spec] or link:https://docs.docker.com/registry/spec/manifest-v2-2/#manifest-list[Image Manifest v2, Schema 2].
+
+[IMPORTANT]
+====
+If your Operator project deploys an application or other workload resources, the following procedure assumes the application's multi-platform images are built during the application release process.
+====
+
+.Prerequisites
+
+* An Operator project built using the Operator SDK version {osdk_ver} or later
+* Docker installed
+
+.Procedure
+
+. Inspect the image manifests of your Operator and operands to find which platforms your Operator project can support. Run the following command to inspect an image manifest:
++
+[source,terminal]
+----
+$ docker manifest inspect <image_manifest> <1>
+----
+<1> Specifies an image manifest, such as `redhat/ubi9:latest`.
++
+The platforms that your Operator and operands mutually support determine the platform compatibility of your Operator project.
++
+.Example output
+[source,json]
+----
+{
+    "manifests": [
+        {
+            "digest": "sha256:c0669ef34cdc14332c0f1ab0c2c01acb91d96014b172f1a76f3a39e63d1f0bda",
+            "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+            "platform": {
+                "architecture": "amd64",
+                "os": "linux"
+            },
+            "size": 528
+        },
+...
+        {
+            "digest": "sha256:30e6d35703c578ee703230b9dc87ada2ba958c1928615ac8a674fcbbcbb0f281",
+            "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            },
+            "size": 528
+        },
+...
+----
+
+. If the previous command does not output platform information, then the specified base image might be a single image instead of an image manifest. You can find which architectures an image supports by running the following command:
++
+[source,terminal]
+----
+$ docker inspect <image>
+----
+
+. For Go-based Operator projects, the Operator SDK explicitly references the `amd64` architecture in your project's Dockerfile. Make the following change
+to your Dockerfile to set an environment variable to the value specified by the platform flag:
++
+.Example Dockerfile
+[source,docker]
+----
+FROM golang:1.19 as builder
+ARG TARGETOS
+ARG TARGETARCH
+...
+RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o manager main.go <1>
+----
+<1> Change the `GOARCH` field from `amd64` to `$TARGETARCH`.
+
+. Your Operator project's makefile defines the `PLATFORMS` environment variable. If your Operator's images do not support all of the platforms set by default, edit the variable to specify the supported platforms. The following example defines the supported platforms as `linux/arm64` and `linux/amd64`:
++
+.Example makefile
+[source,make]
+----
+# ...
+PLATFORMS ?= linux/arm64,linux/amd64 <1>
+.PHONY: docker-buildx
+# ...
+----
++
+<1> The following `PLATFORMS` values are set by default: `linux/arm64`, `linux/amd64`, `linux/s390x`, and `linux/ppc64le`.
++
+When you run the `make docker buildx` command to generate a manifest list, the Operator SDK creates an image manifest for each of the platforms specified by the `PLATFORMS` variable.
+
+. Run the following command from your Operator project directory to build your manager image. Running the command builds a manager image with multi-platform support and pushes the manifest list to your registry.
++
+[source,terminal]
+----
+$ make docker-buildx \
+  IMG=<image_registry>/<organization_name>/<repository_name>:<version_or_sha>
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-multi-arch-support.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-multi-arch-node-affinity_{context}"]
+= About node affinity rules for multi-architecture compute machines and Operator workloads
+
+You must set node affinity rules to ensure your Operator workloads can run on multi-architecture compute machines. Node affinity is a set of rules used by the scheduler to define a pod's placement. Setting node affinity rules ensures your Operator's workloads are scheduled to compute machines with compatible architectures.
+
+If your Operator performs better on particular architectures, you can set preferred node affinity rules to schedule pods to machines with the specified architectures.
+
+For more information, see "About clusters with multi-architecture compute machines" and "Controlling pod placement on nodes using node affinity rules".
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../nodes/scheduling/nodes-scheduler-node-affinity.adoc#nodes-scheduler-node-affinity[Controlling pod placement on nodes using node affinity rules]
+* xref:../../nodes/scheduling/nodes-scheduler-node-affinity.adoc#olm-overriding-operator-pod-affinity_nodes-scheduler-node-affinity[Using node affinity to control where an Operator is installed]
+* xref:../../post_installation_configuration/configuring-multi-arch-compute-machines/multi-architecture-configuration.adoc#post-install-multi-architecture-configuration[About clusters with multi-architecture compute machines]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-multi-arch-support.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-multi-arch-node-reqs_{context}"]
+= Using required node affinity rules to support multi-architecture compute machines for Operator projects
+
+If you want your Operator to support multi-architecture compute machines, you must define your Operator's required node affinity rules.
+
+.Prerequisites
+
+* An Operator project created or maintained with Operator SDK {osdk_ver} or later.
+* A manifest list defining the platforms your Operator supports.
+
+.Procedure
+
+. Search your Operator project for Kubernetes manifests that define pod spec and pod template spec objects.
++
+[IMPORTANT]
+====
+Because object type names are not declared in YAML files, look for the mandatory `containers` field in your Kubernetes manifests. The `containers` field is required when specifying both pod spec and pod template spec objects.
+
+You must set node affinity rules in all Kubernetes manifests that define a pod spec or pod template spec, including objects such as `Pod`, `Deployment`, `DaemonSet`, and `StatefulSet`.
+====
++
+.Example Kubernetes manifest
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: s1
+spec:
+  containers:
+    - name: <container_name>
+      image: docker.io/<org>/<image_name>
+----
+
+. Set the required node affinity rules in the Kubernetes manifests that define pod spec and pod template spec objects, similar to the following example:
++
+.Example Kubernetes manifest
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: s1
+spec:
+  containers:
+    - name: <container_name>
+      image: docker.io/<org>/<image_name>
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution: <1>
+        nodeSelectorTerms: <2>
+        - matchExpressions: <3>
+          - key: kubernetes.io/arch <4>
+            operator: In
+            values:
+            - amd64
+            - arm64
+            - ppc64le
+            - s390x
+          - key: kubernetes.io/os <5>
+            operator: In
+            values:
+                - linux
+----
+<1> Defines a required rule.
+<2> If you specify multiple `nodeSelectorTerms` associated with `nodeAffinity` types, then the pod can be scheduled onto a node if one of the `nodeSelectorTerms` is satisfied.
+<3> If you specify multiple `matchExpressions` associated with `nodeSelectorTerms`, then the pod can be scheduled onto a node only if all `matchExpressions` are satisfied.
+<4> Specifies the architectures defined in the manifest list.
+<5> Specifies the operating systems defined in the manifest list.
+
+. Go-based Operator projects that use dynamically created workloads might embed pod spec and pod template spec objects in the Operator's logic.
++
+If your project embeds pod spec or pod template spec objects in the Operator's logic, edit your Operator's logic similar to the following example. The following example shows how to update a `PodSpec` object by using the Go API:
++
+[source,go]
+----
+Template: corev1.PodTemplateSpec{
+    ...
+    Spec: corev1.PodSpec{
+        Affinity: &corev1.Affinity{
+            NodeAffinity: &corev1.NodeAffinity{
+                RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
+                    NodeSelectorTerms: []corev1.NodeSelectorTerm{
+                        {
+                            MatchExpressions: []corev1.NodeSelectorRequirement{
+                                {
+                                    Key:      "kubernetes.io/arch",
+                                    Operator: "In",
+                                    Values:   []string{"amd64","arm64","ppc64le","s390x"},
+                                },
+                                {
+                                    Key:      "kubernetes.io/os",
+                                    Operator: "In",
+                                    Values:   []string{"linux"},
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        SecurityContext: &corev1.PodSecurityContext{
+            ...
+        },
+        Containers: []corev1.Container{{
+            ...
+        }},
+    },
+----
++
+where:
+
+`RequiredDuringSchedulingIgnoredDuringExecution`:: Defines a required rule.
+`NodeSelectorTerms`:: If you specify multiple `nodeSelectorTerms` associated with `nodeAffinity` types, then the pod can be scheduled onto a node if one of the `nodeSelectorTerms` is satisfied.
+`MatchExpressions`:: If you specify multiple `matchExpressions` associated with `nodeSelectorTerms`, then the pod can be scheduled onto a node only if all `matchExpressions` are satisfied.
+`kubernetes.io/arch`:: Specifies the architectures defined in the manifest list.
+`kubernetes.io/os`:: Specifies the operating systems defined in the manifest list.
+
+[WARNING]
+====
+If you do not set node affinity rules and a container is scheduled to a compute machine with an incompatible architecture, the pod fails and triggers one of the following events:
+
+`CrashLoopBackOff`:: Occurs when an image manifest's entry point fails to run and an `exec format error` message is printed in the logs.
+`ImagePullBackOff`:: Occurs when a manifest list does not include a manifest for the architecture where a pod is scheduled or the node affinity terms are set to the wrong values.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../nodes/scheduling/nodes-scheduler-node-affinity.adoc#nodes-scheduler-node-affinity-configuring-required_nodes-scheduler-node-affinity[Configuring a required node affinity rule]
+* xref:../../nodes/scheduling/nodes-scheduler-node-affinity.adoc#nodes-scheduler-node-affinity-example_nodes-scheduler-node-affinity[Sample node affinity rules]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-multi-arch-support.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-multi-arch-node-preference_{context}"]
+= Using preferred node affinity rules to configure support for multi-architecture compute machines for Operator projects
+
+If your Operator performs better on particular architectures, you can configure preferred node affinity rules to schedule pods to nodes to the specified architectures.
+
+.Prerequisites
+
+* An Operator project created or maintained with Operator SDK {osdk_ver} or later.
+* A manifest list defining the platforms your Operator supports.
+* Required node affinity rules are set for your Operator project.
+
+.Procedure
+
+. Search your Operator project for Kubernetes manifests that define pod spec and pod template spec objects.
++
+.Example Kubernetes manifest
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: s1
+spec:
+  containers:
+    - name: <container_name>
+      image: docker.io/<org>/<image_name>
+----
+
+. Set your Operator's preferred node affinity rules in the Kubernetes manifests that define pod spec and pod template spec objects, similar to the following example:
++
+.Example Kubernetes manifest
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: s1
+spec:
+  containers:
+    - name: <container_name>
+      image: docker.io/<org>/<image_name>
+  affinity:
+      nodeAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution: <1>
+          - preference:
+            matchExpressions: <2>
+              - key: kubernetes.io/arch <3>
+                operator: In <4>
+                values:
+                - amd64
+                - arm64
+            weight: 90 <5>
+----
+<1> Defines a preferred rule.
+<2> If you specify multiple `matchExpressions` associated with `nodeSelectorTerms`, then the pod can be scheduled onto a node only if all `matchExpressions` are satisfied.
+<3> Specifies the architectures defined in the manifest list.
+<4> Specifies an `operator`. The Operator can be `In`, `NotIn`,  `Exists`, or `DoesNotExist`. For example, use the value of `In` to require the label to be in the node.
+<5> Specifies a weight for the node, valid values are `1`-`100`. The node with highest weight is preferred.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../nodes/scheduling/nodes-scheduler-node-affinity.adoc#nodes-scheduler-node-affinity-configuring-preferred_nodes-scheduler-node-affinity[Configuring a preferred node affinity rule]
+
+[id="next-steps_osdk-multi-arch-support"]
+== Next steps
+
+* xref:../../operators/operator_sdk/osdk-generating-csvs.adoc#olm-enabling-operator-for-multi-arch_osdk-generating-csvs[Label the platforms your Operator supports for Operator Lifecycle Manager (OLM)]
+* Bundle your Operator and Deploy with OLM
+** xref:../../operators/operator_sdk/golang/osdk-golang-tutorial.adoc#osdk-bundle-deploy-olm_osdk-golang-tutorial[Go-based Operator projects]
+** xref:../../operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc#osdk-bundle-deploy-olm_osdk-ansible-tutorial[Ansible-based Operator projects]
+** xref:../../operators/operator_sdk/helm/osdk-helm-tutorial.html#osdk-bundle-deploy-olm_osdk-helm-tutorial[Helm-based Operator projects]
+* xref:../../operators/operator_sdk/osdk-bundle-validate.html#osdk-multi-arch-validate_osdk-bundle-validate[Validate your Operator's multi-platform readiness]
+
+//# includes=_attributes/common-attributes,modules/osdk-multi-arch-building-images,modules/osdk-multi-arch-node-affinity,modules/osdk-multi-arch-node-reqs,modules/osdk-multi-arch-node-preference

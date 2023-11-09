@@ -1,0 +1,2894 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="cnf-talm-for-cluster-updates"]
+= Updating managed clusters with the {cgu-operator-full}
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: cnf-topology-aware-lifecycle-manager
+
+toc::[]
+
+You can use the {cgu-operator-first} to manage the software lifecycle of multiple clusters. {cgu-operator} uses {rh-rhacm-first} policies to perform changes on the target clusters.
+
+:FeatureName: {cgu-operator-full}
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// Epic CNF-2600 (CNF-2133) (4.10), Story TELCODOCS-285
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cnf-about-topology-aware-lifecycle-manager-config_{context}"]
+= About the {cgu-operator-full} configuration
+
+The {cgu-operator-first} manages the deployment of {rh-rhacm-first} policies for one or more {product-title} clusters. Using {cgu-operator} in a large network of clusters allows the phased rollout of policies to the clusters in limited batches. This helps to minimize possible service disruptions when updating. With {cgu-operator}, you can control the following actions:
+
+* The timing of the update
+* The number of {rh-rhacm}-managed clusters
+* The subset of managed clusters to apply the policies to
+* The update order of the clusters
+* The set of policies remediated to the cluster
+* The order of policies remediated to the cluster
+* The assignment of a canary cluster
+
+For {sno}, the {cgu-operator-first} offers the following features:
+
+* Create a backup of a deployment before an upgrade
+* Pre-caching images for clusters with limited bandwidth
+
+{cgu-operator} supports the orchestration of the {product-title} y-stream and z-stream updates, and day-two operations on y-streams and z-streams.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// Epic CNF-2600 (CNF-2133) (4.10), Story TELCODOCS-285
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cnf-about-topology-aware-lifecycle-manager-about-policies_{context}"]
+= About managed policies used with {cgu-operator-full}
+
+The {cgu-operator-first} uses {rh-rhacm} policies for cluster updates.
+
+{cgu-operator} can be used to manage the rollout of any policy CR where the `remediationAction` field is set to `inform`.
+Supported use cases include the following:
+
+* Manual user creation of policy CRs
+* Automatically generated policies from the `PolicyGenTemplate` custom resource definition (CRD)
+
+For policies that update an Operator subscription with manual approval, {cgu-operator} provides additional functionality that approves the installation of the updated Operator.
+
+For more information about managed policies, see link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/{rh-rhacm-version}/html-single/governance/index#policy-overview[Policy Overview] in the {rh-rhacm} documentation.
+
+For more information about the `PolicyGenTemplate` CRD, see the "About the PolicyGenTemplate CRD" section in "Configuring managed clusters with policies and PolicyGenTemplate resources".
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// Epic CNF-2600 (CNF-2133) (4.10), Story TELCODOCS-285
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installing-topology-aware-lifecycle-manager-using-web-console_{context}"]
+= Installing the {cgu-operator-full} by using the web console
+
+You can use the {product-title} web console to install the {cgu-operator-full}.
+
+.Prerequisites
+
+// Based on polarion test cases
+
+* Install the latest version of the {rh-rhacm} Operator.
+* Set up a hub cluster with disconnected regitry.
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. In the {product-title} web console, navigate to *Operators* -> *OperatorHub*.
+. Search for the *{cgu-operator-full}* from the list of available Operators, and then click *Install*.
+. Keep the default selection of *Installation mode* ["All namespaces on the cluster (default)"] and *Installed Namespace* ("openshift-operators") to ensure that the Operator is installed properly.
+. Click *Install*.
+
+.Verification
+
+To confirm that the installation is successful:
+
+. Navigate to the *Operators* -> *Installed Operators* page.
+. Check that the Operator is installed in the `All Namespaces` namespace and its status is `Succeeded`.
+
+If the Operator is not installed successfully:
+
+. Navigate to the *Operators* -> *Installed Operators* page and inspect the `Status` column for any errors or failures.
+. Navigate to the *Workloads* -> *Pods* page and check the logs in any containers in the `cluster-group-upgrades-controller-manager` pod that are reporting issues.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// Epic CNF-2600 (CNF-2133) (4.10), Story TELCODOCS-285
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installing-topology-aware-lifecycle-manager-using-cli_{context}"]
+= Installing the {cgu-operator-full} by using the CLI
+
+You can use the OpenShift CLI (`oc`) to install the {cgu-operator-first}.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Install the latest version of the {rh-rhacm} Operator.
+* Set up a hub cluster with disconnected registry.
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create a `Subscription` CR:
+.. Define the `Subscription` CR and save the YAML file, for example, `talm-subscription.yaml`:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: openshift-topology-aware-lifecycle-manager-subscription
+  namespace: openshift-operators
+spec:
+  channel: "stable"
+  name: topology-aware-lifecycle-manager
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+----
+
+.. Create the `Subscription` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f talm-subscription.yaml
+----
+
+.Verification
+
+. Verify that the installation succeeded by inspecting the CSV resource:
++
+[source,terminal]
+----
+$ oc get csv -n openshift-operators
+----
++
+.Example output
+[source,terminal,subs="attributes+"]
+----
+NAME                                                   DISPLAY                            VERSION               REPLACES                           PHASE
+topology-aware-lifecycle-manager.{product-version}.x   Topology Aware Lifecycle Manager   {product-version}.x                                      Succeeded
+----
+
+. Verify that the {cgu-operator} is up and running:
++
+[source,terminal]
+----
+$ oc get deploy -n openshift-operators
+----
++
+.Example output
+[source,terminal]
+----
+NAMESPACE                                          NAME                                             READY   UP-TO-DATE   AVAILABLE   AGE
+openshift-operators                                cluster-group-upgrades-controller-manager        1/1     1            1           14s
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// Epic CNF-2600 (CNF-2133) (4.10), Story TELCODOCS-285
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="talo-about-cgu-crs_{context}"]
+= About the ClusterGroupUpgrade CR
+
+The {cgu-operator-first} builds the remediation plan from the `ClusterGroupUpgrade` CR for a group of clusters. You can define the following specifications in a `ClusterGroupUpgrade` CR:
+
+* Clusters in the group
+* Blocking `ClusterGroupUpgrade` CRs
+* Applicable list of managed policies
+* Number of concurrent updates
+* Applicable canary updates
+* Actions to perform before and after the update
+* Update timing
+
+You can control the start time of an update using the `enable` field in the `ClusterGroupUpgrade` CR.
+For example, if you have a scheduled maintenance window of four hours, you can prepare a `ClusterGroupUpgrade` CR with the `enable` field set to `false`.
+
+You can set the timeout by configuring the `spec.remediationStrategy.timeout` setting as follows:
+[source,yaml]
+----
+spec
+  remediationStrategy:
+          maxConcurrency: 1
+          timeout: 240
+----
+
+You can use the `batchTimeoutAction` to determine what happens if an update fails for a cluster.
+You can specify `continue` to skip the failing cluster and continue to upgrade other clusters, or `abort` to stop policy remediation for all clusters.
+Once the timeout elapses, {cgu-operator} removes all `enforce` policies to ensure that no further updates are made to clusters.
+
+To apply the changes, you set the `enabled` field to `true`.
+
+For more information see the "Applying update policies to managed clusters" section.
+
+As {cgu-operator} works through remediation of the policies to the specified clusters, the `ClusterGroupUpgrade` CR can report true or false statuses for a number of conditions.
+
+[NOTE]
+====
+After {cgu-operator} completes a cluster update, the cluster does not update again under the control of the same `ClusterGroupUpgrade` CR. You must create a new `ClusterGroupUpgrade` CR in the following cases:
+
+* When you need to update the cluster again
+* When the cluster changes to non-compliant with the `inform` policy after being updated
+====
+
+[id="selecting_clusters_{context}"]
+== Selecting clusters
+
+{cgu-operator} builds a remediation plan and selects clusters based on the following fields:
+
+* The `clusterLabelSelector` field specifies the labels of the clusters that you want to update. This consists of a list of the standard label selectors from `k8s.io/apimachinery/pkg/apis/meta/v1`. Each selector in the list uses either label value pairs or label expressions. Matches from each selector are added to the final list of clusters along with the matches from the `clusterSelector` field and the `cluster` field.
+* The `clusters` field specifies a list of clusters to update.
+* The `canaries` field specifies the clusters for canary updates.
+* The `maxConcurrency` field specifies the number of clusters to update in a batch.
+* The `actions` field specifies `beforeEnable` actions that {cgu-operator} takes as it begins the update process, and `afterCompletion` actions that {cgu-operator} takes as it completes policy remediation for each cluster.
+
+You can use the `clusters`, `clusterLabelSelector`, and `clusterSelector` fields together to create a combined list of clusters.
+
+The remediation plan starts with the clusters listed in the `canaries` field. Each canary cluster forms a single-cluster batch.
+
+.Sample `ClusterGroupUpgrade` CR with the enabled `field` set to `false`
+
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  creationTimestamp: '2022-11-18T16:27:15Z'
+  finalizers:
+    - ran.openshift.io/cleanup-finalizer
+  generation: 1
+  name: talm-cgu
+  namespace: talm-namespace
+  resourceVersion: '40451823'
+  uid: cca245a5-4bca-45fa-89c0-aa6af81a596c
+Spec:
+  actions:
+    afterCompletion: <1>
+      addClusterLabels:
+        upgrade-done: ""
+      deleteClusterLabels:
+        upgrade-running: ""
+      deleteObjects: true
+    beforeEnable: <2>
+      addClusterLabels:
+        upgrade-running: ""
+  backup: false
+  clusters: <3>
+    - spoke1
+  enable: false <4>
+  managedPolicies: <5>
+    - talm-policy
+  preCaching: false
+  remediationStrategy: <6>
+    canaries: <7>
+        - spoke1
+    maxConcurrency: 2 <8>
+    timeout: 240
+  clusterLabelSelectors: <9>
+    - matchExpressions:
+      - key: label1
+      operator: In
+      values:
+        - value1a
+        - value1b
+  batchTimeoutAction: <10>
+status: <11>
+    computedMaxConcurrency: 2
+    conditions:
+      - lastTransitionTime: '2022-11-18T16:27:15Z'
+        message: All selected clusters are valid
+        reason: ClusterSelectionCompleted
+        status: 'True'
+        type: ClustersSelected <12>
+      - lastTransitionTime: '2022-11-18T16:27:15Z'
+        message: Completed validation
+        reason: ValidationCompleted
+        status: 'True'
+        type: Validated <13>
+      - lastTransitionTime: '2022-11-18T16:37:16Z'
+        message: Not enabled
+        reason: NotEnabled
+        status: 'False'
+        type: Progressing
+    managedPoliciesForUpgrade:
+      - name: talm-policy
+        namespace: talm-namespace
+    managedPoliciesNs:
+      talm-policy: talm-namespace
+    remediationPlan:
+      - - spoke1
+      - - spoke2
+        - spoke3
+    status:
+----
+<1> Specifies the action that {cgu-operator} takes when it completes policy remediation for each cluster.
+<2> Specifies the action that {cgu-operator} takes as it begins the update process.
+<3> Defines the list of clusters to update.
+<4> The `enable` field is set to `false`.
+<5> Lists the user-defined set of policies to remediate.
+<6> Defines the specifics of the cluster updates.
+<7> Defines the clusters for canary updates.
+<8> Defines the maximum number of concurrent updates in a batch. The number of remediation batches is the number of canary clusters, plus the number of clusters, except the canary clusters, divided by the `maxConcurrency` value. The clusters that are already compliant with all the managed policies are excluded from the remediation plan.
+<9> Displays the parameters for selecting clusters.
+<10> Controls what happens if a batch times out. Possible values are `abort` or `continue`. If unspecified, the default is `continue`.
+<11> Displays information about the status of the updates.
+<12> The `ClustersSelected` condition shows that all selected clusters are valid.
+<13> The `Validated` condition shows that all selected clusters have been validated.
+
+[NOTE]
+====
+Any failures during the update of a canary cluster stops the update process.
+====
+
+When the remediation plan is successfully created, you can you set the `enable` field to `true` and {cgu-operator} starts to update the non-compliant clusters with the specified managed policies.
+
+[NOTE]
+====
+You can only make changes to the `spec` fields if the `enable` field of the `ClusterGroupUpgrade` CR is set to `false`.
+====
+
+[id="validating_{context}"]
+== Validating
+
+{cgu-operator} checks that all specified managed policies are available and correct, and uses the `Validated` condition to report the status and reasons as follows:
+
+* `true`
++
+Validation is completed.
+* `false`
++
+Policies are missing or invalid, or an invalid platform image has been specified.
+
+[id="precaching_{context}"]
+== Pre-caching
+
+Clusters might have limited bandwidth to access the container image registry, which can cause a timeout before the updates are completed. On {sno} clusters, you can use pre-caching to avoid this. The container image pre-caching starts when you create a `ClusterGroupUpgrade` CR with the `preCaching` field set to `true`.
+{cgu-operator} compares the available disk space with the estimated {product-title} image size to ensure that there is enough space. If a cluster has insufficient space, {cgu-operator} cancels pre-caching for that cluster and does not remediate policies on it.
+
+{cgu-operator} uses the `PrecacheSpecValid` condition to report status information as follows:
+
+* `true`
++
+The pre-caching spec is valid and consistent.
+* `false`
++
+The pre-caching spec is incomplete.
+
+{cgu-operator} uses the `PrecachingSucceeded` condition to report status information as follows:
+
+* `true`
++
+TALM has concluded the pre-caching process. If pre-caching fails for any cluster, the update fails for that cluster but proceeds for all other clusters. A message informs you if pre-caching has failed for any clusters.
+* `false`
++
+Pre-caching is still in progress for one or more clusters or has failed for all clusters.
+
+For more information see the "Using the container image pre-cache feature" section.
+
+[id="creating_backup_{context}"]
+== Creating a backup
+
+For {sno}, {cgu-operator} can create a backup of a deployment before an update. If the update fails, you can recover the previous version and restore a cluster to a working state without requiring a reprovision of applications. To use the backup feature you first create a `ClusterGroupUpgrade` CR with the `backup` field set to `true`. To ensure that the contents of the backup are up to date, the backup is not taken until you set the `enable` field in the `ClusterGroupUpgrade` CR to `true`.
+
+{cgu-operator} uses the `BackupSucceeded` condition to report the status and reasons as follows:
+
+* `true`
++
+Backup is completed for all clusters or the backup run has completed but failed for one or more clusters. If backup fails for any cluster, the update fails for that cluster but proceeds for all other clusters.
+* `false`
++
+Backup is still in progress for one or more clusters or has failed for all clusters.
+
+For more information, see the "Creating a backup of cluster resources before upgrade" section.
+
+[id="updating_clusters_{context}"]
+== Updating clusters
+{cgu-operator} enforces the policies following the remediation plan.
+Enforcing the policies for subsequent batches starts immediately after all the clusters of the current batch are compliant with all the managed policies. If the batch times out, {cgu-operator} moves on to the next batch. The timeout value of a batch is the `spec.timeout` field divided by the number of batches in the remediation plan.
+
+{cgu-operator} uses the `Progressing` condition to report the status and reasons as follows:
+
+* `true`
++
+{cgu-operator} is remediating non-compliant policies.
+* `false`
++
+The update is not in progress. Possible reasons for this are:
++
+** All clusters are compliant with all the managed policies.
+** The update has timed out as policy remediation took too long.
+** Blocking CRs are missing from the system or have not yet completed.
+** The `ClusterGroupUpgrade` CR is not enabled.
+** Backup is still in progress.
+
+[NOTE]
+====
+The managed policies apply in the order that they are listed in the `managedPolicies` field in the `ClusterGroupUpgrade` CR. One managed policy is applied to the specified clusters at a time. When a cluster complies with the current policy, the next managed policy is applied to it.
+====
+
+.Sample `ClusterGroupUpgrade` CR in the `Progressing` state
+
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  creationTimestamp: '2022-11-18T16:27:15Z'
+  finalizers:
+    - ran.openshift.io/cleanup-finalizer
+  generation: 1
+  name: talm-cgu
+  namespace: talm-namespace
+  resourceVersion: '40451823'
+  uid: cca245a5-4bca-45fa-89c0-aa6af81a596c
+Spec:
+  actions:
+    afterCompletion:
+      deleteObjects: true
+    beforeEnable: {}
+  backup: false
+  clusters:
+    - spoke1
+  enable: true
+  managedPolicies:
+    - talm-policy
+  preCaching: true
+  remediationStrategy:
+    canaries:
+        - spoke1
+    maxConcurrency: 2
+    timeout: 240
+  clusterLabelSelectors:
+    - matchExpressions:
+      - key: label1
+      operator: In
+      values:
+        - value1a
+        - value1b
+  batchTimeoutAction:
+status:
+    clusters:
+      - name: spoke1
+        state: complete
+    computedMaxConcurrency: 2
+    conditions:
+      - lastTransitionTime: '2022-11-18T16:27:15Z'
+        message: All selected clusters are valid
+        reason: ClusterSelectionCompleted
+        status: 'True'
+        type: ClustersSelected
+      - lastTransitionTime: '2022-11-18T16:27:15Z'
+        message: Completed validation
+        reason: ValidationCompleted
+        status: 'True'
+        type: Validated
+      - lastTransitionTime: '2022-11-18T16:37:16Z'
+        message: Remediating non-compliant policies
+        reason: InProgress
+        status: 'True'
+        type: Progressing <1>
+    managedPoliciesForUpgrade:
+      - name: talm-policy
+        namespace: talm-namespace
+    managedPoliciesNs:
+      talm-policy: talm-namespace
+    remediationPlan:
+      - - spoke1
+      - - spoke2
+        - spoke3
+    status:
+      currentBatch: 2
+      currentBatchRemediationProgress:
+        spoke2:
+          state: Completed
+        spoke3:
+          policyIndex: 0
+          state: InProgress
+      currentBatchStartedAt: '2022-11-18T16:27:16Z'
+      startedAt: '2022-11-18T16:27:15Z'
+----
+<1> The `Progressing` fields show that {cgu-operator} is in the process of remediating policies.
+
+[id="update_status_{context}"]
+== Update status
+
+{cgu-operator} uses the `Succeeded` condition to report the status and reasons as follows:
+
+* `true`
++
+All clusters are compliant with the specified managed policies.
+* `false`
++
+Policy remediation failed as there were no clusters available for remediation, or because policy remediation took too long for one of the following reasons:
++
+** The current batch contains canary updates and the cluster in the batch does not comply with all the managed policies within the batch timeout.
+** Clusters did not comply with the managed policies within the `timeout` value specified in the `remediationStrategy` field.
+
+
+.Sample `ClusterGroupUpgrade` CR in the `Succeeded` state
+
+[source,yaml]
+----
+    apiVersion: ran.openshift.io/v1alpha1
+    kind: ClusterGroupUpgrade
+    metadata:
+      name: cgu-upgrade-complete
+      namespace: default
+    spec:
+      clusters:
+      - spoke1
+      - spoke4
+      enable: true
+      managedPolicies:
+      - policy1-common-cluster-version-policy
+      - policy2-common-pao-sub-policy
+      remediationStrategy:
+        maxConcurrency: 1
+        timeout: 240
+    status: <3>
+      clusters:
+        - name: spoke1
+          state: complete
+        - name: spoke4
+          state: complete
+      conditions:
+      - message: All selected clusters are valid
+        reason: ClusterSelectionCompleted
+        status: "True"
+        type: ClustersSelected
+      - message: Completed validation
+        reason: ValidationCompleted
+        status: "True"
+        type: Validated
+      - message: All clusters are compliant with all the managed policies
+        reason: Completed
+        status: "False"
+        type: Progressing <1>
+      - message: All clusters are compliant with all the managed policies
+        reason: Completed
+        status: "True"
+        type: Succeeded <2>
+      managedPoliciesForUpgrade:
+      - name: policy1-common-cluster-version-policy
+        namespace: default
+      - name: policy2-common-pao-sub-policy
+        namespace: default
+      remediationPlan:
+      - - spoke1
+      - - spoke4
+      status:
+        completedAt: '2022-11-18T16:27:16Z'
+        startedAt: '2022-11-18T16:27:15Z'
+
+----
+<1> In the `Progressing` fields, the status is `false` as the update has completed; clusters are compliant with all the managed policies.
+<2> The `Succeeded` fields show that the validations completed successfully.
+<3> The `status` field includes a list of clusters and their respective statuses. The status of a cluster can be `complete` or `timedout`.
+
+.Sample `ClusterGroupUpgrade` CR in the `timedout` state
+
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  creationTimestamp: '2022-11-18T16:27:15Z'
+  finalizers:
+    - ran.openshift.io/cleanup-finalizer
+  generation: 1
+  name: talm-cgu
+  namespace: talm-namespace
+  resourceVersion: '40451823'
+  uid: cca245a5-4bca-45fa-89c0-aa6af81a596c
+spec:
+  actions:
+    afterCompletion:
+      deleteObjects: true
+    beforeEnable: {}
+  backup: false
+  clusters:
+    - spoke1
+    - spoke2
+  enable: true
+  managedPolicies:
+    - talm-policy
+  preCaching: false
+  remediationStrategy:
+    maxConcurrency: 2
+    timeout: 240
+status:
+  clusters:
+    - name: spoke1
+      state: complete
+    - currentPolicy: <1>
+        name: talm-policy
+        status: NonCompliant
+      name: spoke2
+      state: timedout
+  computedMaxConcurrency: 2
+  conditions:
+    - lastTransitionTime: '2022-11-18T16:27:15Z'
+      message: All selected clusters are valid
+      reason: ClusterSelectionCompleted
+      status: 'True'
+      type: ClustersSelected
+    - lastTransitionTime: '2022-11-18T16:27:15Z'
+      message: Completed validation
+      reason: ValidationCompleted
+      status: 'True'
+      type: Validated
+    - lastTransitionTime: '2022-11-18T16:37:16Z'
+      message: Policy remediation took too long
+      reason: TimedOut
+      status: 'False'
+      type: Progressing
+    - lastTransitionTime: '2022-11-18T16:37:16Z'
+      message: Policy remediation took too long
+      reason: TimedOut
+      status: 'False'
+      type: Succeeded <2>
+  managedPoliciesForUpgrade:
+    - name: talm-policy
+      namespace: talm-namespace
+  managedPoliciesNs:
+    talm-policy: talm-namespace
+  remediationPlan:
+    - - spoke1
+      - spoke2
+  status:
+        startedAt: '2022-11-18T16:27:15Z'
+        completedAt: '2022-11-18T20:27:15Z'
+----
+<1> If a cluster’s state is `timedout`, the `currentPolicy` field shows the name of the policy and the policy status.
+<2> The status for `succeeded` is `false` and the message indicates that policy remediation took too long.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-about-topology-aware-lifecycle-manager-blocking-crs_{context}"]
+= Blocking ClusterGroupUpgrade CRs
+
+You can create multiple `ClusterGroupUpgrade` CRs and control their order of application.
+
+For example, if you create `ClusterGroupUpgrade` CR C that blocks the start of `ClusterGroupUpgrade` CR A, then `ClusterGroupUpgrade` CR A cannot start until the status of `ClusterGroupUpgrade` CR C becomes `UpgradeComplete`.
+
+One `ClusterGroupUpgrade` CR can have multiple blocking CRs. In this case, all the blocking CRs must complete before the upgrade for the current CR can start.
+
+.Prerequisites
+
+* Install the {cgu-operator-first}.
+* Provision one or more managed clusters.
+* Log in as a user with `cluster-admin` privileges.
+* Create {rh-rhacm} policies in the hub cluster.
+
+.Procedure
+
+. Save the content of the `ClusterGroupUpgrade` CRs in the `cgu-a.yaml`, `cgu-b.yaml`, and `cgu-c.yaml` files.
++
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: cgu-a
+  namespace: default
+spec:
+  blockingCRs: <1>
+  - name: cgu-c
+    namespace: default
+  clusters:
+  - spoke1
+  - spoke2
+  - spoke3
+  enable: false
+  managedPolicies:
+  - policy1-common-cluster-version-policy
+  - policy2-common-pao-sub-policy
+  - policy3-common-ptp-sub-policy
+  remediationStrategy:
+    canaries:
+    - spoke1
+    maxConcurrency: 2
+    timeout: 240
+status:
+  conditions:
+  - message: The ClusterGroupUpgrade CR is not enabled
+    reason: UpgradeNotStarted
+    status: "False"
+    type: Ready
+  copiedPolicies:
+  - cgu-a-policy1-common-cluster-version-policy
+  - cgu-a-policy2-common-pao-sub-policy
+  - cgu-a-policy3-common-ptp-sub-policy
+  managedPoliciesForUpgrade:
+  - name: policy1-common-cluster-version-policy
+    namespace: default
+  - name: policy2-common-pao-sub-policy
+    namespace: default
+  - name: policy3-common-ptp-sub-policy
+    namespace: default
+  placementBindings:
+  - cgu-a-policy1-common-cluster-version-policy
+  - cgu-a-policy2-common-pao-sub-policy
+  - cgu-a-policy3-common-ptp-sub-policy
+  placementRules:
+  - cgu-a-policy1-common-cluster-version-policy
+  - cgu-a-policy2-common-pao-sub-policy
+  - cgu-a-policy3-common-ptp-sub-policy
+  remediationPlan:
+  - - spoke1
+  - - spoke2
+----
+<1> Defines the blocking CRs. The `cgu-a` update cannot start until `cgu-c` is complete.
++
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: cgu-b
+  namespace: default
+spec:
+  blockingCRs: <1>
+  - name: cgu-a
+    namespace: default
+  clusters:
+  - spoke4
+  - spoke5
+  enable: false
+  managedPolicies:
+  - policy1-common-cluster-version-policy
+  - policy2-common-pao-sub-policy
+  - policy3-common-ptp-sub-policy
+  - policy4-common-sriov-sub-policy
+  remediationStrategy:
+    maxConcurrency: 1
+    timeout: 240
+status:
+  conditions:
+  - message: The ClusterGroupUpgrade CR is not enabled
+    reason: UpgradeNotStarted
+    status: "False"
+    type: Ready
+  copiedPolicies:
+  - cgu-b-policy1-common-cluster-version-policy
+  - cgu-b-policy2-common-pao-sub-policy
+  - cgu-b-policy3-common-ptp-sub-policy
+  - cgu-b-policy4-common-sriov-sub-policy
+  managedPoliciesForUpgrade:
+  - name: policy1-common-cluster-version-policy
+    namespace: default
+  - name: policy2-common-pao-sub-policy
+    namespace: default
+  - name: policy3-common-ptp-sub-policy
+    namespace: default
+  - name: policy4-common-sriov-sub-policy
+    namespace: default
+  placementBindings:
+  - cgu-b-policy1-common-cluster-version-policy
+  - cgu-b-policy2-common-pao-sub-policy
+  - cgu-b-policy3-common-ptp-sub-policy
+  - cgu-b-policy4-common-sriov-sub-policy
+  placementRules:
+  - cgu-b-policy1-common-cluster-version-policy
+  - cgu-b-policy2-common-pao-sub-policy
+  - cgu-b-policy3-common-ptp-sub-policy
+  - cgu-b-policy4-common-sriov-sub-policy
+  remediationPlan:
+  - - spoke4
+  - - spoke5
+  status: {}
+----
+<1> The `cgu-b` update cannot start until `cgu-a` is complete.
++
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: cgu-c
+  namespace: default
+spec: <1>
+  clusters:
+  - spoke6
+  enable: false
+  managedPolicies:
+  - policy1-common-cluster-version-policy
+  - policy2-common-pao-sub-policy
+  - policy3-common-ptp-sub-policy
+  - policy4-common-sriov-sub-policy
+  remediationStrategy:
+    maxConcurrency: 1
+    timeout: 240
+status:
+  conditions:
+  - message: The ClusterGroupUpgrade CR is not enabled
+    reason: UpgradeNotStarted
+    status: "False"
+    type: Ready
+  copiedPolicies:
+  - cgu-c-policy1-common-cluster-version-policy
+  - cgu-c-policy4-common-sriov-sub-policy
+  managedPoliciesCompliantBeforeUpgrade:
+  - policy2-common-pao-sub-policy
+  - policy3-common-ptp-sub-policy
+  managedPoliciesForUpgrade:
+  - name: policy1-common-cluster-version-policy
+    namespace: default
+  - name: policy4-common-sriov-sub-policy
+    namespace: default
+  placementBindings:
+  - cgu-c-policy1-common-cluster-version-policy
+  - cgu-c-policy4-common-sriov-sub-policy
+  placementRules:
+  - cgu-c-policy1-common-cluster-version-policy
+  - cgu-c-policy4-common-sriov-sub-policy
+  remediationPlan:
+  - - spoke6
+  status: {}
+----
+<1> The `cgu-c` update does not have any blocking CRs. {cgu-operator} starts the `cgu-c` update when the `enable` field is set to `true`.
+
+. Create the `ClusterGroupUpgrade` CRs by running the following command for each relevant CR:
++
+[source,terminal]
+----
+$ oc apply -f <name>.yaml
+----
+
+. Start the update process by running the following command for each relevant CR:
++
+[source,terminal]
+----
+$ oc --namespace=default patch clustergroupupgrade.ran.openshift.io/<name> \
+--type merge -p '{"spec":{"enable":true}}'
+----
++
+The following examples show `ClusterGroupUpgrade` CRs where the `enable` field is set to `true`:
++
+.Example for `cgu-a` with blocking CRs
++
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: cgu-a
+  namespace: default
+spec:
+  blockingCRs:
+  - name: cgu-c
+    namespace: default
+  clusters:
+  - spoke1
+  - spoke2
+  - spoke3
+  enable: true
+  managedPolicies:
+  - policy1-common-cluster-version-policy
+  - policy2-common-pao-sub-policy
+  - policy3-common-ptp-sub-policy
+  remediationStrategy:
+    canaries:
+    - spoke1
+    maxConcurrency: 2
+    timeout: 240
+status:
+  conditions:
+  - message: 'The ClusterGroupUpgrade CR is blocked by other CRs that have not yet
+      completed: [cgu-c]' <1>
+    reason: UpgradeCannotStart
+    status: "False"
+    type: Ready
+  copiedPolicies:
+  - cgu-a-policy1-common-cluster-version-policy
+  - cgu-a-policy2-common-pao-sub-policy
+  - cgu-a-policy3-common-ptp-sub-policy
+  managedPoliciesForUpgrade:
+  - name: policy1-common-cluster-version-policy
+    namespace: default
+  - name: policy2-common-pao-sub-policy
+    namespace: default
+  - name: policy3-common-ptp-sub-policy
+    namespace: default
+  placementBindings:
+  - cgu-a-policy1-common-cluster-version-policy
+  - cgu-a-policy2-common-pao-sub-policy
+  - cgu-a-policy3-common-ptp-sub-policy
+  placementRules:
+  - cgu-a-policy1-common-cluster-version-policy
+  - cgu-a-policy2-common-pao-sub-policy
+  - cgu-a-policy3-common-ptp-sub-policy
+  remediationPlan:
+  - - spoke1
+  - - spoke2
+  status: {}
+----
+<1> Shows the list of blocking CRs.
++
+.Example for `cgu-b` with blocking CRs
++
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: cgu-b
+  namespace: default
+spec:
+  blockingCRs:
+  - name: cgu-a
+    namespace: default
+  clusters:
+  - spoke4
+  - spoke5
+  enable: true
+  managedPolicies:
+  - policy1-common-cluster-version-policy
+  - policy2-common-pao-sub-policy
+  - policy3-common-ptp-sub-policy
+  - policy4-common-sriov-sub-policy
+  remediationStrategy:
+    maxConcurrency: 1
+    timeout: 240
+status:
+  conditions:
+  - message: 'The ClusterGroupUpgrade CR is blocked by other CRs that have not yet
+      completed: [cgu-a]' <1>
+    reason: UpgradeCannotStart
+    status: "False"
+    type: Ready
+  copiedPolicies:
+  - cgu-b-policy1-common-cluster-version-policy
+  - cgu-b-policy2-common-pao-sub-policy
+  - cgu-b-policy3-common-ptp-sub-policy
+  - cgu-b-policy4-common-sriov-sub-policy
+  managedPoliciesForUpgrade:
+  - name: policy1-common-cluster-version-policy
+    namespace: default
+  - name: policy2-common-pao-sub-policy
+    namespace: default
+  - name: policy3-common-ptp-sub-policy
+    namespace: default
+  - name: policy4-common-sriov-sub-policy
+    namespace: default
+  placementBindings:
+  - cgu-b-policy1-common-cluster-version-policy
+  - cgu-b-policy2-common-pao-sub-policy
+  - cgu-b-policy3-common-ptp-sub-policy
+  - cgu-b-policy4-common-sriov-sub-policy
+  placementRules:
+  - cgu-b-policy1-common-cluster-version-policy
+  - cgu-b-policy2-common-pao-sub-policy
+  - cgu-b-policy3-common-ptp-sub-policy
+  - cgu-b-policy4-common-sriov-sub-policy
+  remediationPlan:
+  - - spoke4
+  - - spoke5
+  status: {}
+----
+<1> Shows the list of blocking CRs.
++
+.Example for `cgu-c` with blocking CRs
++
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: cgu-c
+  namespace: default
+spec:
+  clusters:
+  - spoke6
+  enable: true
+  managedPolicies:
+  - policy1-common-cluster-version-policy
+  - policy2-common-pao-sub-policy
+  - policy3-common-ptp-sub-policy
+  - policy4-common-sriov-sub-policy
+  remediationStrategy:
+    maxConcurrency: 1
+    timeout: 240
+status:
+  conditions:
+  - message: The ClusterGroupUpgrade CR has upgrade policies that are still non compliant <1>
+    reason: UpgradeNotCompleted
+    status: "False"
+    type: Ready
+  copiedPolicies:
+  - cgu-c-policy1-common-cluster-version-policy
+  - cgu-c-policy4-common-sriov-sub-policy
+  managedPoliciesCompliantBeforeUpgrade:
+  - policy2-common-pao-sub-policy
+  - policy3-common-ptp-sub-policy
+  managedPoliciesForUpgrade:
+  - name: policy1-common-cluster-version-policy
+    namespace: default
+  - name: policy4-common-sriov-sub-policy
+    namespace: default
+  placementBindings:
+  - cgu-c-policy1-common-cluster-version-policy
+  - cgu-c-policy4-common-sriov-sub-policy
+  placementRules:
+  - cgu-c-policy1-common-cluster-version-policy
+  - cgu-c-policy4-common-sriov-sub-policy
+  remediationPlan:
+  - - spoke6
+  status:
+    currentBatch: 1
+    remediationPlanForBatch:
+      spoke6: 0
+----
+<1> The `cgu-c` update does not have any blocking CRs.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// Epic CNF-2600 (CNF-2133) (4.10), Story TELCODOCS-285
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="talo-policies-concept_{context}"]
+= Update policies on managed clusters
+
+The {cgu-operator-first} remediates a set of `inform` policies for the clusters specified in the `ClusterGroupUpgrade` CR. {cgu-operator} remediates `inform` policies by making `enforce` copies of the managed {rh-rhacm} policies. Each copied policy has its own corresponding {rh-rhacm} placement rule and {rh-rhacm} placement binding.
+
+One by one, {cgu-operator} adds each cluster from the current batch to the placement rule that corresponds with the applicable managed policy. If a cluster is already compliant with a policy, {cgu-operator} skips applying that policy on the compliant cluster. {cgu-operator} then moves on to applying the next policy to the non-compliant cluster. After {cgu-operator} completes the updates in a batch, all clusters are removed from the placement rules associated with the copied policies. Then, the update of the next batch starts.
+
+If a spoke cluster does not report any compliant state to {rh-rhacm}, the managed policies on the hub cluster can be missing status information that {cgu-operator} needs. {cgu-operator} handles these cases in the following ways:
+
+* If a policy's `status.compliant` field is missing, {cgu-operator} ignores the policy and adds a log entry. Then, {cgu-operator} continues looking at the policy's `status.status` field.
+* If a policy's `status.status` is missing, {cgu-operator} produces an error.
+* If a cluster's compliance status is missing in the policy's `status.status` field, {cgu-operator} considers that cluster to be non-compliant with that policy.
+
+The `ClusterGroupUpgrade` CR's `batchTimeoutAction` determines what happens if an upgrade fails for a cluster. You can specify `continue` to skip the failing cluster and continue to upgrade other clusters, or specify `abort` to stop the policy remediation for all clusters. Once the timeout elapses, {cgu-operator} removes all enforce policies to ensure that no further updates are made to clusters.
+
+:_mod-docs-content-type: SNIPPET
+.Example upgrade policy
+[source,yaml,subs="attributes+"]
+----
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: ocp-4.9.4
+  namespace: platform-upgrade
+spec:
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: upgrade
+      spec:
+        namespaceselector:
+          exclude:
+          - kube-*
+          include:
+          - '*'
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: config.openshift.io/v1
+            kind: ClusterVersion
+            metadata:
+              name: version
+            spec:
+              channel: stable-4.9
+              desiredUpdate:
+                version: 4.9.4
+              upstream: https://api.openshift.com/api/upgrades_info/v1/graph
+            status:
+              history:
+                - state: Completed
+                  version: 4.9.4
+        remediationAction: inform
+        severity: low
+  remediationAction: inform
+----
+
+For more information about {rh-rhacm} policies, see link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/{rh-rhacm-version}/html-single/governance/index#policy-overview[Policy overview].
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+For more information about the `PolicyGenTemplate` CRD, see xref:../../scalability_and_performance/ztp_far_edge/ztp-configuring-managed-clusters-policies.adoc#ztp-the-policygentemplate_ztp-configuring-managed-clusters-policies[About the PolicyGenTemplate CRD].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// Epic CNF-2600 (CNF-2133) (4.10), Story TELCODOCS-285
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="talo-about-subscription-crs_{context}"]
+= Configuring Operator subscriptions for managed clusters that you install with {cgu-operator}
+
+{cgu-operator} can only approve the install plan for an Operator if the `Subscription` CR of the Operator contains a valid `status` field. You can use the following fields:
+
+* `status.state.AtLatestKnown` for the latest Operator version
+* `status.installedCSV` for a specific Operator version
+
+.Procedure
+
+. Add one of the following status fields to the `Subscription` CR of the Operator:
+
+.. Add the `status.state.AtLatestKnown` field for the latest Operator version:
++
+.Example Subscription CR
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: cluster-logging
+  namespace: openshift-logging
+  annotations:
+    ran.openshift.io/ztp-deploy-wave: "2"
+spec:
+  channel: "stable"
+  name: cluster-logging
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  installPlanApproval: Manual
+status:
+  state: AtLatestKnown <1>
+----
+<1> The `status.state: AtLatestKnown` field is used for the latest Operator version available from the Operator catalog.
+
++
+[NOTE]
+====
+When a new version of the Operator is available in the registry, the associated policy becomes non-compliant.
+====
+
+.. Add the `status.installedCSV` field for a specific Operator version:
++
+.Example Subscription CR
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: cluster-logging
+  namespace: openshift-logging
+  annotations:
+    ran.openshift.io/ztp-deploy-wave: "2"
+spec:
+  channel: "stable"
+  name: cluster-logging
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  installPlanApproval: Manual
+status:
+  installedCSV: cluster-logging.v5.7.5 <1>
+----
+<1> The `status.installedCSV` field with the CSV value is used for a specific version of an Operator, for example, `status.installedCSV: cluster-logging.v5.7.5`.
+
++
+. Apply the changed `Subscription` policy to your managed clusters with a `ClusterGroupUpgrade` CR.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// Epic CNF-2600 (CNF-2133) (4.10), Story TELCODOCS-285
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="talo-apply-policies_{context}"]
+= Applying update policies to managed clusters
+
+You can update your managed clusters by applying your policies.
+
+.Prerequisites
+
+* Install the {cgu-operator-first}.
+* Provision one or more managed clusters.
+* Log in as a user with `cluster-admin` privileges.
+* Create {rh-rhacm} policies in the hub cluster.
+
+.Procedure
+
+. Save the contents of the `ClusterGroupUpgrade` CR in the `cgu-1.yaml` file.
++
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: cgu-1
+  namespace: default
+spec:
+  managedPolicies: <1>
+    - policy1-common-cluster-version-policy
+    - policy2-common-nto-sub-policy
+    - policy3-common-ptp-sub-policy
+    - policy4-common-sriov-sub-policy
+  enable: false
+  clusters: <2>
+  - spoke1
+  - spoke2
+  - spoke5
+  - spoke6
+  remediationStrategy:
+    maxConcurrency: 2 <3>
+    timeout: 240 <4>
+  batchTimeoutAction: <5>
+----
+<1> The name of the policies to apply.
+<2> The list of clusters to update.
+<3> The `maxConcurrency` field signifies the number of clusters updated at the same time.
+<4> The update timeout in minutes.
+<5> Controls what happens if a batch times out. Possible values are `abort` or `continue`. If unspecified, the default is `continue`.
+
+. Create the `ClusterGroupUpgrade` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f cgu-1.yaml
+----
+
+.. Check if the `ClusterGroupUpgrade` CR was created in the hub cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get cgu --all-namespaces
+----
++
+.Example output
++
+[source,terminal]
+----
+NAMESPACE   NAME  AGE  STATE      DETAILS
+default     cgu-1 8m55 NotEnabled Not Enabled
+----
+
+.. Check the status of the update by running the following command:
++
+[source,terminal]
+----
+$ oc get cgu -n default cgu-1 -ojsonpath='{.status}' | jq
+----
++
+.Example output
++
+[source,json]
+----
+{
+  "computedMaxConcurrency": 2,
+  "conditions": [
+    {
+      "lastTransitionTime": "2022-02-25T15:34:07Z",
+      "message": "Not enabled", <1>
+      "reason": "NotEnabled",
+      "status": "False",
+      "type": "Progressing"
+    }
+  ],
+  "copiedPolicies": [
+    "cgu-policy1-common-cluster-version-policy",
+    "cgu-policy2-common-nto-sub-policy",
+    "cgu-policy3-common-ptp-sub-policy",
+    "cgu-policy4-common-sriov-sub-policy"
+  ],
+  "managedPoliciesContent": {
+    "policy1-common-cluster-version-policy": "null",
+    "policy2-common-nto-sub-policy": "[{\"kind\":\"Subscription\",\"name\":\"node-tuning-operator\",\"namespace\":\"openshift-cluster-node-tuning-operator\"}]",
+    "policy3-common-ptp-sub-policy": "[{\"kind\":\"Subscription\",\"name\":\"ptp-operator-subscription\",\"namespace\":\"openshift-ptp\"}]",
+    "policy4-common-sriov-sub-policy": "[{\"kind\":\"Subscription\",\"name\":\"sriov-network-operator-subscription\",\"namespace\":\"openshift-sriov-network-operator\"}]"
+  },
+  "managedPoliciesForUpgrade": [
+    {
+      "name": "policy1-common-cluster-version-policy",
+      "namespace": "default"
+    },
+    {
+      "name": "policy2-common-nto-sub-policy",
+      "namespace": "default"
+    },
+    {
+      "name": "policy3-common-ptp-sub-policy",
+      "namespace": "default"
+    },
+    {
+      "name": "policy4-common-sriov-sub-policy",
+      "namespace": "default"
+    }
+  ],
+  "managedPoliciesNs": {
+    "policy1-common-cluster-version-policy": "default",
+    "policy2-common-nto-sub-policy": "default",
+    "policy3-common-ptp-sub-policy": "default",
+    "policy4-common-sriov-sub-policy": "default"
+  },
+  "placementBindings": [
+    "cgu-policy1-common-cluster-version-policy",
+    "cgu-policy2-common-nto-sub-policy",
+    "cgu-policy3-common-ptp-sub-policy",
+    "cgu-policy4-common-sriov-sub-policy"
+  ],
+  "placementRules": [
+    "cgu-policy1-common-cluster-version-policy",
+    "cgu-policy2-common-nto-sub-policy",
+    "cgu-policy3-common-ptp-sub-policy",
+    "cgu-policy4-common-sriov-sub-policy"
+  ],
+  "precaching": {
+    "spec": {}
+  },
+  "remediationPlan": [
+    [
+      "spoke1",
+      "spoke2"
+    ],
+    [
+      "spoke5",
+      "spoke6"
+    ]
+  ],
+  "status": {}
+}
+----
+<1> The `spec.enable` field in the `ClusterGroupUpgrade` CR is set to `false`.
+
+.. Check the status of the policies by running the following command:
++
+[source,terminal]
+----
+$ oc get policies -A
+----
++
+.Example output
+[source,terminal]
+----
+NAMESPACE   NAME                                                 REMEDIATION ACTION   COMPLIANCE STATE   AGE
+default     cgu-policy1-common-cluster-version-policy            enforce                                 17m <1>
+default     cgu-policy2-common-nto-sub-policy                    enforce                                 17m
+default     cgu-policy3-common-ptp-sub-policy                    enforce                                 17m
+default     cgu-policy4-common-sriov-sub-policy                  enforce                                 17m
+default     policy1-common-cluster-version-policy                inform               NonCompliant       15h
+default     policy2-common-nto-sub-policy                        inform               NonCompliant       15h
+default     policy3-common-ptp-sub-policy                        inform               NonCompliant       18m
+default     policy4-common-sriov-sub-policy                      inform               NonCompliant       18m
+----
+<1> The `spec.remediationAction` field of policies currently applied on the clusters is set to `enforce`. The managed policies in `inform` mode from the `ClusterGroupUpgrade` CR remain in `inform` mode during the update.
+
+. Change the value of the `spec.enable` field to `true` by running the following command:
++
+[source,terminal]
+----
+$ oc --namespace=default patch clustergroupupgrade.ran.openshift.io/cgu-1 \
+--patch '{"spec":{"enable":true}}' --type=merge
+----
+
+.Verification
+
+. Check the status of the update again by running the following command:
++
+[source,terminal]
+----
+$ oc get cgu -n default cgu-1 -ojsonpath='{.status}' | jq
+----
++
+.Example output
++
+[source,json]
+----
+{
+  "computedMaxConcurrency": 2,
+  "conditions": [ <1>
+    {
+      "lastTransitionTime": "2022-02-25T15:33:07Z",
+      "message": "All selected clusters are valid",
+      "reason": "ClusterSelectionCompleted",
+      "status": "True",
+      "type": "ClustersSelected",
+      "lastTransitionTime": "2022-02-25T15:33:07Z",
+      "message": "Completed validation",
+      "reason": "ValidationCompleted",
+      "status": "True",
+      "type": "Validated",
+      "lastTransitionTime": "2022-02-25T15:34:07Z",
+      "message": "Remediating non-compliant policies",
+      "reason": "InProgress",
+      "status": "True",
+      "type": "Progressing"
+    }
+  ],
+  "copiedPolicies": [
+    "cgu-policy1-common-cluster-version-policy",
+    "cgu-policy2-common-nto-sub-policy",
+    "cgu-policy3-common-ptp-sub-policy",
+    "cgu-policy4-common-sriov-sub-policy"
+  ],
+  "managedPoliciesContent": {
+    "policy1-common-cluster-version-policy": "null",
+    "policy2-common-nto-sub-policy": "[{\"kind\":\"Subscription\",\"name\":\"node-tuning-operator\",\"namespace\":\"openshift-cluster-node-tuning-operator\"}]",
+    "policy3-common-ptp-sub-policy": "[{\"kind\":\"Subscription\",\"name\":\"ptp-operator-subscription\",\"namespace\":\"openshift-ptp\"}]",
+    "policy4-common-sriov-sub-policy": "[{\"kind\":\"Subscription\",\"name\":\"sriov-network-operator-subscription\",\"namespace\":\"openshift-sriov-network-operator\"}]"
+  },
+  "managedPoliciesForUpgrade": [
+    {
+      "name": "policy1-common-cluster-version-policy",
+      "namespace": "default"
+    },
+    {
+      "name": "policy2-common-nto-sub-policy",
+      "namespace": "default"
+    },
+    {
+      "name": "policy3-common-ptp-sub-policy",
+      "namespace": "default"
+    },
+    {
+      "name": "policy4-common-sriov-sub-policy",
+      "namespace": "default"
+    }
+  ],
+  "managedPoliciesNs": {
+    "policy1-common-cluster-version-policy": "default",
+    "policy2-common-nto-sub-policy": "default",
+    "policy3-common-ptp-sub-policy": "default",
+    "policy4-common-sriov-sub-policy": "default"
+  },
+  "placementBindings": [
+    "cgu-policy1-common-cluster-version-policy",
+    "cgu-policy2-common-nto-sub-policy",
+    "cgu-policy3-common-ptp-sub-policy",
+    "cgu-policy4-common-sriov-sub-policy"
+  ],
+  "placementRules": [
+    "cgu-policy1-common-cluster-version-policy",
+    "cgu-policy2-common-nto-sub-policy",
+    "cgu-policy3-common-ptp-sub-policy",
+    "cgu-policy4-common-sriov-sub-policy"
+  ],
+  "precaching": {
+    "spec": {}
+  },
+  "remediationPlan": [
+    [
+      "spoke1",
+      "spoke2"
+    ],
+    [
+      "spoke5",
+      "spoke6"
+    ]
+  ],
+  "status": {
+    "currentBatch": 1,
+    "currentBatchStartedAt": "2022-02-25T15:54:16Z",
+    "remediationPlanForBatch": {
+      "spoke1": 0,
+      "spoke2": 1
+    },
+    "startedAt": "2022-02-25T15:54:16Z"
+  }
+}
+----
+<1> Reflects the update progress of the current batch. Run this command again to receive updated information about the progress.
+
+. If the policies include Operator subscriptions, you can check the installation progress directly on the single-node cluster.
+
+.. Export the `KUBECONFIG` file of the single-node cluster you want to check the installation progress for by running the following command:
++
+[source,terminal]
+----
+$ export KUBECONFIG=<cluster_kubeconfig_absolute_path>
+----
+
+.. Check all the subscriptions present on the single-node cluster and look for the one in the policy you are trying to install through the `ClusterGroupUpgrade` CR by running the following command:
++
+[source,terminal]
+----
+$ oc get subs -A | grep -i <subscription_name>
+----
++
+.Example output for `cluster-logging` policy
++
+[source,terminal]
+----
+NAMESPACE                              NAME                         PACKAGE                      SOURCE             CHANNEL
+openshift-logging                      cluster-logging              cluster-logging              redhat-operators   stable
+----
+
+. If one of the managed policies includes a `ClusterVersion` CR, check the status of platform updates in the current batch by running the following command against the spoke cluster:
++
+[source,terminal]
+----
+$ oc get clusterversion
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME      VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
+version   4.9.5     True        True          43s     Working towards 4.9.7: 71 of 735 done (9% complete)
+----
+
+. Check the Operator subscription by running the following command:
++
+[source,terminal]
+----
+$ oc get subs -n <operator-namespace> <operator-subscription> -ojsonpath="{.status}"
+----
+
+. Check the install plans present on the single-node cluster that is associated with the desired subscription by running the following command:
++
+[source,terminal]
+----
+$ oc get installplan -n <subscription_namespace>
+----
++
+.Example output for `cluster-logging` Operator
++
+[source,terminal]
+----
+NAMESPACE                              NAME            CSV                                 APPROVAL   APPROVED
+openshift-logging                      install-6khtw   cluster-logging.5.3.3-4             Manual     true <1>
+----
+<1> The install plans have their `Approval` field set to `Manual` and their `Approved` field changes from `false` to `true` after {cgu-operator} approves the install plan.
++
+[NOTE]
+====
+When {cgu-operator} is remediating a policy containing a subscription, it automatically approves any install plans attached to that subscription.
+Where multiple install plans are needed to get the operator to the latest known version, {cgu-operator} might approve multiple install plans, upgrading through one or more intermediate versions to get to the final version.
+====
+
+. Check if the cluster service version for the Operator of the policy that the `ClusterGroupUpgrade` is installing reached the `Succeeded` phase by running the following command:
++
+[source,terminal]
+----
+$ oc get csv -n <operator_namespace>
+----
++
+.Example output for OpenShift Logging Operator
++
+[source,terminal]
+----
+NAME                    DISPLAY                     VERSION   REPLACES   PHASE
+cluster-logging.5.4.2   Red Hat OpenShift Logging   5.4.2                Succeeded
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// Epic CNF-3901 (CNF-2133) (4.11), Story TELCODOCS-339
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="talo-backup-feature-concept_{context}"]
+= Creating a backup of cluster resources before upgrade
+
+For {sno}, the {cgu-operator-first} can create a backup of a deployment before an upgrade. If the upgrade fails, you can recover the previous version and restore a cluster to a working state without requiring a reprovision of applications.
+
+To use the backup feature you first create a `ClusterGroupUpgrade` CR with the `backup` field set to `true`. To ensure that the contents of the backup are up to date, the backup is not taken until you set the `enable` field in the `ClusterGroupUpgrade` CR to `true`.
+
+{cgu-operator} uses the `BackupSucceeded` condition to report the status and reasons as follows:
+
+* `true`
++
+Backup is completed for all clusters or the backup run has completed but failed for one or more clusters. If backup fails for any cluster, the update does not proceed for that cluster.
+* `false`
++
+Backup is still in progress for one or more clusters or has failed for all clusters. The backup process running in the spoke clusters can have the following statuses:
++
+** `PreparingToStart`
++
+The first reconciliation pass is in progress. The {cgu-operator} deletes any spoke backup namespace and hub view resources that have been created in a failed upgrade attempt.
+** `Starting`
++
+The backup prerequisites and backup job are being created.
+** `Active`
++
+The backup is in progress.
+** `Succeeded`
++
+The backup succeeded.
+** `BackupTimeout`
++
+Artifact backup is partially done.
+** `UnrecoverableError`
++
+The backup has ended with a non-zero exit code.
+
+[NOTE]
+====
+If the backup of a cluster fails and enters the `BackupTimeout` or `UnrecoverableError` state, the cluster update does not proceed for that cluster. Updates to other clusters are not affected and continue.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// Epic CNF-3901 (CNF-2133) (4.11), Story TELCODOCS-339
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="talo-backup-start_and_update_{context}"]
+= Creating a ClusterGroupUpgrade CR with backup
+
+You can create a backup of a deployment before an upgrade on {sno} clusters. If the upgrade fails you can use the `upgrade-recovery.sh` script generated by {cgu-operator-first} to return the system to its preupgrade state.
+The backup consists of the following items:
+
+Cluster backup:: A snapshot of `etcd` and static pod manifests.
+Content backup:: Backups of folders, for example, `/etc`, `/usr/local`, `/var/lib/kubelet`.
+Changed files backup:: Any files managed by `machine-config` that have been changed.
+Deployment:: A pinned `ostree` deployment.
+Images (Optional):: Any container images that are in use.
+
+
+.Prerequisites
+
+* Install the {cgu-operator-first}.
+* Provision one or more managed clusters.
+* Log in as a user with `cluster-admin` privileges.
+* Install {rh-rhacm-first}.
+
+[NOTE]
+====
+It is highly recommended that you create a recovery partition.
+The following is an example `SiteConfig` custom resource (CR) for a recovery partition of 50 GB:
+
+[source,yaml]
+----
+nodes:
+    - hostName: "snonode.sno-worker-0.e2e.bos.redhat.com"
+    role: "master"
+    rootDeviceHints:
+        hctl: "0:2:0:0"
+        deviceName: /dev/disk/by-id/scsi-3600508b400105e210000900000490000
+...
+    #Disk /dev/disk/by-id/scsi-3600508b400105e210000900000490000:
+    #893.3 GiB, 959119884288 bytes, 1873281024 sectors
+    diskPartition:
+        - device: /dev/disk/by-id/scsi-3600508b400105e210000900000490000
+        partitions:
+        - mount_point: /var/recovery
+            size: 51200
+            start: 800000
+----
+====
+
+.Procedure
+
+. Save the contents of the `ClusterGroupUpgrade` CR with the `backup` and `enable` fields set to `true` in the `clustergroupupgrades-group-du.yaml` file:
++
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: du-upgrade-4918
+  namespace: ztp-group-du-sno
+spec:
+  preCaching: true
+  backup: true
+  clusters:
+  - cnfdb1
+  - cnfdb2
+  enable: true
+  managedPolicies:
+  - du-upgrade-platform-upgrade
+  remediationStrategy:
+    maxConcurrency: 2
+    timeout: 240
+----
+
+. To start the update, apply the `ClusterGroupUpgrade` CR by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f clustergroupupgrades-group-du.yaml
+----
+
+.Verification
+
+* Check the status of the upgrade in the hub cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get cgu -n ztp-group-du-sno du-upgrade-4918 -o jsonpath='{.status}'
+----
++
+.Example output
++
+[source,json]
+----
+{
+    "backup": {
+        "clusters": [
+            "cnfdb2",
+            "cnfdb1"
+    ],
+    "status": {
+        "cnfdb1": "Succeeded",
+        "cnfdb2": "Failed" <1>
+    }
+},
+"computedMaxConcurrency": 1,
+"conditions": [
+    {
+        "lastTransitionTime": "2022-04-05T10:37:19Z",
+        "message": "Backup failed for 1 cluster", <2>
+        "reason": "PartiallyDone", <3>
+        "status": "True", <4>
+        "type": "Succeeded"
+    }
+],
+"precaching": {
+    "spec": {}
+},
+"status": {}
+----
+<1> Backup has failed for one cluster.
+<2> The message confirms that the backup failed for one cluster.
+<3> The backup was partially successful.
+<4> The backup process has finished.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// Epic CNF-3901 (CNF-2133) (4.11), Story TELCODOCS-339
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="talo-backup-recovery_{context}"]
+= Recovering a cluster after a failed upgrade
+
+If an upgrade of a cluster fails, you can manually log in to the cluster and use the backup to return the cluster to its preupgrade state. There are two stages:
+
+Rollback:: If the attempted upgrade included a change to the platform OS deployment, you must roll back to the previous version before running the recovery script.
+
+[IMPORTANT]
+====
+A rollback is only applicable to upgrades from TALM and single-node OpenShift. This process does not apply to rollbacks from any other upgrade type.
+====
+
+Recovery:: The recovery shuts down containers and uses files from the backup partition to relaunch containers and restore clusters.
+
+.Prerequisites
+
+* Install the {cgu-operator-first}.
+* Provision one or more managed clusters.
+* Install {rh-rhacm-first}.
+* Log in as a user with `cluster-admin` privileges.
+* Run an upgrade that is configured for backup.
+
+.Procedure
+
+. Delete the previously created `ClusterGroupUpgrade` custom resource (CR) by running the following command:
++
+[source,terminal]
+----
+$ oc delete cgu/du-upgrade-4918 -n ztp-group-du-sno
+----
+
+. Log in to the cluster that you want to recover.
+
+. Check the status of the platform OS deployment by running the following command:
++
+[source,terminal]
+----
+$ ostree admin status
+----
+.Example outputs
++
+[source,terminal]
+----
+[root@lab-test-spoke2-node-0 core]# ostree admin status
+* rhcos c038a8f08458bbed83a77ece033ad3c55597e3f64edad66ea12fda18cbdceaf9.0
+    Version: 49.84.202202230006-0
+    Pinned: yes <1>
+    origin refspec: c038a8f08458bbed83a77ece033ad3c55597e3f64edad66ea12fda18cbdceaf9
+----
+<1> The current deployment is pinned. A platform OS deployment rollback is not necessary.
++
+[source,terminal]
+----
+[root@lab-test-spoke2-node-0 core]# ostree admin status
+* rhcos f750ff26f2d5550930ccbe17af61af47daafc8018cd9944f2a3a6269af26b0fa.0
+    Version: 410.84.202204050541-0
+    origin refspec: f750ff26f2d5550930ccbe17af61af47daafc8018cd9944f2a3a6269af26b0fa
+rhcos ad8f159f9dc4ea7e773fd9604c9a16be0fe9b266ae800ac8470f63abc39b52ca.0 (rollback) <1>
+    Version: 410.84.202203290245-0
+    Pinned: yes <2>
+    origin refspec: ad8f159f9dc4ea7e773fd9604c9a16be0fe9b266ae800ac8470f63abc39b52ca
+----
+<1> This platform OS deployment is marked for rollback.
+<2> The previous deployment is pinned and can be rolled back.
+
+. To trigger a rollback of the platform OS deployment, run the following command:
++
+[source,terminal]
+----
+$ rpm-ostree rollback -r
+----
+
+. The first phase of the recovery shuts down containers and restores files from the backup partition to the targeted directories. To begin the recovery, run the following command:
++
+[source,terminal]
+----
+$ /var/recovery/upgrade-recovery.sh
+----
++
+
+. When prompted, reboot the cluster by running the following command:
++
+[source,terminal]
+----
+$ systemctl reboot
+----
+. After the reboot, restart the recovery by running the following command:
++
+[source,terminal]
+----
+$ /var/recovery/upgrade-recovery.sh  --resume
+----
+
+[NOTE]
+====
+If the recovery utility fails, you can retry with the `--restart` option:
+[source,terminal]
+----
+$ /var/recovery/upgrade-recovery.sh --restart
+----
+====
+
+.Verification
+* To check the status of the recovery run the following command:
++
+[source,terminal]
+----
+$ oc get clusterversion,nodes,clusteroperator
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                         VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
+clusterversion.config.openshift.io/version   4.9.23    True        False         86d     Cluster version is 4.9.23 <1>
+
+
+NAME                          STATUS   ROLES           AGE   VERSION
+node/lab-test-spoke1-node-0   Ready    master,worker   86d   v1.22.3+b93fd35 <2>
+
+NAME                                                                           VERSION   AVAILABLE   PROGRESSING   DEGRADED   SINCE   MESSAGE
+clusteroperator.config.openshift.io/authentication                             4.9.23    True        False         False      2d7h    <3>
+clusteroperator.config.openshift.io/baremetal                                  4.9.23    True        False         False      86d
+
+
+..............
+----
+<1> The cluster version is available and has the correct version.
+<2> The node status is `Ready`.
+<3> The `ClusterOperator` object's availability is `True`.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// Epic CNF-2600 (CNF-2133) (4.10), Story TELCODOCS-285
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="talo-precache-feature-concept_{context}"]
+= Using the container image pre-cache feature
+
+{sno-caps} clusters might have limited bandwidth to access the container image registry, which can cause a timeout before the updates are completed.
+
+[NOTE]
+====
+The time of the update is not set by {cgu-operator}. You can apply the `ClusterGroupUpgrade` CR at the beginning of the update by manual application or by external automation.
+====
+
+The container image pre-caching starts when the `preCaching` field is set to `true` in the `ClusterGroupUpgrade` CR.
+
+{cgu-operator} uses the `PrecacheSpecValid` condition to report status information as follows:
+
+* `true`
++
+The pre-caching spec is valid and consistent.
+* `false`
++
+The pre-caching spec is incomplete.
+
+{cgu-operator} uses the `PrecachingSucceeded` condition to report status information as follows:
+
+* `true`
++
+{cgu-operator} has concluded the pre-caching process. If pre-caching fails for any cluster, the update fails for that cluster but proceeds for all other clusters. A message informs you if pre-caching has failed for any clusters.
+* `false`
++
+Pre-caching is still in progress for one or more clusters or has failed for all clusters.
+
+After a successful pre-caching process, you can start remediating policies. The remediation actions start when the `enable` field is set to `true`. If there is a pre-caching failure on a cluster, the upgrade fails for that cluster. The upgrade process continues for all other clusters that have a successful pre-cache.
+
+The pre-caching process can be in the following statuses:
+
+* `NotStarted`
++
+This is the initial state all clusters are automatically assigned to on the first reconciliation pass of the `ClusterGroupUpgrade` CR. In this state, {cgu-operator} deletes any pre-caching namespace and hub view resources of spoke clusters that remain from previous incomplete updates. {cgu-operator} then creates a new `ManagedClusterView` resource for the spoke pre-caching namespace to verify its deletion in the `PrecachePreparing` state.
+* `PreparingToStart`
++
+Cleaning up any remaining resources from previous incomplete updates is in progress.
+* `Starting`
++
+Pre-caching job prerequisites and the job are created.
+* `Active`
++
+The job is in "Active" state.
+*  `Succeeded`
++
+The pre-cache job succeeded.
+* `PrecacheTimeout`
++
+The artifact pre-caching is partially done.
+* `UnrecoverableError`
++
+The job ends with a non-zero exit code.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// Epic CNF-6848 (4.13), Story TELCODOCS-949
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="talo-precache-feature-image-filter_{context}"]
+= Using the container image pre-cache filter
+
+The pre-cache feature typically downloads more images than a cluster needs for an update. You can control which pre-cache images are downloaded to a cluster. This decreases download time, and saves bandwidth and storage.
+
+You can see a list of all images to be downloaded using the following command:
+
+[source,terminal]
+----
+$ oc adm release info <ocp-version>
+----
+
+The following `ConfigMap` example shows how you can exclude images using the `excludePrecachePatterns` field.
+
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-group-upgrade-overrides
+data:
+  excludePrecachePatterns: |
+    azure <1>
+    aws
+    vsphere
+    alibaba
+----
+<1> {cgu-operator} excludes all images with names that include any of the patterns listed here.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// Epic CNF-2600 (CNF-2133) (4.10), Story TELCODOCS-285
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="talo-precache-start_and_update_{context}"]
+= Creating a ClusterGroupUpgrade CR with pre-caching
+
+For {sno}, the pre-cache feature allows the required container images to be present on the spoke cluster before the update starts.
+
+[NOTE]
+====
+For pre-caching, {cgu-operator} uses the `spec.remediationStrategy.timeout` value from the `ClusterGroupUpgrade` CR. You must set a `timeout` value that allows sufficient time for the pre-caching job to complete. When you enable the `ClusterGroupUpgrade` CR after pre-caching has completed, you can change the `timeout` value to a duration that is appropriate for the update.
+====
+
+.Prerequisites
+
+* Install the {cgu-operator-first}.
+* Provision one or more managed clusters.
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Save the contents of the `ClusterGroupUpgrade` CR with the `preCaching` field set to `true` in the `clustergroupupgrades-group-du.yaml` file:
++
+[source,yaml]
+----
+apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: du-upgrade-4918
+  namespace: ztp-group-du-sno
+spec:
+  preCaching: true <1>
+  clusters:
+  - cnfdb1
+  - cnfdb2
+  enable: false
+  managedPolicies:
+  - du-upgrade-platform-upgrade
+  remediationStrategy:
+    maxConcurrency: 2
+    timeout: 240
+----
+<1> The `preCaching` field is set to `true`, which enables {cgu-operator} to pull the container images before starting the update.
+
+. When you want to start pre-caching, apply the `ClusterGroupUpgrade` CR by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f clustergroupupgrades-group-du.yaml
+----
+
+.Verification
+
+. Check if the `ClusterGroupUpgrade` CR exists in the hub cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get cgu -A
+----
++
+.Example output
++
+[source,terminal]
+----
+NAMESPACE          NAME              AGE   STATE        DETAILS
+ztp-group-du-sno   du-upgrade-4918   10s   InProgress   Precaching is required and not done <1>
+----
+<1> The CR is created.
+
+. Check the status of the pre-caching task by running the following command:
++
+[source,terminal]
+----
+$ oc get cgu -n ztp-group-du-sno du-upgrade-4918 -o jsonpath='{.status}'
+----
++
+.Example output
++
+[source,json]
+----
+{
+  "conditions": [
+    {
+      "lastTransitionTime": "2022-01-27T19:07:24Z",
+      "message": "Precaching is required and not done",
+      "reason": "InProgress",
+      "status": "False",
+      "type": "PrecachingSucceeded"
+    },
+    {
+      "lastTransitionTime": "2022-01-27T19:07:34Z",
+      "message": "Pre-caching spec is valid and consistent",
+      "reason": "PrecacheSpecIsWellFormed",
+      "status": "True",
+      "type": "PrecacheSpecValid"
+    }
+  ],
+  "precaching": {
+    "clusters": [
+      "cnfdb1" <1>
+      "cnfdb2"
+    ],
+    "spec": {
+      "platformImage": "image.example.io"},
+    "status": {
+      "cnfdb1": "Active"
+      "cnfdb2": "Succeeded"}
+    }
+}
+----
+<1> Displays the list of identified clusters.
+
+. Check the status of the pre-caching job by running the following command on the spoke cluster:
++
+[source,terminal]
+----
+$ oc get jobs,pods -n openshift-talo-pre-cache
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME                  COMPLETIONS   DURATION   AGE
+job.batch/pre-cache   0/1           3m10s      3m10s
+
+NAME                     READY   STATUS    RESTARTS   AGE
+pod/pre-cache--1-9bmlr   1/1     Running   0          3m10s
+----
+
+ . Check the status of the `ClusterGroupUpgrade` CR by running the following command:
++
+[source,terminal]
+----
+$ oc get cgu -n ztp-group-du-sno du-upgrade-4918 -o jsonpath='{.status}'
+----
++
+.Example output
++
+[source,json]
+----
+"conditions": [
+    {
+      "lastTransitionTime": "2022-01-27T19:30:41Z",
+      "message": "The ClusterGroupUpgrade CR has all clusters compliant with all the managed policies",
+      "reason": "UpgradeCompleted",
+      "status": "True",
+      "type": "Ready"
+    },
+    {
+      "lastTransitionTime": "2022-01-27T19:28:57Z",
+      "message": "Precaching is completed",
+      "reason": "PrecachingCompleted",
+      "status": "True",
+      "type": "PrecachingSucceeded" <1>
+    }
+----
+<1> The pre-cache tasks are done.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/cnf-talm-for-cluster-upgrades.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="talo-troubleshooting_{context}"]
+= Troubleshooting the {cgu-operator-full}
+
+The {cgu-operator-first} is an {product-title} Operator that remediates {rh-rhacm} policies. When issues occur, use the `oc adm must-gather` command to gather details and logs and to take steps in debugging the issues.
+
+
+For more information about related topics, see the following documentation:
+
+* link:https://access.redhat.com/articles/6218901[Red Hat Advanced Cluster Management for Kubernetes 2.4 Support Matrix]
+
+* link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.0/html/troubleshooting/troubleshooting[Red Hat Advanced Cluster Management Troubleshooting]
+
+* The "Troubleshooting Operator issues" section
+
+[id="talo-general-troubleshooting_{context}"]
+== General troubleshooting
+
+You can determine the cause of the problem by reviewing the following questions:
+
+* Is the configuration that you are applying supported?
+** Are the {rh-rhacm} and the {product-title} versions compatible?
+** Are the {cgu-operator} and {rh-rhacm} versions compatible?
+* Which of the following components is causing the problem?
+** <<talo-troubleshooting-managed-policies_{context}>>
+** <<talo-troubleshooting-clusters_{context}>>
+** <<talo-troubleshooting-remediation-strategy_{context}>>
+** <<talo-troubleshooting-remediation-talo_{context}>>
+
+To ensure that the `ClusterGroupUpgrade` configuration is functional, you can do the following:
+
+. Create the `ClusterGroupUpgrade` CR with the `spec.enable` field set to `false`.
+
+. Wait for the status to be updated and go through the troubleshooting questions.
+
+. If everything looks as expected, set the `spec.enable` field to `true` in the `ClusterGroupUpgrade` CR.
+
+[WARNING]
+====
+After you set the `spec.enable` field to `true` in the `ClusterUpgradeGroup` CR, the update procedure starts and you cannot edit the CR's `spec` fields anymore.
+====
+
+[id="talo-troubleshooting-modify-cgu_{context}"]
+== Cannot modify the ClusterUpgradeGroup CR
+
+Issue:: You cannot edit the `ClusterUpgradeGroup` CR after enabling the update.
+
+Resolution:: Restart the procedure by performing the following steps:
++
+. Remove the old `ClusterGroupUpgrade` CR by running the following command:
++
+[source,terminal]
+----
+$ oc delete cgu -n <ClusterGroupUpgradeCR_namespace> <ClusterGroupUpgradeCR_name>
+----
++
+. Check and fix the existing issues with the managed clusters and policies.
+.. Ensure that all the clusters are managed clusters and available.
+.. Ensure that all the policies exist and have the `spec.remediationAction` field set to `inform`.
++
+. Create a new `ClusterGroupUpgrade` CR with the correct configurations.
++
+[source,terminal]
+----
+$ oc apply -f <ClusterGroupUpgradeCR_YAML>
+----
+
+[id="talo-troubleshooting-managed-policies_{context}"]
+== Managed policies
+
+[discrete]
+== Checking managed policies on the system
+
+Issue:: You want to check if you have the correct managed policies on the system.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc get cgu lab-upgrade -ojsonpath='{.spec.managedPolicies}'
+----
++
+.Example output
++
+[source,json]
+----
+["group-du-sno-validator-du-validator-policy", "policy2-common-nto-sub-policy", "policy3-common-ptp-sub-policy"]
+----
+
+[discrete]
+== Checking remediationAction mode
+
+Issue:: You want to check if the `remediationAction` field is set to `inform` in the `spec` of the managed policies.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc get policies --all-namespaces
+----
++
+.Example output
++
+[source,terminal]
+----
+NAMESPACE   NAME                                                 REMEDIATION ACTION   COMPLIANCE STATE   AGE
+default     policy1-common-cluster-version-policy                inform               NonCompliant       5d21h
+default     policy2-common-nto-sub-policy                        inform               Compliant          5d21h
+default     policy3-common-ptp-sub-policy                        inform               NonCompliant       5d21h
+default     policy4-common-sriov-sub-policy                      inform               NonCompliant       5d21h
+----
+
+[discrete]
+== Checking policy compliance state
+
+Issue:: You want to check the compliance state of policies.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc get policies --all-namespaces
+----
++
+.Example output
++
+[source,terminal]
+----
+NAMESPACE   NAME                                                 REMEDIATION ACTION   COMPLIANCE STATE   AGE
+default     policy1-common-cluster-version-policy                inform               NonCompliant       5d21h
+default     policy2-common-nto-sub-policy                        inform               Compliant          5d21h
+default     policy3-common-ptp-sub-policy                        inform               NonCompliant       5d21h
+default     policy4-common-sriov-sub-policy                      inform               NonCompliant       5d21h
+----
+
+[id="talo-troubleshooting-clusters_{context}"]
+== Clusters
+
+[discrete]
+=== Checking if managed clusters are present
+
+Issue:: You want to check if the clusters in the `ClusterGroupUpgrade` CR are managed clusters.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc get managedclusters
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME            HUB ACCEPTED   MANAGED CLUSTER URLS                    JOINED   AVAILABLE   AGE
+local-cluster   true           https://api.hub.example.com:6443        True     Unknown     13d
+spoke1          true           https://api.spoke1.example.com:6443     True     True        13d
+spoke3          true           https://api.spoke3.example.com:6443     True     True        27h
+----
+
+. Alternatively, check the {cgu-operator} manager logs:
+
+.. Get the name of the {cgu-operator} manager by running the following command:
++
+[source,terminal]
+----
+$ oc get pod -n openshift-operators
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME                                                         READY   STATUS    RESTARTS   AGE
+cluster-group-upgrades-controller-manager-75bcc7484d-8k8xp   2/2     Running   0          45m
+----
+
+.. Check the {cgu-operator} manager logs by running the following command:
++
+[source,terminal]
+----
+$ oc logs -n openshift-operators \
+cluster-group-upgrades-controller-manager-75bcc7484d-8k8xp -c manager
+----
++
+.Example output
++
+[source,terminal]
+----
+ERROR	controller-runtime.manager.controller.clustergroupupgrade	Reconciler error	{"reconciler group": "ran.openshift.io", "reconciler kind": "ClusterGroupUpgrade", "name": "lab-upgrade", "namespace": "default", "error": "Cluster spoke5555 is not a ManagedCluster"} <1>
+sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).processNextWorkItem
+----
+<1> The error message shows that the cluster is not a managed cluster.
+
+[discrete]
+=== Checking if managed clusters are available
+
+Issue:: You want to check if the managed clusters specified in the `ClusterGroupUpgrade` CR are available.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc get managedclusters
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME            HUB ACCEPTED   MANAGED CLUSTER URLS                    JOINED   AVAILABLE   AGE
+local-cluster   true           https://api.hub.testlab.com:6443        True     Unknown     13d
+spoke1          true           https://api.spoke1.testlab.com:6443     True     True        13d <1>
+spoke3          true           https://api.spoke3.testlab.com:6443     True     True        27h <1>
+----
+<1> The value of the `AVAILABLE` field is `True` for the managed clusters.
+
+[discrete]
+=== Checking clusterLabelSelector
+
+Issue:: You want to check if the `clusterLabelSelector` field specified in the `ClusterGroupUpgrade` CR matches at least one of the managed clusters.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc get managedcluster --selector=upgrade=true <1>
+----
+<1> The label for the clusters you want to update is `upgrade:true`.
++
+.Example output
++
+[source,terminal]
+----
+NAME            HUB ACCEPTED   MANAGED CLUSTER URLS                     JOINED    AVAILABLE   AGE
+spoke1          true           https://api.spoke1.testlab.com:6443      True     True        13d
+spoke3          true           https://api.spoke3.testlab.com:6443      True     True        27h
+----
+
+[discrete]
+=== Checking if canary clusters are present
+
+Issue:: You want to check if the canary clusters are present in the list of clusters.
++
+.Example `ClusterGroupUpgrade` CR
+[source,yaml]
+----
+spec:
+    remediationStrategy:
+        canaries:
+        - spoke3
+        maxConcurrency: 2
+        timeout: 240
+    clusterLabelSelectors:
+      - matchLabels:
+          upgrade: true
+----
+
+Resolution:: Run the following commands:
++
+[source,terminal]
+----
+$ oc get cgu lab-upgrade -ojsonpath='{.spec.clusters}'
+----
++
+.Example output
++
+[source,json]
+----
+["spoke1", "spoke3"]
+----
+
+. Check if the canary clusters are present in the list of clusters that match `clusterLabelSelector` labels by running the following command:
++
+[source,terminal]
+----
+$ oc get managedcluster --selector=upgrade=true
+----
++
+.Example output
++
+[source,terminal]
+----
+NAME            HUB ACCEPTED   MANAGED CLUSTER URLS   JOINED    AVAILABLE   AGE
+spoke1          true           https://api.spoke1.testlab.com:6443   True     True        13d
+spoke3          true           https://api.spoke3.testlab.com:6443   True     True        27h
+----
+
+[NOTE]
+====
+A cluster can be present in `spec.clusters` and also be matched by the `spec.clusterLabelSelector` label.
+====
+
+[discrete]
+=== Checking the pre-caching status on spoke clusters
+
+. Check the status of pre-caching by running the following command on the spoke cluster:
++
+[source,terminal]
+----
+$ oc get jobs,pods -n openshift-talo-pre-cache
+----
+
+[id="talo-troubleshooting-remediation-strategy_{context}"]
+== Remediation Strategy
+
+[discrete]
+=== Checking if remediationStrategy is present in the ClusterGroupUpgrade CR
+
+Issue:: You want to check if the `remediationStrategy` is present in the `ClusterGroupUpgrade` CR.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc get cgu lab-upgrade -ojsonpath='{.spec.remediationStrategy}'
+----
++
+.Example output
++
+[source,json]
+----
+{"maxConcurrency":2, "timeout":240}
+----
+
+[discrete]
+=== Checking if maxConcurrency is specified in the ClusterGroupUpgrade CR
+
+Issue:: You want to check if the `maxConcurrency` is specified in the `ClusterGroupUpgrade` CR.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc get cgu lab-upgrade -ojsonpath='{.spec.remediationStrategy.maxConcurrency}'
+----
++
+.Example output
++
+[source,terminal]
+----
+2
+----
+
+[id="talo-troubleshooting-remediation-talo_{context}"]
+== {cgu-operator-full}
+
+[discrete]
+=== Checking condition message and status in the ClusterGroupUpgrade CR
+
+Issue:: You want to check the value of the `status.conditions` field in the `ClusterGroupUpgrade` CR.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc get cgu lab-upgrade -ojsonpath='{.status.conditions}'
+----
++
+.Example output
++
+[source,json]
+----
+{"lastTransitionTime":"2022-02-17T22:25:28Z", "message":"Missing managed policies:[policyList]", "reason":"NotAllManagedPoliciesExist", "status":"False", "type":"Validated"}
+----
+
+[discrete]
+=== Checking corresponding copied policies
+
+Issue:: You want to check if every policy from `status.managedPoliciesForUpgrade` has a corresponding policy in `status.copiedPolicies`.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc get cgu lab-upgrade -oyaml
+----
++
+.Example output
++
+[source,yaml]
+----
+status:
+  …
+  copiedPolicies:
+  - lab-upgrade-policy3-common-ptp-sub-policy
+  managedPoliciesForUpgrade:
+  - name: policy3-common-ptp-sub-policy
+    namespace: default
+----
+
+[discrete]
+=== Checking if status.remediationPlan was computed
+
+Issue:: You want to check if `status.remediationPlan` is computed.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc get cgu lab-upgrade -ojsonpath='{.status.remediationPlan}'
+----
++
+.Example output
++
+[source,json]
+----
+[["spoke2", "spoke3"]]
+----
+
+[discrete]
+=== Errors in the {cgu-operator} manager container
+
+Issue:: You want to check the logs of the manager container of {cgu-operator}.
+
+Resolution:: Run the following command:
++
+[source,terminal]
+----
+$ oc logs -n openshift-operators \
+cluster-group-upgrades-controller-manager-75bcc7484d-8k8xp -c manager
+----
++
+.Example output
++
+[source,terminal]
+----
+ERROR	controller-runtime.manager.controller.clustergroupupgrade	Reconciler error	{"reconciler group": "ran.openshift.io", "reconciler kind": "ClusterGroupUpgrade", "name": "lab-upgrade", "namespace": "default", "error": "Cluster spoke5555 is not a ManagedCluster"} <1>
+sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).processNextWorkItem
+----
+<1> Displays the error.
+
+[discrete]
+=== Clusters are not compliant to some policies after a `ClusterGroupUpgrade` CR has completed
+
+Issue:: The policy compliance status that {cgu-operator} uses to decide if remediation is needed has not yet fully updated for all clusters.
+This may be because:
+* The CGU was run too soon after a policy was created or updated.
+* The remediation of a policy affects the compliance of subsequent policies in the `ClusterGroupUpgrade` CR.
+
+Resolution:: Create and apply a new `ClusterGroupUpdate` CR with the same specification.
+
+[discrete]
+[id="talo-troubleshooting-auto-create-policies_{context}"]
+=== Auto-created `ClusterGroupUpgrade` CR in the {ztp} workflow has no managed policies
+
+Issue:: If there are no policies for the managed cluster when the cluster becomes `Ready`, a `ClusterGroupUpgrade` CR with no policies is auto-created.
+Upon completion of the `ClusterGroupUpgrade` CR, the managed cluster is labeled as `ztp-done`.
+If the `PolicyGenTemplate` CRs were not pushed to the Git repository within the required time after `SiteConfig` resources were pushed, this might result in no policies being available for the target cluster when the cluster became `Ready`.
+
+Resolution:: Verify that the policies you want to apply are available on the hub cluster, then create a `ClusterGroupUpgrade` CR with the required policies.
+
+You can either manually create the `ClusterGroupUpgrade` CR or trigger auto-creation again. To trigger auto-creation of the `ClusterGroupUpgrade` CR, remove the `ztp-done` label from the cluster and delete the empty `ClusterGroupUpgrade` CR that was previously created in the `zip-install` namespace.
+
+[discrete]
+[id="talo-troubleshooting-pre-cache-failed_{context}"]
+=== Pre-caching has failed
+
+Issue:: Pre-caching might fail for one of the following reasons:
+* There is not enough free space on the node.
+* For a disconnected environment, the pre-cache image has not been properly mirrored.
+* There was an issue when creating the pod.
+
+Resolution::
+. To check if pre-caching has failed due to insufficient space, check the log of the pre-caching pod in the node.
+.. Find the name of the pod using the following command:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-talo-pre-cache
+----
++
+.. Check the logs to see if the error is related to insufficient space using the following command:
++
+[source,terminal]
+----
+$ oc logs -n openshift-talo-pre-cache <pod name>
+----
++
+. If there is no log, check the pod status using the following command:
++
+[source,terminal]
+----
+$ oc describe pod -n openshift-talo-pre-cache <pod name>
+----
++
+. If the pod does not exist, check the job status to see why it could not create a pod using the following command:
++
+[source,terminal]
+----
+$ oc describe job -n openshift-talo-pre-cache pre-cache
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For information about troubleshooting, see xref:../../support/troubleshooting/troubleshooting-operator-issues.adoc[OpenShift Container Platform Troubleshooting Operator Issues].
+
+* For more information about using {cgu-operator-full} in the ZTP workflow, see xref:../../scalability_and_performance/ztp_far_edge/ztp-talm-updating-managed-policies.adoc#ztp-topology-aware-lifecycle-manager[Updating managed policies with {cgu-operator-full}].
+
+* For more information about the `PolicyGenTemplate` CRD, see xref:../../scalability_and_performance/ztp_far_edge/ztp-configuring-managed-clusters-policies.adoc#ztp-the-policygentemplate_ztp-configuring-managed-clusters-policies[About the PolicyGenTemplate CRD]
+
+//# includes=_attributes/common-attributes,modules/cnf-about-topology-aware-lifecycle-manager-config,modules/cnf-about-topology-aware-lifecycle-manager-policies,modules/cnf-topology-aware-lifecycle-manager-installation-web-console,modules/cnf-topology-aware-lifecycle-manager-installation-cli,modules/cnf-topology-aware-lifecycle-manager-about-cgu-crs,modules/cnf-about-topology-aware-lifecycle-manager-blocking-crs,modules/cnf-topology-aware-lifecycle-manager-policies-concept,modules/snippets/cnf-example-upgrade-policy,modules/cnf-topology-aware-lifecycle-manager-about-subscription-crs,modules/cnf-topology-aware-lifecycle-manager-apply-policies,modules/cnf-topology-aware-lifecycle-manager-backup-concept,modules/cnf-topology-aware-lifecycle-manager-backup-feature,modules/cnf-topology-aware-lifecycle-manager-backup-recovery,modules/cnf-topology-aware-lifecycle-manager-precache-concept,modules/cnf-topology-aware-lifecycle-manager-precache-image-filter,modules/cnf-topology-aware-lifecycle-manager-precache-feature,modules/cnf-topology-aware-lifecycle-manager-troubleshooting

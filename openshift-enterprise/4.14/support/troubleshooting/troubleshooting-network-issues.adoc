@@ -1,0 +1,562 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="troubleshooting-network-issues"]
+= Troubleshooting network issues
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: troubleshooting-network-issues
+
+toc::[]
+
+// How the network interface is selected
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * support/troubleshooting/troubleshooting-network-issues.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-how-nw-iface-selected_{context}"]
+= How the network interface is selected
+
+For installations on bare metal or with virtual machines that have more than one network interface controller (NIC), the NIC that {product-title} uses for communication with the Kubernetes API server is determined by the `nodeip-configuration.service` service unit that is run by systemd when the node boots. The `nodeip-configuration.service` selects the IP from the interface associated with the default route.
+
+After the `nodeip-configuration.service` service determines the correct NIC, the service creates the `/etc/systemd/system/kubelet.service.d/20-nodenet.conf` file. The `20-nodenet.conf` file sets the `KUBELET_NODE_IP` environment variable to the IP address that the service selected.
+
+When the kubelet service starts, it reads the value of the environment variable from the `20-nodenet.conf` file and sets the IP address as the value of the `--node-ip` kubelet command-line argument. As a result, the kubelet service uses the selected IP address as the node IP address.
+
+If hardware or networking is reconfigured after installation, or if there is a networking layout where the node IP should not come from the default route interface, it is possible for the `nodeip-configuration.service` service to select a different NIC after a reboot. In some cases, you might be able to detect that a different NIC is selected by reviewing the `INTERNAL-IP` column in the output from the `oc get nodes -o wide` command.
+
+If network communication is disrupted or misconfigured because a different NIC is selected, you might receive the following error: `EtcdCertSignerControllerDegraded`. You can create a hint file that includes the `NODEIP_HINT` variable to override the default IP selection logic. For more information, see Optional: Overriding the default node IP selection logic.
+
+// Link to info for creating a machine config.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// This is included in the following assemblies:
+//
+// * troubleshooting-network-issues.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="overriding-default-node-ip-selection-logic_{context}"]
+= Optional: Overriding the default node IP selection logic
+
+To override the default IP selection logic, you can create a hint file that includes the `NODEIP_HINT` variable to override the default IP selection logic. Creating a hint file allows you to select a specific node IP address from the interface in the subnet of the IP address specified in the `NODEIP_HINT` variable.
+
+For example, if a node has two interfaces, `eth0` with an address of `10.0.0.10/24`, and `eth1` with an address of `192.0.2.5/24`, and the default route points to `eth0` (`10.0.0.10`),the node IP address would normally use the `10.0.0.10` IP address.
+
+Users can configure the `NODEIP_HINT` variable to point at a known IP in the subnet, for example, a subnet gateway such as `192.0.2.1` so that the other subnet, `192.0.2.0/24`, is selected. As a result, the `192.0.2.5` IP address on `eth1` is used for the node.
+
+The following procedure shows how to override the default node IP selection logic.
+
+.Procedure
+
+. Add a hint file to your `/etc/default/nodeip-configuration` file, for example:
++
+[source,text]
+----
+NODEIP_HINT=192.0.2.1
+----
++
+[IMPORTANT]
+====
+* Do not use the exact IP address of a node as a hint, for example, `192.0.2.5`. Using the exact IP address of a node causes the node using the hint IP address to fail to configure correctly.
+* The IP address in the hint file is only used to determine the correct subnet. It will not receive traffic as a result of appearing in the hint file.
+====
+
+. Generate the `base-64` encoded content by running the following command:
++
+[source,terminal]
+----
+$ echo -n 'NODEIP_HINT=192.0.2.1' | base64 -w0
+----
++
+.Example output
++
+[source,terminal]
+----
+Tk9ERUlQX0hJTlQ9MTkyLjAuMCxxxx==
+----
+
+. Activate the hint by creating a machine config manifest for both `master` and `worker` roles before deploying the cluster:
++
+.99-nodeip-hint-master.yaml
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 99-nodeip-hint-master
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      files:
+      - contents:
+          source: data:text/plain;charset=utf-8;base64,<encoded_content> <1>
+        mode: 0644
+        overwrite: true
+        path: /etc/default/nodeip-configuration
+----
++
+<1> Replace `<encoded_contents>` with the  base64-encoded content of the `/etc/default/nodeip-configuration` file, for example, `Tk9ERUlQX0hJTlQ9MTkyLjAuMCxxxx==`. Note that a space is not acceptable after the comma and before the encoded content.
++
+.99-nodeip-hint-worker.yaml
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+ labels:
+   machineconfiguration.openshift.io/role: worker
+   name: 99-nodeip-hint-worker
+spec:
+ config:
+   ignition:
+     version: 3.2.0
+   storage:
+     files:
+     - contents:
+         source: data:text/plain;charset=utf-8;base64,<encoded_content> <1>
+       mode: 0644
+       overwrite: true
+       path: /etc/default/nodeip-configuration
+----
+<1> Replace `<encoded_contents>` with the  base64-encoded content of the `/etc/default/nodeip-configuration` file, for example, `Tk9ERUlQX0hJTlQ9MTkyLjAuMCxxxx==`. Note that a space is not acceptable after the comma and before the encoded content.
+
+. Save the manifest to the directory where you store your cluster configuration, for example, `~/clusterconfigs`.
+
+. Deploy the cluster.
+
+:leveloffset!:
+
+// Troubleshooting OVS issues
+:leveloffset: +1
+
+[id="nw-troubleshoot-ovs_{context}"]
+= Troubleshooting Open vSwitch issues
+
+To troubleshoot some Open vSwitch (OVS) issues, you might need to configure the log level to include more information.
+
+If you modify the log level on a node temporarily, be aware that you can receive log messages from the machine config daemon on the node like the following example:
+
+[source,terminal]
+----
+E0514 12:47:17.998892    2281 daemon.go:1350] content mismatch for file /etc/systemd/system/ovs-vswitchd.service: [Unit]
+----
+
+To avoid the log messages related to the mismatch, revert the log level change after you complete your troubleshooting.
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-ovs-log-level-temp_{context}"]
+= Configuring the Open vSwitch log level temporarily
+
+For short-term troubleshooting, you can configure the Open vSwitch (OVS) log level temporarily.
+The following procedure does not require rebooting the node.
+In addition, the configuration change does not persist whenever you reboot the node.
+
+After you perform this procedure to change the log level, you can receive log messages from the machine config daemon that indicate a content mismatch for the `ovs-vswitchd.service`.
+To avoid the log messages, repeat this procedure and set the log level to the original value.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+
+* You have installed the OpenShift CLI (`oc`).
+
+.Procedure
+
+. Start a debug pod for a node:
++
+[source,terminal]
+----
+$ oc debug node/<node_name>
+----
+
+. Set `/host` as the root directory within the debug shell. The debug pod mounts the root file system from the host in `/host` within the pod. By changing the root directory to `/host`, you can run binaries from the host file system:
++
+[source,terminal]
+----
+# chroot /host
+----
+
+. View the current syslog level for OVS modules:
++
+[source,terminal]
+----
+# ovs-appctl vlog/list
+----
++
+The following example output shows the log level for syslog set to `info`.
++
+.Example output
+[source,terminal]
+----
+                 console    syslog    file
+                 -------    ------    ------
+backtrace          OFF       INFO       INFO
+bfd                OFF       INFO       INFO
+bond               OFF       INFO       INFO
+bridge             OFF       INFO       INFO
+bundle             OFF       INFO       INFO
+bundles            OFF       INFO       INFO
+cfm                OFF       INFO       INFO
+collectors         OFF       INFO       INFO
+command_line       OFF       INFO       INFO
+connmgr            OFF       INFO       INFO
+conntrack          OFF       INFO       INFO
+conntrack_tp       OFF       INFO       INFO
+coverage           OFF       INFO       INFO
+ct_dpif            OFF       INFO       INFO
+daemon             OFF       INFO       INFO
+daemon_unix        OFF       INFO       INFO
+dns_resolve        OFF       INFO       INFO
+dpdk               OFF       INFO       INFO
+...
+----
+
+. Specify the log level in the `/etc/systemd/system/ovs-vswitchd.service.d/10-ovs-vswitchd-restart.conf` file:
++
+[source,text]
+----
+Restart=always
+ExecStartPre=-/bin/sh -c '/usr/bin/chown -R :$${OVS_USER_ID##*:} /var/lib/openvswitch'
+ExecStartPre=-/bin/sh -c '/usr/bin/chown -R :$${OVS_USER_ID##*:} /etc/openvswitch'
+ExecStartPre=-/bin/sh -c '/usr/bin/chown -R :$${OVS_USER_ID##*:} /run/openvswitch'
+ExecStartPost=-/usr/bin/ovs-appctl vlog/set syslog:dbg
+ExecReload=-/usr/bin/ovs-appctl vlog/set syslog:dbg
+----
++
+In the preceding example, the log level is set to `dbg`.
+Change the last two lines by setting `syslog:<log_level>` to `off`, `emer`, `err`, `warn`, `info`, or `dbg`. The `off` log level filters out all log messages.
+
+. Restart the service:
++
+[source,terminal]
+----
+# systemctl daemon-reload
+----
++
+[source,terminal]
+----
+# systemctl restart ovs-vswitchd
+----
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * support/troubleshooting/troubleshooting-network-issues.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-ovs-log-level-permanently_{context}"]
+= Configuring the Open vSwitch log level permanently
+
+For long-term changes to the Open vSwitch (OVS) log level, you can change the log level permanently.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+
+* You have installed the OpenShift CLI (`oc`).
+
+.Procedure
+
+. Create a file, such as `99-change-ovs-loglevel.yaml`, with a `MachineConfig` object like the following example:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master  <1>
+  name: 99-change-ovs-loglevel
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    systemd:
+      units:
+      - dropins:
+        - contents: |
+            [Service]
+              ExecStartPost=-/usr/bin/ovs-appctl vlog/set syslog:dbg  <2>
+              ExecReload=-/usr/bin/ovs-appctl vlog/set syslog:dbg
+          name: 20-ovs-vswitchd-restart.conf
+        name: ovs-vswitchd.service
+----
+<1> After you perform this procedure to configure control plane nodes, repeat the procedure and set the role to `worker` to configure worker nodes.
+<2> Set the `syslog:<log_level>` value. Log levels are `off`, `emer`, `err`, `warn`, `info`, or `dbg`. Setting the value to `off` filters out all log messages.
+
+. Apply the machine config:
++
+[source,terminal]
+----
+$ oc apply -f 99-change-ovs-loglevel.yaml
+----
+
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../post_installation_configuration/machine-configuration-tasks.adoc#understanding-the-machine-config-operator[Understanding the Machine Config Operator]
+
+* xref:../../post_installation_configuration/machine-configuration-tasks.adoc#checking-mco-status_post-install-machine-configuration-tasks[Checking machine config pool status]
+
+:leveloffset: +2
+
+:_mod-docs-content-type: PROCEDURE
+[id="displaying-ovs-logs_{context}"]
+= Displaying Open vSwitch logs
+
+Use the following procedure to display Open vSwitch (OVS) logs.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+
+* You have installed the OpenShift CLI (`oc`).
+
+.Procedure
+
+* Run one of the following commands:
+
+** Display the logs by using the `oc` command from outside the cluster:
++
+[source,terminal]
+----
+$ oc adm node-logs <node_name> -u ovs-vswitchd
+----
+
+** Display the logs after logging on to a node in the cluster:
++
+[source,terminal]
+----
+# journalctl -b -f -u ovs-vswitchd.service
+----
++
+One way to log on to a node is by using the `oc debug node/<node_name>` command.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/nw-how-nw-iface-selected,modules/overriding-default-node-ip-selection-logic,modules/nw-troubleshoot-ovs,modules/configuring-ovs-log-level-temp,modules/configuring-ovs-log-level-permanently,modules/displaying-ovs-logs

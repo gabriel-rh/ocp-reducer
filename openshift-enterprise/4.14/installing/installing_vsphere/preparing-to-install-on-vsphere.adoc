@@ -1,0 +1,382 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="preparing-to-install-on-vsphere"]
+= Preparing to install on vSphere
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: preparing-to-install-on-vsphere
+
+toc::[]
+
+
+[id="preparing-to-install-on-vsphere-prerequisites"]
+== Prerequisites
+
+* You reviewed details about the xref:../../architecture/architecture-installation.adoc#architecture-installation[{product-title} installation and update] processes.
+
+* You read the documentation on xref:../../installing/installing-preparing.adoc#installing-preparing[selecting a cluster installation method and preparing it for users].
+
+* If you use a firewall and plan to use Telemetry, you
+xref:../../installing/install_config/configuring-firewall.adoc#configuring-firewall[configured the firewall to allow the sites] required by your cluster.
+
+* You reviewed your VMware platform licenses. Red Hat does not place any restrictions on your VMware licenses, but some VMware infrastructure components require licensing.
+
+[id="choosing-a-method-to-install-ocp-on-vsphere"]
+== Choosing a method to install {product-title} on vSphere
+
+You can install {product-title} with the link:https://access.redhat.com/documentation/en-us/assisted_installer_for_openshift_container_platform/2022/html-single/assisted_installer_for_openshift_container_platform/index[{ai-full}]. This method requires no setup for the installer, and is ideal for connected environments like vSphere. Installing with the {ai-full} also provides integration with vSphere, enabling autoscaling. See xref:../../installing/installing_on_prem_assisted/installing-on-prem-assisted.adoc#installing-on-prem-assisted[Installing an on-premise cluster using the {ai-full}] for additional details.
+
+You can also install {product-title} on vSphere by using installer-provisioned or user-provisioned infrastructure. Installer-provisioned infrastructure is ideal for installing in environments with air-gapped/restricted networks, where the installation program provisions the underlying infrastructure for the cluster. You can also install {product-title} on infrastructure that you provide. If you do not use infrastructure that the installation program provisions, you must manage and maintain the cluster resources yourself.
+
+See the xref:../../architecture/architecture-installation.adoc#installation-process_architecture-installation[Installation process] for more information about installer-provisioned and user-provisioned installation processes.
+
+[IMPORTANT]
+====
+The steps for performing a user-provisioned infrastructure installation are provided as an example only. Installing a cluster with infrastructure you provide requires knowledge of the vSphere platform and the installation process of {product-title}. Use the user-provisioned infrastructure installation instructions as a guide; you are free to create the required resources through other methods.
+====
+
+
+=== Installer-provisioned infrastructure installation of {product-title} on vSphere
+
+Installer-provisioned infrastructure allows the installation program to preconfigure and automate the provisioning of resources required by {product-title}.
+
+* **xref:../../installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc#installing-vsphere-installer-provisioned[Installing a cluster on vSphere]**: You can install {product-title} on vSphere by using installer-provisioned infrastructure installation with no customization.
+
+* **xref:../../installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc#installing-vsphere-installer-provisioned-customizations[Installing a cluster on vSphere with customizations]**: You can install {product-title} on vSphere by using installer-provisioned infrastructure installation with the default customization options.
+
+* **xref:../../installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc#installing-vsphere-installer-provisioned-network-customizations[Installing a cluster on vSphere with network customizations]**: You can install {product-title} on installer-provisioned vSphere infrastructure, with network customizations. You can customize your {product-title} network configuration during installation, so that your cluster can coexist with your existing IP address allocations and adhere to your network requirements.
+
+* **xref:../../installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc#installing-restricted-networks-installer-provisioned-vsphere[Installing a cluster on vSphere in a restricted network]**: You can install a cluster on VMware vSphere infrastructure in a restricted network by creating an internal mirror of the installation release content.
+ You can use this method to deploy {product-title} on an internal network that is not visible to the internet.
+
+=== User-provisioned infrastructure installation of {product-title} on vSphere
+
+User-provisioned infrastructure requires the user to provision all resources required by {product-title}.
+
+* **xref:../../installing/installing_vsphere/installing-vsphere.adoc#[Installing a cluster on vSphere with user-provisioned infrastructure]**: You can install {product-title} on VMware vSphere infrastructure that you provision.
+
+* **xref:../../installing/installing_vsphere/installing-vsphere-network-customizations.adoc#installing-vsphere-network-customizations[Installing a cluster on vSphere with network customizations with user-provisioned infrastructure]**: You can install {product-title} on VMware vSphere infrastructure that you provision with customized network configuration options.
+
+* **xref:../../installing/installing_vsphere/installing-restricted-networks-vsphere.adoc#installing-restricted-networks-vsphere[Installing a cluster on vSphere in a restricted network with user-provisioned infrastructure]**: {product-title} can be installed on VMware vSphere infrastructure that you provision in a restricted network.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+
+[id="installation-vsphere-infrastructure_{context}"]
+= VMware vSphere infrastructure requirements
+
+You must install the {product-title} cluster on a VMware vSphere version 7.0 Update 2 or later instance that meets the requirements for the components that you use.
+
+[NOTE]
+====
+{product-title} version {product-version} supports VMware vSphere version 8.0.
+====
+
+You can host the VMware vSphere infrastructure on-premise or on a link:https://cloud.vmware.com/providers[VMware Cloud Verified provider] that meets the requirements outlined in the following tables:
+
+.Version requirements for vSphere virtual environments
+[cols=2, options="header"]
+|===
+|Virtual environment product |Required version
+|VMware virtual hardware | 15 or later
+|vSphere ESXi hosts | 7.0 Update 2 or later
+|vCenter host   | 7.0 Update 2 or later
+|===
+
+[IMPORTANT]
+====
+You must ensure that the time on your ESXi hosts is synchronized before you install {product-title}. See link:https://docs.vmware.com/en/VMware-vSphere/6.7/com.vmware.vsphere.vcenterhost.doc/GUID-8756D419-A878-4AE0-9183-C6D5A91A8FB1.html[Edit Time Configuration for a Host] in the VMware documentation.
+====
+
+.Minimum supported vSphere version for VMware components
+|===
+|Component | Minimum supported versions |Description
+
+|Hypervisor
+|vSphere 7.0 Update 2 and later with virtual hardware version 15
+|This version is the minimum version that {op-system-first} supports. For more information about supported hardware on the latest version of {op-system-base-full} that is compatible with {op-system}, see link:https://catalog.redhat.com/hardware/search[Hardware] on the Red Hat Customer Portal.
+
+|Storage with in-tree drivers
+|vSphere 7.0 Update 2 and later
+|This plugin creates vSphere storage by using the in-tree storage drivers for vSphere included in {product-title}.
+
+|Optional: Networking (NSX-T)
+|vSphere 7.0 Update 2 and later
+|vSphere 7.0 Update 2 is required for {product-title}. For more information about the compatibility of NSX and {product-title}, see the Release Notes section of VMware's link:https://docs.vmware.com/en/VMware-NSX-Container-Plugin/index.html[NSX container plugin documentation].
+|===
+
+[IMPORTANT]
+====
+To ensure the best performance conditions for your cluster workloads that operate on {oci-first} and on the {ocvs-first} service, ensure volume performance units (VPUs) for your block volume are sized for your workloads.
+
+The following list provides some guidance in selecting the VPUs needed for specific performance needs:
+
+* Test or proof of concept environment: 100 GB, and 20 to 30 VPUs.
+* Base-production environment: 500 GB, and 60 VPUs.
+* Heavy-use production environment: More than 500 GB, and 100 or more VPUs.
+
+Consider allocating additional VPUs to give enough capacity for updates and scaling activities. See link:https://docs.oracle.com/en-us/iaas/Content/Block/Concepts/blockvolumeperformance.htm[Block Volume Performance Levels] in the Oracle documentation.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/preparing-to-install-on-vsphere.adoc
+// * storage/container_storage_interface/persistent-storage-csi-vsphere.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="vsphere-csi-driver-reqs_{context}"]
+= VMware vSphere CSI Driver Operator requirements
+
+To install the vSphere CSI Driver Operator, the following requirements must be met:
+
+* VMware vSphere version 7.0 Update 2 or later
+* vCenter 7.0 Update 2 or later
+* Virtual machines of hardware version 15 or later
+* No third-party vSphere CSI driver already installed in the cluster
+
+If a third-party vSphere CSI driver is present in the cluster, {product-title} does not overwrite it. The presence of a third-party vSphere CSI driver prevents {product-title} from updating to {product-title} 4.13 or later.
+
+[NOTE]
+====
+The VMware vSphere CSI Driver Operator is supported only on clusters deployed with `platform: vsphere` in the installation manifest.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* To remove a third-party vSphere CSI driver, see xref:../../storage/container_storage_interface/persistent-storage-csi-vsphere.adoc#persistent-storage-csi-vsphere-install-issues_persistent-storage-csi-vsphere[Removing a third-party vSphere CSI Driver].
+
+== Configuring the vSphere connection settings
+
+* **xref:../../installing/installing_vsphere/installing-vsphere-post-installation-configuration.adoc#installing-vsphere-post-installation-configuration[Updating the vSphere connection settings following an installation]**: For installations on vSphere using the Assisted Installer, you must manually update the vSphere connection settings to complete the installation. For installer-provisioned or user-provisioned infrastructure installations on vSphere, you can optionally validate or modify the vSphere connection settings at any time.
+
+== Uninstalling an installer-provisioned infrastructure installation of {product-title} on vSphere
+
+* **xref:../../installing/installing_vsphere/uninstalling-cluster-vsphere-installer-provisioned.adoc#uninstalling-cluster-vsphere-installer-provisioned[Uninstalling a cluster on vSphere that uses installer-provisioned infrastructure]**: You can remove a cluster that you deployed on VMware vSphere infrastructure that used installer-provisioned infrastructure.
+
+//# includes=_attributes/common-attributes,modules/installation-vsphere-infrastructure,modules/vmware-csi-driver-reqs

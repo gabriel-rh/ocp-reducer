@@ -1,0 +1,740 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="osdk-scorecard"]
+= Validating Operators using the scorecard tool
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: osdk-scorecard
+
+toc::[]
+
+As an Operator author, you can use the scorecard tool in the Operator SDK to do the following tasks:
+
+* Validate that your Operator project is free of syntax errors and packaged correctly
+* Review suggestions about ways you can improve your Operator
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-scorecard.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-about-scorecard_{context}"]
+= About the scorecard tool
+
+While the Operator SDK `bundle validate` subcommand can validate local bundle directories and remote bundle images for content and structure, you can use the `scorecard` command to run tests on your Operator based on a configuration file and test images. These tests are implemented within test images that are configured and constructed to be executed by the scorecard.
+
+The scorecard assumes it is run with access to a configured Kubernetes cluster, such as {product-title}. The scorecard runs each test within a pod, from which pod logs are aggregated and test results are sent to the console. The scorecard has built-in basic and Operator Lifecycle Manager (OLM) tests and also provides a means to execute custom test definitions.
+
+.Scorecard workflow
+. Create all resources required by any related custom resources (CRs) and the Operator
+. Create a proxy container in the deployment of the Operator to record calls to the API server and run tests
+. Examine parameters in the CRs
+
+The scorecard tests make no assumptions as to the state of the Operator being tested. Creating Operators and CRs for an Operators are beyond the scope of the scorecard itself. Scorecard tests can, however, create whatever resources they require if the tests are designed for resource creation.
+
+.`scorecard` command syntax
+[source,terminal]
+----
+$ operator-sdk scorecard <bundle_dir_or_image> [flags]
+----
+
+The scorecard requires a positional argument for either the on-disk path to
+your Operator bundle or the name of a bundle image.
+
+For further information about the flags, run:
+
+[source,terminal]
+----
+$ operator-sdk scorecard -h
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-scorecard.adoc
+
+[id="osdk-scorecard-config_{context}"]
+= Scorecard configuration
+
+The scorecard tool uses a configuration that allows you to configure internal plugins, as well as several global configuration options. Tests are driven by a configuration file named `config.yaml`, which is generated by the `make bundle` command, located in your `bundle/` directory:
+
+[source,terminal]
+----
+./bundle
+...
+└── tests
+    └── scorecard
+        └── config.yaml
+----
+
+.Example scorecard configuration file
+[source,yaml,subs="attributes+"]
+----
+kind: Configuration
+apiversion: scorecard.operatorframework.io/v1alpha3
+metadata:
+  name: config
+stages:
+- parallel: true
+  tests:
+  - image: quay.io/operator-framework/scorecard-test:v{osdk_ver}
+    entrypoint:
+    - scorecard-test
+    - basic-check-spec
+    labels:
+      suite: basic
+      test: basic-check-spec-test
+  - image: quay.io/operator-framework/scorecard-test:v{osdk_ver}
+    entrypoint:
+    - scorecard-test
+    - olm-bundle-validation
+    labels:
+      suite: olm
+      test: olm-bundle-validation-test
+----
+
+The configuration file defines each test that scorecard can execute. The
+following fields of the scorecard configuration file define the test as follows:
+
+[cols="3,7",options="header"]
+|===
+|Configuration field |Description
+
+|`image`
+|Test container image name that implements a test
+
+|`entrypoint`
+|Command and arguments that are invoked in the test image to execute a test
+
+|`labels`
+|Scorecard-defined or custom labels that select which tests to run
+|===
+
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-scorecard.adoc
+
+[id="osdk-scorecard-tests_{context}"]
+= Built-in scorecard tests
+
+The scorecard ships with pre-defined tests that are arranged into suites: the basic test suite and the Operator Lifecycle Manager (OLM) suite.
+
+[id="osdk-scorecard-basic-tests_{context}"]
+.Basic test suite
+[cols="3,7,3",options="header"]
+|===
+|Test |Description |Short name
+
+|Spec Block Exists
+|This test checks the custom resource (CR) created in the cluster to make sure that all CRs have a `spec` block.
+|`basic-check-spec-test`
+|===
+
+[id="osdk-scorecard-olm-tests_{context}"]
+.OLM test suite
+
+[cols="3,7,3",options="header"]
+|===
+|Test |Description |Short name
+
+|Bundle Validation
+|This test validates the bundle manifests found in the bundle that is passed into scorecard. If the bundle contents contain errors, then the test result output includes the validator log as well as error messages from the validation library.
+|`olm-bundle-validation-test`
+
+|Provided APIs Have Validation
+|This test verifies that the custom resource definitions (CRDs) for the provided CRs contain a validation section and that there is validation for each `spec` and `status` field detected in the CR.
+|`olm-crds-have-validation-test`
+
+|Owned CRDs Have Resources Listed
+|This test makes sure that the CRDs for each CR provided via the `cr-manifest` option have a `resources` subsection in the `owned` CRDs section of the ClusterServiceVersion (CSV). If the test detects used resources that are not listed in the resources section, it lists them in the suggestions at the end of the test. Users are required to fill out the resources section after initial code generation for this test to pass.
+|`olm-crds-have-resources-test`
+
+|Spec Fields With Descriptors
+|This test verifies that every field in the CRs `spec` sections has a corresponding descriptor listed in the CSV.
+|`olm-spec-descriptors-test`
+
+|Status Fields With Descriptors
+|This test verifies that every field in the CRs `status` sections have a corresponding descriptor listed in the CSV.
+|`olm-status-descriptors-test`
+|===
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-scorecard.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-scorecard-run_{context}"]
+= Running the scorecard tool
+
+A default set of Kustomize files are generated by the Operator SDK after running the `init` command. The default `bundle/tests/scorecard/config.yaml` file that is generated can be immediately used to run the scorecard tool against your Operator, or you can modify this file to your test specifications.
+
+.Prerequisites
+
+* Operator project generated by using the Operator SDK
+
+.Procedure
+
+. Generate or regenerate your bundle manifests and metadata for your Operator:
++
+[source,terminal]
+----
+$ make bundle
+----
++
+This command automatically adds scorecard annotations to your bundle metadata, which is used by the `scorecard` command to run tests.
+
+. Run the scorecard against the on-disk path to your Operator bundle or the name of a bundle image:
++
+[source,terminal]
+----
+$ operator-sdk scorecard <bundle_dir_or_image>
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-scorecard.adoc
+
+[id="osdk-scorecard-output_{context}"]
+= Scorecard output
+
+The `--output` flag for the `scorecard` command specifies the scorecard results output format: either `text` or `json`.
+
+.Example JSON output snippet
+[%collapsible]
+====
+[source,json,subs="attributes+"]
+----
+{
+  "apiVersion": "scorecard.operatorframework.io/v1alpha3",
+  "kind": "TestList",
+  "items": [
+    {
+      "kind": "Test",
+      "apiVersion": "scorecard.operatorframework.io/v1alpha3",
+      "spec": {
+        "image": "quay.io/operator-framework/scorecard-test:v{osdk_ver}",
+        "entrypoint": [
+          "scorecard-test",
+          "olm-bundle-validation"
+        ],
+        "labels": {
+          "suite": "olm",
+          "test": "olm-bundle-validation-test"
+        }
+      },
+      "status": {
+        "results": [
+          {
+            "name": "olm-bundle-validation",
+            "log": "time=\"2020-06-10T19:02:49Z\" level=debug msg=\"Found manifests directory\" name=bundle-test\ntime=\"2020-06-10T19:02:49Z\" level=debug msg=\"Found metadata directory\" name=bundle-test\ntime=\"2020-06-10T19:02:49Z\" level=debug msg=\"Getting mediaType info from manifests directory\" name=bundle-test\ntime=\"2020-06-10T19:02:49Z\" level=info msg=\"Found annotations file\" name=bundle-test\ntime=\"2020-06-10T19:02:49Z\" level=info msg=\"Could not find optional dependencies file\" name=bundle-test\n",
+            "state": "pass"
+          }
+        ]
+      }
+    }
+  ]
+}
+----
+====
+
+.Example text output snippet
+[%collapsible]
+====
+[source,text,subs="attributes+"]
+----
+--------------------------------------------------------------------------------
+Image:      quay.io/operator-framework/scorecard-test:v{osdk_ver}
+Entrypoint: [scorecard-test olm-bundle-validation]
+Labels:
+	"suite":"olm"
+	"test":"olm-bundle-validation-test"
+Results:
+	Name: olm-bundle-validation
+	State: pass
+	Log:
+		time="2020-07-15T03:19:02Z" level=debug msg="Found manifests directory" name=bundle-test
+		time="2020-07-15T03:19:02Z" level=debug msg="Found metadata directory" name=bundle-test
+		time="2020-07-15T03:19:02Z" level=debug msg="Getting mediaType info from manifests directory" name=bundle-test
+		time="2020-07-15T03:19:02Z" level=info msg="Found annotations file" name=bundle-test
+		time="2020-07-15T03:19:02Z" level=info msg="Could not find optional dependencies file" name=bundle-test
+----
+====
+
+[NOTE]
+====
+The output format spec matches the link:https://pkg.go.dev/github.com/operator-framework/api/pkg/apis/scorecard/v1alpha3#Test[`Test`] type layout.
+====
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-scorecard.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-scorecard-select-tests_{context}"]
+= Selecting tests
+
+Scorecard tests are selected by setting the `--selector` CLI flag to a set of label strings. If a selector flag is not supplied, then all of the tests within the scorecard configuration file are run.
+
+Tests are run serially with test results being aggregated by the scorecard and written to standard output, or _stdout_.
+
+.Procedure
+
+. To select a single test, for example `basic-check-spec-test`, specify the test by using the `--selector` flag:
++
+[source,terminal]
+----
+$ operator-sdk scorecard <bundle_dir_or_image> \
+    -o text \
+    --selector=test=basic-check-spec-test
+----
+
+. To select a suite of tests, for example `olm`, specify a label that is used by all of the OLM tests:
++
+[source,terminal]
+----
+$ operator-sdk scorecard <bundle_dir_or_image> \
+    -o text \
+    --selector=suite=olm
+----
+
+. To select multiple tests, specify the test names by using the `selector` flag using the following syntax:
++
+[source,terminal]
+----
+$ operator-sdk scorecard <bundle_dir_or_image> \
+    -o text \
+    --selector='test in (basic-check-spec-test,olm-bundle-validation-test)'
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-scorecard.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-scorecard-parallel_{context}"]
+= Enabling parallel testing
+
+As an Operator author, you can define separate stages for your tests using the scorecard configuration file. Stages run sequentially in the order they are defined in the configuration file. A stage contains a list of tests and a configurable `parallel` setting.
+
+By default, or when a stage explicitly sets `parallel` to `false`, tests in a stage are run sequentially in the order they are defined in the configuration file. Running tests one at a time is helpful to guarantee that no two tests interact and conflict with each other.
+
+However, if tests are designed to be fully isolated, they can be parallelized.
+
+.Procedure
+
+* To run a set of isolated tests in parallel, include them in the same stage and set `parallel` to `true`:
++
+[source,terminal,subs="attributes+"]
+----
+apiVersion: scorecard.operatorframework.io/v1alpha3
+kind: Configuration
+metadata:
+  name: config
+stages:
+- parallel: true <1>
+  tests:
+  - entrypoint:
+    - scorecard-test
+    - basic-check-spec
+    image: quay.io/operator-framework/scorecard-test:v{osdk_ver}
+    labels:
+      suite: basic
+      test: basic-check-spec-test
+  - entrypoint:
+    - scorecard-test
+    - olm-bundle-validation
+    image: quay.io/operator-framework/scorecard-test:v{osdk_ver}
+    labels:
+      suite: olm
+      test: olm-bundle-validation-test
+----
+<1> Enables parallel testing
++
+All tests in a parallel stage are executed simultaneously, and scorecard waits for all of them to finish before proceding to the next stage. This can make your tests run much faster.
+
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-scorecard.adoc
+
+[id="osdk-scorecard-custom-tests_{context}"]
+= Custom scorecard tests
+
+The scorecard tool can run custom tests that follow these mandated conventions:
+
+* Tests are implemented within a container image
+* Tests accept an entrypoint which include a command and arguments
+* Tests produce `v1alpha3` scorecard output in JSON format with no extraneous logging in the test output
+* Tests can obtain the bundle contents at a shared mount point of `/bundle`
+* Tests can access the Kubernetes API using an in-cluster client connection
+
+Writing custom tests in other programming languages is possible if the test
+image follows the above guidelines.
+
+The following example shows of a custom test image written in Go:
+
+.Example custom scorecard test
+[%collapsible]
+====
+[source,go]
+----
+// Copyright 2020 The Operator-SDK Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+
+	scapiv1alpha3 "github.com/operator-framework/api/pkg/apis/scorecard/v1alpha3"
+	apimanifests "github.com/operator-framework/api/pkg/manifests"
+)
+
+// This is the custom scorecard test example binary
+// As with the Redhat scorecard test image, the bundle that is under
+// test is expected to be mounted so that tests can inspect the
+// bundle contents as part of their test implementations.
+// The actual test is to be run is named and that name is passed
+// as an argument to this binary.  This argument mechanism allows
+// this binary to run various tests all from within a single
+// test image.
+
+const PodBundleRoot = "/bundle"
+
+func main() {
+	entrypoint := os.Args[1:]
+	if len(entrypoint) == 0 {
+		log.Fatal("Test name argument is required")
+	}
+
+	// Read the pod's untar'd bundle from a well-known path.
+	cfg, err := apimanifests.GetBundleFromDir(PodBundleRoot)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	var result scapiv1alpha3.TestStatus
+
+	// Names of the custom tests which would be passed in the
+	// `operator-sdk` command.
+	switch entrypoint[0] {
+	case CustomTest1Name:
+		result = CustomTest1(cfg)
+	case CustomTest2Name:
+		result = CustomTest2(cfg)
+	default:
+		result = printValidTests()
+	}
+
+	// Convert scapiv1alpha3.TestResult to json.
+	prettyJSON, err := json.MarshalIndent(result, "", "    ")
+	if err != nil {
+		log.Fatal("Failed to generate json", err)
+	}
+	fmt.Printf("%s\n", string(prettyJSON))
+
+}
+
+// printValidTests will print out full list of test names to give a hint to the end user on what the valid tests are.
+func printValidTests() scapiv1alpha3.TestStatus {
+	result := scapiv1alpha3.TestResult{}
+	result.State = scapiv1alpha3.FailState
+	result.Errors = make([]string, 0)
+	result.Suggestions = make([]string, 0)
+
+	str := fmt.Sprintf("Valid tests for this image include: %s %s",
+		CustomTest1Name,
+		CustomTest2Name)
+	result.Errors = append(result.Errors, str)
+	return scapiv1alpha3.TestStatus{
+		Results: []scapiv1alpha3.TestResult{result},
+	}
+}
+
+const (
+	CustomTest1Name = "customtest1"
+	CustomTest2Name = "customtest2"
+)
+
+// Define any operator specific custom tests here.
+// CustomTest1 and CustomTest2 are example test functions. Relevant operator specific
+// test logic is to be implemented in similarly.
+
+func CustomTest1(bundle *apimanifests.Bundle) scapiv1alpha3.TestStatus {
+	r := scapiv1alpha3.TestResult{}
+	r.Name = CustomTest1Name
+	r.State = scapiv1alpha3.PassState
+	r.Errors = make([]string, 0)
+	r.Suggestions = make([]string, 0)
+	almExamples := bundle.CSV.GetAnnotations()["alm-examples"]
+	if almExamples == "" {
+		fmt.Println("no alm-examples in the bundle CSV")
+	}
+
+	return wrapResult(r)
+}
+
+func CustomTest2(bundle *apimanifests.Bundle) scapiv1alpha3.TestStatus {
+	r := scapiv1alpha3.TestResult{}
+	r.Name = CustomTest2Name
+	r.State = scapiv1alpha3.PassState
+	r.Errors = make([]string, 0)
+	r.Suggestions = make([]string, 0)
+	almExamples := bundle.CSV.GetAnnotations()["alm-examples"]
+	if almExamples == "" {
+		fmt.Println("no alm-examples in the bundle CSV")
+	}
+	return wrapResult(r)
+}
+
+func wrapResult(r scapiv1alpha3.TestResult) scapiv1alpha3.TestStatus {
+	return scapiv1alpha3.TestStatus{
+		Results: []scapiv1alpha3.TestResult{r},
+	}
+}
+----
+====
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/osdk-scorecard-about,modules/osdk-scorecard-config,modules/osdk-scorecard-tests,modules/osdk-scorecard-run,modules/osdk-scorecard-output,modules/osdk-scorecard-select-tests,modules/osdk-scorecard-parallel,modules/osdk-scorecard-custom-tests

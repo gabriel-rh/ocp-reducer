@@ -1,0 +1,769 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="distr-tracing-otel-configuring"]
+= Configuring and deploying the {OTELShortName}
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: distr-tracing-otel-configuring
+
+toc::[]
+
+The {OTELName} Operator uses a custom resource definition (CRD) file that defines the architecture and configuration settings to be used when creating and deploying the {OTELShortName} resources. You can install the default configuration or modify the file.
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+-distr_tracing_otel/distr-tracing-otel-configuring.adoc
+////
+:_mod-docs-content-type: REFERENCE
+[id="distr-tracing-config-otel-collector_{context}"]
+= OpenTelemetry Collector configuration options
+
+The OpenTelemetry Collector consists of three components that access telemetry data:
+
+Receivers:: A receiver, which can be push or pull based, is how data gets into the Collector. Generally, a receiver accepts data in a specified format, translates it into the internal format, and passes it to processors and exporters defined in the applicable pipelines. By default, no receivers are configured. One or more receivers must be configured. Receivers may support one or more data sources.
+
+Processors:: Optional. Processors run through the data between it is received and exported. By default, no processors are enabled. Processors must be enabled for every data source. Not all processors support all data sources. Depending on the data source, multiple processors might be enabled. Note that the order of processors matters.
+
+Exporters:: An exporter, which can be push or pull based, is how you send data to one or more back ends or destinations. By default, no exporters are configured. One or more exporters must be configured. Exporters can support one or more data sources. Exporters might be used with their default settings, but many exporters require configuration to specify at least the destination and security settings.
+
+You can define multiple instances of components in a custom resource YAML file. When configured, these components must be enabled through pipelines defined in the `spec.config.service` section of the YAML file. As a best practice, only enable the components that you need.
+
+.Example of the OpenTelemetry Collector custom resource file
+[source,yaml]
+----
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: cluster-collector
+  namespace: tracing-system
+spec:
+  mode: deployment
+  ports:
+  - name: promexporter
+    port: 8889
+    protocol: TCP
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+    processors:
+    exporters:
+      jaeger:
+        endpoint: jaeger-production-collector-headless.tracing-system.svc:14250
+        tls:
+          ca_file: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+      prometheus:
+        endpoint: 0.0.0.0:8889
+        resource_to_telemetry_conversion:
+          enabled: true # by default resource attributes are dropped
+    service: <1>
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: []
+          exporters: [jaeger]
+        metrics:
+          receivers: [otlp]
+          processors: []
+          exporters: [prometheus]
+----
+<1> If a component is configured but not defined in the `service` section, the component is not enabled.
+
+.Parameters used by the Operator to define the OpenTelemetry Collector
+[options="header"]
+[cols="l, a, a, a"]
+|===
+|Parameter |Description |Values |Default
+|receivers:
+|A receiver is how data gets into the Collector. By default, no receivers are configured. There must be at least one enabled receiver for a configuration to be considered valid. Receivers are enabled by being added to a pipeline.
+|`otlp`, `jaeger`, `zipkin`
+|None
+
+|processors:
+|Processors run through the data between it is received and exported. By default, no processors are enabled.
+|
+|None
+
+|exporters:
+|An exporter sends data to one or more back ends or destinations. By default, no exporters are configured. There must be at least one enabled exporter for a configuration to be considered valid. Exporters are enabled by being added to a pipeline. Exporters might be used with their default settings, but many require configuration to specify at least the destination and security settings.
+|`otlp`, `otlphttp`, `jaeger`, `logging`, `prometheus`
+|None
+
+|service:
+  pipelines:
+|Components are enabled by adding them to a pipeline under `services.pipeline`.
+|
+|
+
+|service:
+  pipelines:
+    traces:
+      receivers:
+|You enable receivers for tracing by adding them under `service.pipelines.traces`.
+|
+|None
+
+|service:
+  pipelines:
+    traces:
+      processors:
+|You enable processors for tracing by adding them under `service.pipelines.traces`.
+|
+|None
+
+|service:
+  pipelines:
+    traces:
+      exporters:
+|You enable exporters for tracing by adding them under `service.pipelines.traces`.
+|
+|None
+
+|service:
+  pipelines:
+    metrics:
+      receivers:
+|You enable receivers for metrics by adding them under `service.pipelines.metrics`.
+|
+|None
+
+|service:
+  pipelines:
+    metrics:
+      processors:
+|You enable processors for metircs by adding them under `service.pipelines.metrics`.
+|
+|None
+
+|service:
+  pipelines:
+    metrics:
+      exporters:
+|You enable exporters for metrics by adding them under `service.pipelines.metrics`.
+|
+|None
+|===
+
+[id="otel-collector-components_{context}"]
+== OpenTelemetry Collector components
+
+[id="receivers_{context}"]
+=== Receivers
+
+[id="otlp-receiver_{context}"]
+==== OTLP Receiver
+
+The OTLP receiver ingests data using the OpenTelemetry protocol (OTLP).
+
+* Support level: link:https://access.redhat.com/support/offerings/techpreview[Technology Preview]
+* Supported signals: traces, metrics
+
+.OpenTelemetry Collector custom resource with an enabled OTLP receiver
+[source,yaml]
+----
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317 <1>
+            tls: <2>
+              ca_file: ca.pem
+              cert_file: cert.pem
+              key_file: key.pem
+              client_ca_file: client.pem <3>
+              reload_interval: 1h <4>
+          http:
+            endpoint: 0.0.0.0:4318 <5>
+            tls: <6>
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+        metrics:
+          receivers: [otlp]
+----
+<1> The OTLP gRPC endpoint. If omitted, the default `+0.0.0.0:4317+` is used.
+<2> The server-side TLS configuration. Defines paths to TLS certificates. If omitted, TLS is disabled.
+<3> The path to the TLS certificate at which the server verifies a client certificate. This sets the value of `ClientCAs` and `ClientAuth` to `RequireAndVerifyClientCert` in the `TLSConfig`. For more information, see the link:https://godoc.org/crypto/tls#Config[`Config` of the Golang TLS package].
+<4> Specifies the time interval at which the certificate is reloaded. If the value is not set, the certificate is never reloaded.  `reload_interval` accepts a string containing valid units of time such as `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`.
+<5> The OTLP HTTP endpoint. The default value is `+0.0.0.0:4318+`.
+<6> The server-side TLS configuration. For more information, see `grpc` protocol configuration section.
+
+[id="jaeger-receiver_{context}"]
+==== Jaeger Receiver
+
+The Jaeger receiver ingests data in Jaeger formats.
+
+* Support level: link:https://access.redhat.com/support/offerings/techpreview[Technology Preview]
+* Supported signals: traces
+
+.OpenTelemetry Collector custom resource with an enabled Jaeger receiver
+[source,yaml]
+----
+  config: |
+    receivers:
+      jaeger:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:14250 <1>
+          thrift_http:
+            endpoint: 0.0.0.0:14268 <2>
+          thrift_compact:
+            endpoint: 0.0.0.0:6831 <3>
+          thrift_binary:
+            endpoint: 0.0.0.0:6832 <4>
+          tls: <5>
+
+    service:
+      pipelines:
+        traces:
+          receivers: [jaeger]
+----
+<1> The Jaeger gRPC endpoint. If omitted, the default `+0.0.0.0:14250+` is used.
+<2> The Jaeger Thrift HTTP endpoint. If omitted, the default `+0.0.0.0:14268+` is used.
+<3> The Jaeger Thrift Compact endpoint. If omitted, the default `+0.0.0.0:6831+` is used.
+<4> The Jaeger Thrift Binary endpoint. If omitted, the default `+0.0.0.0:6832+` is used.
+<5> The TLS server side configuration. See the OTLP receiver configuration section for more details.
+
+[id="zipkin-receiver_{context}"]
+==== Zipkin Receiver
+
+The Zipkin receiver ingests data in the Zipkin v1 and v2 formats.
+
+* Support level: link:https://access.redhat.com/support/offerings/techpreview[Technology Preview]
+* Supported signals: traces
+
+.OpenTelemetry Collector custom resource with enabled Zipkin receiver
+[source,yaml]
+----
+  config: |
+    receivers:
+      zipkin:
+        endpoint: 0.0.0.0:9411 <1>
+        tls: <2>
+
+    service:
+      pipelines:
+        traces:
+          receivers: [zipkin]
+----
+<1> The Zipkin HTTP endpoint. If omitted, the default `+0.0.0.0:9411+` is used.
+<2> The TLS server side configuration. See the OTLP receiver configuration section for more details.
+
+[id="processors_{context}"]
+=== Processors
+
+
+[id="batch-processor_{context}"]
+==== Batch processor
+
+The batch processor batches the data to reduce the number of outgoing connections needed to transfer the telemetry information.
+
+* Support level: link:https://access.redhat.com/support/offerings/techpreview[Technology Preview]
+* Supported signals: traces, metrics
+
+.Example of the OpenTelemetry Collector custom resource when using the batch processor
+[source,yaml]
+----
+  config: |
+    processor:
+      batch:
+        timeout: 5s
+        send_batch_max_size: 10000
+    service:
+      pipelines:
+        traces:
+          processors: [batch]
+        metrics:
+          processors: [batch]
+----
+
+.Parameters used by the batch processor
+[cols="3",options="header"]
+|===
+|Parameter |Description |Default
+
+| `timeout`
+| Sends the batch after a specific time duration, irrespective of its size.
+| 200ms
+
+| `send_batch_size`
+| Sends the batch of telemetry data after the specified number of spans or metrics.
+| 8192
+
+| `send_batch_max_size`
+| The maximum allowable size of the batch. Must be equal or greater than `send_batch_size`.
+| 0
+
+| `metadata_keys`
+| When activated, a batcher instance is created for each unique set of values found in the `client.Metadata`.
+| []
+
+| `metadata_cardinality_limit`
+| When the `metadata_keys` are populated, this configuration restricts the number of distinct metadata key-value combinations processed throughout the duration of the process.
+| 1000
+|===
+
+[id="resource-detection-processor_{context}"]
+==== Resource Detection processor
+
+The Resource Detection processor is designed to identify host resource details in alignment with OpenTelemetry's resource semantic standards. Using this detected information, it can add or replace the resource values in telemetry data.
+
+* Support level: link:https://access.redhat.com/support/offerings/techpreview[Technology Preview]
+* Supported signals: traces, metrics
+
+.{product-title} permissions required for the Resource Detection processor
+[source,yaml]
+----
+kind: ClusterRole
+metadata:
+  name: otel-collector
+rules:
+- apiGroups: ["config.openshift.io"]
+  resources: ["infrastructures", "infrastructures/status"]
+  verbs: ["get", "watch", "list"]
+----
+
+.OpenTelemetry Collector using the Resource Detection processor
+[source,yaml]
+----
+  config: |
+    processor:
+      resourcedetection:
+        detectors: [openshift]
+        override: true
+    service:
+      pipelines:
+        traces:
+          processors: [resourcedetection]
+        metrics:
+          processors: [resourcedetection]
+----
+
+[id="exporters_{context}"]
+=== Exporters
+
+[id="otlp-exporter_{context}"]
+==== OTLP exporter
+
+The OTLP gRPC exporter exports data using the OpenTelemetry protocol (OTLP).
+
+* Support level: link:https://access.redhat.com/support/offerings/techpreview[Technology Preview]
+* Supported signals: traces, metrics
+
+.OpenTelemetry Collector custom resource with an enabled OTLP exporter
+[source,yaml]
+----
+  config: |
+    exporters:
+      otlp:
+        endpoint: tempo-ingester:4317 <1>
+        tls: <2>
+          ca_file: ca.pem
+          cert_file: cert.pem
+          key_file: key.pem
+          insecure: false <3>
+          insecure_skip_verify: false <4>
+          reload_interval: 1h <5>
+          server_name_override: <name> <6>
+        headers: <7>
+          X-Scope-OrgID: "dev"
+    service:
+      pipelines:
+        traces:
+          exporters: [otlp]
+        metrics:
+          exporters: [otlp]
+----
+<1> The OTLP gRPC endpoint. If the `+https://+` scheme is used, then client transport security is enabled and overrides the `insecure` setting in the `tls`.
+<2> The client side TLS configuration. Defines paths to TLS certificates.
+<3> Disables client transport security when set to `true`. The default value is `false` by default.
+<4> Skips verifying the certificate when set to `true`. The default value is `false`.
+<5> Specifies the time interval at which the certificate is reloaded. If the value is not set, the certificate is never reloaded. `reload_interval` accepts a string containing valid units of time such as `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`.
+<6> Overrides the virtual host name of authority such as the authority header field in requests. You can use this for testing.
+<7> Headers are sent for every request performed during an established connection.
+
+[id="otlp-http-exporter_{context}"]
+==== OTLP HTTP exporter
+
+The OTLP HTTP exporter exports data using the OpenTelemetry protocol (OTLP).
+
+* Support level: link:https://access.redhat.com/support/offerings/techpreview[Technology Preview]
+* Supported signals: traces, metrics
+
+.OpenTelemetry Collector custom resource with an enabled OTLP exporter
+[source,yaml]
+----
+  config: |
+    exporters:
+      otlphttp:
+        endpoint: http://tempo-ingester:4318 <1>
+        tls: <2>
+        headers: <3>
+          X-Scope-OrgID: "dev"
+
+    service:
+      pipelines:
+        traces:
+          exporters: [otlphttp]
+        metrics:
+          expoters: [otlphttp]
+----
+<1> The OTLP HTTP endpoint. If the `+https://+` scheme is used, then client transport security is enabled and overrides the `insecure` setting in the `tls`.
+<2> The client side TLS configuration. Defines paths to TLS certificates.
+<3> Headers are sent in every HTTP request.
+
+[id="jaeger-exporter_{context}"]
+==== Jaeger exporter
+
+The Jaeger exporter exports data using the Jaeger proto format through gRPC.
+
+* Support level: link:https://access.redhat.com/support/offerings/techpreview[Technology Preview]
+* Supported signals: traces
+
+.OpenTelemetry Collector custom resource with enabled Jaeger exporter
+[source,yaml]
+----
+  config: |
+    exporters:
+      jaeger:
+        endpoint: jaeger-all-in-one:14250 <1>
+        tls: <2>
+    service:
+      pipelines:
+        traces:
+          exporters: [jaeger]
+----
+<1> The Jaeger gRPC endpoint.
+<2> The client side TLS configuration. Defines paths to TLS certificates.
+
+[id="logging-exporter_{context}"]
+==== Logging exporter
+
+The Logging exporter prints data to the standard output.
+
+* Support level: link:https://access.redhat.com/support/offerings/techpreview[Technology Preview]
+* Supported signals: traces, metrics
+
+.OpenTelemetry Collector custom resource with an enabled Logging exporter
+[source,yaml]
+----
+  config: |
+    exporters:
+      logging:
+        verbosity: detailed <1>
+    service:
+      pipelines:
+        traces:
+          exporters: [logging]
+        metrics:
+          exporters: [logging]
+----
+<1> Verbosity of the logging export: `detailed` or `normal` or `basic`. When set to `detailed`, pipeline data is verbosely logged. Defaults to `normal`.
+
+[id="prometheus-exporter_{context}"]
+==== Prometheus exporter
+
+The Prometheus exporter exports data using the Prometheus or OpenMetrics formats.
+
+* Support level: link:https://access.redhat.com/support/offerings/techpreview[Technology Preview]
+* Supported signals: metrics
+
+.OpenTelemetry Collector custom resource with an enabled Prometheus exporter
+[source,yaml]
+----
+  ports:
+  - name: promexporter <1>
+    port: 8889
+    protocol: TCP
+  config: |
+    exporters:
+      prometheus:
+        endpoint: 0.0.0.0:8889 <2>
+        tls: <3>
+          ca_file: ca.pem
+          cert_file: cert.pem
+          key_file: key.pem
+        namespace: prefix <4>
+        const_labels: <5>
+          label1: value1
+        enable_open_metrics: true <6>
+        resource_to_telemetry_conversion: <7>
+          enabled: true
+        metric_expiration: 180m <8>
+    service:
+      pipelines:
+        metrics:
+          exporters: [prometheus]
+----
+<1> Exposes the Prometheus port from the collector pod and service. You can enable scraping of metrics by Prometheus by using the port name in `ServiceMonitor` or `PodMonitor` custom resource.
+<2> The network endpoint where the metrics are exposed.
+<3> The server-side TLS configuration. Defines paths to TLS certificates.
+<4> If set, exports metrics under the provided value. No default.
+<5> Key-value pair labels that are applied for every exported metric. No default.
+<6> If `true`, metrics are exported using the OpenMetrics format. Exemplars are only exported in the OpenMetrics format and only for histogram and monotonic sum metrics such as `counter`. Disabled by default.
+<7> If `enabled` is `true`, all the resource attributes are converted to metric labels by default. Disabled by default.
+<8> Defines how long metrics are exposed without updates. The default is `5m`.
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module is included in the following assemblies:
+- distr_tracing_install/distributed-tracing-deploying-otel.adoc
+////
+:_mod-docs-content-type: REFERENCE
+[id="distr-tracing-send-metrics-monitoring-stack_{context}"]
+= Sending metrics to the monitoring stack
+
+You can configure the monitoring stack to scrape OpenTelemetry Collector metrics endpoints and to remove duplicated labels that the monitoring stack has added during scraping.
+
+.Sample `PodMonitor` custom resource (CR) that configures the monitoring stack to scrape Collector metrics
+[source,yaml]
+----
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: otel-collector
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: otel-collector
+  podMetricsEndpoints:
+  - port: metrics <1>
+  - port: promexporter <2>
+    relabelings:
+    - action: labeldrop
+      regex: pod
+    - action: labeldrop
+      regex: container
+    - action: labeldrop
+      regex: endpoint
+    metricRelabelings:
+    - action: labeldrop
+      regex: instance
+    - action: labeldrop
+      regex: job
+----
+<1> The name of the internal metrics port for the OpenTelemetry Collector. This port name is always `metrics`.
+<2> The name of the Prometheus exporter port for the OpenTelemetry Collector. This port name is defined in the `.spec.ports` section of the `OpenTelemetryCollector` CR.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_deploy-otel"]
+== Additional resources
+* xref:../../monitoring/enabling-monitoring-for-user-defined-projects.adoc#enabling-monitoring-for-user-defined-projects[Enabling monitoring for user-defined projects]
+
+//# includes=_attributes/common-attributes,modules/distr-tracing-otel-config-collector,modules/distr-tracing-otel-config-send-metrics-monitoring-stack

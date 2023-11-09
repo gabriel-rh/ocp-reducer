@@ -1,0 +1,1969 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ossm-federation"]
+= Connecting service meshes
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: federation
+
+toc::[]
+
+_Federation_ is a deployment model that lets you share services and workloads between separate meshes managed in distinct administrative domains.
+
+// The following include statements pull in the module files that comprise the assembly.
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+- ossm-federation.adoc
+////
+
+:_mod-docs-content-type: CONCEPT
+[id="ossm-federation-overview_{context}"]
+= Federation overview
+
+Federation is a set of features that let you connect services between separate meshes, allowing the use of {SMProductShortName} features such as authentication, authorization, and traffic management across multiple, distinct administrative domains.
+
+Implementing a federated mesh lets you run, manage, and observe a single service mesh running across multiple OpenShift clusters. {SMProductName} federation takes an opinionated approach to a multi-cluster implementation of Service Mesh that assumes _minimal_ trust between meshes.
+
+Service Mesh federation assumes that each mesh is managed individually and retains its own administrator. The default behavior is that no communication is permitted and no information is shared between meshes. The sharing of information between meshes is on an explicit opt-in basis. Nothing is shared in a federated mesh unless it has been configured for sharing. Support functions such as certificate generation, metrics and trace collection remain local in their respective meshes.
+
+You configure the `ServiceMeshControlPlane` on each service mesh to create ingress and egress gateways specifically for the federation, and to specify the trust domain for the mesh.
+
+Federation also involves the creation of additional federation files. The following resources are used to configure the federation between two or more meshes.
+
+* A *ServiceMeshPeer* resource declares the federation between a pair of service meshes.
+
+* An *ExportedServiceSet* resource declares that one or more services from the mesh are available for use by a peer mesh.
+
+* An *ImportedServiceSet* resource declares which services exported by a peer mesh will be imported into the mesh.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+[id="ossm-federation-features_{context}"]
+= Federation features
+
+[role="_abstract"]
+Features of the {SMProductName} federated approach to joining meshes include the following:
+
+* Supports common root certificates for each mesh.
+* Supports different root certificates for each mesh.
+//* Supports rotating any mesh’s intermediate certificate while preserving the federation connection.
+* Mesh administrators must manually configure certificate chains, service discovery endpoints, trust domains, etc for meshes outside of the Federated mesh.
+* Only export/import the services that you want to share between meshes.
+** Defaults to not sharing information about deployed workloads with other meshes in the federation. A service can be *exported* to make it visible to other meshes and allow requests from workloads outside of its own mesh.
+** A service that has been exported can be *imported* to another mesh, enabling workloads on that mesh to send requests to the imported service.
+* Encrypts communication between meshes at all times.
+//* Supports configuring failover from a service that is locally deployed to a service that is deployed in another mesh in the federation.
+* Supports configuring load balancing across workloads deployed locally and workloads that are deployed in another mesh in the federation.
+
+When a mesh is joined to another mesh it can do the following:
+
+* Provide trust details about itself to the federated mesh.
+* Discover trust details about the federated mesh.
+* Provide information to the federated mesh about its own exported services.
+* Discover information about services exported by the federated mesh.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+[id="ossm-federation-security_{context}"]
+= Federation security
+
+Red Hat OpenShift Service Mesh federation takes an opinionated approach to a multi-cluster implementation of Service Mesh that assumes minimal trust between meshes. Data security is built in as part of the federation features.
+
+* Each mesh is considered to be a unique tenant, with a unique administration.
+* You create a unique trust domain for each mesh in the federation.
+* Traffic between the federated meshes is automatically encrypted using mutual Transport Layer Security (mTLS).
+* The Kiali graph only displays your mesh and services that you have imported. You cannot see the other mesh or services that have not been imported into your mesh.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+[id="ossm-federation-limitations_{context}"]
+= Federation limitations
+
+The {SMProductName} federated approach to joining meshes has the following limitations:
+
+* Federation of meshes is not supported on OpenShift Dedicated.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+[id="ossm-federation-prerequisites_{context}"]
+= Federation prerequisites
+
+The {SMProductName} federated approach to joining meshes has the following prerequisites:
+
+* Two or more {product-title} 4.6 or above clusters.
+* Federation was introduced in {SMProductName} 2.1 or later. You must have the {SMProductName} 2.1 or later Operator installed on each mesh that you want to federate.
+* You must have a version 2.1 or later `ServiceMeshControlPlane` deployed on each mesh that you want to federate.
+* You must configure the load balancers supporting the services associated with the federation gateways to support raw TLS traffic. Federation traffic consists of HTTPS for discovery and raw encrypted TCP for service traffic.
+* Services that you want to expose to another mesh should be deployed before you can export and import them. However, this is not a strict requirement. You can specify service names that do not yet exist for export/import. When you deploy the services named in the `ExportedServiceSet` and `ImportedServiceSet` they will be automatically made available for export/import.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+[id="ossm-federation-planning_{context}"]
+= Planning your mesh federation
+
+Before you start configuring your mesh federation, you should take some time to plan your implementation.
+
+* How many meshes do you plan to join in a federation? You probably want to start with a limited number of meshes, perhaps two or three.
+* What naming convention do you plan to use for each mesh? Having a pre-defined naming convention will help with configuration and troubleshooting. The examples in this documentation use different colors for each mesh. You should decide on a naming convention that will help you determine who owns and manages each mesh, as well as the following federation resources:
+** Cluster names
+** Cluster network names
+** Mesh names and namespaces
+** Federation ingress gateways
+** Federation egress gateways
+** Security trust domains
++
+[NOTE]
+====
+Each mesh in the federation must have its own unique trust domain.
+====
++
+* Which services from each mesh do you plan to export to the federated mesh? Each service can be exported individually, or you can specify labels or use wildcards.
+** Do you want to use aliases for the service namespaces?
+** Do you want to use aliases for the exported services?
+* Which exported services does each mesh plan to import? Each mesh only imports the services that it needs.
+** Do you want to use aliases for the imported services?
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+[id="ossm-federation-across-clusters_{context}"]
+= Mesh federation across clusters
+
+To connect one instance of the OpenShift Service Mesh with one running in a different cluster, the procedure is not much different as when connecting two meshes deployed in the same cluster. However, the ingress gateway of one mesh must be reachable from the other mesh. One way of ensuring this is to configure the gateway service as a `LoadBalancer` service if the cluster supports this type of service.
+
+The service must be exposed through a load balancer that operates at Layer4 of the OSI model.
+
+== Exposing the federation ingress on clusters running on bare metal
+If the cluster runs on bare metal and fully supports `LoadBalancer` services, the IP address found in the `.status.loadBalancer.ingress.ip` field of the ingress gateway `Service` object should be specified as one of the entries in the `.spec.remote.addresses` field of the `ServiceMeshPeer` object.
+
+If the cluster does not support `LoadBalancer` services, using a `NodePort` service could be an option if the nodes are accessible from the cluster running the other mesh. In the `ServiceMeshPeer` object, specify the IP addresses of the nodes in the `.spec.remote.addresses` field and the service's node ports in the `.spec.remote.discoveryPort` and `.spec.remote.servicePort` fields.
+
+== Exposing the federation ingress on clusters running on {ibmpowerProductName} and {ibmzProductName}
+If the cluster runs on {ibmpowerProductName} or {ibmzProductName} infrastructure and fully supports `LoadBalancer` services, the IP address found in the `.status.loadBalancer.ingress.ip` field of the ingress gateway `Service` object should be specified as one of the entries in the `.spec.remote.addresses` field of the `ServiceMeshPeer` object.
+
+If the cluster does not support `LoadBalancer` services, using a `NodePort` service could be an option if the nodes are accessible from the cluster running the other mesh. In the `ServiceMeshPeer` object, specify the IP addresses of the nodes in the `.spec.remote.addresses` field and the service's node ports in the `.spec.remote.discoveryPort` and `.spec.remote.servicePort` fields.
+
+== Exposing the federation ingress on Amazon Web Services (AWS)
+By default, LoadBalancer services in clusters running on AWS do not support L4 load balancing. In order for {SMProductName} federation to operate correctly, the following annotation must be added to the ingress gateway service:
+
+service.beta.kubernetes.io/aws-load-balancer-type: nlb
+
+The Fully Qualified Domain Name found in the `.status.loadBalancer.ingress.hostname` field of the ingress gateway `Service` object should be specified as one of the entries in the `.spec.remote.addresses` field of the `ServiceMeshPeer` object.
+
+== Exposing the federation ingress on Azure
+On Microsoft Azure, merely setting the service type to `LoadBalancer` suffices for mesh federation to operate correctly.
+
+The IP address found in the `.status.loadBalancer.ingress.ip` field of the ingress gateway `Service` object should be specified as one of the entries in the `.spec.remote.addresses` field of the `ServiceMeshPeer` object.
+
+== Exposing the federation ingress on Google Cloud Platform (GCP)
+On Google Cloud Platform, merely setting the service type to `LoadBalancer` suffices for mesh federation to operate correctly.
+
+The IP address found in the `.status.loadBalancer.ingress.ip` field of the ingress gateway `Service` object should be specified as one of the entries in the `.spec.remote.addresses` field of the `ServiceMeshPeer` object.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+[id="con-my-concept-module-a_{context}"]
+= Federation implementation checklist
+
+Federating services meshes involves the following activities:
+
+* [ ] Configure networking between the clusters that you are going to federate.
+
+** [ ] Configure the load balancers supporting the services associated with the federation gateways to support raw TLS traffic.
+
+* [ ] Installing the {SMProductName} version 2.1 or later Operator in each of your clusters.
+
+* [ ] Deploying a version 2.1 or later `ServiceMeshControlPlane` to each of your clusters.
+
+* [ ] Configuring the SMCP for federation for each mesh that you want to federate:
+
+** [ ] Create a federation egress gateway for each mesh you are going to federate with.
+** [ ] Create a federation ingress gateway for each mesh you are going to federate with.
+** [ ] Configure a unique trust domain.
+
+* [ ] Federate two or more meshes by creating a `ServiceMeshPeer` resource for each mesh pair.
+
+* [ ] Export services by creating an `ExportedServiceSet` resource to make services available from one mesh to a peer mesh.
+
+* [ ] Import services by creating an `ImportedServiceSet` resource to import services shared by a mesh peer.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+:_mod-docs-content-type: PROCEDURE
+[id="ossm-federation-config-smcp_{context}"]
+= Configuring a {SMProductShortName} control plane for federation
+
+Before a mesh can be federated, you must configure the `ServiceMeshControlPlane` for mesh federation. Because all meshes that are members of the federation are equal, and each mesh is managed independently, you must configure the SMCP for _each_ mesh that will participate in the federation.
+
+In the following example, the administrator for the `red-mesh` is configuring the SMCP for federation with both the `green-mesh` and the `blue-mesh`.
+
+.Sample SMCP for red-mesh
+[source,yaml, subs="attributes,verbatim"]
+----
+apiVersion: maistra.io/v2
+kind: ServiceMeshControlPlane
+metadata:
+  name: red-mesh
+  namespace: red-mesh-system
+spec:
+  version: v{MaistraVersion}
+  runtime:
+    defaults:
+      container:
+        imagePullPolicy: Always
+  gateways:
+    additionalEgress:
+      egress-green-mesh:
+        enabled: true
+        requestedNetworkView:
+        - green-network
+        routerMode: sni-dnat
+        service:
+          metadata:
+            labels:
+              federation.maistra.io/egress-for: egress-green-mesh
+          ports:
+          - port: 15443
+            name: tls
+          - port: 8188
+            name: http-discovery  #note HTTP here
+      egress-blue-mesh:
+        enabled: true
+        requestedNetworkView:
+        - blue-network
+        routerMode: sni-dnat
+        service:
+          metadata:
+            labels:
+              federation.maistra.io/egress-for: egress-blue-mesh
+          ports:
+          - port: 15443
+            name: tls
+          - port: 8188
+            name: http-discovery  #note HTTP here
+    additionalIngress:
+      ingress-green-mesh:
+        enabled: true
+        routerMode: sni-dnat
+        service:
+          type: LoadBalancer
+          metadata:
+            labels:
+              federation.maistra.io/ingress-for: ingress-green-mesh
+          ports:
+          - port: 15443
+            name: tls
+          - port: 8188
+            name: https-discovery  #note HTTPS here
+      ingress-blue-mesh:
+        enabled: true
+        routerMode: sni-dnat
+        service:
+          type: LoadBalancer
+          metadata:
+            labels:
+              federation.maistra.io/ingress-for: ingress-blue-mesh
+          ports:
+          - port: 15443
+            name: tls
+          - port: 8188
+            name: https-discovery  #note HTTPS here
+  security:
+    trust:
+      domain: red-mesh.local
+----
+
+
+.ServiceMeshControlPlane federation configuration parameters
+[options="header"]
+[cols="l, a, a, a"]
+|===
+|Parameter |Description |Values |Default value
+|spec:
+  cluster:
+    name:
+|Name of the cluster. You are not required to specify a cluster name, but it is helpful for troubleshooting.
+|String
+|N/A
+
+|spec:
+  cluster:
+    network:
+|Name of the cluster network. You are not required to specify a name for the network, but it is helpful for configuration and troubleshooting.
+|String
+|N/A
+|===
+
+== Understanding federation gateways
+
+You use a *gateway* to manage inbound and outbound traffic for your mesh, letting you specify which traffic you want to enter or leave the mesh.
+
+You use ingress and egress gateways to manage traffic entering and leaving the service mesh (North-South traffic). When you create a federated mesh, you create additional ingress/egress gateways, to facilitate service discovery between federated meshes, communication between federated meshes, and to manage traffic flow between service meshes (East-West traffic).
+
+To avoid naming conflicts between meshes, you must create separate egress and ingress gateways for each mesh. For example, `red-mesh` would have separate egress gateways for traffic going to `green-mesh` and `blue-mesh`.
+
+.Federation gateway parameters
+[options="header"]
+[cols="l, a, a, a"]
+|===
+|Parameter |Description |Values |Default value
+|spec:
+  gateways:
+    additionalEgress:
+      <egressName>:
+|Define an additional egress gateway for _each_ mesh peer in the federation.
+|
+|
+
+|spec:
+  gateways:
+    additionalEgress:
+      <egressName>:
+        enabled:
+|This parameter enables or disables the federation egress.
+|`true`/`false`
+|`true`
+
+|spec:
+  gateways:
+    additionalEgress:
+      <egressName>:
+        requestedNetworkView:
+|Networks associated with exported services.
+|Set to the value of `spec.cluster.network` in the SMCP for the mesh, otherwise use <ServiceMeshPeer-name>-network. For example, if the `ServiceMeshPeer` resource for that mesh is named `west`, then the network would be named `west-network`.
+|
+
+|spec:
+  gateways:
+    additionalEgress:
+      <egressName>:
+        routerMode:
+|The router mode to be used by the gateway.
+|`sni-dnat`
+|
+
+|spec:
+  gateways:
+    additionalEgress:
+      <egressName>:
+        service:
+          metadata:
+            labels:
+              federation.maistra.io/egress-for:
+|Specify a unique label for the gateway to prevent federated traffic from flowing through the cluster's default system gateways.
+|
+|
+
+|spec:
+  gateways:
+    additionalEgress:
+      <egressName>:
+        service:
+          ports:
+|Used to specify the `port:` and `name:` used for TLS and service discovery. Federation traffic consists of raw encrypted TCP for service traffic.
+|Port `15443` is required for sending TLS service requests to other meshes in the federation. Port `8188` is required for sending service discovery requests to other meshes in the federation.
+|
+
+|spec:
+  gateways:
+    additionalIngress:
+|Define an additional ingress gateway gateway for _each_ mesh peer in the federation.
+|
+|
+
+|spec:
+  gateways:
+    additionalIgress:
+      <ingressName>:
+        enabled:
+|This parameter enables or disables the federation ingress.
+|`true`/`false`
+|`true`
+
+|spec:
+  gateways:
+    additionalIngress:
+      <ingressName>:
+        routerMode:
+|The router mode to be used by the gateway.
+|`sni-dnat`
+|
+
+|spec:
+  gateways:
+    additionalIngress:
+      <ingressName>:
+        service:
+          type:
+|The ingress gateway service must be exposed through a load balancer that operates at Layer 4 of the OSI model and is publicly available.
+|`LoadBalancer`
+|
+
+|spec:
+  gateways:
+    additionalIngress:
+      <ingressName>:
+        service:
+          type:
+|If the cluster does not support `LoadBalancer` services, the ingress gateway service can be exposed through a `NodePort` service.
+|`NodePort`
+|
+
+|spec:
+  gateways:
+    additionalIngress:
+      <ingressName>:
+        service:
+          metadata:
+            labels:
+              federation.maistra.io/ingress-for:
+|Specify a unique label for the gateway to prevent federated traffic from flowing through the cluster's default system gateways.
+|
+|
+
+|spec:
+  gateways:
+    additionalIngress:
+      <ingressName>:
+        service:
+          ports:
+|Used to specify the `port:` and `name:` used for TLS and service discovery. Federation traffic consists of raw encrypted TCP for service traffic. Federation traffic consists of HTTPS for discovery.
+|Port `15443` is required for receiving TLS service requests to other meshes in the federation. Port `8188` is required for receiving service discovery requests to other meshes in the federation.
+|
+
+|spec:
+  gateways:
+    additionalIngress:
+      <ingressName>:
+        service:
+          ports:
+            nodePort:
+|Used to specify the `nodePort:` if the cluster does not support `LoadBalancer` services.
+|If specified, is required in addition to `port:` and `name:` for both TLS and service discovery. `nodePort:` must be in the range  `30000`-`32767`.
+|
+|===
+
+In the following example, the administrator is configuring the SMCP for federation with  the `green-mesh` using a `NodePort` service.
+
+.Sample SMCP for NodePort
+[source,yaml]
+----
+  gateways:
+     additionalIngress:
+      ingress-green-mesh:
+        enabled: true
+        routerMode: sni-dnat
+        service:
+          type: NodePort
+          metadata:
+            labels:
+              federation.maistra.io/ingress-for: ingress-green-mesh
+          ports:
+          - port: 15443
+            nodePort: 30510
+            name: tls
+          - port: 8188
+            nodePort: 32359
+            name: https-discovery
+----
+
+== Understanding federation trust domain parameters
+
+Each mesh in the federation must have its own unique trust domain. This value is used when configuring mesh federation in the `ServiceMeshPeer` resource.
+
+[source,yaml]
+----
+kind: ServiceMeshControlPlane
+metadata:
+  name: red-mesh
+  namespace: red-mesh-system
+spec:
+  security:
+    trust:
+      domain: red-mesh.local
+----
+
+.Federation security parameters
+[options="header"]
+[cols="l, a, a, a"]
+|===
+|Parameter |Description |Values |Default value
+|spec:
+  security:
+    trust:
+      domain:
+|Used to specify a unique name for the trust domain for the mesh. Domains must be unique for every mesh in the federation.
+|`<mesh-name>.local`
+|N/A
+|===
+
+////
+TODO
+.Sample SMCP green mesh
+[%collapsible]
+====
+[source,yaml]
+----
+apiVersion:
+kind:
+metadata:
+spec:
+----
+====
+
+
+.Sample SMCP blue mesh
+[%collapsible]
+====
+[source,yaml]
+----
+apiVersion:
+kind:
+metadata:
+spec:
+----
+====
+////
+
+.Procedure from the Console
+
+Follow this procedure to edit the `ServiceMeshControlPlane` with the {product-title} web console. This example uses the `red-mesh` as an example.
+
+. Log in to the {product-title} web console as a user with the cluster-admin role.
+
+. Navigate to *Operators* -> *Installed Operators*.
+
+. Click the *Project* menu and select the project where you installed the {SMProductShortName} control plane. For example, `red-mesh-system`.
+
+. Click the {SMProductName} Operator.
+
+. On the *Istio Service Mesh Control Plane* tab, click the name of your `ServiceMeshControlPlane`, for example `red-mesh`.
+
+. On the *Create ServiceMeshControlPlane Details* page, click `YAML` to modify your configuration.
+
+. Modify your `ServiceMeshControlPlane` to add federation ingress and egress gateways and to specify the trust domain.
+
+. Click *Save*.
+
+
+.Procedure from the CLI
+
+Follow this procedure to create or edit the `ServiceMeshControlPlane` with the command line. This example uses the `red-mesh` as an example.
+
+. Log in to the {product-title} CLI as a user with the `cluster-admin` role. Enter the following command. Then, enter your username and password when prompted.
++
+[source,terminal]
+----
+$ oc login --username=<NAMEOFUSER> https://<HOSTNAME>:6443
+----
++
+. Change to the project where you installed the {SMProductShortName} control plane, for example red-mesh-system.
++
+[source,terminal]
+----
+$ oc project red-mesh-system
+----
++
+. Edit the `ServiceMeshControlPlane` file to add federation ingress and egress gateways and to specify the trust domain.
+
+. Run the following command to edit the {SMProductShortName} control plane where `red-mesh-system` is the system namespace and `red-mesh` is the name of the `ServiceMeshControlPlane` object:
++
+[source,terminal]
+----
+$ oc edit -n red-mesh-system smcp red-mesh
+----
++
+. Enter the following command, where `red-mesh-system` is the system namespace, to see the status of the {SMProductShortName} control plane installation.
++
+[source,terminal]
+----
+$ oc get smcp -n red-mesh-system
+----
++
+The installation has finished successfully when the READY column indicates that all components are ready.
++
+----
+NAME       READY   STATUS            PROFILES      VERSION   AGE
+red-mesh   10/10   ComponentsReady   ["default"]   2.1.0     4m25s
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+:_mod-docs-content-type: CONCEPT
+[id="ossm-federation-joining_{context}"]
+= Joining a federated mesh
+
+You declare the federation between two meshes by creating a `ServiceMeshPeer` resource. The `ServiceMeshPeer` resource defines the federation between two meshes, and you use it to configure discovery for the peer mesh, access to the peer mesh, and certificates used to validate the other mesh’s clients.
+
+image::ossm-federated-mesh.png[Service Mesh federated mesh peers illustration]
+
+Meshes are federated on a one-to-one basis, so each pair of peers requires a pair of `ServiceMeshPeer` resources specifying the federation connection to the other service mesh. For example, federating two meshes named `red` and `green` would require two `ServiceMeshPeer` files.
+
+. On red-mesh-system, create a `ServiceMeshPeer` for the green mesh.
+. On green-mesh-system, create a `ServiceMeshPeer` for the red mesh.
+
+Federating three meshes named `red`, `blue`, and `green` would require six `ServiceMeshPeer` files.
+
+. On red-mesh-system, create a `ServiceMeshPeer` for the green mesh.
+. On red-mesh-system, create a `ServiceMeshPeer` for the blue mesh.
+. On green-mesh-system, create a `ServiceMeshPeer` for the red mesh.
+. On green-mesh-system, create a `ServiceMeshPeer` for the blue mesh.
+. On blue-mesh-system, create a `ServiceMeshPeer` for the red mesh.
+. On blue-mesh-system, create a `ServiceMeshPeer` for the green mesh.
+
+Configuration in the `ServiceMeshPeer` resource includes the following:
+
+* The address of the other mesh’s ingress gateway, which is used for discovery and service requests.
+* The names of the local ingress and egress gateways that is used for interactions with the specified peer mesh.
+* The client ID used by the other mesh when sending requests to this mesh.
+* The trust domain used by the other mesh.
+* The name of a `ConfigMap` containing a root certificate that is used to validate client certificates in the trust domain used by the other mesh.
+
+In the following example, the administrator for the `red-mesh` is configuring federation with the `green-mesh`.
+
+.Example ServiceMeshPeer resource for red-mesh
+[source,yaml]
+----
+kind: ServiceMeshPeer
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: green-mesh
+  namespace: red-mesh-system
+spec:
+  remote:
+    addresses:
+    - ingress-red-mesh.green-mesh-system.apps.domain.com
+  gateways:
+    ingress:
+      name: ingress-green-mesh
+    egress:
+      name: egress-green-mesh
+  security:
+    trustDomain: green-mesh.local
+    clientID: green-mesh.local/ns/green-mesh-system/sa/egress-red-mesh-service-account
+    certificateChain:
+      kind: ConfigMap
+      name: green-mesh-ca-root-cert
+----
+
+.ServiceMeshPeer configuration parameters
+[options="header"]
+[cols="l, a, a"]
+|===
+|Parameter |Description |Values
+|metadata:
+  name:
+|Name of the peer mesh that this resource is configuring federation with.
+|String
+
+|metadata:
+  namespace:
+|System namespace for this mesh, that is, where the {SMProductShortName} control plane is installed.
+|String
+
+|spec:
+  remote:
+    addresses:
+|List of public addresses of the peer meshes' ingress gateways that are servicing requests from this mesh.
+|
+
+|spec:
+  remote:
+    discoveryPort:
+|The port on which the addresses are handling discovery requests.
+|Defaults to 8188
+
+|spec:
+  remote:
+    servicePort:
+|The port on which the addresses are handling service requests.
+|Defaults to 15443
+
+|spec:
+  gateways:
+    ingress:
+      name:
+|Name of the ingress on this mesh that is servicing requests received from the peer mesh. For example, `ingress-green-mesh`.
+|
+
+|spec:
+  gateways:
+    egress:
+      name:
+|Name of the egress on this mesh that is servicing requests sent to the peer mesh. For example, `egress-green-mesh`.
+|
+
+|spec:
+  security:
+    trustDomain:
+|The trust domain used by the peer mesh.
+|<peerMeshName>.local
+
+|spec:
+  security:
+    clientID:
+|The client ID used by the peer mesh when calling into this mesh.
+|<peerMeshTrustDomain>/ns/<peerMeshSystem>/sa/<peerMeshEgressGatewayName>-service-account
+
+|spec:
+  security:
+    certificateChain:
+      kind: ConfigMap
+      name:
+|The kind (for example, ConfigMap) and name of a resource containing the root certificate used to validate the client and server certificate(s) presented to this mesh by the peer mesh.
+The key of the config map entry containing the certificate should be `root-cert.pem`.
+|kind: ConfigMap
+name: <peerMesh>-ca-root-cert
+|===
+
+:leveloffset!:
+
+:leveloffset: +2
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+:_mod-docs-content-type: PROCEDURE
+[id="ossm-federation-create-peer_{context}"]
+= Creating a ServiceMeshPeer resource
+
+.Prerequisites
+
+* Two or more {product-title} 4.6 or above clusters.
+* The clusters must already be networked.
+* The load balancers supporting the services associated with the federation gateways must be configured to support raw TLS traffic.
+* Each cluster must have a version 2.1 or later `ServiceMeshControlPlane` configured to support federation deployed.
+* An account with the `cluster-admin` role.
+
+////
+.Procedure from the Console
+This is conjecture about what the flow might look like…
+
+Follow this procedure to create a `ServiceMeshPeer` resource from the console. This example shows the `red-mesh` creating a peer resource for the `green-mesh`.
+
+. Log in to the {product-title} web console as a user with the cluster-admin role.
+. Navigate to *Operators* → *Installed Operators*.
+. Click the *Project* menu and select the project where you installed the control plane for the mesh that is creating the `ServiceMeshPeer` resource. For example, `red-mesh-system`.
+. Click the {SMProductName} Operator, then click *Istio Service Mesh ServiceMeshPeer*.
+. On the *Istio Service Mesh ServiceMeshPeer* tab, click *Create ServiceMeshPeer*.
+. On the *Create ServiceMeshPeer* page, click *YAML* to modify your configuration.
+. Modify the default configuration with values for the mesh federation between the peers.
+. Click *Create*. The Operator creates the mesh peer based on your configuration parameters.
+. To verify the `ServiceMeshPeer` resource was created, click the *Istio Service Mesh ServiceMeshPeer* tab.
+.. Click the name of the new `ServiceMeshPeer`, for example, `green-mesh`.
+.. Click the *Resources* tab to see the `ServiceMeshPeer` resource the Operator created and configured.
+////
+
+.Procedure from the CLI
+
+Follow this procedure to create a `ServiceMeshPeer` resource from the command line. This example shows the `red-mesh` creating a peer resource for the `green-mesh`.
+
+. Log in to the {product-title} CLI as a user with the `cluster-admin` role. Enter the following command. Then, enter your username and password when prompted.
++
+[source,terminal]
+----
+$ oc login --username=<NAMEOFUSER> <API token> https://<HOSTNAME>:6443
+----
++
+. Change to the project where you installed the control plane, for example, `red-mesh-system`.
++
+[source,terminal]
+----
+$ oc project red-mesh-system
+----
++
+. Create a `ServiceMeshPeer` file based the following example for the two meshes that you want to federate.
++
+.Example ServiceMeshPeer resource for red-mesh to green-mesh
+[source,yaml]
+----
+kind: ServiceMeshPeer
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: green-mesh
+  namespace: red-mesh-system
+spec:
+  remote:
+    addresses:
+    - ingress-red-mesh.green-mesh-system.apps.domain.com
+  gateways:
+    ingress:
+      name: ingress-green-mesh
+    egress:
+      name: egress-green-mesh
+  security:
+    trustDomain: green-mesh.local
+    clientID: green-mesh.local/ns/green-mesh-system/sa/egress-red-mesh-service-account
+    certificateChain:
+      kind: ConfigMap
+      name: green-mesh-ca-root-cert
+----
++
+. Run the following command to deploy the resource, where `red-mesh-system` is the system namespace and `servicemeshpeer.yaml` includes a full path to the file you edited:
++
+[source,terminal]
+----
+$ oc create -n red-mesh-system -f servicemeshpeer.yaml
+----
++
+. To confirm that connection between the red mesh and green mesh is established, inspect the status of the green-mesh `ServiceMeshPeer` in the red-mesh-system namespace:
++
+[source,terminal]
+----
+$ oc -n red-mesh-system get servicemeshpeer green-mesh -o yaml
+----
++
+.Example ServiceMeshPeer connection between red-mesh and green-mesh
+[source,yaml]
+----
+status:
+  discoveryStatus:
+    active:
+    - pod: istiod-red-mesh-b65457658-9wq5j
+      remotes:
+      - connected: true
+        lastConnected: "2021-10-05T13:02:25Z"
+        lastFullSync: "2021-10-05T13:02:25Z"
+        source: 10.128.2.149
+      watch:
+        connected: true
+        lastConnected: "2021-10-05T13:02:55Z"
+        lastDisconnectStatus: 503 Service Unavailable
+        lastFullSync: "2021-10-05T13:05:43Z"
+----
+The `status.discoveryStatus.active.remotes` field shows that istiod in the peer mesh (in this example, the green mesh) is connected to istiod in the current mesh (in this example, the red mesh).
++
+The `status.discoveryStatus.active.watch` field shows that istiod in the current mesh is connected to istiod in the peer mesh.
++
+If you check the `servicemeshpeer` named `red-mesh` in `green-mesh-system`, you'll find information about the same two connections from the perspective of the green mesh.
++
+When the connection between two meshes is not established, the `ServiceMeshPeer` status indicates this in the `status.discoveryStatus.inactive` field.
++
+For more information on why a connection attempt failed, inspect the Istiod log, the access log of the egress gateway handling egress traffic for the peer, and the ingress gateway handling ingress traffic for the current mesh in the peer mesh.
++
+For example, if the red mesh can't connect to the green mesh, check the following logs:
+
+* istiod-red-mesh in red-mesh-system
+* egress-green-mesh in red-mesh-system
+* ingress-red-mesh in green-mesh-system
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+[id="ossm-federation-config-export_{context}"]
+= Exporting a service from a federated mesh
+
+Exporting services allows a mesh to share one or more of its services with another member of the federated mesh.
+
+image::ossm-federation-export-service.png[Service Mesh federation exporting service illustration]
+
+You use an `ExportedServiceSet` resource to declare the services from one mesh that you are making available to another peer in the federated mesh. You must explicitly declare each service to be shared with a peer.
+
+* You can select services by namespace or name.
+* You can use wildcards to select services; for example, to export all the services in a namespace.
+* You can export services using an alias. For example, you can export the `foo/bar` service as `custom-ns/bar`.
+// Need non foo/bar example above
+* You can only export services that are visible to the mesh’s system namespace. For example, a service in another namespace with a `networking.istio.io/exportTo` label set to ‘.’ would not be a candidate for export.
+* For exported services, their target services will only see traffic from the ingress gateway, not the original requestor (that is, they won’t see the client ID of either the other mesh’s egress gateway or the workload originating the request)
+
+The following example is for services that `red-mesh` is exporting to `green-mesh`.
+
+.Example ExportedServiceSet resource
+[source,yaml]
+----
+kind: ExportedServiceSet
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: green-mesh
+  namespace: red-mesh-system
+spec:
+  exportRules:
+  # export ratings.mesh-x-bookinfo as ratings.bookinfo
+  - type: NameSelector
+    nameSelector:
+      namespace: red-mesh-bookinfo
+      name: red-ratings
+      alias:
+        namespace: bookinfo
+        name: ratings
+  # export any service in red-mesh-bookinfo namespace with label export-service=true
+  - type: LabelSelector
+    labelSelector:
+      namespace: red-mesh-bookinfo
+      selector:
+        matchLabels:
+          export-service: "true"
+      aliases: # export all matching services as if they were in the bookinfo namespace
+      - namespace: "*"
+        name: "*"
+        alias:
+          namespace: bookinfo
+----
+
+.ExportedServiceSet parameters
+[options="header"]
+[cols="l, a, a"]
+|===
+|Parameter |Description |Values
+|metadata:
+  name:
+|Name of the ServiceMeshPeer you are exposing this service to.
+|Must match the `name` value for the mesh in the `ServiceMeshPeer` resource.
+
+|metadata:
+  namespace:
+|Name of the project/namespace containing this resource (should be the system namespace for the mesh) .
+|
+
+|spec:
+  exportRules:
+  - type:
+|Type of rule that will govern the export for this service. The first matching rule found for the service will be used for the export.
+|`NameSelector`, `LabelSelector`
+
+|spec:
+  exportRules:
+  - type: NameSelector
+    nameSelector:
+      namespace:
+      name:
+|To create a `NameSelector` rule, specify the `namespace` of the service and the `name` of the service as defined in the `Service` resource.
+|
+
+|spec:
+  exportRules:
+  - type: NameSelector
+    nameSelector:
+      alias:
+        namespace:
+        name:
+|To create a `NameSelector` rule that uses an alias for the service, after specifying the `namespace` and `name` for the service, then specify the alias for the `namespace` and the alias to be used for `name` of the service.
+|
+
+|spec:
+  exportRules:
+  - type: LabelSelector
+    labelSelector:
+      namespace: <exportingMesh>
+      selector:
+        matchLabels:
+          <labelKey>: <labelValue>
+|To create a `LabelSelector` rule, specify the `namespace` of the service and specify the `label` defined in the `Service` resource. In the example above, the label is `export-service`.
+|
+
+|spec:
+  exportRules:
+  - type: LabelSelector
+    labelSelector:
+      namespace: <exportingMesh>
+      selector:
+        matchLabels:
+          <labelKey>: <labelValue>
+      aliases:
+      - namespace:
+        name:
+        alias:
+          namespace:
+          name:
+|To create a `LabelSelector` rule that uses aliases for the services, after specifying the `selector`, specify the aliases to be used for `name` or `namespace` of the service. In the example above, the namespace alias is `bookinfo` for all matching services.
+|
+|===
+
+
+
+.Export services with the name "ratings" from all namespaces in the red-mesh to blue-mesh.
+[source,yaml]
+----
+kind: ExportedServiceSet
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: blue-mesh
+  namespace: red-mesh-system
+spec:
+  exportRules:
+  - type: NameSelector
+    nameSelector:
+      namespace: "*"
+      name: ratings
+----
+
+.Export all services from the west-data-center namespace to green-mesh
+[source,yaml]
+----
+kind: ExportedServiceSet
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: green-mesh
+  namespace: red-mesh-system
+spec:
+  exportRules:
+  - type: NameSelector
+    nameSelector:
+      namespace: west-data-center
+      name: "*"
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+:_mod-docs-content-type: PROCEDURE
+[id="ossm-federation-create-export_{context}"]
+= Creating an ExportedServiceSet
+
+You create an `ExportedServiceSet` resource to explicitly declare the services that you want to be available to a mesh peer.
+
+Services are exported as `<export-name>.<export-namespace>.svc.<ServiceMeshPeer.name>-exports.local` and will automatically route to the target service.  This is the name by which the exported service is known in the exporting mesh. When the ingress gateway receives a request destined for this name, it will be routed to the actual service being exported. For example, if a service named `ratings.red-mesh-bookinfo` is exported to `green-mesh` as `ratings.bookinfo`, the service will be exported under the name `ratings.bookinfo.svc.green-mesh-exports.local`, and traffic received by the ingress gateway for that hostname will be routed to the `ratings.red-mesh-bookinfo` service.
+
+.Prerequisites
+
+* The cluster and `ServiceMeshControlPlane` have been configured for mesh federation.
+* An account with the `cluster-admin` role.
+
+[NOTE]
+====
+You can configure services for export even if they don't exist yet. When a service that matches the value specified in the ExportedServiceSet is deployed, it will be automatically exported.
+====
+
+////
+.Procedure from the Console
+This is conjecture about what the flow might look like.
+
+Follow this procedure to create an `ExportedServiceSet` with the web console. This example shows the red-mesh exporting the ratings service from the bookinfo application to the green-mesh.
+
+. Log in to the {product-title} web console as a user with the cluster-admin role.
+. Navigate to *Operators* → *Installed Operators*.
+. Click the *Project* menu and select the project where you installed the {SMProductShortName} control plane for the mesh that will export services. For example, `red-mesh-system`.
+. Click the {SMProductName} Operator, then click *Istio Service Mesh ExportedServiceSet*.
+. On the *Istio Service Mesh ExportedServiceSet* tab, click *Create ExportedServiceSet*.
+. On the *Create ExportedServiceSet* page, click *YAML* to modify your configuration.
+. Modify the default configuration with values for your export.
+. Click *Create*. The Operator creates the export based on your configuration parameters.
+. To verify the `ExportedServiceSet` resource was created, click the *Istio Service Mesh ExportedServiceSet* tab.
+.. Click the name of the new `ExportedServiceSet`; for example, `export-to-green-mesh`.
+.. Click the *Resources* tab to see the `ExportedServiceSet` resource the Operator created and configured.
+////
+
+.Procedure from the CLI
+
+Follow this procedure to create an `ExportedServiceSet` from the command line.
+
+. Log in to the {product-title} CLI as a user with the `cluster-admin` role. Enter the following command. Then, enter your username and password when prompted.
++
+[source,terminal]
+----
+$ oc login --username=<NAMEOFUSER> <API token> https://<HOSTNAME>:6443
+----
++
+. Change to the project where you installed the {SMProductShortName} control plane; for example, `red-mesh-system`.
++
+[source,terminal]
+----
+$ oc project red-mesh-system
+----
++
+. Create an `ExportedServiceSet` file based on the following example where `red-mesh` is exporting services to `green-mesh`.
++
+.Example ExportedServiceSet resource from red-mesh to green-mesh
+[source,yaml]
+----
+apiVersion: federation.maistra.io/v1
+kind: ExportedServiceSet
+metadata:
+  name: green-mesh
+  namespace: red-mesh-system
+spec:
+  exportRules:
+  - type: NameSelector
+    nameSelector:
+      namespace: red-mesh-bookinfo
+      name: ratings
+      alias:
+        namespace: bookinfo
+        name: red-ratings
+  - type: NameSelector
+    nameSelector:
+      namespace: red-mesh-bookinfo
+      name: reviews
+----
++
+. Run the following command to upload and create the `ExportedServiceSet` resource in the red-mesh-system namespace.
++
+[source,terminal]
+----
+$ oc create -n <ControlPlaneNamespace> -f <ExportedServiceSet.yaml>
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc create -n red-mesh-system -f export-to-green-mesh.yaml
+----
++
+. Create additional `ExportedServiceSets` as needed for each mesh peer in your federated mesh.
+//TODO - Add sample output after the validation
+. To validate the services you've exported from `red-mesh` to share with `green-mesh`, run the following command:
++
+[source,terminal]
+----
+$ oc get exportedserviceset <PeerMeshExportedTo> -o yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc get exportedserviceset green-mesh -o yaml
+----
++
+. Run the following command to validate the services the red-mesh exports to share with green-mesh:
++
+[source,terminal]
+----
+$ oc get exportedserviceset <PeerMeshExportedTo> -o yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc -n red-mesh-system get exportedserviceset green-mesh -o yaml
+----
++
+.Example validating the services exported from the red mesh that are shared with the green mesh.
+[source,yaml]
+----
+  status:
+    exportedServices:
+    - exportedName: red-ratings.bookinfo.svc.green-mesh-exports.local
+      localService:
+        hostname: ratings.red-mesh-bookinfo.svc.cluster.local
+        name: ratings
+        namespace: red-mesh-bookinfo
+    - exportedName: reviews.red-mesh-bookinfo.svc.green-mesh-exports.local
+      localService:
+        hostname: reviews.red-mesh-bookinfo.svc.cluster.local
+        name: reviews
+        namespace: red-mesh-bookinfo
+----
+The `status.exportedServices` array lists the services that are currently exported (these services matched the export rules in the `ExportedServiceSet object`). Each entry in the array indicates the name of the exported service and details about the local service that is exported.
++
+If a service that you expected to be exported is missing, confirm the Service object exists, its name or labels match the `exportRules` defined in the `ExportedServiceSet` object, and that the Service object's namespace is configured as a member of the service mesh using the `ServiceMeshMemberRoll` or `ServiceMeshMember` object.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+[id="ossm-federation-config-import_{context}"]
+= Importing a service into a federated mesh
+
+Importing services lets you explicitly specify which services exported from another mesh should be accessible within your service mesh.
+
+image::ossm-federation-import-service.png[Service Mesh federation importing service illustration]
+
+You use an `ImportedServiceSet` resource to select services for import. Only services exported by a mesh peer and explicitly imported are available to the mesh. Services that you do not explicitly import are not made available within the mesh.
+
+* You can select services by namespace or name.
+* You can use wildcards to select services, for example, to import all the services that were exported to the namespace.
+* You can select services for export using a label selector, which may be global to the mesh, or scoped to a specific member namespace.
+* You can import services using an alias. For example, you can import the `custom-ns/bar` service as `other-mesh/bar`.
+// Need non foo/bar example above
+* You can specify a custom domain suffix, which will be appended to the `name.namespace` of an imported service for its fully qualified domain name; for example, `bar.other-mesh.imported.local`.
+
+The following example is for the `green-mesh` importing a service that was exported by `red-mesh`.
+
+.Example ImportedServiceSet
+[source,yaml]
+----
+kind: ImportedServiceSet
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: red-mesh #name of mesh that exported the service
+  namespace: green-mesh-system #mesh namespace that service is being imported into
+spec:
+  importRules: # first matching rule is used
+  # import ratings.bookinfo as ratings.bookinfo
+  - type: NameSelector
+    importAsLocal: false
+    nameSelector:
+      namespace: bookinfo
+      name: ratings
+      alias:
+        # service will be imported as ratings.bookinfo.svc.red-mesh-imports.local
+        namespace: bookinfo
+        name: ratings
+----
+
+.ImportedServiceSet parameters
+[options="header"]
+[cols="l, a, a"]
+|===
+|Parameter |Description |Values
+|metadata:
+  name:
+|Name of the ServiceMeshPeer that exported the service to the federated mesh.
+|
+
+|metadata:
+  namespace:
+|Name of the namespace containing the ServiceMeshPeer resource (the mesh system namespace).
+|
+
+|spec:
+  importRules:
+  - type:
+|Type of rule that will govern the import for the service. The first matching rule found for the service will be used for the import.
+|`NameSelector`
+
+|spec:
+  importRules:
+  - type: NameSelector
+    nameSelector:
+      namespace:
+      name:
+|To create a `NameSelector` rule, specify the `namespace` and the `name` of the exported service.
+|
+
+|spec:
+  importRules:
+  - type: NameSelector
+    importAsLocal:
+|Set to `true` to aggregate remote endpoint with local services. When `true`, services will be imported as `<name>.<namespace>.svc.cluster.local`
+|`true`/`false`
+
+|spec:
+  importRules:
+  - type: NameSelector
+    nameSelector:
+      namespace:
+      name:
+      alias:
+        namespace:
+        name:
+|To create a `NameSelector` rule that uses an alias for the service, after specifying the `namespace` and `name` for the service, then specify the alias for the `namespace` and the alias to be used for `name` of the service.
+|
+|===
+
+
+
+
+.Import the "bookinfo/ratings" service from the red-mesh into blue-mesh
+[source,yaml]
+----
+kind: ImportedServiceSet
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: red-mesh
+  namespace: blue-mesh-system
+spec:
+  importRules:
+  - type: NameSelector
+    importAsLocal: false
+    nameSelector:
+      namespace: bookinfo
+      name: ratings
+----
+
+.Import all services from the red-mesh's west-data-center namespace into the green-mesh. These services will be accessible as <name>.west-data-center.svc.red-mesh-imports.local
+[source,yaml]
+----
+kind: ImportedServiceSet
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: red-mesh
+  namespace: green-mesh-system
+spec:
+  importRules:
+  - type: NameSelector
+    importAsLocal: false
+    nameSelector:
+      namespace: west-data-center
+      name: "*"
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+:_mod-docs-content-type: PROCEDURE
+[id="ossm-federation-create-import_{context}"]
+= Creating an ImportedServiceSet
+
+You create an `ImportedServiceSet` resource to explicitly declare the services that you want to import into your mesh.
+
+Services are imported with the name `<exported-name>.<exported-namespace>.svc.<ServiceMeshPeer.name>.remote` which is a "hidden" service, visible only within the egress gateway namespace and is associated with the exported service's hostname. The service will be available locally as `<export-name>.<export-namespace>.<domainSuffix>`, where `domainSuffix` is `svc.<ServiceMeshPeer.name>-imports.local` by default, unless `importAsLocal` is set to `true`, in which case `domainSuffix` is `svc.cluster.local`.  If `importAsLocal` is set to `false`, the domain suffix in the import rule will be applied.  You can treat the local import just like any other service in the mesh. It automatically routes through the egress gateway, where it is redirected to the exported service's remote name.
+
+.Prerequisites
+
+* The cluster and `ServiceMeshControlPlane` have been configured for mesh federation.
+* An account with the `cluster-admin` role.
+
+[NOTE]
+====
+You can configure services for import even if they haven't been exported yet. When a service that matches the value specified in the ImportedServiceSet is deployed and exported, it will be automatically imported.
+====
+
+////
+.Procedure from the Console
+This is conjecture about what the flow might look like.
+
+Follow this procedure to create an `ImportedServiceSet` with the web console. This example shows the green-mesh importing the ratings service that was exported by the red-mesh.
+
+. Log in to the {product-title} web console as a user with the cluster-admin role.
+. Navigate to *Operators* → *Installed Operators*.
+. Click the *Project* menu and select the project where you installed the {SMProductShortName} control plane for the mesh you want to import services into. For example, `green-mesh-system`.
+. Click the {SMProductName} Operator, then click *Istio Service Mesh ImportedServiceSet*.
+. On the *Istio Service Mesh ImportedServiceSet* tab, click *Create ImportedServiceSet*.
+. On the *Create ImportedServiceSet* page, click *YAML* to modify your configuration.
+. Modify the default configuration with values for your import.
+. Click *Create*. The Operator creates the import the based on your configuration parameters.
+. To verify the `ImportedServiceSet` resource was created, click the *Istio Service Mesh ImportedServiceSet* tab.
+.. Click the name of the new `ImportedServiceSet`; for example, `import-from-red-mesh`.
+.. Click the *Resources* tab to see the `ImportedServiceSet` resource the Operator created and configured.
+////
+
+
+.Procedure from the CLI
+
+Follow this procedure to create an `ImportedServiceSet` from the command line.
+
+. Log in to the {product-title} CLI as a user with the `cluster-admin` role. Enter the following command. Then, enter your username and password when prompted.
++
+[source,terminal]
+----
+$ oc login --username=<NAMEOFUSER> <API token> https://<HOSTNAME>:6443
+----
++
+. Change to the project where you installed the {SMProductShortName} control plane; for example, `green-mesh-system`.
++
+[source,terminal]
+----
+$ oc project green-mesh-system
+----
++
+. Create an `ImportedServiceSet` file based on the following example where `green-mesh` is importing services previously exported by `red-mesh`.
++
+.Example ImportedServiceSet resource from red-mesh to green-mesh
+[source,yaml]
+----
+kind: ImportedServiceSet
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: red-mesh
+  namespace: green-mesh-system
+spec:
+  importRules:
+  - type: NameSelector
+    importAsLocal: false
+    nameSelector:
+      namespace: bookinfo
+      name: red-ratings
+      alias:
+        namespace: bookinfo
+        name: ratings
+----
++
+. Run the following command to upload and create the `ImportedServiceSet` resource in the green-mesh-system namespace.
++
+[source,terminal]
+----
+$ oc create -n <ControlPlaneNamespace> -f <ImportedServiceSet.yaml>
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc create -n green-mesh-system -f import-from-red-mesh.yaml
+----
++
+. Create additional `ImportedServiceSet` resources as needed for each mesh peer in your federated mesh.
+//TODO - Add sample output after the validation
+. To validate the services you've imported into `green-mesh`, run the following command:
++
+[source,terminal]
+----
+$ oc get importedserviceset <PeerMeshImportedInto> -o yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc get importedserviceset green-mesh -o yaml
+----
++
+. Run the following command to validate the services imported into a mesh.
++
+[source,terminal]
+----
+$ oc get importedserviceset <PeerMeshImportedInto> -o yaml
+----
++
+.Example validating that the services exported from the red mesh have been imported into the green mesh using the status section of the `importedserviceset/red-mesh' object in the 'green-mesh-system` namespace:
++
+[source,terminal]
+----
+$ oc -n green-mesh-system get importedserviceset/red-mesh -o yaml
+----
++
+[source,yaml]
+----
+status:
+  importedServices:
+  - exportedName: red-ratings.bookinfo.svc.green-mesh-exports.local
+    localService:
+      hostname: ratings.bookinfo.svc.red-mesh-imports.local
+      name: ratings
+      namespace: bookinfo
+  - exportedName: reviews.red-mesh-bookinfo.svc.green-mesh-exports.local
+    localService:
+      hostname: ""
+      name: ""
+      namespace: ""
+----
++
+In the preceding example only the ratings service is imported, as indicated by the populated fields under `localService`. The reviews service is available for import, but isn't currently imported because it does not match any `importRules` in the `ImportedServiceSet` object.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+:_mod-docs-content-type: CONCEPT
+[id="ossm-federation-config-failover-overview_{context}"]
+= Configuring a federated mesh for failover
+
+Failover is the ability to switch automatically and seamlessly to a reliable backup system, for example another server. In the case of a federated mesh, you can configure a service in one mesh to failover to a service in another mesh.
+
+You configure Federation for failover by setting the `importAsLocal` and `locality` settings in an `ImportedServiceSet` resource and then configuring a `DestinationRule` that configures failover for the service to the locality specified in the `ImportedServiceSet`.
+
+.Prerequisites
+
+* Two or more {product-title} 4.6 or above clusters already networked and federated.
+* `ExportedServiceSet` resources already created for each mesh peer in the federated mesh.
+* `ImportedServiceSet` resources already created for each mesh peer in the federated mesh.
+* An account with the `cluster-admin` role.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+:_mod-docs-content-type: PROCEDURE
+[id="ossm-federation-config-importedserviceset-failover_{context}"]
+= Configuring an ImportedServiceSet for failover
+
+Locality-weighted load balancing allows administrators to control the distribution of traffic to endpoints based on the localities of where the traffic originates and where it will terminate. These localities are specified using arbitrary labels that designate a hierarchy of localities in {region}/{zone}/{sub-zone} form.
+
+In the examples in this section, the `green-mesh` is located in the `us-east` region, and the `red-mesh` is located in the `us-west` region.
+
+.Example `ImportedServiceSet` resource from red-mesh to green-mesh
+[source,yaml]
+----
+kind: ImportedServiceSet
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: red-mesh #name of mesh that exported the service
+  namespace: green-mesh-system #mesh namespace that service is being imported into
+spec:
+  importRules: # first matching rule is used
+  # import ratings.bookinfo as ratings.bookinfo
+  - type: NameSelector
+    importAsLocal: true
+    nameSelector:
+      namespace: bookinfo
+      name: ratings
+      alias:
+        # service will be imported as ratings.bookinfo.svc.red-mesh-imports.local
+        namespace: bookinfo
+        name: ratings
+  #Locality within which imported services should be associated.
+  locality:
+    region: us-west
+----
+
+.`ImportedServiceLocality` fields table
+|===
+| Name | Description | Type
+
+|region:
+|Region within which imported services are located.
+|string
+
+|subzone:
+|Subzone within which imported services are located.  I Subzone is specified, Zone must also be specified.
+|string
+
+|zone:
+|Zone within which imported services are located.  If Zone is specified, Region must also be specified.
+|string
+|===
+
+
+.Procedure
+
+. Log in to the {product-title} CLI as a user with the `cluster-admin` role, enter the following command:
++
+[source,terminal]
+----
+$ oc login --username=<NAMEOFUSER> <API token> https://<HOSTNAME>:6443
+----
++
+. Change to the project where you installed the {SMProductShortName} control plane, enter the following command:
++
+[source,terminal]
+----
+$ oc project <smcp-system>
+----
++
+For example, `green-mesh-system`.
++
+[source,terminal]
+----
+$ oc project green-mesh-system
+----
++
+.  Edit the `ImportedServiceSet` file, where `<ImportedServiceSet.yaml>` includes a full path to the file you want to edit, enter the following command:
++
+[source,terminal]
+----
+$ oc edit -n <smcp-system> -f <ImportedServiceSet.yaml>
+----
++
+For example, if you want to modify the file that imports from the red-mesh-system to the green-mesh-system as shown in the previous `ImportedServiceSet` example.
++
+[source,terminal]
+----
+$ oc edit -n green-mesh-system -f import-from-red-mesh.yaml
+----
+. Modify the file:
+.. Set `spec.importRules.importAsLocal` to `true`.
+.. Set `spec.locality` to a `region`, `zone`, or `subzone`.
+.. Save your changes.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+:_mod-docs-content-type: PROCEDURE
+[id="ossm-federation-config-destinationrule-failover_{context}"]
+= Configuring a DestinationRule for failover
+
+Create a `DestinationRule` resource that configures the following:
+
+* Outlier detection for the service. This is required in order for failover to function properly. In particular, it configures the sidecar proxies to know when endpoints for a service are unhealthy, eventually triggering a failover to the next locality.
+
+* Failover policy between regions. This ensures that failover beyond a region boundary will behave predictably.
+
+.Procedure
+
+. Log in to the {product-title} CLI as a user with the `cluster-admin` role. Enter the following command. Then, enter your username and password when prompted.
++
+[source,terminal]
+----
+$ oc login --username=<NAMEOFUSER> <API token> https://<HOSTNAME>:6443
+----
++
+. Change to the project where you installed the {SMProductShortName} control plane.
++
+[source,terminal]
+----
+$ oc project <smcp-system>
+----
++
+For example, `green-mesh-system`.
++
+[source,terminal]
+----
+$ oc project green-mesh-system
+----
++
+. Create a `DestinationRule` file based on the following example where if green-mesh is unavailable, the traffic should be routed from the green-mesh in the `us-east` region to the red-mesh in `us-west`.
++
+.Example `DestinationRule`
+[source,yaml]
+----
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: default-failover
+  namespace: bookinfo
+spec:
+  host: "ratings.bookinfo.svc.cluster.local"
+  trafficPolicy:
+    loadBalancer:
+      localityLbSetting:
+        enabled: true
+        failover:
+          - from: us-east
+            to: us-west
+    outlierDetection:
+      consecutive5xxErrors: 3
+      interval: 10s
+      baseEjectionTime: 1m
+----
++
+. Deploy the `DestinationRule`, where `<DestinationRule>` includes the full path to your file, enter the following command:
++
+[source,terminal]
+----
+$ oc create -n <application namespace> -f <DestinationRule.yaml>
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc create -n bookinfo -f green-mesh-us-west-DestinationRule.yaml
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+[id="ossm-federation-remove-service_{context}"]
+= Removing a service from the federated mesh
+
+If you need to remove a service from the federated mesh, for example if it has become obsolete or has been replaced by a different service, you can do so.
+
+== To remove a service from a single mesh
+
+Remove the entry for the service from the `ImportedServiceSet` resource for the mesh peer that no longer should access the service.
+
+== To remove a service from the entire federated mesh
+
+Remove the entry for the service from the `ExportedServiceSet` resource for the mesh that owns the service.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+* service_mesh/v2x/ossm-federation.adoc
+////
+
+[id="ossm-federation-remove-mesh_{context}"]
+= Removing a mesh from the federated mesh
+
+If you need to remove a mesh from the federation, you can do so.
+
+. Edit the removed mesh's `ServiceMeshControlPlane` resource to remove all federation ingress gateways for peer meshes.
+
+. For each mesh peer that the removed mesh has been federated with:
+
+.. Remove the `ServiceMeshPeer` resource that links the two meshes.
+
+.. Edit the peer mesh's `ServiceMeshControlPlane` resource to remove the egress gateway that serves the removed mesh.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/ossm-federation-overview,modules/ossm-federation-features,modules/ossm-federation-security,modules/ossm-federation-limitations,modules/ossm-federation-prerequisites,modules/ossm-federation-planning,modules/ossm-federation-across-cluster,modules/ossm-federation-checklist,modules/ossm-federation-config-smcp,modules/ossm-federation-config-meshPeer,modules/ossm-federation-create-meshPeer,modules/ossm-federation-config-export,modules/ossm-federation-create-export,modules/ossm-federation-config-import,modules/ossm-federation-create-import,modules/ossm-federation-config-failover-overview,modules/ossm-federation-config-importedserviceset-failover,modules/ossm-federation-config-destinationrule-failover,modules/ossm-federation-remove-service,modules/ossm-federation-remove-mesh

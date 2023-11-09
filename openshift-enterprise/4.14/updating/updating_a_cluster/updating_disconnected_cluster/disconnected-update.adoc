@@ -1,0 +1,861 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="updating-restricted-network-cluster"]
+= Updating a cluster in a disconnected environment without the OpenShift Update Service
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: updating-restricted-network-cluster
+
+toc::[]
+
+////
+WARNING: This assembly has been moved into a subdirectory for 4.14+. Changes to this assembly for earlier versions should be done in separate PRs based off of their respective version branches. Otherwise, your cherry picks may fail.
+
+To do: Remove this comment once 4.13 docs are EOL.
+////
+
+Use the following procedures to update a cluster in a disconnected environment without access to the OpenShift Update Service.
+
+== Prerequisites
+
+* You must have the `oc` command-line interface (CLI) tool installed.
+* You must provision a local container image registry with the container images for your update, as described in xref:../../../updating/updating_a_cluster/updating_disconnected_cluster/mirroring-image-repository.adoc#mirroring-ocp-image-repository[Mirroring {product-title} images].
+* You must have access to the cluster as a user with `admin` privileges.
+See xref:../../../authentication/using-rbac.adoc#using-rbac[Using RBAC to define and apply permissions].
+* You must have a recent xref:../../../backup_and_restore/control_plane_backup_and_restore/backing-up-etcd.adoc#backup-etcd[etcd backup] in case your update fails and you must xref:../../../backup_and_restore/control_plane_backup_and_restore/disaster_recovery/scenario-2-restoring-cluster-state.adoc#dr-restoring-cluster-state[restore your cluster to a previous state].
+* You must ensure that all machine config pools (MCPs) are running and not paused. Nodes associated with a paused MCP are skipped during the update process. You can pause the MCPs if you are performing a canary rollout update strategy.
+* If your cluster uses manually maintained credentials, update the cloud provider resources for the new release. For more information, including how to determine if this is a requirement for your cluster, see xref:../../../updating/preparing_for_updates/preparing-manual-creds-update.adoc#preparing-manual-creds-update[Preparing to update a cluster with manually maintained credentials].
+* If you run an Operator or you have configured any application with the pod disruption budget, you might experience an interruption during the update process. If `minAvailable` is set to 1 in `PodDisruptionBudget`, the nodes are drained to apply pending machine configs which might block the eviction process. If several nodes are rebooted, all the pods might run on only one node, and the `PodDisruptionBudget` field can prevent the node drain.
+
+[NOTE]
+====
+If you run an Operator or you have configured any application with the pod disruption budget, you might experience an interruption during the update process. If `minAvailable` is set to 1 in `PodDisruptionBudget`, the nodes are drained to apply pending machine configs which might block the eviction process. If several nodes are rebooted, all the pods might run on only one node, and the `PodDisruptionBudget` field can prevent the node drain.
+====
+
+// Pausing a MachineHealthCheck resource
+:leveloffset: +1
+
+// Module included in the following assemblies:
+
+// * updating/updating_a_cluster/updating-cluster-cli.adoc
+// * updating/updating_a_cluster/updating-cluster-web-console.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="machine-health-checks-pausing_{context}"]
+= Pausing a MachineHealthCheck resource
+
+During the update process, nodes in the cluster might become temporarily unavailable. In the case of worker nodes, the machine health check might identify such nodes as unhealthy and reboot them. To avoid rebooting such nodes, pause all the `MachineHealthCheck` resources before updating the cluster.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+.Procedure
+
+. To list all the available `MachineHealthCheck` resources that you want to pause, run the following command:
++
+[source,terminal]
+----
+$ oc get machinehealthcheck -n openshift-machine-api
+----
+
+. To pause the machine health checks, add the `cluster.x-k8s.io/paused=""` annotation to the `MachineHealthCheck` resource. Run the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-machine-api annotate mhc <mhc-name> cluster.x-k8s.io/paused=""
+----
++
+The annotated `MachineHealthCheck` resource resembles the following YAML file:
++
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineHealthCheck
+metadata:
+  name: example
+  namespace: openshift-machine-api
+  annotations:
+    cluster.x-k8s.io/paused: ""
+spec:
+  selector:
+    matchLabels:
+      role: worker
+  unhealthyConditions:
+  - type:    "Ready"
+    status:  "Unknown"
+    timeout: "300s"
+  - type:    "Ready"
+    status:  "False"
+    timeout: "300s"
+  maxUnhealthy: "40%"
+status:
+  currentHealthy: 5
+  expectedMachines: 5
+----
++
+[IMPORTANT]
+====
+Resume the machine health checks after updating the cluster. To resume the check, remove the pause annotation from the `MachineHealthCheck` resource by running the following command:
+
+[source,terminal]
+----
+$ oc -n openshift-machine-api annotate mhc <mhc-name> cluster.x-k8s.io/paused-
+----
+====
+
+:leveloffset!:
+
+// Retrieving a release image digest
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-restricted-image-digests_{context}"]
+= Retrieving a release image digest
+
+In order to update a cluster in a disconnected environment using the `oc adm upgrade` command with the `--to-image` option, you must reference the sha256 digest that corresponds to your targeted release image.
+
+.Procedure
+
+. Run the following command on a device that is connected to the internet:
++
+[source,terminal]
+----
+$ oc adm release info -o 'jsonpath={.digest}{"\n"}' quay.io/openshift-release-dev/ocp-release:${OCP_RELEASE_VERSION}-${ARCHITECTURE}
+----
++
+For `{OCP_RELEASE_VERSION}`, specify the version of {product-title} to which you want to update, such as `4.10.16`.
++
+For `{ARCHITECTURE}`, specify the architecture of the cluster, such as `x86_64`, `aarch64`, `s390x`, or `ppc64le`.
++
+.Example output
+[source,terminal]
+----
+sha256:a8bfba3b6dddd1a2fbbead7dac65fe4fb8335089e4e7cae327f3bad334add31d
+----
+
+. Copy the sha256 digest for use when updating your cluster.
+
+:leveloffset!:
+
+// Updating the disconnected cluster
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-restricted_{context}"]
+= Updating the disconnected cluster
+
+Update the disconnected cluster to the {product-title} version that you downloaded the release images for.
+
+//TODO: Add xrefs in the following note when functionality is enabled.
+
+[NOTE]
+====
+If you have a local OpenShift Update Service, you can update by using the connected web console or CLI instructions instead of this procedure.
+====
+
+.Prerequisites
+
+* You mirrored the images for the new release to your registry.
+* You applied the release image signature ConfigMap for the new release to your cluster.
++
+[NOTE]
+====
+The release image signature config map allows the Cluster Version Operator (CVO) to ensure the integrity of release images by verifying that the actual image signatures match the expected signatures.
+====
+* You obtained the sha256 digest for your targeted release image.
+* You installed the OpenShift CLI (`oc`).
+* You paused all `MachineHealthCheck` resources.
+
+.Procedure
+
+* Update the cluster:
++
+[source,terminal]
+----
+$ oc adm upgrade --allow-explicit-upgrade --to-image ${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}@<digest> <1>
+----
+<1> The `<digest>` value is the sha256 digest for the targeted release image, for example, `sha256:81154f5c03294534e1eaf0319bef7a601134f891689ccede5d705ef659aa8c92`
++
+If you use an `ImageContentSourcePolicy` for the mirror registry, you can use the canonical registry name instead of `LOCAL_REGISTRY`.
++
+[NOTE]
+====
+You can only configure global pull secrets for clusters that have an `ImageContentSourcePolicy` object. You cannot add a pull secret to a project.
+====
+
+:leveloffset!:
+
+// Configuring image registry repository mirroring
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * openshift_images/image-configuration.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="images-configuration-registry-mirror_{context}"]
+= Configuring image registry repository mirroring
+
+Setting up container registry repository mirroring enables you to perform the following tasks:
+
+* Configure your {product-title} cluster to redirect requests to pull images from a repository on a source image registry and have it resolved by a repository on a mirrored image registry.
+* Identify multiple mirrored repositories for each target repository, to make sure that if one mirror is down, another can be used.
+
+Repository mirroring in {product-title} includes the following attributes:
+
+* Image pulls are resilient to registry downtimes.
+* Clusters in disconnected environments can pull images from critical locations, such as quay.io, and have registries behind a company firewall provide the requested images.
+* A particular order of registries is tried when an image pull request is made, with the permanent registry typically being the last one tried.
+* The mirror information you enter is added to the `/etc/containers/registries.conf` file on every node in the {product-title} cluster.
+* When a node makes a request for an image from the source repository, it tries each mirrored repository in turn until it finds the requested content. If all mirrors fail, the cluster tries the source repository. If successful, the image is pulled to the node.
+
+Setting up repository mirroring can be done in the following ways:
+
+* At {product-title} installation:
++
+By pulling container images needed by {product-title} and then bringing those images behind your company's firewall, you can install {product-title} into a datacenter that is in a disconnected environment.
+
+* After {product-title} installation:
++
+If you did not configure mirroring during {product-title} installation, you can do so postinstallation by using one of the following custom resource (CR) objects:
++
+--
+** `ImageDigestMirrorSet`. This CR allows you to pull images from a mirrored registry by using digest specifications.
++
+** `ImageTagMirrorSet`. This CR allows you to pull images from a mirrored registry by using image tags.
+--
++
+[IMPORTANT]
+====
+Using an `ImageContentSourcePolicy` (ICSP) object to configure repository mirroring is a deprecated feature. Deprecated functionality is still included in {product-title} and continues to be supported; however, it will be removed in a future release of this product and is not recommended for new deployments. If you have existing YAML files that you used to create `ImageContentSourcePolicy` objects, you can use the `oc adm migrate icsp` command to convert those files to an `ImageDigestMirrorSet` YAML file. For more information, see "Converting ImageContentSourcePolicy (ICSP) files for image registry repository mirroring" in the following section.
+====
+
+Both of these custom resource objects identify the following information:
+--
+* The source of the container image repository you want to mirror.
+* A separate entry for each mirror repository you want to offer the content
+requested from the source repository.
+--
+
+[NOTE]
+====
+If your cluster uses an `ImageDigestMirrorSet` or `ImageTagMirrorSet` object to configure repository mirroring, you can use only global pull secrets for mirrored registries. You cannot add a pull secret to a project.
+====
+
+The following procedure creates a postinstallation mirror configuration, where you create an `ImageDigestMirrorSet` object.
+
+.Prerequisites
+* Access to the cluster as a user with the `cluster-admin` role.
+
+* Ensure that there are no `ImageContentSourcePolicy` objects on your cluster. For example, you can use the following command:
++
+[source,terminal]
+----
+$ oc get ImageContentSourcePolicy
+----
++
+.Example output
+[source,terminal]
+----
+No resources found
+----
+
+.Procedure
+
+. Configure mirrored repositories, by either:
++
+* Setting up a mirrored repository with Red Hat Quay, as described in link:https://access.redhat.com/documentation/en-us/red_hat_quay/3/html/manage_red_hat_quay/repo-mirroring-in-red-hat-quay[Red Hat Quay Repository Mirroring]. Using Red Hat Quay allows you to copy images from one repository to another and also automatically sync those repositories repeatedly over time.
+* Using a tool such as `skopeo` to copy images manually from the source directory to the mirrored repository.
++
+For example, after installing the skopeo RPM package on a Red Hat Enterprise Linux (RHEL) 7 or RHEL 8 system, use the `skopeo` command as shown in this example:
++
+[source,terminal]
+----
+$ skopeo copy \
+docker://registry.access.redhat.com/ubi9/ubi-minimal:latest@sha256:5cf... \
+docker://example.io/example/ubi-minimal
+----
++
+In this example, you have a container image registry that is named `example.io` with an image repository named `example` to which you want to copy the `ubi9/ubi-minimal` image from `registry.access.redhat.com`. After you create the registry, you can configure your {product-title} cluster to redirect requests made of the source repository to the mirrored repository.
+
+. Log in to your {product-title} cluster.
+
+. Create an `ImageDigestMirrorSet` or `ImageTagMirrorSet` CR, as needed, replacing the source and mirrors with your own registry and repository pairs and images:
++
+[source,yaml]
+----
+apiVersion: config.openshift.io/v1 <1>
+kind: ImageDigestMirrorSet <2>
+metadata:
+  name: ubi9repo
+spec:
+  imageDigestMirrors: <3>
+  - mirrors:
+    - example.io/example/ubi-minimal <4>
+    - example.com/example/ubi-minimal <5>
+    source: registry.access.redhat.com/ubi9/ubi-minimal <6>
+    mirrorSourcePolicy: AllowContactingSource <7>
+  - mirrors:
+    - mirror.example.com/redhat
+    source: registry.redhat.io/openshift4 <8>
+    mirrorSourcePolicy: AllowContactingSource
+  - mirrors:
+    - mirror.example.com
+    source: registry.redhat.io <9>
+    mirrorSourcePolicy: AllowContactingSource
+  - mirrors:
+    - mirror.example.net/image
+    source: registry.example.com/example/myimage <10>
+    mirrorSourcePolicy: AllowContactingSource
+  - mirrors:
+    - mirror.example.net
+    source: registry.example.com/example <11>
+    mirrorSourcePolicy: AllowContactingSource
+  - mirrors:
+    - mirror.example.net/registry-example-com
+    source: registry.example.com <12>
+    mirrorSourcePolicy: AllowContactingSource
+----
+<1> Indicates the API to use with this CR. This must be `config.openshift.io/v1`.
+<2> Indicates the kind of object according to the pull type:
+** `ImageDigestMirrorSet`: Pulls a digest reference image.
+** `ImageTagMirrorSet`: Pulls a tag reference image.
+<3> Indicates the type of image pull method, either:
+** `imageDigestMirrors`: Use for an `ImageDigestMirrorSet` CR.
+** `imageTagMirrors`: Use for an `ImageTagMirrorSet` CR.
+<4> Indicates the name of the mirrored image registry and repository.
+<5> Optional: Indicates a secondary mirror repository for each target repository. If one mirror is down, the target repository can use another mirror.
+<6> Indicates the registry and repository source, which is the repository that is referred to in image pull specifications.
+<7> Optional: Indicates the fallback policy if the image pull fails:
+** `AllowContactingSource`: Allows continued attempts to pull the image from the source repository. This is the default.
+** `NeverContactSource`: Prevents continued attempts to pull the image from the source repository.
+<8> Optional: Indicates a namespace inside a registry, which allows you to use any image in that namespace. If you use a registry domain as a source, the object is applied to all repositories from the registry.
+<9> Optional: Indicates a registry, which allows you to use any image in that registry. If you specify a registry name, the object is applied to all repositories from a source registry to a mirror registry.
+<10> Pulls the image `registry.example.com/example/myimage@sha256:...` from the mirror `mirror.example.net/image@sha256:..`.
+<11> Pulls the image `registry.example.com/example/image@sha256:...` in the source registry namespace from the mirror `mirror.example.net/image@sha256:...`.
+<12> Pulls the image `registry.example.com/myimage@sha256` from the mirror registry `example.net/registry-example-com/myimage@sha256:...`. The `ImageContentSourcePolicy` resource is applied to all repositories from a source registry to a mirror registry `mirror.example.net/registry-example-com`.
+
+. Create the new object:
++
+[source,terminal]
+----
+$ oc create -f registryrepomirror.yaml
+----
++
+After the object is created, the Machine Config Operator (MCO) cordons the nodes as the new settings are deployed to each node. The MCO restarts the nodes for an `ImageTagMirrorSet` object only. The MCO does not restart the nodes for `ImageDigestMirrorSet` objects. When the nodes are uncordoned, the cluster starts using the mirrored repository for requests to the source repository.
+
+. To check that the mirrored configuration settings are applied, do the following on one of the nodes.
+
+.. List your nodes:
++
+[source,terminal]
+----
+$ oc get node
+----
++
+.Example output
+[source,terminal]
+----
+NAME                           STATUS                     ROLES    AGE  VERSION
+ip-10-0-137-44.ec2.internal    Ready                      worker   7m   v1.27.3
+ip-10-0-138-148.ec2.internal   Ready                      master   11m  v1.27.3
+ip-10-0-139-122.ec2.internal   Ready                      master   11m  v1.27.3
+ip-10-0-147-35.ec2.internal    Ready                      worker   7m   v1.27.3
+ip-10-0-153-12.ec2.internal    Ready                      worker   7m   v1.27.3
+ip-10-0-154-10.ec2.internal    Ready                      master   11m  v1.27.3
+----
+
+.. Start the debugging process to access the node:
++
+[source,terminal]
+----
+$ oc debug node/ip-10-0-147-35.ec2.internal
+----
++
+.Example output
+[source,terminal]
+----
+Starting pod/ip-10-0-147-35ec2internal-debug ...
+To use host binaries, run `chroot /host`
+----
+
+.. Change your root directory to `/host`:
++
+[source,terminal]
+----
+sh-4.2# chroot /host
+----
+
+.. Check the `/etc/containers/registries.conf` file to make sure
+the changes were made:
++
+[source,terminal]
+----
+sh-4.2# cat /etc/containers/registries.conf
+----
++
+The following output represents a `registries.conf` file where an `ImageDigestMirrorSet` object and an `ImageTagMirrorSet` object were applied. The final two entries are marked `digest-only` and `tag-only` respectively.
++
+.Example output
+[source,terminal]
+----
+unqualified-search-registries = ["registry.access.redhat.com", "docker.io"]
+short-name-mode = ""
+
+[[registry]]
+  prefix = ""
+  location = "registry.access.redhat.com/ubi9/ubi-minimal" <1>
+
+  [[registry.mirror]]
+    location = "example.io/example/ubi-minimal" <2>
+    pull-from-mirror = "digest-only" <3>
+
+  [[registry.mirror]]
+    location = "example.com/example/ubi-minimal"
+    pull-from-mirror = "digest-only"
+
+[[registry]]
+  prefix = ""
+  location = "registry.example.com"
+
+  [[registry.mirror]]
+    location = "mirror.example.net/registry-example-com"
+    pull-from-mirror = "digest-only"
+
+[[registry]]
+  prefix = ""
+  location = "registry.example.com/example"
+
+  [[registry.mirror]]
+    location = "mirror.example.net"
+    pull-from-mirror = "digest-only"
+
+[[registry]]
+  prefix = ""
+  location = "registry.example.com/example/myimage"
+
+  [[registry.mirror]]
+    location = "mirror.example.net/image"
+    pull-from-mirror = "digest-only"
+
+[[registry]]
+  prefix = ""
+  location = "registry.redhat.io"
+
+  [[registry.mirror]]
+    location = "mirror.example.com"
+    pull-from-mirror = "digest-only"
+
+[[registry]]
+  prefix = ""
+  location = "registry.redhat.io/openshift4"
+
+  [[registry.mirror]]
+    location = "mirror.example.com/redhat"
+    pull-from-mirror = "digest-only"
+[[registry]]
+  prefix = ""
+  location = "registry.access.redhat.com/ubi9/ubi-minimal"
+  blocked = true <4>
+
+  [[registry.mirror]]
+    location = "example.io/example/ubi-minimal-tag"
+    pull-from-mirror = "tag-only" <5>
+----
+<1> Indicates the repository that is referred to in a pull spec.
+<2> Indicates the mirror for that repository.
+<3> Indicates that the image pull from the mirror is a digest reference image.
+<4> Indicates that the `NeverContactSource` parameter is set for this repository.
+<5> Indicates that the image pull from the mirror is a tag reference image.
+
+.. Pull an image to the node from the source and check if it is resolved by the mirror.
++
+[source,terminal]
+----
+sh-4.2# podman pull --log-level=debug registry.access.redhat.com/ubi9/ubi-minimal@sha256:5cf...
+----
+
+.Troubleshooting repository mirroring
+
+If the repository mirroring procedure does not work as described, use the following information about how repository mirroring works to help troubleshoot the problem.
+
+* The first working mirror is used to supply the pulled image.
+* The main registry is only used if no other mirror works.
+* From the system context, the `Insecure` flags are used as fallback.
+* The format of the `/etc/containers/registries.conf` file has changed recently. It is now version 2 and in TOML format.
+* You cannot add the same repository to both an `ImageDigestMirrorSet` and an `ImageTagMirrorSet` object.
+
+
+:leveloffset!:
+
+// Converting ImageContentSourcePolicy (ICSP) files for image registry repository mirroring
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * openshift_images/image-configuration.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="images-configuration-registry-mirror-convert_{context}"]
+= Converting ImageContentSourcePolicy (ICSP) files for image registry repository mirroring
+
+Using an `ImageContentSourcePolicy` (ICSP) object to configure repository mirroring is a deprecated feature. This functionality is still included in {product-title} and continues to be supported; however, it will be removed in a future release of this product and is not recommended for new deployments.
+
+ICSP objects are being replaced by `ImageDigestMirrorSet` and `ImageTagMirrorSet` objects to configure repository mirroring. If you have existing YAML files that you used to create `ImageContentSourcePolicy` objects, you can use the `oc adm migrate icsp` command to convert those files to an `ImageDigestMirrorSet` YAML file. The command updates the API to the current version, changes the `kind` value to `ImageDigestMirrorSet`, and changes `spec.repositoryDigestMirrors` to `spec.imageDigestMirrors`. The rest of the file is not changed.
+
+For more information about `ImageDigestMirrorSet` or `ImageTagMirrorSet` objects, see "Configuring image registry repository mirroring" in the previous section.
+
+.Prerequisites
+
+* Access to the cluster as a user with the `cluster-admin` role.
+
+* Ensure that you have `ImageContentSourcePolicy` objects on your cluster.
+
+.Procedure
+
+. Use the following command to convert one or more `ImageContentSourcePolicy` YAML files to an `ImageDigestMirrorSet` YAML file:
++
+[source,terminal]
+----
+$ oc adm migrate icsp <file_name>.yaml <file_name>.yaml <file_name>.yaml --dest-dir <path_to_the_directory>
+----
++
+--
+where:
+
+`<file_name>`:: Specifies the name of the source `ImageContentSourcePolicy` YAML. You can list multiple file names.
+`--dest-dir`:: Optional: Specifies a directory for the output `ImageDigestMirrorSet` YAML. If unset, the file is written to the current directory.
+--
++
+For example, the following command converts the `icsp.yaml` and `icsp-2.yaml` file and saves the new YAML files to the `idms-files` directory.
++
+[source,terminal]
+----
+$ oc adm migrate icsp icsp.yaml icsp-2.yaml --dest-dir idms-files
+----
++
+.Example output
+[source,terminal]
+----
+wrote ImageDigestMirrorSet to idms-files/imagedigestmirrorset_ubi8repo.5911620242173376087.yaml
+wrote ImageDigestMirrorSet to idms-files/imagedigestmirrorset_ubi9repo.6456931852378115011.yaml
+----
+
+. Create the CR object by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <path_to_the_directory>/<file-name>.yaml
+----
++
+--
+where:
+
+`<path_to_the_directory>`:: Specifies the path to the directory, if you used the `--dest-dir` flag.
+`<file_name>`:: Specifies the name of the `ImageDigestMirrorSet` YAML.
+--
+
+
+:leveloffset!:
+
+// Widening the scope of the mirror image catalog to reduce the frequency of cluster node reboots
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="generating-icsp-object-scoped-to-a-registry_{context}"]
+= Widening the scope of the mirror image catalog to reduce the frequency of cluster node reboots
+
+You can scope the mirrored image catalog at the repository level or the wider registry level. A widely scoped `ImageContentSourcePolicy` resource reduces the number of times the nodes need to reboot in response to changes to the resource.
+
+To widen the scope of the mirror image catalog in the `ImageContentSourcePolicy` resource, perform the following procedure.
+
+.Prerequisites
+
+* Install the {product-title} CLI `oc`.
+* Log in as a user with `cluster-admin` privileges.
+* Configure a mirrored image catalog for use in your disconnected cluster.
+
+.Procedure
+
+. Run the following command, specifying values for `<local_registry>`, `<pull_spec>`, and `<pull_secret_file>`:
++
+[source,terminal]
+----
+$ oc adm catalog mirror <local_registry>/<pull_spec> <local_registry> -a <pull_secret_file> --icsp-scope=registry
+----
++
+where:
++
+--
+<local_registry>:: is the local registry you have configured for your disconnected cluster, for example, `local.registry:5000`.
+<pull_spec>:: is the pull specification as configured in your disconnected registry, for example, `redhat/redhat-operator-index:v{product-version}`
+<pull_secret_file>:: is the `registry.redhat.io` pull secret in `.json` file format. You can download the {cluster-manager-url-pull}.
+--
++
+The `oc adm catalog mirror` command creates a `/redhat-operator-index-manifests` directory and generates `imageContentSourcePolicy.yaml`, `catalogSource.yaml`, and `mapping.txt` files.
+
+. Apply the new `ImageContentSourcePolicy` resource to the cluster:
++
+[source,terminal]
+----
+$ oc apply -f imageContentSourcePolicy.yaml
+----
+
+.Verification
+
+* Verify that `oc apply` successfully applied the change to `ImageContentSourcePolicy`:
++
+[source,terminal]
+----
+$ oc get ImageContentSourcePolicy -o yaml
+----
++
+.Example output
+
+[source,yaml]
+----
+apiVersion: v1
+items:
+- apiVersion: operator.openshift.io/v1alpha1
+  kind: ImageContentSourcePolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"operator.openshift.io/v1alpha1","kind":"ImageContentSourcePolicy","metadata":{"annotations":{},"name":"redhat-operator-index"},"spec":{"repositoryDigestMirrors":[{"mirrors":["local.registry:5000"],"source":"registry.redhat.io"}]}}
+...
+----
+
+After you update the `ImageContentSourcePolicy` resource, {product-title} deploys the new settings to each node and the cluster starts using the mirrored repository for requests to the source repository.
+
+:leveloffset!:
+
+[id="additional-resources_security-container-signature"]
+[role="_additional-resources"]
+== Additional resources
+
+* xref:../../../operators/admin/olm-restricted-networks.adoc#olm-restricted-networks[Using Operator Lifecycle Manager on restricted networks]
+
+* xref:../../../post_installation_configuration/machine-configuration-tasks.adoc#machine-config-overview-post-install-machine-configuration-tasks[Machine Config Overview]
+
+//# includes=_attributes/common-attributes,modules/machine-health-checks-pausing,modules/update-restricted-image-digests,modules/update-restricted,modules/images-configuration-registry-mirror,modules/images-configuration-registry-mirror-convert,modules/generating-icsp-object-scoped-to-a-registry

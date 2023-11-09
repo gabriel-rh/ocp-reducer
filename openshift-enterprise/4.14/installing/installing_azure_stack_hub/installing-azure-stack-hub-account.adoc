@@ -1,0 +1,552 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="installing-azure-stack-hub-account"]
+= Configuring an Azure Stack Hub account
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: installing-azure-stack-hub-account
+
+toc::[]
+
+Before you can install {product-title}, you must configure a Microsoft Azure account.
+
+[IMPORTANT]
+====
+All Azure resources that are available through public endpoints are subject to resource name restrictions, and you cannot create resources that use certain terms. For a list of terms that Azure restricts, see link:https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-reserved-resource-name[Resolve reserved resource name errors] in the Azure documentation.
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_azure/installing-azure-account.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-account.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:ash:
+:upi:
+:cp: Azure Stack Hub
+
+:_mod-docs-content-type: REFERENCE
+[id="installation-azure-limits_{context}"]
+= {cp} account limits
+
+The {product-title} cluster uses a number of Microsoft Azure Stack Hub components, and the default link:https://docs.microsoft.com/en-us/azure-stack/operator/azure-stack-quota-types?view=azs-2102[Quota types in Azure Stack Hub] affect your ability to install {product-title} clusters.
+
+The following table summarizes the {cp} components whose limits can impact your
+ability to install and run {product-title} clusters.
+
+[cols="2a,3a,8a",options="header"]
+|===
+|Component |Number of components required by default |Description
+
+|vCPU
+|56
+|A default cluster requires 56 vCPUs, so you must increase the account limit.
+
+By default, each cluster creates the following instances:
+
+* One bootstrap machine, which is removed after installation
+* Three control plane machines
+* Three compute machines
+
+Because the bootstrap, control plane, and worker machines use `Standard_DS4_v2` virtual machines, which use 8 vCPUs, a default cluster requires 56 vCPUs. The bootstrap node VM is used only during installation.
+
+To deploy more worker nodes, enable autoscaling, deploy large workloads, or use
+a different instance type, you must further increase the vCPU limit for your
+account to ensure that your cluster can deploy the machines that you require.
+
+
+|VNet
+| 1
+| Each default cluster requires one Virtual Network (VNet), which contains two
+subnets.
+
+|Network interfaces
+|7
+|Each default cluster requires seven network interfaces. If you create more
+machines or your deployed workloads create load balancers, your cluster uses
+more network interfaces.
+
+|Network security groups
+|2
+| Each cluster creates network security groups for each subnet in the VNet.
+The default cluster creates network
+security groups for the control plane and for the compute node subnets:
+
+[horizontal]
+ `controlplane`:: Allows the control plane machines to be reached on port 6443
+ from anywhere
+`node`:: Allows worker nodes to be reached from the internet on ports 80 and 443
+
+|Network load balancers
+| 3
+|Each cluster creates the following
+link:https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-overview[load balancers]:
+
+[horizontal]
+`default`:: Public IP address that load balances requests to ports 80 and 443 across worker machines
+`internal`:: Private IP address that load balances requests to ports 6443 and 22623 across control plane machines
+`external`:: Public IP address that load balances requests to port 6443 across control plane machines
+
+If your applications create more Kubernetes `LoadBalancer` service objects,
+your cluster uses more load balancers.
+
+|Public IP addresses
+|2
+|The public load balancer uses a public IP address. The bootstrap
+machine also uses a public IP address so that you can SSH into the
+machine to troubleshoot issues during installation. The IP address for the
+bootstrap node is used only during installation.
+
+|Private IP addresses
+|7
+|The internal load balancer, each of the three control plane machines, and each
+of the three worker machines each use a private IP address.
+
+|===
+
+:!ash:
+:!cp: Azure Stack Hub
+:!upi:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../scalability_and_performance/optimization/optimizing-storage.adoc#optimizing-storage[Optimizing storage].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-account.adoc
+
+[id="installation-azure-stack-hub-network-config_{context}"]
+= Configuring a DNS zone in Azure Stack Hub
+
+To successfully install {product-title} on Azure Stack Hub, you must create DNS records in an Azure Stack Hub DNS zone. The DNS zone must be authoritative for the domain. To delegate a registrar's DNS zone to Azure Stack Hub, see Microsoft's documentation for link:https://docs.microsoft.com/en-us/azure-stack/operator/azure-stack-integrate-dns?view=azs-2102[Azure Stack Hub datacenter DNS integration].
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+
+[id="installation-azure-stack-hub-permissions_{context}"]
+= Required Azure Stack Hub roles
+
+Your Microsoft Azure Stack Hub account must have the following roles for the subscription that you use:
+
+* `Owner`
+
+To set roles on the Azure portal, see the link:https://docs.microsoft.com/en-us/azure-stack/user/azure-stack-manage-permissions?view=azs-2102[Manage access to resources in Azure Stack Hub with role-based access control] in the Microsoft documentation.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_azure/installing-azure-account.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-account.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:ash:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-azure-service-principal_{context}"]
+= Creating a service principal
+
+Because {product-title} and its installation program create Microsoft Azure resources by using the Azure Resource Manager, you must create a service principal to represent it.
+
+.Prerequisites
+
+* Install or update the link:https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-yum?view=azure-cli-latest[Azure CLI].
+* Your Azure account has the required roles for the subscription that you use.
+
+.Procedure
+
+. Register your environment:
++
+[source,terminal]
+----
+$ az cloud register -n AzureStackCloud --endpoint-resource-manager <endpoint> <1>
+----
+<1> Specify the Azure Resource Manager endpoint, \`https://management.<region>.<fqdn>/`.
++
+See the link:https://docs.microsoft.com/en-us/azure-stack/mdc/azure-stack-version-profiles-azurecli-2-tzl#connect-to-azure-stack-hub[Microsoft documentation] for details.
+
+. Set the active environment:
++
+[source,terminal]
+----
+$ az cloud set -n AzureStackCloud
+----
+
+. Update your environment configuration to use the specific API version for Azure Stack Hub:
++
+[source,terminal]
+----
+$ az cloud update --profile 2019-03-01-hybrid
+----
+
+. Log in to the Azure CLI:
++
+[source,terminal]
+----
+$ az login
+----
++
+If you are in a multitenant environment, you must also supply the tenant ID.
+
+. If your Azure account uses subscriptions, ensure that you are using the right
+subscription:
+
+.. View the list of available accounts and record the `tenantId` value for the
+subscription you want to use for your cluster:
++
+[source,terminal]
+----
+$ az account list --refresh
+----
++
+.Example output
+[source,terminal]
+----
+[
+  {
+    "cloudName": AzureStackCloud",
+    "id": "9bab1460-96d5-40b3-a78e-17b15e978a80",
+    "isDefault": true,
+    "name": "Subscription Name",
+    "state": "Enabled",
+    "tenantId": "6057c7e9-b3ae-489d-a54e-de3f6bf6a8ee",
+    "user": {
+      "name": "you@example.com",
+      "type": "user"
+    }
+  }
+]
+----
+
+.. View your active account details and confirm that the `tenantId` value matches
+the subscription you want to use:
++
+[source,terminal]
+----
+$ az account show
+----
++
+.Example output
+[source,terminal]
+----
+{
+  "environmentName": AzureStackCloud",
+  "id": "9bab1460-96d5-40b3-a78e-17b15e978a80",
+  "isDefault": true,
+  "name": "Subscription Name",
+  "state": "Enabled",
+  "tenantId": "6057c7e9-b3ae-489d-a54e-de3f6bf6a8ee", <1>
+  "user": {
+    "name": "you@example.com",
+    "type": "user"
+  }
+}
+----
+<1> Ensure that the value of the `tenantId` parameter is the correct subscription ID.
+
+.. If you are not using the right subscription, change the active subscription:
++
+[source,terminal]
+----
+$ az account set -s <subscription_id> <1>
+----
+<1> Specify the subscription ID.
+
+.. Verify the subscription ID update:
++
+[source,terminal]
+----
+$ az account show
+----
++
+.Example output
+[source,terminal]
+----
+{
+  "environmentName": AzureStackCloud",
+  "id": "33212d16-bdf6-45cb-b038-f6565b61edda",
+  "isDefault": true,
+  "name": "Subscription Name",
+  "state": "Enabled",
+  "tenantId": "8049c7e9-c3de-762d-a54e-dc3f6be6a7ee",
+  "user": {
+    "name": "you@example.com",
+    "type": "user"
+  }
+}
+----
+
+. Record the `tenantId` and `id` parameter values from the output. You need these values during the {product-title} installation.
+
+. Create the service principal for your account:
++
+[source,terminal]
+----
+$ az ad sp create-for-rbac --role Contributor --name <service_principal> \ <1>
+  --scopes /subscriptions/<subscription_id> <2>
+  --years <years> <3>
+----
+<1> Specify the service principal name.
+<2> Specify the subscription ID.
+<3> Specify the number of years. By default, a service principal expires in one year. By using the `--years` option you can extend the validity of your service principal.
++
+.Example output
+[source,terminal]
+----
+Creating 'Contributor' role assignment under scope '/subscriptions/<subscription_id>'
+The output includes credentials that you must protect. Be sure that you do not
+include these credentials in your code or check the credentials into your source
+control. For more information, see https://aka.ms/azadsp-cli
+{
+  "appId": "ac461d78-bf4b-4387-ad16-7e32e328aec6",
+  "displayName": <service_principal>",
+  "password": "00000000-0000-0000-0000-000000000000",
+  "tenantId": "8049c7e9-c3de-762d-a54e-dc3f6be6a7ee"
+}
+----
+
+
+. Record the values of the `appId` and `password` parameters from the previous
+output. You need these values during {product-title} installation.
+
+
+:!ash:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For more information about CCO modes, see xref:../../authentication/managing_cloud_provider_credentials/about-cloud-credential-operator.adoc#about-cloud-credential-operator-modes[About the Cloud Credential Operator].
+
+[id="next-steps_installing-azure-stack-hub-account"]
+== Next steps
+
+* Install an {product-title} cluster:
+** xref:../../installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc#installing-azure-stack-hub-default[Installing a cluster quickly on Azure Stack Hub].
+** Install an {product-title} cluster on Azure Stack Hub with user-provisioned infrastructure by following xref:../../installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc#installing-azure-stack-hub-user-infra[Installing a cluster on Azure Stack Hub using ARM templates].
+
+//# includes=_attributes/common-attributes,modules/installation-azure-limits,modules/installation-azure-stack-hub-network-config,modules/installation-azure-stack-hub-permissions,modules/installation-azure-service-principal

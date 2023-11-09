@@ -1,0 +1,503 @@
+// Module included in the following assemblies:
+//
+// * backup_and_restore/application_backup_and_restore/backing_up_and_restoring/backing-up-applications.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="oadp-using-data-mover-for-csi-snapshots-doc"]
+= Using Data Mover for CSI snapshots
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: backing-up-applications
+
+toc::[]
+
+:FeatureName: Data Mover for CSI snapshots
+
+The OADP Data Mover enables customers to back up Container Storage Interface (CSI) volume snapshots to a remote object store. When Data Mover is enabled, you can restore stateful applications, using CSI volume snapshots pulled from the object store if a failure, accidental deletion, or corruption of the cluster occurs.
+
+The Data Mover solution uses the Restic option of VolSync.
+
+Data Mover supports backup and restore of CSI volume snapshots only.
+
+In OADP 1.2 Data Mover `VolumeSnapshotBackups` (VSBs) and `VolumeSnapshotRestores` (VSRs) are queued using the VolumeSnapshotMover (VSM). The VSM's performance is improved by specifying a concurrent number of VSBs and VSRs simultaneously `InProgress`. After all async plugin operations are complete, the backup is marked as complete.
+
+
+[NOTE]
+====
+The OADP 1.1 Data Mover is a Technology Preview feature.
+
+The OADP 1.2 Data Mover has significantly improved features and performances, but is still a Technology Preview feature.
+====
+:FeatureName: The OADP Data Mover
+:leveloffset: +1
+
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+:leveloffset!:
+
+[NOTE]
+====
+Red Hat recommends that customers who use OADP 1.2 Data Mover in order to back up and restore ODF CephFS volumes, upgrade or install {product-title} version 4.12 or later for improved performance. OADP Data Mover can leverage CephFS shallow volumes in {product-title} version 4.12 or later, which based on our testing, can improve the performance of backup times.
+
+* https://issues.redhat.com/browse/RHSTOR-4287[CephFS ROX details]
+//* https://github.com/ceph/ceph-csi/blob/devel/docs/cephfs-snapshot-backed-volumes.md[Provisioning and mounting CephFS snapshot-backed volumes]
+
+
+//For more information about OADP 1.2 with CephS [name of topic], see ___.
+
+====
+
+.Prerequisites
+
+* You have verified that the `StorageClass` and `VolumeSnapshotClass` custom resources (CRs) support CSI.
+
+* You have verified that only one `VolumeSnapshotClass` CR has the annotation `snapshot.storage.kubernetes.io/is-default-class: "true"`.
++
+[NOTE]
+====
+In {product-title} version 4.12 or later, verify that this is the only default `VolumeSnapshotClass`.
+====
+
+* You have verified that `deletionPolicy` of the `VolumeSnapshotClass` CR is set to `Retain`.
+
+* You have verified that only one `StorageClass` CR has the annotation `storageclass.kubernetes.io/is-default-class: "true"`.
+
+* You have included the label `{velero-domain}/csi-volumesnapshot-class: "true"` in your `VolumeSnapshotClass` CR.
+
+* You have verified that the `OADP namespace` has the annotation `oc annotate --overwrite namespace/openshift-adp volsync.backube/privileged-movers="true"`.
++
+[NOTE]
+====
+In OADP 1.1 the above setting is mandatory.
+
+In OADP 1.2 the `privileged-movers` setting is not required in most scenarios. The restoring container permissions should be adequate for the Volsync copy. In some user scenarios, there may be permission errors that the `privileged-mover`= `true` setting should resolve.
+====
+
+* You have installed the VolSync Operator by using the Operator Lifecycle Manager (OLM).
++
+[NOTE]
+====
+The VolSync Operator is required for using OADP Data Mover.
+====
+
+* You have installed the OADP operator by using OLM.
+
+.Procedure
+
+. Configure a Restic secret by creating a `.yaml` file as following:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: <secret_name>
+  namespace: openshift-adp
+type: Opaque
+stringData:
+  RESTIC_PASSWORD: <secure_restic_password>
+----
++
+[NOTE]
+====
+By default, the Operator looks for a secret named `dm-credential`. If you are using a different name, you need to specify the name through a Data Protection Application (DPA) CR using `dpa.spec.features.dataMover.credentialName`.
+====
+
+. Create a DPA CR similar to the following example. The default plugins include CSI.
++
+.Example Data Protection Application (DPA) CR
+[source,yaml]
+----
+apiVersion: oadp.openshift.io/v1alpha1
+kind: DataProtectionApplication
+metadata:
+  name: velero-sample
+  namespace: openshift-adp
+spec:
+  backupLocations:
+    - velero:
+        config:
+          profile: default
+          region: us-east-1
+        credential:
+          key: cloud
+          name: cloud-credentials
+        default: true
+        objectStorage:
+          bucket: <bucket_name>
+          prefix: <bucket-prefix>
+        provider: aws
+  configuration:
+    restic:
+      enable: <true_or_false>
+    velero:
+       itemOperationSyncFrequency: "10s"
+       defaultPlugins:
+        - openshift
+        - aws
+        - csi
+        - vsm <1>
+  features:
+    dataMover:
+      credentialName: restic-secret
+      enable: true
+      maxConcurrentBackupVolumes: "3" <2>
+      maxConcurrentRestoreVolumes: "3" <3>
+      pruneInterval: "14" <4>
+      volumeOptions: <5>
+      sourceVolumeOptions:
+          accessMode: ReadOnlyMany
+          cacheAccessMode: ReadWriteOnce
+          cacheCapacity: 2Gi
+      destinationVolumeOptions:
+          storageClass: other-storageclass-name
+          cacheAccessMode: ReadWriteMany
+  snapshotLocations:
+    - velero:
+        config:
+          profile: default
+          region: us-west-2
+        provider: aws
+
+----
+<1> OADP 1.2 only.
+<2> OADP 1.2 only. Optional: Specify the upper limit of the number of snapshots allowed to be queued for backup. The default value is 10.
+<3> OADP 1.2 only. Optional: Specify the upper limit of the number of snapshots allowed to be queued for restore. The default value is 10.
+<4> OADP 1.2 only. Optional: Specify the number of days, between running Restic pruning on the repository. The prune operation repacks the data to free space, but it can also generate significant I/O traffic as a part of the process. Setting this option allows a trade-off between storage consumption, from no longer referenced data, and access costs.
+<5> OADP 1.2 only. Optional: Specify VolumeSync volume options for backup and restore.
+
++
+The OADP Operator installs two custom resource definitions (CRDs), `VolumeSnapshotBackup` and `VolumeSnapshotRestore`.
++
+.Example `VolumeSnapshotBackup` CRD
+[source,yaml]
+----
+apiVersion: datamover.oadp.openshift.io/v1alpha1
+kind: VolumeSnapshotBackup
+metadata:
+  name: <vsb_name>
+  namespace: <namespace_name> <1>
+spec:
+  volumeSnapshotContent:
+    name: <snapcontent_name>
+  protectedNamespace: <adp_namespace> <2>
+  resticSecretRef:
+    name: <restic_secret_name>
+----
+<1> Specify the namespace where the volume snapshot exists.
+<2> Specify the namespace where the OADP Operator is installed. The default is `openshift-adp`.
++
+.Example `VolumeSnapshotRestore` CRD
+[source,yaml]
+----
+apiVersion: datamover.oadp.openshift.io/v1alpha1
+kind: VolumeSnapshotRestore
+metadata:
+  name: <vsr_name>
+  namespace: <namespace_name> <1>
+spec:
+  protectedNamespace: <protected_ns> <2>
+  resticSecretRef:
+    name: <restic_secret_name>
+  volumeSnapshotMoverBackupRef:
+    sourcePVCData:
+      name: <source_pvc_name>
+      size: <source_pvc_size>
+    resticrepository: <your_restic_repo>
+    volumeSnapshotClassName: <vsclass_name>
+----
+<1> Specify the namespace where the volume snapshot exists.
+<2> Specify the namespace where the OADP Operator is installed. The default is `openshift-adp`.
+
+. You can back up a volume snapshot by performing the following steps:
+
+.. Create a backup CR:
++
+[source,yaml]
+----
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: <backup_name>
+  namespace: <protected_ns> <1>
+spec:
+  includedNamespaces:
+  - <app_ns> <2>
+  storageLocation: velero-sample-1
+----
+<1> Specify the namespace where the Operator is installed. The default namespace is `openshift-adp`.
+<2> Specify the application namespace or namespaces to be backed up.
+
+.. Wait up to 10 minutes and check whether the `VolumeSnapshotBackup` CR status is `Completed` by entering the following commands:
++
+[source,terminal]
+----
+$ oc get vsb -n <app_ns>
+----
++
+[source,terminal]
+----
+$ oc get vsb <vsb_name> -n <app_ns> -o jsonpath="{.status.phase}"
+----
++
+A snapshot is created in the object store was configured in the DPA.
++
+[NOTE]
+====
+If the status of the `VolumeSnapshotBackup` CR becomes `Failed`, refer to the Velero logs for troubleshooting.
+====
+
+. You can restore a volume snapshot by performing the following steps:
+
+.. Delete the application namespace and the `VolumeSnapshotContent` that was created by the Velero CSI plugin.
+
+.. Create a `Restore` CR and set `restorePVs` to `true`.
++
+.Example `Restore` CR
+[source,yaml]
+----
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: <restore_name>
+  namespace: <protected_ns>
+spec:
+  backupName: <previous_backup_name>
+  restorePVs: true
+----
+
+.. Wait up to 10 minutes and check whether the `VolumeSnapshotRestore` CR status is `Completed` by entering the following command:
++
+[source,terminal]
+----
+$ oc get vsr -n <app_ns>
+----
++
+[source,terminal]
+----
+$ oc get vsr <vsr_name> -n <app_ns> -o jsonpath="{.status.phase}"
+----
+
+.. Check whether your application data and resources have been restored.
++
+[NOTE]
+====
+If the status of the `VolumeSnapshotRestore` CR becomes 'Failed', refer to the Velero logs for troubleshooting.
+====
+
+//# includes=_attributes/common-attributes,snippets/technology-preview

@@ -1,0 +1,648 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="post-install-configure-additional-devices-ibmz"]
+= Configuring additional devices in an {ibmzProductName} or {linuxoneProductName} environment
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: post-install-configure-additional-devices-ibmz
+
+toc::[]
+
+After installing {product-title}, you can configure additional devices for your cluster in an {ibmzProductName} or {linuxoneProductName} environment, which is installed with z/VM. The following devices can be configured:
+
+* Fibre Channel Protocol (FCP) host
+* FCP LUN
+* DASD
+* qeth
+
+You can configure devices by adding udev rules using the Machine Config Operator (MCO) or you can configure devices manually.
+
+[NOTE]
+====
+The procedures described here apply only to z/VM installations. If you have installed your cluster with {op-system-base} KVM on {ibmzProductName} or {linuxoneProductName} infrastructure, no additional configuration is needed inside the KVM guest after the devices were added to the KVM guests. However, both in z/VM and {op-system-base} KVM environments the next steps to configure the Local Storage Operator and Kubernetes NMState Operator need to be applied.
+====
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../post_installation_configuration/machine-configuration-tasks.adoc#post-install-machine-configuration-tasks[Post-installation machine configuration tasks]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * post-installation-configuration/ibmz-post-install.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configure-additional-devices-using-mco_{context}"]
+= Configuring additional devices using the Machine Config Operator (MCO)
+
+Tasks in this section describe how to use features of the Machine Config Operator (MCO) to configure additional devices in an {ibmzProductName} or {linuxoneProductName} environment. Configuring devices with the MCO is persistent but only allows specific configurations for compute nodes. MCO does not allow control plane nodes to have different configurations.
+
+.Prerequisites
+
+* You are logged in to the cluster as a user with administrative privileges.
+* The device must be available to the z/VM guest.
+* The device is already attached.
+* The device is not included in the `cio_ignore` list, which can be set in the kernel parameters.
+* You have created a `MachineConfig` object file with the following YAML:
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  name: worker0
+spec:
+  machineConfigSelector:
+    matchExpressions:
+      - {key: machineconfiguration.openshift.io/role, operator: In, values: [worker,worker0]}
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/worker0: ""
+----
+
+[id="configuring-fcp-host"]
+== Configuring a Fibre Channel Protocol (FCP) host
+
+The following is an example of how to configure an FCP host adapter with N_Port Identifier Virtualization (NPIV) by adding a udev rule.
+
+.Procedure
+
+. Take the following sample udev rule `441-zfcp-host-0.0.8000.rules`:
++
+[source,terminal]
+----
+ACTION=="add", SUBSYSTEM=="ccw", KERNEL=="0.0.8000", DRIVER=="zfcp", GOTO="cfg_zfcp_host_0.0.8000"
+ACTION=="add", SUBSYSTEM=="drivers", KERNEL=="zfcp", TEST=="[ccw/0.0.8000]", GOTO="cfg_zfcp_host_0.0.8000"
+GOTO="end_zfcp_host_0.0.8000"
+
+LABEL="cfg_zfcp_host_0.0.8000"
+ATTR{[ccw/0.0.8000]online}="1"
+
+LABEL="end_zfcp_host_0.0.8000"
+----
+
+. Convert the rule to Base64 encoded by running the following command:
++
+[source,terminal]
+----
+$ base64 /path/to/file/
+----
+
+. Copy the following MCO sample profile into a YAML file:
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+   labels:
+     machineconfiguration.openshift.io/role: worker0 <1>
+   name: 99-worker0-devices
+spec:
+   config:
+     ignition:
+       version: 3.2.0
+     storage:
+       files:
+       - contents:
+           source: data:text/plain;base64,<encoded_base64_string> <2>
+         filesystem: root
+         mode: 420
+         path: /etc/udev/rules.d/41-zfcp-host-0.0.8000.rules <3>
+----
+<1> The role you have defined in the machine config file.
+<2> The Base64 encoded string that you have generated in the previous step.
+<3> The path where the udev rule is located.
+
+[id="configuring-fcp-lun"]
+== Configuring an FCP LUN
+The following is an example of how to configure an FCP LUN by adding a udev rule. You can add new FCP LUNs or add additional paths to LUNs that are already configured with multipathing.
+
+.Procedure
+
+. Take the following sample udev rule `41-zfcp-lun-0.0.8000:0x500507680d760026:0x00bc000000000000.rules`:
++
+[source,terminal]
+----
+ACTION=="add", SUBSYSTEMS=="ccw", KERNELS=="0.0.8000", GOTO="start_zfcp_lun_0.0.8207"
+GOTO="end_zfcp_lun_0.0.8000"
+
+LABEL="start_zfcp_lun_0.0.8000"
+SUBSYSTEM=="fc_remote_ports", ATTR{port_name}=="0x500507680d760026", GOTO="cfg_fc_0.0.8000_0x500507680d760026"
+GOTO="end_zfcp_lun_0.0.8000"
+
+LABEL="cfg_fc_0.0.8000_0x500507680d760026"
+ATTR{[ccw/0.0.8000]0x500507680d760026/unit_add}="0x00bc000000000000"
+GOTO="end_zfcp_lun_0.0.8000"
+
+LABEL="end_zfcp_lun_0.0.8000"
+----
+
+. Convert the rule to Base64 encoded by running the following command:
++
+[source,terminal]
+----
+$ base64 /path/to/file/
+----
+
+. Copy the following MCO sample profile into a YAML file:
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+   labels:
+     machineconfiguration.openshift.io/role: worker0 <1>
+   name: 99-worker0-devices
+spec:
+   config:
+     ignition:
+       version: 3.2.0
+     storage:
+       files:
+       - contents:
+           source: data:text/plain;base64,<encoded_base64_string> <2>
+         filesystem: root
+         mode: 420
+         path: /etc/udev/rules.d/41-zfcp-lun-0.0.8000:0x500507680d760026:0x00bc000000000000.rules <3>
+----
+<1> The role you have defined in the machine config file.
+<2> The Base64 encoded string that you have generated in the previous step.
+<3> The path where the udev rule is located.
+
+[id="configuring-dasd"]
+== Configuring DASD
+
+The following is an example of how to configure a DASD device by adding a udev rule.
+
+.Procedure
+
+. Take the following sample udev rule `41-dasd-eckd-0.0.4444.rules`:
++
+[source,terminal]
+----
+ACTION=="add", SUBSYSTEM=="ccw", KERNEL=="0.0.4444", DRIVER=="dasd-eckd", GOTO="cfg_dasd_eckd_0.0.4444"
+ACTION=="add", SUBSYSTEM=="drivers", KERNEL=="dasd-eckd", TEST=="[ccw/0.0.4444]", GOTO="cfg_dasd_eckd_0.0.4444"
+GOTO="end_dasd_eckd_0.0.4444"
+
+LABEL="cfg_dasd_eckd_0.0.4444"
+ATTR{[ccw/0.0.4444]online}="1"
+
+LABEL="end_dasd_eckd_0.0.4444"
+----
+
+. Convert the rule to Base64 encoded by running the following command:
++
+[source,terminal]
+----
+$ base64 /path/to/file/
+----
+
+. Copy the following MCO sample profile into a YAML file:
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+   labels:
+     machineconfiguration.openshift.io/role: worker0 <1>
+   name: 99-worker0-devices
+spec:
+   config:
+     ignition:
+       version: 3.2.0
+     storage:
+       files:
+       - contents:
+           source: data:text/plain;base64,<encoded_base64_string> <2>
+         filesystem: root
+         mode: 420
+         path: /etc/udev/rules.d/41-dasd-eckd-0.0.4444.rules <3>
+----
+<1> The role you have defined in the machine config file.
+<2> The Base64 encoded string that you have generated in the previous step.
+<3> The path where the udev rule is located.
+
+[id="configuring-qeth"]
+== Configuring qeth
+
+The following is an example of how to configure a qeth device by adding a udev rule.
+
+.Procedure
+
+. Take the following sample udev rule `41-qeth-0.0.1000.rules`:
++
+[source,terminal]
+----
+ACTION=="add", SUBSYSTEM=="drivers", KERNEL=="qeth", GOTO="group_qeth_0.0.1000"
+ACTION=="add", SUBSYSTEM=="ccw", KERNEL=="0.0.1000", DRIVER=="qeth", GOTO="group_qeth_0.0.1000"
+ACTION=="add", SUBSYSTEM=="ccw", KERNEL=="0.0.1001", DRIVER=="qeth", GOTO="group_qeth_0.0.1000"
+ACTION=="add", SUBSYSTEM=="ccw", KERNEL=="0.0.1002", DRIVER=="qeth", GOTO="group_qeth_0.0.1000"
+ACTION=="add", SUBSYSTEM=="ccwgroup", KERNEL=="0.0.1000", DRIVER=="qeth", GOTO="cfg_qeth_0.0.1000"
+GOTO="end_qeth_0.0.1000"
+
+LABEL="group_qeth_0.0.1000"
+TEST=="[ccwgroup/0.0.1000]", GOTO="end_qeth_0.0.1000"
+TEST!="[ccw/0.0.1000]", GOTO="end_qeth_0.0.1000"
+TEST!="[ccw/0.0.1001]", GOTO="end_qeth_0.0.1000"
+TEST!="[ccw/0.0.1002]", GOTO="end_qeth_0.0.1000"
+ATTR{[drivers/ccwgroup:qeth]group}="0.0.1000,0.0.1001,0.0.1002"
+GOTO="end_qeth_0.0.1000"
+
+LABEL="cfg_qeth_0.0.1000"
+ATTR{[ccwgroup/0.0.1000]online}="1"
+
+LABEL="end_qeth_0.0.1000"
+----
+
+. Convert the rule to Base64 encoded by running the following command:
++
+[source,terminal]
+----
+$ base64 /path/to/file/
+----
+
+. Copy the following MCO sample profile into a YAML file:
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+   labels:
+     machineconfiguration.openshift.io/role: worker0 <1>
+   name: 99-worker0-devices
+spec:
+   config:
+     ignition:
+       version: 3.2.0
+     storage:
+       files:
+       - contents:
+           source: data:text/plain;base64,<encoded_base64_string> <2>
+         filesystem: root
+         mode: 420
+         path: /etc/udev/rules.d/41-dasd-eckd-0.0.4444.rules <3>
+----
+<1> The role you have defined in the machine config file.
+<2> The Base64 encoded string that you have generated in the previous step.
+<3> The path where the udev rule is located.
+
+
+:leveloffset!:
+
+.Next steps
+
+* xref:../storage/persistent_storage/persistent_storage_local/persistent-storage-local.adoc#persistent-storage-using-local-volume[Install and configure the Local Storage Operator]
+* xref:../networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc#k8s-nmstate-updating-node-network-config[Updating node network configuration]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * post-installation-configuration/ibmz-post-install.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="configure-additional-devices-manually_{context}"]
+= Configuring additional devices manually
+
+Tasks in this section describe how to manually configure additional devices in an {ibmzProductName} or {linuxoneProductName} environment. This configuration method is persistent over node restarts but not {product-title} native and you need to redo the steps if you replace the node.
+
+.Prerequisites
+
+* You are logged in to the cluster as a user with administrative privileges.
+* The device must be available to the node.
+* In a z/VM environment, the device must be attached to the z/VM guest.
+
+.Procedure
+
+. Connect to the node via SSH by running the following command:
++
+[source,terminal]
+----
+$ ssh <user>@<node_ip_address>
+----
++
+You can also start a debug session to the node by running the following command:
++
+[source,terminal]
+----
+$ oc debug node/<node_name>
+----
+
+. To enable the devices with the `chzdev` command, enter the following command:
++
+[source,terminal]
+----
+$ sudo chzdev -e 0.0.8000
+  sudo chzdev -e 1000-1002
+  sude chzdev -e 4444
+  sudo chzdev -e 0.0.8000:0x500507680d760026:0x00bc000000000000
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+See link:https://www.ibm.com/docs/en/linux-on-systems?topic=linuxonibm/com.ibm.linux.z.ludd/ludd_c_perscfg.html[Persistent device configuration] in IBM Documentation.
+
+[id="roce-network-cards"]
+== RoCE network Cards
+RoCE (RDMA over Converged Ethernet) network cards do not need to be enabled and their interfaces can be configured with the Kubernetes NMState Operator whenever they are available in the node. For example, RoCE network cards are available if they are attached in a z/VM environment or passed through in a {op-system-base} KVM environment.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * post-installation-configuration/ibmz-post-install.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="enabling-multipathing-fcp-luns_{context}"]
+= Enabling multipathing for FCP LUNs
+
+Tasks in this section describe how to manually configure additional devices in an {ibmzProductName} or {linuxoneProductName} environment. This configuration method is persistent over node restarts but not {product-title} native and you need to redo the steps if you replace the node.
+
+[IMPORTANT]
+====
+On {ibmzProductName} and {linuxoneProductName}, you can enable multipathing only if you configured your cluster for it during installation. For more information, see "Installing {op-system} and starting the {product-title} bootstrap process" in _Installing a cluster with z/VM on {ibmzProductName} and {linuxoneProductName}_.
+====
+
+.Prerequisites
+
+* You are logged in to the cluster as a user with administrative privileges.
+* You have configured multiple paths to a LUN with either method explained above.
+
+.Procedure
+
+. Connect to the node via SSH by running the following command:
++
+[source,terminal]
+----
+$ ssh <user>@<node_ip_address>
+----
++
+You can also start a debug session to the node by running the following command:
++
+[source,terminal]
+----
+$ oc debug node/<node_name>
+----
+
+. To enable multipathing, run the following command:
++
+[source,terminal]
+----
+$ sudo /sbin/mpathconf --enable
+----
+
+. To start the `multipathd` daemon, run the following command:
++
+[source,terminal]
+----
+$ sudo multipath
+----
+
+. Optional: To format your multipath device with fdisk, run the following command:
++
+[source,terminal]
+----
+$ sudo fdisk /dev/mapper/mpatha
+----
+
+.Verification
+
+* To verify that the devices have been grouped, run the following command:
++
+[source,terminal]
+----
+$ sudo multipath -II
+----
++
+.Example output
++
+[source,terminal]
+----
+mpatha (20017380030290197) dm-1 IBM,2810XIV
+   size=512G features='1 queue_if_no_path' hwhandler='1 alua' wp=rw
+	-+- policy='service-time 0' prio=50 status=enabled
+ 	|- 1:0:0:6  sde 68:16  active ready running
+ 	|- 1:0:1:6  sdf 69:24  active ready running
+ 	|- 0:0:0:6  sdg  8:80  active ready running
+ 	`- 0:0:1:6  sdh 66:48  active ready running
+----
+
+:leveloffset!:
+
+.Next steps
+
+* xref:../storage/persistent_storage/persistent_storage_local/persistent-storage-local.adoc#persistent-storage-using-local-volume[Install and configure the Local Storage Operator]
+* xref:../networking/k8s_nmstate/k8s-nmstate-updating-node-network-config.adoc#k8s-nmstate-updating-node-network-config[Updating node network configuration]
+
+//# includes=_attributes/common-attributes,modules/ibmz-configure-devices-mco,modules/ibmz-configure-devices-manually,modules/ibmz-enable-multipathing-fcp-luns

@@ -1,0 +1,927 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="migrate-from-kuryr-sdn"]
+= Migrating from the Kuryr network plugin to the OVN-Kubernetes network plugin
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: migrate-from-kuryr-sdn
+
+toc::[]
+
+As the administrator of a cluster that runs on {rh-openstack-first}, you can migrate to the OVN-Kubernetes network plugin from the Kuryr SDN network plugin.
+
+To learn more about OVN-Kubernetes, read xref:../../networking/ovn_kubernetes_network_provider/about-ovn-kubernetes#about-ovn-kubernetes[About the OVN-Kubernetes network plugin].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/migrate-from-openshift-sdn.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-kuryr-ovn-kubernetes-migration-about_{context}"]
+= Migration to the OVN-Kubernetes network provider
+
+You can manually migrate a cluster that runs on {rh-openstack-first} to the OVN-Kubernetes network provider.
+
+[IMPORTANT]
+====
+Migration to OVN-Kubernetes is a one-way process.
+During migration, your cluster will be unreachable for a brief time.
+====
+
+[id="considerations-kuryr-migrating-network-provider_{context}"]
+== Considerations when migrating to the OVN-Kubernetes network provider
+
+Kubernetes namespaces are kept by Kuryr in separate {rh-openstack} networking service (Neutron) subnets. Those subnets and the IP addresses that are assigned to individual pods are not preserved during the migration.
+
+[id="how-the-kuryr-migration-process-works_{context}"]
+== How the migration process works
+
+The following table summarizes the migration process by relating the steps that you perform with the actions that your cluster and Operators take.
+
+.The Kuryr to OVN-Kubernetes migration process
+[cols="1,1a",options="header"]
+|===
+
+|User-initiated steps|Migration activity
+
+|
+Set the `migration` field of the `Network.operator.openshift.io` custom resource (CR) named `cluster` to `OVNKubernetes`. Verify that the value of the `migration` field prints the `null` value before setting it to another value.
+|
+Cluster Network Operator (CNO):: Updates the status of the `Network.config.openshift.io` CR named `cluster` accordingly.
+Machine Config Operator (MCO):: Deploys an update to the systemd configuration that is required by OVN-Kubernetes. By default, the MCO updates a single machine per pool at a time. As a result, large clusters have longer migration times.
+
+|Update the `networkType` field of the `Network.config.openshift.io` CR.
+|
+CNO:: Performs the following actions:
++
+--
+* Destroys the Kuryr control plane pods: Kuryr CNIs and the Kuryr controller.
+* Deploys the OVN-Kubernetes control plane pods.
+* Updates the Multus objects to reflect the new network plugin.
+--
+
+|
+Reboot each node in the cluster.
+|
+Cluster:: As nodes reboot, the cluster assigns IP addresses to pods on the OVN-Kubernetes cluster network.
+
+|
+Clean up remaining resources Kuryr controlled.
+|
+Cluster:: Holds {rh-openstack} resources that need to be freed, as well as {product-title} resources to configure.
+|===
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/migrate-from-kuryr-sdn.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-kuryr-migration_{context}"]
+= Migrating to the OVN-Kubernetes network plugin
+
+As a cluster administrator, you can change the network plugin for your cluster to OVN-Kubernetes.
+
+[IMPORTANT]
+====
+During the migration, you must reboot every node in your cluster.
+Your cluster is unavailable and workloads might be interrupted.
+Perform the migration only if an interruption in service is acceptable.
+====
+
+.Prerequisites
+
+* You installed the OpenShift CLI (`oc`).
+* You have access to the cluster as a user with the `cluster-admin` role.
+* You have a recent backup of the etcd database is available.
+* You can manually reboot each node.
+* The cluster you plan to migrate is in a known good state, without any errors.
+* You installed the Python interpreter.
+* You installed the `openstacksdk` python package.
+* You installed the `openstack` CLI tool.
+* You have access to the underlying {rh-openstack} cloud.
+
+.Procedure
+
+. Back up the configuration for the cluster network by running the following command:
++
+[source,terminal]
+----
+$ oc get Network.config.openshift.io cluster -o yaml > cluster-kuryr.yaml
+----
+
+. To set the `CLUSTERID` variable, run the following command:
++
+[source,terminal]
+----
+$ CLUSTERID=$(oc get infrastructure.config.openshift.io cluster -o=jsonpath='{.status.infrastructureName}')
+----
+
+. To prepare all the nodes for the migration, set the `migration` field on the Cluster Network Operator configuration object by running the following command:
++
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type=merge \
+    --patch '{"spec": {"migration": {"networkType": "OVNKubernetes"}}}'
+----
++
+[NOTE]
+====
+This step does not deploy OVN-Kubernetes immediately. Specifying the `migration` field triggers the Machine Config Operator (MCO) to apply new machine configs to all the nodes in the cluster. This prepares the cluster for the OVN-Kubernetes deployment.
+====
+
+. Optional: Customize the following settings for OVN-Kubernetes for your network infrastructure requirements:
++
+--
+* Maximum transmission unit (MTU)
+* Geneve (Generic Network Virtualization Encapsulation) overlay network port
+* OVN-Kubernetes IPv4 internal subnet
+* OVN-Kubernetes IPv6 internal subnet
+--
++
+To customize these settings, enter and customize the following command:
++
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type=merge \
+  --patch '{
+    "spec":{
+      "defaultNetwork":{
+        "ovnKubernetesConfig":{
+          "mtu":<mtu>,
+          "genevePort":<port>,
+          "v4InternalSubnet":"<ipv4_subnet>",
+          "v6InternalSubnet":"<ipv6_subnet>"
+    }}}}'
+----
++
+where:
++
+--
+`mtu`::
+Specifies the MTU for the Geneve overlay network. This value is normally configured automatically, but if the nodes in your cluster do not all use the same MTU, then you must set this explicitly to `100` less than the smallest node MTU value.
+`port`::
+Specifies the UDP port for the Geneve overlay network. If a value is not specified, the default is `6081`. The port cannot be the same as the VXLAN port that is used by Kuryr. The default value for the VXLAN port is `4789`.
+`ipv4_subnet`::
+Specifies an IPv4 address range for internal use by OVN-Kubernetes. You must ensure that the IP address range does not overlap with any other subnet used by your {product-title} installation. The IP address range must be larger than the maximum number of nodes that can be added to the cluster. The default value is `100.64.0.0/16`.
+`ipv6_subnet`::
+Specifies an IPv6 address range for internal use by OVN-Kubernetes. You must ensure that the IP address range does not overlap with any other subnet used by your {product-title} installation. The IP address range must be larger than the maximum number of nodes that can be added to the cluster. The default value is `fd98::/48`.
+--
++
+If you do not need to change the default value, omit the key from the patch.
++
+.Example patch command to update `mtu` field
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type=merge \
+  --patch '{
+    "spec":{
+      "defaultNetwork":{
+        "ovnKubernetesConfig":{
+          "mtu":1200
+    }}}}'
+----
+
+. Check the machine config pool status by entering the following command:
++
+[source,terminal]
+----
+$ oc get mcp
+----
++
+While the MCO updates machines in each machine config pool, it reboots each node one by one. You must wait until all the nodes are updated before continuing.
++
+A successfully updated node has the following status: `UPDATED=true`, `UPDATING=false`, `DEGRADED=false`.
++
+[NOTE]
+====
+By default, the MCO updates one machine per pool at a time. Large clusters take more time to migrate than small clusters.
+====
+
+. Confirm the status of the new machine configuration on the hosts:
+
+.. To list the machine configuration state and the name of the applied machine configuration, enter the following command:
++
+[source,terminal]
+----
+$ oc describe node | egrep "hostname|machineconfig"
+----
++
+.Example output
+[source,terminal]
+----
+kubernetes.io/hostname=master-0
+machineconfiguration.openshift.io/currentConfig: rendered-master-c53e221d9d24e1c8bb6ee89dd3d8ad7b <2>
+machineconfiguration.openshift.io/desiredConfig: rendered-master-c53e221d9d24e1c8bb6ee89dd3d8ad7b <3>
+machineconfiguration.openshift.io/reason:
+machineconfiguration.openshift.io/state: Done
+----
+
+.. Review the output from the previous step. The following statements must be true:
++
+--
+ * The value of `machineconfiguration.openshift.io/state` field is `Done`.
+ * The value of the `machineconfiguration.openshift.io/currentConfig` field is equal to the value of the `machineconfiguration.openshift.io/desiredConfig` field.
+--
+
+.. To confirm that the machine config is correct, enter the following command:
++
+[source,terminal]
+----
+$ oc get machineconfig <config_name> -o yaml | grep ExecStart
+----
++
+where:
+
+<config_name>:: Specifies the name of the machine config from the `machineconfiguration.openshift.io/currentConfig` field.
++
+The machine config must include the following update to the systemd configuration:
++
+.Example output
+[source,plain]
+----
+ExecStart=/usr/local/bin/configure-ovs.sh OVNKubernetes
+----
+
+.. If a node is stuck in the `NotReady` state, investigate the machine config daemon pod logs and resolve any errors:
+
+... To list the pods, enter the following command:
++
+[source,terminal]
+----
+$ oc get pod -n openshift-machine-config-operator
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                         READY   STATUS    RESTARTS   AGE
+machine-config-controller-75f756f89d-sjp8b   1/1     Running   0          37m
+machine-config-daemon-5cf4b                  2/2     Running   0          43h
+machine-config-daemon-7wzcd                  2/2     Running   0          43h
+machine-config-daemon-fc946                  2/2     Running   0          43h
+machine-config-daemon-g2v28                  2/2     Running   0          43h
+machine-config-daemon-gcl4f                  2/2     Running   0          43h
+machine-config-daemon-l5tnv                  2/2     Running   0          43h
+machine-config-operator-79d9c55d5-hth92      1/1     Running   0          37m
+machine-config-server-bsc8h                  1/1     Running   0          43h
+machine-config-server-hklrm                  1/1     Running   0          43h
+machine-config-server-k9rtx                  1/1     Running   0          43h
+----
++
+The names for the config daemon pods are in the following format: `machine-config-daemon-<seq>`. The `<seq>` value is a random five character alphanumeric sequence.
+
+... Display the pod log for the first machine config daemon pod shown in the previous output by enter the following command:
++
+[source,terminal]
+----
+$ oc logs <pod> -n openshift-machine-config-operator
+----
++
+where:
+
+<pod>:: Specifies the name of a machine config daemon pod.
+
+... Resolve any errors in the logs shown by the output from the previous command.
+
+. To start the migration, configure the OVN-Kubernetes network plugin by using one of the following commands:
+
+** To specify the network provider without changing the cluster network IP address block, enter the following command:
++
+[source,terminal]
+----
+$ oc patch Network.config.openshift.io cluster --type=merge \
+    --patch '{"spec": {"networkType": "OVNKubernetes"}}'
+----
+
+** To specify a different cluster network IP address block, enter the following command:
++
+[source,terminal]
+----
+$ oc patch Network.config.openshift.io cluster \
+  --type='merge' --patch '{
+    "spec": {
+      "clusterNetwork": [
+        {
+          "cidr": "<cidr>",
+          "hostPrefix": "<prefix>"
+        }
+      ]
+      "networkType": "OVNKubernetes"
+    }
+  }'
+----
++
+where:
+
+<cidr>:: Specifies a CIDR block.
+<prefix>:: Specifies a slice of the CIDR block that is apportioned to each node in your cluster.
++
+[IMPORTANT]
+====
+You cannot change the service network address block during the migration.
+
+You cannot use any CIDR block that overlaps with the `100.64.0.0/16` CIDR block because the OVN-Kubernetes network provider uses this block internally.
+====
+
+. To complete the migration, reboot each node in your cluster. For example, you can use a bash script similar to the following example. The script assumes that you can connect to each host by using `ssh` and that you have configured `sudo` to not prompt for a password:
++
+[source,bash]
+----
+#!/bin/bash
+
+for ip in $(oc get nodes  -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}')
+do
+   echo "reboot node $ip"
+   ssh -o StrictHostKeyChecking=no core@$ip sudo shutdown -r -t 3
+done
+----
++
+[NOTE]
+====
+If SSH access is not available, you can use the `openstack` command:
+[source,terminal]
+----
+$ for name in $(openstack server list --name "${CLUSTERID}*" -f value -c Name); do openstack server reboot "${name}"; done
+----
+Alternatively, you might be able to reboot each node through the management portal for
+your infrastructure provider. Otherwise, contact the appropriate authority to
+either gain access to the virtual machines through SSH or the management
+portal and OpenStack client.
+====
+
+.Verification
+. Confirm that the migration succeeded, and then remove the migration resources:
+
+.. To confirm that the network plugin is OVN-Kubernetes, enter the following command.
++
+[source,terminal]
+----
+$ oc get network.config/cluster -o jsonpath='{.status.networkType}{"\n"}'
+----
++
+The value of `status.networkType` must be `OVNKubernetes`.
+
+.. To confirm that the cluster nodes are in the `Ready` state, enter the following command:
++
+[source,terminal]
+----
+$ oc get nodes
+----
+
+.. To confirm that your pods are not in an error state, enter the following command:
++
+[source,terminal]
+----
+$ oc get pods --all-namespaces -o wide --sort-by='{.spec.nodeName}'
+----
++
+If pods on a node are in an error state, reboot that node.
+
+.. To confirm that all of the cluster Operators are not in an abnormal state, enter the following command:
++
+[source,terminal]
+----
+$ oc get co
+----
++
+The status of every cluster Operator must be the following: `AVAILABLE="True"`, `PROGRESSING="False"`, `DEGRADED="False"`. If a cluster Operator is not available or degraded, check the logs for the cluster Operator for more information.
++
+[IMPORTANT]
+====
+Do not proceed if any of the previous verification steps indicate errors.
+You might encounter pods that have a `Terminating` state due to finalizers that are removed during clean up. They are not an error indication.
+====
++
+. If the migration completed and your cluster is in a good state, remove the migration configuration from the CNO configuration object by entering the following command:
++
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type=merge \
+    --patch '{"spec": {"migration": null}}'
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/migrate-from-kuryr-sdn.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-kuryr-cleanup_{context}"]
+= Cleaning up resources after migration
+
+After migration from the Kuryr network plugin to the OVN-Kubernetes network
+plugin, you must clean up the resources that Kuryr created previously.
+
+[NOTE]
+====
+The clean up process relies on a Python virtual environment to ensure that the package versions that you use support tags for Octavia objects. You do not need a virtual environment if you are certain that your environment uses at minimum:
+
+* The `openstacksdk` Python package version 0.54.0
+
+* The `python-openstackclient` Python package version 5.5.0
+
+* The `python-octaviaclient` Python package version 2.3.0
+
+If you decide to use these particular versions, be sure to pull `python-neutronclient` prior to version 9.0.0, as it prevents you from accessing trunks.
+
+====
+
+.Prerequisites
+
+* You installed the {product-title} CLI (`oc`).
+* You installed a Python interpreter.
+* You installed the `openstacksdk` Python package.
+* You installed the `openstack` CLI.
+* You have access to the underlying {rh-openstack} cloud.
+* You can access the cluster as a user with the `cluster-admin` role.
+
+.Procedure
+. Create a clean-up Python virtual environment:
+.. Create a temporary directory for your environment. For example:
++
+[source,terminal]
+----
+$ python3 -m venv /tmp/venv
+----
++
+The virtual environment located in `/tmp/venv` directory is used in all clean up examples.
+.. Enter the virtual environment. For example:
++
+[source,terminal]
+----
+$ source /tmp/venv/bin/activate
+----
+.. Upgrade the `pip` command in the virtual environment by running the following command:
++
+[source,terminal]
+----
+(venv) $ pip install --upgrade pip
+----
+.. Install the required Python packages by running the following command:
++
+[source,terminal]
+----
+(venv) $ pip install openstacksdk==0.54.0 python-openstackclient==5.5.0 python-octaviaclient==2.3.0 'python-neutronclient<9.0.0'
+----
+
+. In your terminal, set variables to cluster and Kuryr identifiers by running the following commands:
+
+.. Set the cluster ID:
++
+[source,terminal]
+----
+(venv) $ CLUSTERID=$(oc get infrastructure.config.openshift.io cluster -o=jsonpath='{.status.infrastructureName}')
+----
+
+.. Set the cluster tag:
++
+[source,terminal]
+----
+(venv) $ CLUSTERTAG="openshiftClusterID=${CLUSTERID}"
+----
+.. Set the router ID:
++
+[source,terminal]
+----
+(venv) $ ROUTERID=$(oc get kuryrnetwork -A --no-headers -o custom-columns=":status.routerId"|uniq)
+----
+
+. Create a Bash function that removes finalizers from specified resources by running the following command:
++
+[source,terminal]
+----
+(venv) $ function REMFIN {
+    local resource=$1
+    local finalizer=$2
+    for res in $(oc get "${resource}" -A --template='{{range $i,$p := .items}}{{ $p.metadata.name }}|{{ $p.metadata.namespace }}{{"\n"}}{{end}}'); do
+        name=${res%%|*}
+        ns=${res##*|}
+        yaml=$(oc get -n "${ns}" "${resource}" "${name}" -o yaml)
+        if echo "${yaml}" | grep -q "${finalizer}"; then
+            echo "${yaml}" | grep -v  "${finalizer}" | oc replace -n "${ns}" "${resource}" "${name}" -f -
+        fi
+    done
+}
+----
++
+The function takes two parameters: the first parameter is name of the resource, and the second parameter is the finalizer to remove.
+The named resource is removed from the cluster and its definition is replaced with copied data, excluding the specified finalizer.
+
+. To remove Kuryr finalizers from services, enter the following command:
++
+[source,terminal]
+----
+(venv) $ REMFIN services kuryr.openstack.org/service-finalizer
+----
+
+. To remove the Kuryr `service-subnet-gateway-ip` service, enter the following command:
++
+[source,terminal]
+----
+(venv) $ if oc get -n openshift-kuryr service service-subnet-gateway-ip &>/dev/null; then
+    oc -n openshift-kuryr delete service service-subnet-gateway-ip
+fi
+----
+
+. To remove all tagged {rh-openstack} load balancers from Octavia, enter the following command:
++
+[source,terminal]
+----
+(venv) $ for lb in $(openstack loadbalancer list --tags "${CLUSTERTAG}" -f value -c id); do
+    openstack loadbalancer delete --cascade "${lb}"
+done
+----
+
+. To remove Kuryr finalizers from all `KuryrLoadBalancer` CRs, enter the following command:
++
+[source,terminal]
+----
+(venv) $ REMFIN kuryrloadbalancers.openstack.org kuryr.openstack.org/kuryrloadbalancer-finalizers
+----
+
+. To remove the `openshift-kuryr` namespace, enter the following command:
++
+[source,terminal]
+----
+(venv) $ oc delete namespace openshift-kuryr
+----
+
+. To remove the Kuryr service subnet from the router, enter the following command:
++
+[source,terminal]
+----
+(venv) $ openstack router remove subnet "${ROUTERID}" "${CLUSTERID}-kuryr-service-subnet"
+----
+
+. To remove the Kuryr service network, enter the following command:
++
+[source,terminal]
+----
+(venv) $ openstack network delete "${CLUSTERID}-kuryr-service-network"
+----
+
+. To remove Kuryr finalizers from all pods, enter the following command:
++
+[source,terminal]
+----
+(venv) $ REMFIN pods kuryr.openstack.org/pod-finalizer
+----
+
+. To remove Kuryr finalizers from all `KuryrPort` CRs, enter the following command:
++
+[source,terminal]
+----
+(venv) $ REMFIN kuryrports.openstack.org kuryr.openstack.org/kuryrport-finalizer
+----
+This command deletes the `KuryrPort` CRs.
+
+. To remove Kuryr finalizers from network policies, enter the following command:
++
+[source,terminal]
+----
+(venv) $ REMFIN networkpolicy kuryr.openstack.org/networkpolicy-finalizer
+----
+
+. To remove Kuryr finalizers from remaining network policies, enter the following command:
++
+[source,terminal]
+----
+(venv) $ REMFIN kuryrnetworkpolicies.openstack.org kuryr.openstack.org/networkpolicy-finalizer
+----
+
+. To remove subports that Kuryr created from trunks, enter the following command:
++
+[source,terminal]
+----
+(venv) $ mapfile trunks < <(python -c "import openstack; n = openstack.connect().network; print('\n'.join([x.id for x in n.trunks(any_tags='$CLUSTERTAG')]))") && \
+i=0 && \
+for trunk in "${trunks[@]}"; do
+    trunk=$(echo "$trunk"|tr -d '\n')
+    i=$((i+1))
+    echo "Processing trunk $trunk, ${i}/${#trunks[@]}."
+    subports=()
+    for subport in $(python -c "import openstack; n = openstack.connect().network; print(' '.join([x['port_id'] for x in n.get_trunk('$trunk').sub_ports if '$CLUSTERTAG' in n.get_port(x['port_id']).tags]))"); do
+        subports+=("$subport");
+    done
+    args=()
+    for sub in "${subports[@]}" ; do
+        args+=("--subport $sub")
+    done
+    if [ ${#args[@]} -gt 0 ]; then
+        openstack network trunk unset ${args[*]} "${trunk}"
+    fi
+done
+----
+
+. To retrieve all networks and subnets from `KuryrNetwork` CRs and remove ports, router interfaces and the network itself, enter the following command:
++
+[source,terminal]
+----
+(venv) $ mapfile -t kuryrnetworks < <(oc get kuryrnetwork -A --template='{{range $i,$p := .items}}{{ $p.status.netId }}|{{ $p.status.subnetId }}{{"\n"}}{{end}}') && \
+i=0 && \
+for kn in "${kuryrnetworks[@]}"; do
+    i=$((i+1))
+    netID=${kn%%|*}
+    subnetID=${kn##*|}
+    echo "Processing network $netID, ${i}/${#kuryrnetworks[@]}"
+    # Remove all ports from the network.
+    for port in $(python -c "import openstack; n = openstack.connect().network; print(' '.join([x.id for x in n.ports(network_id='$netID') if x.device_owner != 'network:router_interface']))"); do
+        ( openstack port delete "${port}" ) &
+
+        # Only allow 20 jobs in parallel.
+        if [[ $(jobs -r -p | wc -l) -ge 20 ]]; then
+            wait -n
+        fi
+    done
+    wait
+
+    # Remove the subnet from the router.
+    openstack router remove subnet "${ROUTERID}" "${subnetID}"
+
+    # Remove the network.
+    openstack network delete "${netID}"
+done
+----
+
+. To remove the Kuryr security group, enter the following command:
++
+[source,terminal]
+----
+(venv) $ openstack security group delete "${CLUSTERID}-kuryr-pods-security-group"
+----
+
+. To remove all tagged subnet pools, enter the following command:
++
+[source,terminal]
+----
+(venv) $ for subnetpool in $(openstack subnet pool list --tags "${CLUSTERTAG}" -f value -c ID); do
+    openstack subnet pool delete "${subnetpool}"
+done
+----
+
+. To check that all of the networks based on `KuryrNetwork` CRs were removed, enter the following command:
++
+[source,terminal]
+----
+(venv) $ networks=$(oc get kuryrnetwork -A --no-headers -o custom-columns=":status.netId") && \
+for existingNet in $(openstack network list --tags "${CLUSTERTAG}" -f value -c ID); do
+    if [[ $networks =~ $existingNet ]]; then
+        echo "Network still exists: $existingNet"
+    fi
+done
+----
++
+If the command returns any existing networks, intestigate and remove them before you continue.
+
+. To remove security groups that are related to network policy, enter the following command:
++
+[source,terminal]
+----
+(venv) $ for sgid in $(openstack security group list -f value -c ID -c Description | grep 'Kuryr-Kubernetes Network Policy' | cut -f 1 -d ' '); do
+    openstack security group delete "${sgid}"
+done
+----
+
+. To remove finalizers from `KuryrNetwork` CRs, enter the following command:
++
+[source,terminal]
+----
+(venv) $ REMFIN kuryrnetworks.openstack.org kuryrnetwork.finalizers.kuryr.openstack.org
+----
+
+. To remove the Kuryr router, enter the following command:
++
+[source,terminal]
+----
+(venv) $ if python3 -c "import sys; import openstack; n = openstack.connect().network; r = n.get_router('$ROUTERID'); sys.exit(0) if r.description != 'Created By OpenShift Installer' else sys.exit(1)"; then
+    openstack router delete "${ROUTERID}"
+fi
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="migrate-from-kuryr-additional-resources"]
+== Additional resources
+
+* xref:../../networking/cluster-network-operator.adoc#nw-operator-configuration-parameters-for-ovn-sdn_cluster-network-operator[Configuration parameters for the OVN-Kubernetes network plugin]
+* xref:../../backup_and_restore/control_plane_backup_and_restore/backing-up-etcd.adoc#backup-etcd[Backing up etcd]
+* xref:../../networking/network_policy/about-network-policy.adoc#about-network-policy[About network policy]
+* To learn more about OVN-Kubernetes capabilities, see:
+** xref:../../networking/ovn_kubernetes_network_provider/configuring-egress-ips-ovn.adoc#configuring-egress-ips-ovn[Configuring an egress IP address]
+** xref:../../networking/ovn_kubernetes_network_provider/configuring-egress-firewall-ovn.adoc#configuring-egress-firewall-ovn[Configuring an egress firewall for a project]
+** xref:../../networking/ovn_kubernetes_network_provider/enabling-multicast.adoc#nw-ovn-kubernetes-enabling-multicast[Enabling multicast for a project]
+
+//# includes=_attributes/common-attributes,modules/nw-kuryr-migration-about,modules/nw-kuryr-migration,modules/nw-kuryr-cleanup

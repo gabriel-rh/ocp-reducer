@@ -1,0 +1,848 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="updating-restricted-network-cluster-OSUS"]
+= Updating a cluster in a disconnected environment using the OpenShift Update Service
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: updating-restricted-network-cluster-osus
+
+toc::[]
+
+////
+WARNING: This assembly has been moved into a subdirectory for 4.14+. Changes to this assembly for earlier versions should be done in separate PRs based off of their respective version branches. Otherwise, your cherry picks may fail.
+
+To do: Remove this comment once 4.13 docs are EOL.
+////
+
+To get an update experience similar to connected clusters, you can use the following procedures to install and configure the OpenShift Update Service (OSUS) in a disconnected environment.
+
+The following steps outline the high-level workflow on how to update a cluster in a disconnected environment using OSUS:
+
+. Configure access to a secured registry.
+
+. Update the global cluster pull secret to access your mirror registry.
+
+. Install the OSUS Operator.
+
+. Create a graph data container image for the OpenShift Update Service.
+
+. Install the OSUS application and configure your clusters to use the local OpenShift Update Service.
+
+. Perform a supported update procedure from the documentation as you would with a connected cluster.
+
+// Using the OpenShift Update Service in a disconnected environment
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update-osus.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="update-service-overview_{context}"]
+
+= Using the OpenShift Update Service in a disconnected environment
+
+The OpenShift Update Service (OSUS) provides update recommendations to {product-title} clusters. Red Hat publicly hosts the OpenShift Update Service, and clusters in a connected environment can connect to the service through public APIs to retrieve update recommendations.
+
+However, clusters in a disconnected environment cannot access these public APIs to retrieve update information. To have a similar update experience in a disconnected environment, you can install and configure the OpenShift Update Service locally so that it is available within the disconnected environment.
+
+A single OSUS instance is capable of serving recommendations to thousands of clusters.
+OSUS can be scaled horizontally to cater to more clusters by changing the replica value.
+So for most disconnected use cases, one OSUS instance is enough.
+For example, Red Hat hosts just one OSUS instance for the entire fleet of connected clusters.
+
+If you want to keep update recommendations separate in different environments, you can run one OSUS instance for each environment.
+For example, in a case where you have separate test and stage environments, you might not want a cluster in a stage environment to receive update recommendations to version A if that version has not been tested in the test environment yet.
+
+The following sections describe how to install a local OSUS instance and configure it to provide update recommendations to a cluster.
+
+:leveloffset!:
+
+.Additional resources
+
+* xref:../../../updating/understanding_updates/intro-to-updates.adoc#update-service-about_understanding-openshift-updates[About the OpenShift Update Service]
+* xref:../../../updating/understanding_updates/understanding-update-channels-release.adoc#understanding-update-channels-releases[Understanding update channels and releases]
+
+[id="update-service-prereqs"]
+== Prerequisites
+
+* You must have the `oc` command-line interface (CLI) tool installed.
+* You must provision a local container image registry with the container images for your update, as described in xref:../../../updating/updating_a_cluster/updating_disconnected_cluster/mirroring-image-repository.adoc#mirroring-ocp-image-repository[Mirroring {product-title} images].
+
+[id="registry-configuration-for-update-service"]
+== Configuring access to a secured registry for the OpenShift Update Service
+
+If the release images are contained in a registry whose HTTPS X.509 certificate is signed by a custom certificate authority, complete the steps in xref:../../../registry/configuring-registry-operator.adoc#images-configuration-cas_configuring-registry-operator[Configuring additional trust stores for image registry access] along with following changes for the update service.
+
+The OpenShift Update Service Operator needs the config map key name `updateservice-registry` in the registry CA cert.
+
+.Image registry CA config map example for the update service
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-registry-ca
+data:
+  updateservice-registry: | <1>
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+  registry-with-port.example.com..5000: | <2>
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+----
+<1> The OpenShift Update Service Operator requires the config map key name updateservice-registry in the registry CA cert.
+<2> If the registry has the port, such as `registry-with-port.example.com:5000`, `:` should be replaced with `..`.
+
+// Updating the global cluster pull secret
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// * openshift_images/managing_images/using-image-pull-secrets.adoc
+// * post_installation_configuration/cluster-tasks.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update-osus.adoc
+// * support/remote_health_monitoring/opting-out-of-remote-health-reporting.adoc
+//
+// Not included, but linked to from:
+// * operators/admin/olm-managing-custom-catalogs.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="images-update-global-pull-secret_{context}"]
+= Updating the global cluster pull secret
+
+You can update the global pull secret for your cluster by either replacing the current pull secret or appending a new pull secret.
+
+The procedure is required when users use a separate registry to store images than the registry used during installation.
+
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+
+.Procedure
+. Optional: To append a new pull secret to the existing pull secret, complete the following steps:
+
+.. Enter the following command to download the pull secret:
++
+[source,terminal]
+----
+$ oc get secret/pull-secret -n openshift-config --template='{{index .data ".dockerconfigjson" | base64decode}}' ><pull_secret_location> <1>
+----
+<1> Provide the path to the pull secret file.
+
+.. Enter the following command to add the new pull secret:
++
+[source,terminal]
+----
+$ oc registry login --registry="<registry>" \ <1>
+--auth-basic="<username>:<password>" \ <2>
+--to=<pull_secret_location> <3>
+----
+<1> Provide the new registry. You can include multiple repositories within the same registry, for example: `--registry="<registry/my-namespace/my-repository>"`.
+<2> Provide the credentials of the new registry.
+<3> Provide the path to the pull secret file.
++
+Alternatively, you can perform a manual update to the pull secret file.
+
+. Enter the following command to update the global pull secret for your cluster:
++
+[source,terminal]
+----
+$ oc set data secret/pull-secret -n openshift-config --from-file=.dockerconfigjson=<pull_secret_location> <1>
+----
+<1> Provide the path to the new pull secret file.
++
+This update is rolled out to all nodes, which can take some time depending on the size of your cluster.
++
+[NOTE]
+====
+As of {product-title} 4.7.4, changes to the global pull secret no longer trigger a node drain or reboot.
+====
+//Also referred to as the cluster-wide pull secret.
+
+
+
+:leveloffset!:
+
+[id="update-service-install"]
+== Installing the OpenShift Update Service Operator
+
+To install the OpenShift Update Service, you must first install the OpenShift Update Service Operator by using the {product-title} web console or CLI.
+
+[NOTE]
+====
+For clusters that are installed in disconnected environments, also known as disconnected clusters, Operator Lifecycle Manager by default cannot access the Red Hat-provided OperatorHub sources hosted on remote registries because those remote sources require full internet connectivity. For more information, see xref:../../../operators/admin/olm-restricted-networks.adoc#olm-restricted-networks[Using Operator Lifecycle Manager on restricted networks].
+====
+
+// Installing the OpenShift Update Service Operator by using the web console
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update-osus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-service-install-web-console_{context}"]
+= Installing the OpenShift Update Service Operator by using the web console
+
+You can use the web console to install the OpenShift Update Service Operator.
+
+.Procedure
+
+. In the web console, click *Operators* -> *OperatorHub*.
++
+[NOTE]
+====
+Enter `Update Service` into the *Filter by keyword...* field to find the Operator faster.
+====
+
+. Choose *OpenShift Update Service* from the list of available Operators, and click *Install*.
+
+.. Channel `v1` is selected as the *Update Channel* since it is the only channel available in this release.
+
+.. Select *A specific namespace on the cluster* under *Installation Mode*.
+
+.. Select a namespace for *Installed Namespace* or accept the recommended namespace `openshift-update-service`.
+
+.. Select an *Approval Strategy*:
++
+** The *Automatic* strategy allows Operator Lifecycle Manager (OLM) to automatically update the Operator when a new version is available.
++
+** The *Manual* strategy requires a cluster administrator to approve the Operator update.
+
+.. Click *Install*.
+
+. Verify that the OpenShift Update Service Operator is installed by switching to the *Operators* -> *Installed Operators* page.
+
+. Ensure that *OpenShift Update Service* is listed in the selected namespace with a *Status* of *Succeeded*.
+
+:leveloffset!:
+
+// Installing the OpenShift Update Service Operator by using the CLI
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update-osus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-service-install-cli_{context}"]
+= Installing the OpenShift Update Service Operator by using the CLI
+
+You can use the OpenShift CLI (`oc`) to install the OpenShift Update Service Operator.
+
+.Procedure
+
+. Create a namespace for the OpenShift Update Service Operator:
+
+.. Create a `Namespace` object YAML file, for example, `update-service-namespace.yaml`, for the OpenShift Update Service Operator:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-update-service
+  annotations:
+    openshift.io/node-selector: ""
+  labels:
+    openshift.io/cluster-monitoring: "true" <1>
+----
+<1> Set the `openshift.io/cluster-monitoring` label to enable Operator-recommended cluster monitoring on this namespace.
+
+.. Create the namespace:
++
+[source,terminal]
+----
+$ oc create -f <filename>.yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc create -f update-service-namespace.yaml
+----
+
+. Install the OpenShift Update Service Operator by creating the following objects:
+
+.. Create an `OperatorGroup` object YAML file, for example, `update-service-operator-group.yaml`:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: update-service-operator-group
+spec:
+  targetNamespaces:
+  - openshift-update-service
+----
+
+.. Create an `OperatorGroup` object:
++
+[source,terminal]
+----
+$ oc -n openshift-update-service create -f <filename>.yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc -n openshift-update-service create -f update-service-operator-group.yaml
+----
+
+.. Create a `Subscription` object YAML file, for example, `update-service-subscription.yaml`:
++
+.Example Subscription
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: update-service-subscription
+spec:
+  channel: v1
+  installPlanApproval: "Automatic"
+  source: "redhat-operators" <1>
+  sourceNamespace: "openshift-marketplace"
+  name: "cincinnati-operator"
+----
+<1> Specify the name of the catalog source that provides the Operator. For clusters that do not use a custom Operator Lifecycle Manager (OLM), specify `redhat-operators`. If your {product-title} cluster is installed in a disconnected environment, specify the name of the `CatalogSource` object created when you configured Operator Lifecycle Manager (OLM).
+
+.. Create the `Subscription` object:
++
+[source,terminal]
+----
+$ oc create -f <filename>.yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc -n openshift-update-service create -f update-service-subscription.yaml
+----
++
+The OpenShift Update Service Operator is installed to the `openshift-update-service` namespace and targets the `openshift-update-service` namespace.
+
+. Verify the Operator installation:
++
+[source,terminal]
+----
+$ oc -n openshift-update-service get clusterserviceversions
+----
++
+.Example output
+[source,terminal]
+----
+NAME                             DISPLAY                    VERSION   REPLACES   PHASE
+update-service-operator.v4.6.0   OpenShift Update Service   4.6.0                Succeeded
+...
+----
++
+If the OpenShift Update Service Operator is listed, the installation was successful. The version number might be different than shown.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../../operators/user/olm-installing-operators-in-namespace.adoc#olm-installing-operators-in-namespace[Installing Operators in your namespace].
+
+// Creating the OpenShift Update Service graph data container image
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update-osus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-service-graph-data_{context}"]
+= Creating the OpenShift Update Service graph data container image
+
+The OpenShift Update Service requires a graph data container image, from which the OpenShift Update Service retrieves information about channel membership and blocked update edges. Graph data is typically fetched directly from the update graph data repository. In environments where an internet connection is unavailable, loading this information from an init container is another way to make the graph data available to the OpenShift Update Service. The role of the init container is to provide a local copy of the graph data, and during pod initialization, the init container copies the data to a volume that is accessible by the service.
+
+[NOTE]
+====
+The oc-mirror OpenShift CLI (`oc`) plugin creates this graph data container image in addition to mirroring release images. If you used the oc-mirror plugin to mirror your release images, you can skip this procedure.
+====
+
+.Procedure
+
+. Create a Dockerfile, for example, `./Dockerfile`, containing the following:
++
+[source,terminal]
+----
+FROM registry.access.redhat.com/ubi9/ubi:latest
+
+RUN curl -L -o cincinnati-graph-data.tar.gz https://api.openshift.com/api/upgrades_info/graph-data
+
+RUN mkdir -p /var/lib/cincinnati-graph-data && tar xvzf cincinnati-graph-data.tar.gz -C /var/lib/cincinnati-graph-data/ --no-overwrite-dir --no-same-owner
+
+CMD ["/bin/bash", "-c" ,"exec cp -rp /var/lib/cincinnati-graph-data/* /var/lib/cincinnati/graph-data"]
+----
+
+. Use the docker file created in the above step to build a graph data container image, for example, `registry.example.com/openshift/graph-data:latest`:
++
+[source,terminal]
+----
+$ podman build -f ./Dockerfile -t registry.example.com/openshift/graph-data:latest
+----
+
+. Push the graph data container image created in the previous step to a repository that is accessible to the OpenShift Update Service, for example, `registry.example.com/openshift/graph-data:latest`:
++
+[source,terminal]
+----
+$ podman push registry.example.com/openshift/graph-data:latest
+----
++
+[NOTE]
+====
+To push a graph data image to a local registry in a disconnected environment, copy the graph data container image created in the previous step to a repository that is accessible to the OpenShift Update Service. Run `oc image mirror --help` for available options.
+====
+
+:leveloffset!:
+
+[id="update-service-create-service"]
+== Creating an OpenShift Update Service application
+
+You can create an OpenShift Update Service application by using the {product-title} web console or CLI.
+
+// Creating an OpenShift Update Service application by using the web console
+:leveloffset: +2
+
+//Module included in the following assemblies:
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update-osus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-service-create-service-web-console_{context}"]
+= Creating an OpenShift Update Service application by using the web console
+
+You can use the {product-title} web console to create an OpenShift Update Service application by using the OpenShift Update Service Operator.
+
+.Prerequisites
+
+* The OpenShift Update Service Operator has been installed.
+* The OpenShift Update Service graph data container image has been created and pushed to a repository that is accessible to the OpenShift Update Service.
+* The current release and update target releases have been mirrored to a locally accessible registry.
+
+.Procedure
+
+. In the web console, click *Operators* -> *Installed Operators*.
+
+. Choose *OpenShift Update Service* from the list of installed Operators.
+
+. Click the *Update Service* tab.
+
+. Click *Create UpdateService*.
+
+. Enter a name in the *Name* field, for example, `service`.
+
+. Enter the local pullspec in the *Graph Data Image* field to the graph data container image created in "Creating the OpenShift Update Service graph data container image", for example, `registry.example.com/openshift/graph-data:latest`.
+//TODO: Add xref to preceding step when allowed.
+
+. In the *Releases* field, enter the local registry and repository created to contain the release images in "Mirroring the OpenShift Container Platform image repository", for example, `registry.example.com/ocp4/openshift4-release-images`.
+//TODO: Add xref to preceding step when allowed.
+
+. Enter `2` in the *Replicas* field.
+
+. Click *Create* to create the OpenShift Update Service application.
+
+. Verify the OpenShift Update Service application:
+
+** From the *UpdateServices* list in the *Update Service* tab, click the Update Service application just created.
+
+** Click the *Resources* tab.
+
+** Verify each application resource has a status of *Created*.
+
+:leveloffset!:
+
+// Creating an OpenShift Update Service application by using the CLI
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update-osus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-service-create-service-cli_{context}"]
+= Creating an OpenShift Update Service application by using the CLI
+
+You can use the OpenShift CLI (`oc`) to create an OpenShift Update Service application.
+
+.Prerequisites
+
+* The OpenShift Update Service Operator has been installed.
+* The OpenShift Update Service graph data container image has been created and pushed to a repository that is accessible to the OpenShift Update Service.
+* The current release and update target releases have been mirrored to a locally accessible registry.
+
+.Procedure
+
+. Configure the OpenShift Update Service target namespace, for example, `openshift-update-service`:
++
+[source,terminal]
+----
+$ NAMESPACE=openshift-update-service
+----
++
+The namespace must match the `targetNamespaces` value from the operator group.
+
+. Configure the name of the OpenShift Update Service application, for example, `service`:
++
+[source,terminal]
+----
+$ NAME=service
+----
+
+. Configure the local registry and repository for the release images as configured in "Mirroring the {product-title} image repository", for example, `registry.example.com/ocp4/openshift4-release-images`:
+//TODO: Add xref to the preceding step when allowed.
++
+[source,terminal]
+----
+$ RELEASE_IMAGES=registry.example.com/ocp4/openshift4-release-images
+----
+
+. Set the local pullspec for the graph data image to the graph data container image created in "Creating the OpenShift Update Service graph data container image", for example, `registry.example.com/openshift/graph-data:latest`:
+//TODO: Add xref to the preceding step when allowed.
++
+[source,terminal]
+----
+$ GRAPH_DATA_IMAGE=registry.example.com/openshift/graph-data:latest
+----
+
+. Create an OpenShift Update Service application object:
++
+[source,terminal]
+----
+$ oc -n "${NAMESPACE}" create -f - <<EOF
+apiVersion: updateservice.operator.openshift.io/v1
+kind: UpdateService
+metadata:
+  name: ${NAME}
+spec:
+  replicas: 2
+  releases: ${RELEASE_IMAGES}
+  graphDataImage: ${GRAPH_DATA_IMAGE}
+EOF
+----
+
+. Verify the OpenShift Update Service application:
+
+.. Use the following command to obtain a policy engine route:
++
+[source,terminal]
+----
+$ while sleep 1; do POLICY_ENGINE_GRAPH_URI="$(oc -n "${NAMESPACE}" get -o jsonpath='{.status.policyEngineURI}/api/upgrades_info/v1/graph{"\n"}' updateservice "${NAME}")"; SCHEME="${POLICY_ENGINE_GRAPH_URI%%:*}"; if test "${SCHEME}" = http -o "${SCHEME}" = https; then break; fi; done
+----
++
+You might need to poll until the command succeeds.
+
+.. Retrieve a graph from the policy engine. Be sure to specify a valid version for `channel`. For example, if running in {product-title} {product-version}, use `stable-{product-version}`:
++
+[source,terminal]
+----
+$ while sleep 10; do HTTP_CODE="$(curl --header Accept:application/json --output /dev/stderr --write-out "%{http_code}" "${POLICY_ENGINE_GRAPH_URI}?channel=stable-4.6")"; if test "${HTTP_CODE}" -eq 200; then break; fi; echo "${HTTP_CODE}"; done
+----
++
+This polls until the graph request succeeds; however, the resulting graph might be empty depending on which release images you have mirrored.
+
+:leveloffset!:
+
+[NOTE]
+====
+The policy engine route name must not be more than 63 characters based on RFC-1123. If you see `ReconcileCompleted` status as `false`  with the reason `CreateRouteFailed` caused by `host must conform to DNS 1123 naming convention
+and must be no more than 63 characters`, try creating the Update Service with a shorter name.
+====
+
+// Configuring the Cluster Version Operator (CVO)
+:leveloffset: +3
+
+// Module included in the following assemblies:
+// * updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update-osus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-service-configure-cvo"]
+= Configuring the Cluster Version Operator (CVO)
+
+After the OpenShift Update Service Operator has been installed and the OpenShift Update Service application has been created, the Cluster Version Operator (CVO) can be updated to pull graph data from the locally installed OpenShift Update Service.
+
+.Prerequisites
+
+* The OpenShift Update Service Operator has been installed.
+* The OpenShift Update Service graph data container image has been created and pushed to a repository that is accessible to the OpenShift Update Service.
+* The current release and update target releases have been mirrored to a locally accessible registry.
+* The OpenShift Update Service application has been created.
+
+.Procedure
+
+. Set the OpenShift Update Service target namespace, for example, `openshift-update-service`:
++
+[source,terminal]
+----
+$ NAMESPACE=openshift-update-service
+----
+
+. Set the name of the OpenShift Update Service application, for example, `service`:
++
+[source,terminal]
+----
+$ NAME=service
+----
+
+.  Obtain the policy engine route:
++
+[source,terminal]
+----
+$ POLICY_ENGINE_GRAPH_URI="$(oc -n "${NAMESPACE}" get -o jsonpath='{.status.policyEngineURI}/api/upgrades_info/v1/graph{"\n"}' updateservice "${NAME}")"
+----
+
+. Set the patch for the pull graph data:
++
+[source,terminal]
+----
+$ PATCH="{\"spec\":{\"upstream\":\"${POLICY_ENGINE_GRAPH_URI}\"}}"
+----
++
+. Patch the CVO to use the local OpenShift Update Service:
++
+[source,terminal]
+----
+$ oc patch clusterversion version -p $PATCH --type merge
+----
+
+:leveloffset!:
+
+[NOTE]
+====
+See xref:../../../networking/enable-cluster-wide-proxy.adoc#enable-cluster-wide-proxy[Configuring the cluster-wide proxy] to configure the CA to trust the update server.
+====
+
+[id="next-steps_updating-restricted-network-cluster-osus"]
+== Next steps
+
+Before updating your cluster, confirm that the following conditions are met:
+
+* The Cluster Version Operator (CVO) is configured to use your locally-installed OpenShift Update Service application.
+* The release image signature config map for the new release is applied to your cluster.
++
+[NOTE]
+====
+The release image signature config map allows the Cluster Version Operator (CVO) to ensure the integrity of release images by verifying that the actual image signatures match the expected signatures.
+====
+* The current release and update target release images are mirrored to a locally accessible registry.
+* A recent graph data container image has been mirrored to your local registry.
+
+After you configure your cluster to use the locally-installed OpenShift Update Service and local mirror registry, you can use any of the following update methods:
+
+** xref:../../../updating/updating_a_cluster/updating-cluster-web-console.adoc#updating-cluster-web-console[Updating a cluster using the web console]
+** xref:../../../updating/updating_a_cluster/updating-cluster-cli.adoc#updating-cluster-cli[Updating a cluster using the CLI]
+** xref:../../../updating/updating_a_cluster/eus-eus-update.adoc#eus-eus-update[Performing an EUS-to-EUS update]
+** xref:../../../updating/updating_a_cluster/update-using-custom-machine-config-pools.adoc#update-using-custom-machine-config-pools[Performing a canary rollout update]
+** xref:../../../updating/updating_a_cluster/updating-cluster-rhel-compute.adoc#updating-cluster-rhel-compute[Updating a cluster that includes RHEL compute machines]
+
+//# includes=_attributes/common-attributes,modules/disconnected-osus-overview,modules/images-update-global-pull-secret,modules/update-service-install-web-console,modules/update-service-install-cli,modules/update-service-graph-data,modules/update-service-create-service-web-console,modules/update-service-create-service-cli,modules/update-service-configure-cvo

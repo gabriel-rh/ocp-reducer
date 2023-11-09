@@ -1,0 +1,412 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="deploying-egress-router-http-redirection"]
+= Deploying an egress router pod in HTTP proxy mode
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: deploying-egress-router-http-redirection
+
+toc::[]
+
+As a cluster administrator, you can deploy an egress router pod configured to proxy traffic to specified HTTP and HTTPS-based services.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/openshift_sdn/deploying-egress-router-layer3-redirection.adoc
+// * networking/openshift_sdn/deploying-egress-router-http-redirection.adoc
+// * networking/openshift_sdn/deploying-egress-router-dns-redirection.adoc
+
+// Conditional per flavor of Pod
+:http:
+:router-type: HTTP
+
+:egress-router-image-name: openshift4/ose-egress-router
+:egress-router-image-url: registry.redhat.io/{egress-router-image-name}
+
+:egress-http-proxy-image-name: openshift4/ose-egress-http-proxy
+:egress-http-proxy-image-url: registry.redhat.io/{egress-http-proxy-image-name}
+
+// All the images are different for OKD
+
+[id="nw-egress-router-pod_{context}"]
+= Egress router pod specification for {router-type} mode
+
+Define the configuration for an egress router pod in the `Pod` object. The following YAML describes the fields for the configuration of an egress router pod in {router-type} mode:
+
+// Because redirect needs privileged access to setup `EGRESS_DESTINATION`
+// and the other modes do not, this ends up needing its own almost
+// identical Pod. It's not possible to use conditionals for an unequal
+// number of callouts.
+
+
+// Many conditionals because DNS offers one additional env variable.
+
+[source,yaml,subs="attributes+"]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: egress-1
+  labels:
+    name: egress-1
+  annotations:
+    pod.network.openshift.io/assign-macvlan: "true" <1>
+spec:
+  initContainers:
+  - name: egress-router
+    image: {egress-router-image-url}
+    securityContext:
+      privileged: true
+    env:
+    - name: EGRESS_SOURCE <2>
+      value: <egress-router>
+    - name: EGRESS_GATEWAY <3>
+      value: <egress-gateway>
+    - name: EGRESS_ROUTER_MODE
+      value: http-proxy
+  containers:
+  - name: egress-router-pod
+    image: {egress-http-proxy-image-url}
+    env:
+    - name: EGRESS_HTTP_PROXY_DESTINATION <4>
+      value: |-
+        ...
+    ...
+----
+<1> The annotation tells {product-title} to create a macvlan network interface on the primary network interface controller (NIC) and move that macvlan interface into the pod's network namespace. You must include the quotation marks around the `"true"` value. To have {product-title} create the macvlan interface on a different NIC interface, set the annotation value to the name of that interface. For example, `eth1`.
+<2> IP address from the physical network that the node is on that is reserved for use by the egress router pod. Optional: You can include the subnet length, the `/24` suffix, so that a proper route to the local subnet is set. If you do not specify a subnet length, then the egress router can access only the host specified with the `EGRESS_GATEWAY` variable and no other hosts on the subnet.
+<3> Same value as the default gateway used by the node.
+<4> A string or YAML multi-line string specifying how to configure the proxy. Note that this is specified as an environment variable in the HTTP proxy container, not with the other environment variables in the init container.
+
+// unload flavors
+:!http:
+:!router-type:
+
+// unload images
+:!egress-router-image-name:
+:!egress-router-image-url:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/openshift_sdn/deploying-egress-router-layer3-redirection.adoc
+// * networking/openshift_sdn/deploying-egress-router-http-redirection.adoc
+// * networking/openshift_sdn/deploying-egress-router-dns-redirection.adoc
+
+// Every redirection mode supports an expanded environment variable
+
+// Conditional per flavor of Pod
+:http:
+
+[id="nw-egress-router-dest-var_{context}"]
+= Egress destination configuration format
+
+
+When an egress router pod is deployed in HTTP proxy mode, you can specify redirection rules by using one or more of the following formats. Each line in the configuration specifies one group of connections to allow or deny:
+
+- An IP address allows connections to that IP address, such as `192.168.1.1`.
+- A CIDR range allows connections to that CIDR range, such as `192.168.1.0/24`.
+- A hostname allows proxying to that host, such as `www.example.com`.
+- A domain name preceded by `+*.+` allows proxying to that domain and all of its subdomains, such as `*.example.com`.
+- A `!` followed by any of the previous match expressions denies the connection instead.
+- If the last line is `*`, then anything that is not explicitly denied is allowed. Otherwise, anything that is not allowed is denied.
+
+You can also use `*` to allow connections to all remote destinations.
+
+.Example configuration
+[source,text]
+----
+!*.example.com
+!192.168.1.0/24
+192.168.2.1
+*
+----
+
+
+// unload flavors
+:!http:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/openshift_sdn/deploying-egress-router-http-redirection.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-egress-router-http-proxy-mode_{context}"]
+= Deploying an egress router pod in HTTP proxy mode
+
+In _HTTP proxy mode_, an egress router pod runs as an HTTP proxy on port `8080`. This mode only works for clients that are connecting to HTTP-based or HTTPS-based services, but usually requires fewer changes to the client pods to get them to work. Many programs can be told to use an HTTP proxy by setting an environment variable.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create an egress router pod.
+
+. To ensure that other pods can find the IP address of the egress router pod, create a service to point to the egress router pod, as in the following example:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: egress-1
+spec:
+  ports:
+  - name: http-proxy
+    port: 8080 <1>
+  type: ClusterIP
+  selector:
+    name: egress-1
+----
+<1> Ensure the `http` port is set to `8080`.
+
+. To configure the client pod (not the egress proxy pod) to use the HTTP proxy, set the `http_proxy` or `https_proxy` variables:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-1
+  labels:
+    name: app-1
+spec:
+  containers:
+    env:
+    - name: http_proxy
+      value: http://egress-1:8080/ <1>
+    - name: https_proxy
+      value: http://egress-1:8080/
+    ...
+----
+<1> The service created in the previous step.
++
+[NOTE]
+====
+Using the `http_proxy` and `https_proxy` environment variables is not necessary for all setups. If the above does not create a working setup, then consult the documentation for the tool or software you are running in the pod.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="deploying-egress-router-http-redirection-additional-resources"]
+== Additional resources
+
+* xref:../../networking/openshift_sdn/configuring-egress-router-configmap.adoc#configuring-egress-router-configmap[Configuring an egress router destination mappings with a ConfigMap]
+
+//# includes=_attributes/common-attributes,modules/nw-egress-router-pod,modules/nw-egress-router-dest-var,modules/nw-egress-router-http-proxy-mode

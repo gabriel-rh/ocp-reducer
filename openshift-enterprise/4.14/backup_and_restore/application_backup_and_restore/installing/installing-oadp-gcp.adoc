@@ -1,0 +1,804 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="installing-oadp-gcp"]
+= Configuring the OpenShift API for Data Protection with Google Cloud Platform
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: installing-oadp-gcp
+:installing-oadp-gcp:
+:credentials: cloud-credentials-gcp
+:provider: gcp
+
+toc::[]
+
+You install the OpenShift API for Data Protection (OADP) with Google Cloud Platform (GCP) by installing the OADP Operator. The Operator installs link:https://{velero-domain}/docs/v{velero-version}/[Velero {velero-version}].
+
+
+//This snippet appears in the following assemblies:
+//
+// * .../backup_and_restore/backing_up_and_restoring/installing/about-installing-oadp.adoc
+// * .../backup_and_restore/backing_up_and_restoring/installing/installing-oadp-aws.adoc
+// * .../backup_and_restore/backing_up_and_restoring/installing/installing-oadp-azure.adoc
+// * .../backup_and_restore/backing_up_and_restoring/installing/installing-oadp-gcp.adoc
+// * .../backup_and_restore/backing_up_and_restoring/installing/installing-oadp-mcg.adoc
+// * .../backup_and_restore/backing_up_and_restoring/installing/installing-oadp-ocs.adoc
+
+:_mod-docs-content-type: SNIPPET
+[NOTE]
+====
+Starting from OADP 1.0.4, all OADP 1.0._z_ versions can only be used as a dependency of the MTC Operator and are not available as a standalone Operator.
+====
+
+You configure GCP for Velero, create a default `Secret`, and then install the Data Protection Application. For more details, see xref:../../..//backup_and_restore/application_backup_and_restore/installing/oadp-installing-operator.adoc#oadp-installing-operator-doc[Installing the OADP Operator].
+
+To install the OADP Operator in a restricted network environment, you must first disable the default OperatorHub sources and mirror the Operator catalog. See xref:../../../operators/admin/olm-restricted-networks.adoc#olm-restricted-networks[Using Operator Lifecycle Manager on restricted networks] for details.
+
+//include::modules/oadp-installing-operator.adoc[leveloffset=+1]
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * migrating_from_ocp_3_to_4/installing-3-4.adoc
+// * migration_toolkit_for_containers/installing-mtc.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-gcp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="migration-configuring-gcp_{context}"]
+= Configuring Google Cloud Platform
+
+You configure Google Cloud Platform (GCP) for the OpenShift API for Data Protection (OADP).
+
+.Prerequisites
+
+* You must have the `gcloud` and `gsutil` CLI tools installed. See the link:https://cloud.google.com/sdk/docs/[Google cloud documentation] for details.
+
+
+.Procedure
+
+. Log in to GCP:
++
+[source,terminal]
+----
+$ gcloud auth login
+----
+
+. Set the `BUCKET` variable:
++
+[source,terminal]
+----
+$ BUCKET=<bucket> <1>
+----
+<1> Specify your bucket name.
+
+. Create the storage bucket:
++
+[source,terminal]
+----
+$ gsutil mb gs://$BUCKET/
+----
+
+. Set the `PROJECT_ID` variable to your active project:
++
+[source,terminal]
+----
+$ PROJECT_ID=$(gcloud config get-value project)
+----
+
+. Create a service account:
++
+[source,terminal]
+----
+$ gcloud iam service-accounts create velero \
+    --display-name "Velero service account"
+----
+
+. List your service accounts:
++
+[source,terminal]
+----
+$ gcloud iam service-accounts list
+----
+
+. Set the `SERVICE_ACCOUNT_EMAIL` variable to match its `email` value:
++
+[source,terminal]
+----
+$ SERVICE_ACCOUNT_EMAIL=$(gcloud iam service-accounts list \
+    --filter="displayName:Velero service account" \
+    --format 'value(email)')
+----
+
+. Attach the policies to give the `velero` user the minimum necessary permissions:
++
+[source,terminal]
+----
+$ ROLE_PERMISSIONS=(
+    compute.disks.get
+    compute.disks.create
+    compute.disks.createSnapshot
+    compute.snapshots.get
+    compute.snapshots.create
+    compute.snapshots.useReadOnly
+    compute.snapshots.delete
+    compute.zones.get
+    storage.objects.create
+    storage.objects.delete
+    storage.objects.get
+    storage.objects.list
+    iam.serviceAccounts.signBlob
+)
+----
+
+. Create the `velero.server` custom role:
++
+[source,terminal]
+----
+$ gcloud iam roles create velero.server \
+    --project $PROJECT_ID \
+    --title "Velero Server" \
+    --permissions "$(IFS=","; echo "${ROLE_PERMISSIONS[*]}")"
+----
+
+. Add IAM policy binding to the project:
++
+[source,terminal]
+----
+$ gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member serviceAccount:$SERVICE_ACCOUNT_EMAIL \
+    --role projects/$PROJECT_ID/roles/velero.server
+----
+
+. Update the IAM service account:
++
+[source,terminal]
+----
+$ gsutil iam ch serviceAccount:$SERVICE_ACCOUNT_EMAIL:objectAdmin gs://${BUCKET}
+----
+
+. Save the IAM service account keys to the `credentials-velero` file in the current directory:
++
+[source,terminal]
+----
+$ gcloud iam service-accounts keys create credentials-velero \
+    --iam-account $SERVICE_ACCOUNT_EMAIL
+----
++
+You use the `credentials-velero` file to create a `Secret` object for GCP before you install the Data Protection Application.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-aws.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-azure.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-gcp.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-mcg.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-ocs.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="oadp-about-backup-snapshot-locations_{context}"]
+= About backup and snapshot locations and their secrets
+
+You specify backup and snapshot locations and their secrets in the `DataProtectionApplication` custom resource (CR).
+
+[id="backup-locations_{context}"]
+[discrete]
+== Backup locations
+
+You specify S3-compatible object storage, such as Multicloud Object Gateway or MinIO, as a backup location.
+
+Velero backs up {product-title} resources, Kubernetes objects, and internal images as an archive file on object storage.
+
+[id="snapshot-locations_{context}"]
+[discrete]
+== Snapshot locations
+
+If you use your cloud provider's native snapshot API to back up persistent volumes, you must specify the cloud provider as the snapshot location.
+
+If you use Container Storage Interface (CSI) snapshots, you do not need to specify a snapshot location because you will create a `VolumeSnapshotClass` CR to register the CSI driver.
+
+If you use Restic, you do not need to specify a snapshot location because Restic backs up the file system on object storage.
+
+[id="secrets_{context}"]
+[discrete]
+== Secrets
+
+If the backup and snapshot locations use the same credentials or if you do not require a snapshot location, you create a default `Secret`.
+
+If the backup and snapshot locations use different credentials, you create two secret objects:
+
+* Custom `Secret` for the backup location, which you specify in the `DataProtectionApplication` CR.
+* Default `Secret` for the snapshot location, which is not referenced in the `DataProtectionApplication` CR.
+
+[IMPORTANT]
+====
+The Data Protection Application requires a default `Secret`. Otherwise, the installation will fail.
+
+If you do not want to specify backup or snapshot locations during the installation, you can create a default `Secret` with an empty `credentials-velero` file.
+====
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-aws.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-azure.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-gcp.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-mcg.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-ocs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="oadp-creating-default-secret_{context}"]
+= Creating a default Secret
+
+You create a default `Secret` if your backup and snapshot locations use the same credentials or if you do not require a snapshot location.
+
+The default name of the `Secret` is `{credentials}`.
+
+[NOTE]
+====
+The `DataProtectionApplication` custom resource (CR) requires a default `Secret`.  Otherwise, the installation will fail. If the name of the backup location `Secret` is not specified, the default name is used.
+
+If you do not want to use the backup location credentials during the installation, you can create a `Secret` with the default name by using an empty `credentials-velero` file.
+====
+
+.Prerequisites
+
+* Your object storage and cloud storage, if any, must use the same credentials.
+* You must configure object storage for Velero.
+* You must create a `credentials-velero` file for the object storage in the appropriate format.
+
+.Procedure
+
+* Create a `Secret` with the default name:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc create secret generic {credentials} -n openshift-adp --from-file cloud=credentials-velero
+----
+
+The `Secret` is referenced in the `spec.backupLocations.credential` block of the `DataProtectionApplication` CR when you install the Data Protection Application.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-aws.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-azure.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-gcp.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-mcg.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-ocs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="oadp-secrets-for-different-credentials_{context}"]
+= Creating secrets for different credentials
+
+If your backup and snapshot locations use different credentials, you must create two `Secret` objects:
+
+* Backup location `Secret` with a custom name. The custom name is specified in the `spec.backupLocations` block of the `DataProtectionApplication` custom resource (CR).
+* Snapshot location `Secret` with the default name, `{credentials}`. This `Secret` is not specified in the `DataProtectionApplication` CR.
+
+.Procedure
+
+. Create a `credentials-velero` file for the snapshot location in the appropriate format for your cloud provider.
+. Create a `Secret` for the snapshot location with the default name:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc create secret generic {credentials} -n openshift-adp --from-file cloud=credentials-velero
+----
+
+. Create a `credentials-velero` file for the backup location in the appropriate format for your object storage.
+. Create a `Secret` for the backup location with a custom name:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc create secret generic <custom_secret> -n openshift-adp --from-file cloud=credentials-velero
+----
+
+. Add the `Secret` with the custom name to the `DataProtectionApplication` CR, as in the following example:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: oadp.openshift.io/v1alpha1
+kind: DataProtectionApplication
+metadata:
+  name: <dpa_sample>
+  namespace: openshift-adp
+spec:
+...
+  backupLocations:
+    - velero:
+        provider: {provider}
+        default: true
+        credential:
+          key: cloud
+          name: <custom_secret> <1>
+        objectStorage:
+          bucket: <bucket_name>
+          prefix: <prefix>
+  snapshotLocations:
+    - velero:
+        provider: {provider}
+        default: true
+        config:
+          project: <project>
+          snapshotLocation: us-west1
+----
+<1> Backup location `Secret` with custom name.
+
+:leveloffset!:
+
+[id="configuring-dpa-gcp"]
+== Configuring the Data Protection Application
+
+You can configure the Data Protection Application by setting Velero resource allocations or enabling self-signed CA certificates.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * backup_and_restore/application_backup_and_restore/configuring-oadp.adoc
+// * virt/backup_restore/virt-installing-configuring-oadp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="oadp-setting-resource-limits-and-requests_{context}"]
+= Setting Velero CPU and memory resource allocations
+
+You set the CPU and memory resource allocations for the `Velero` pod by editing the  `DataProtectionApplication` custom resource (CR) manifest.
+
+.Prerequisites
+
+* You must have the OpenShift API for Data Protection (OADP) Operator installed.
+
+.Procedure
+
+* Edit the values in the `spec.configuration.velero.podConfig.ResourceAllocations` block of the `DataProtectionApplication` CR manifest, as in the following example:
++
+[source,yaml]
+----
+apiVersion: oadp.openshift.io/v1alpha1
+kind: DataProtectionApplication
+metadata:
+  name: <dpa_sample>
+spec:
+...
+  configuration:
+    velero:
+      podConfig:
+        nodeSelector: <node selector> <1>
+        resourceAllocations: <2>
+          limits:
+            cpu: "1"
+            memory: 1024Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
+----
+<1> Specify the node selector to be supplied to Velero podSpec.
+<2> The `resourceAllocations` listed are for average usage.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * backup_and_restore/application_backup_and_restore/configuring-oadp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="oadp-self-signed-certificate_{context}"]
+= Enabling self-signed CA certificates
+
+You must enable a self-signed CA certificate for object storage by editing the `DataProtectionApplication` custom resource (CR) manifest to prevent a `certificate signed by unknown authority` error.
+
+.Prerequisites
+
+* You must have the OpenShift API for Data Protection (OADP) Operator installed.
+
+.Procedure
+
+* Edit the `spec.backupLocations.velero.objectStorage.caCert` parameter and `spec.backupLocations.velero.config` parameters of the `DataProtectionApplication` CR manifest:
++
+[source,yaml]
+----
+apiVersion: oadp.openshift.io/v1alpha1
+kind: DataProtectionApplication
+metadata:
+  name: <dpa_sample>
+spec:
+...
+  backupLocations:
+    - name: default
+      velero:
+        provider: aws
+        default: true
+        objectStorage:
+          bucket: <bucket>
+          prefix: <prefix>
+          caCert: <base64_encoded_cert_string> <1>
+        config:
+          insecureSkipTLSVerify: "false" <2>
+...
+----
+<1> Specify the Base64-encoded CA certificate string.
+<2> The `insecureSkipTLSVerify` configuration can be set to either `"true"` or `"false"`. If set to `"true"`, SSL/TLS security is disabled. If set to `"false"`, SSL/TLS security is enabled.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-aws.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-azure.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-gcp.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-mcg.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-ocs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="oadp-installing-dpa_{context}"]
+= Installing the Data Protection Application
+
+You install the Data Protection Application (DPA) by creating an instance of the `DataProtectionApplication` API.
+
+.Prerequisites
+
+* You must install the OADP Operator.
+* You must configure object storage as a backup location.
+* If you use snapshots to back up PVs, your cloud provider must support either a native snapshot API or Container Storage Interface (CSI) snapshots.
+* If the backup and snapshot locations use the same credentials, you must create a `Secret` with the default name, `{credentials}`.
+* If the backup and snapshot locations use different credentials, you must create two `Secrets`:
+
+** `Secret` with a custom name for the backup location. You add this `Secret` to the `DataProtectionApplication` CR.
+** `Secret` with the default name, `{credentials}`, for the snapshot location. This `Secret` is not referenced in the `DataProtectionApplication` CR.
++
+[NOTE]
+====
+If you do not want to specify backup or snapshot locations during the installation, you can create a default `Secret` with an empty `credentials-velero` file. If there is no default `Secret`, the installation will fail.
+====
++
+[NOTE]
+====
+Velero creates a secret named `velero-repo-credentials` in the OADP namespace, which contains a default backup repository password.
+You can update the secret with your own password encoded as base64 *before* you run your first backup targeted to the backup repository. The value of the key to update is `Data[repository-password]`.
+
+After you create your DPA, the first time that you run a backup targeted to the backup repository, Velero creates a backup repository whose secret is `velero-repo-credentials`, which contains either the default password or the one you replaced it with.
+If you update the secret password *after* the first backup, the new password will not match the password in `velero-repo-credentials`, and therefore, Velero will not be able to connect with the older backups.
+====
+
+.Procedure
+
+. Click *Operators* -> *Installed Operators* and select the OADP Operator.
+. Under *Provided APIs*, click *Create instance* in the *DataProtectionApplication* box.
+
+. Click *YAML View* and update the parameters of the `DataProtectionApplication` manifest:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: oadp.openshift.io/v1alpha1
+kind: DataProtectionApplication
+metadata:
+  name: <dpa_sample>
+  namespace: openshift-adp
+spec:
+  configuration:
+    velero:
+      defaultPlugins:
+        - gcp
+        - openshift <1>
+      resourceTimeout: 10m <2>
+    restic:
+      enable: true <3>
+      podConfig:
+        nodeSelector: <node_selector> <4>
+  backupLocations:
+    - velero:
+        provider: {provider}
+        default: true
+        credential:
+          key: cloud
+          name: {credentials} <5>
+        objectStorage:
+          bucket: <bucket_name> <6>
+          prefix: <prefix> <7>
+  snapshotLocations: <8>
+    - velero:
+        provider: {provider}
+        default: true
+        config:
+          project: <project>
+          snapshotLocation: us-west1 <9>
+----
+<1> The `openshift` plugin is mandatory.
+<2> Specify how many minutes to wait for several Velero resources before timeout occurs, such as Velero CRD availability, volumeSnapshot deletion, and backup repository availability. The default is 10m.
+<3> Set this value to `false` if you want to disable the Restic installation. Restic deploys a daemon set, which means that Restic pods run on each working node. In OADP version 1.2 and later, you can configure Restic for backups by adding `spec.defaultVolumesToFsBackup: true` to the `Backup` CR. In OADP version 1.1, add `spec.defaultVolumesToRestic: true` to the `Backup` CR.
+<4> Specify on which nodes Restic is available. By default, Restic runs on all nodes.
+<5> If you do not specify this value, the default name, `{credentials}`, is used. If you specify a custom name, the custom name is used for the backup location.
+<6> Specify a bucket as the backup storage location. If the bucket is not a dedicated bucket for Velero backups, you must specify a prefix.
+<7> Specify a prefix for Velero backups, for example, `velero`, if the bucket is used for multiple purposes.
+<8> Specify a snapshot location, unless you use CSI snapshots or Restic to back up PVs.
+<9> The snapshot location must be in the same region as the PVs.
+
+. Click *Create*.
+. Verify the installation by viewing the OADP resources:
++
+[source,terminal]
+----
+$ oc get all -n openshift-adp
+----
++
+.Example output
++
+----
+NAME                                                     READY   STATUS    RESTARTS   AGE
+pod/oadp-operator-controller-manager-67d9494d47-6l8z8    2/2     Running   0          2m8s
+pod/restic-9cq4q                                         1/1     Running   0          94s
+pod/restic-m4lts                                         1/1     Running   0          94s
+pod/restic-pv4kr                                         1/1     Running   0          95s
+pod/velero-588db7f655-n842v                              1/1     Running   0          95s
+
+NAME                                                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/oadp-operator-controller-manager-metrics-service   ClusterIP   172.30.70.140    <none>        8443/TCP   2m8s
+
+NAME                    DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+daemonset.apps/restic   3         3         3       3            3           <none>          96s
+
+NAME                                                READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/oadp-operator-controller-manager    1/1     1            1           2m9s
+deployment.apps/velero                              1/1     1            1           96s
+
+NAME                                                           DESIRED   CURRENT   READY   AGE
+replicaset.apps/oadp-operator-controller-manager-67d9494d47    1         1         1       2m9s
+replicaset.apps/velero-588db7f655                              1         1         1       96s
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-aws.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-azure.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-gcp.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-mcg.adoc
+// * backup_and_restore/application_backup_and_restore/installing/installing-oadp-ocs.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="oadp-enabling-csi-dpa_{context}"]
+= Enabling CSI in the DataProtectionApplication CR
+
+You enable the Container Storage Interface (CSI) in the `DataProtectionApplication` custom resource (CR) in order to back up persistent volumes with CSI snapshots.
+
+.Prerequisites
+
+* The cloud provider must support CSI snapshots.
+
+.Procedure
+
+* Edit the `DataProtectionApplication` CR, as in the following example:
++
+[source,yaml]
+----
+apiVersion: oadp.openshift.io/v1alpha1
+kind: DataProtectionApplication
+...
+spec:
+  configuration:
+    velero:
+      defaultPlugins:
+      - openshift
+      - csi <1>
+----
+<1> Add the `csi` default plugin.
+
+:leveloffset!:
+
+:installing-oadp-gcp!:
+
+//# includes=_attributes/common-attributes,snippets/oadp-mtc-operator,modules/migration-configuring-gcp,modules/oadp-about-backup-snapshot-locations-secrets,modules/oadp-creating-default-secret,modules/oadp-secrets-for-different-credentials,modules/oadp-setting-resource-limits-and-requests,modules/oadp-self-signed-certificate,modules/oadp-installing-dpa,modules/oadp-enabling-csi-dpa

@@ -1,0 +1,3210 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="installing-vsphere-installer-provisioned-customizations"]
+= Installing a cluster on vSphere with customizations
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: installing-vsphere-installer-provisioned-customizations
+:platform: vSphere
+
+toc::[]
+
+In {product-title} version {product-version}, you can install a cluster on your
+VMware vSphere instance by using installer-provisioned infrastructure. To customize the installation, you modify parameters in the `install-config.yaml` file before you install the cluster.
+
+// Text snippet included in the following modules:
+//
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+
+:_mod-docs-content-type: SNIPPET
+
+[NOTE]
+====
+{product-title} supports deploying a cluster to a single VMware vCenter only. Deploying a cluster with machines/machine sets on multiple vCenters is not supported.
+====
+
+== Prerequisites
+
+* You reviewed details about the xref:../../architecture/architecture-installation.adoc#architecture-installation[{product-title} installation and update] processes.
+* You read the documentation on xref:../../installing/installing-preparing.adoc#installing-preparing[selecting a cluster installation method and preparing it for users].
+* You provisioned xref:../../storage/understanding-persistent-storage.adoc#understanding-persistent-storage[persistent storage] for your cluster. To deploy a private image registry, your storage must provide `ReadWriteMany` access modes.
+* The {product-title} installer requires access to port 443 on the vCenter and ESXi hosts. You verified that port 443 is accessible.
+* If you use a firewall, you confirmed with the administrator that port 443 is accessible. Control plane nodes must be able to reach vCenter and ESXi hosts on port 443 for the installation to succeed.
+* If you use a firewall, you xref:../../installing/install_config/configuring-firewall.adoc#configuring-firewall[configured it to allow the sites] that your cluster requires access to.
++
+[NOTE]
+====
+Be sure to also review this site list if you are configuring a proxy.
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-china-region.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-user-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_openstack/installing-openstack-installer-sr-iov.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-network-customizations.adoc
+// * architecture/architecture.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-installer-provisioned.adoc
+
+
+
+:_mod-docs-content-type: CONCEPT
+[id="cluster-entitlements_{context}"]
+= Internet access for {product-title}
+
+In {product-title} {product-version}, you require access to the internet to
+install
+your cluster.
+
+You must have internet access to:
+
+* Access {cluster-manager-url} to download the installation program and perform subscription management. If the cluster has internet access and you do not disable Telemetry, that service automatically entitles your cluster.
+* Access link:http://quay.io[Quay.io] to obtain the packages that are required to install your cluster.
+* Obtain the packages that are required to perform cluster updates.
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+
+[id="installation-vsphere-infrastructure_{context}"]
+= VMware vSphere infrastructure requirements
+
+You must install the {product-title} cluster on a VMware vSphere version 7.0 Update 2 or later instance that meets the requirements for the components that you use.
+
+[NOTE]
+====
+{product-title} version {product-version} supports VMware vSphere version 8.0.
+====
+
+You can host the VMware vSphere infrastructure on-premise or on a link:https://cloud.vmware.com/providers[VMware Cloud Verified provider] that meets the requirements outlined in the following tables:
+
+.Version requirements for vSphere virtual environments
+[cols=2, options="header"]
+|===
+|Virtual environment product |Required version
+|VMware virtual hardware | 15 or later
+|vSphere ESXi hosts | 7.0 Update 2 or later
+|vCenter host   | 7.0 Update 2 or later
+|===
+
+[IMPORTANT]
+====
+You must ensure that the time on your ESXi hosts is synchronized before you install {product-title}. See link:https://docs.vmware.com/en/VMware-vSphere/6.7/com.vmware.vsphere.vcenterhost.doc/GUID-8756D419-A878-4AE0-9183-C6D5A91A8FB1.html[Edit Time Configuration for a Host] in the VMware documentation.
+====
+
+.Minimum supported vSphere version for VMware components
+|===
+|Component | Minimum supported versions |Description
+
+|Hypervisor
+|vSphere 7.0 Update 2 and later with virtual hardware version 15
+|This version is the minimum version that {op-system-first} supports. For more information about supported hardware on the latest version of {op-system-base-full} that is compatible with {op-system}, see link:https://catalog.redhat.com/hardware/search[Hardware] on the Red Hat Customer Portal.
+
+|Storage with in-tree drivers
+|vSphere 7.0 Update 2 and later
+|This plugin creates vSphere storage by using the in-tree storage drivers for vSphere included in {product-title}.
+
+|Optional: Networking (NSX-T)
+|vSphere 7.0 Update 2 and later
+|vSphere 7.0 Update 2 is required for {product-title}. For more information about the compatibility of NSX and {product-title}, see the Release Notes section of VMware's link:https://docs.vmware.com/en/VMware-NSX-Container-Plugin/index.html[NSX container plugin documentation].
+|===
+
+[IMPORTANT]
+====
+To ensure the best performance conditions for your cluster workloads that operate on {oci-first} and on the {ocvs-first} service, ensure volume performance units (VPUs) for your block volume are sized for your workloads.
+
+The following list provides some guidance in selecting the VPUs needed for specific performance needs:
+
+* Test or proof of concept environment: 100 GB, and 20 to 30 VPUs.
+* Base-production environment: 500 GB, and 60 VPUs.
+* Heavy-use production environment: More than 500 GB, and 100 or more VPUs.
+
+Consider allocating additional VPUs to give enough capacity for updates and scaling activities. See link:https://docs.oracle.com/en-us/iaas/Content/Block/Concepts/blockvolumeperformance.htm[Block Volume Performance Levels] in the Oracle documentation.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-vsphere-installer-network-requirements_{context}"]
+= Network connectivity requirements
+
+You must configure the network connectivity between machines to allow {product-title} cluster components to communicate.
+
+Review the following details about the required network ports.
+
+.Ports used for all-machine to all-machine communications
+[cols="2a,2a,5a",options="header"]
+|===
+
+|Protocol
+|Port
+|Description
+
+|ICMP
+|N/A
+|Network reachability tests
+
+.4+|TCP
+|`1936`
+|Metrics
+
+|`9000`-`9999`
+|Host level services, including the node exporter on ports `9100`-`9101` and
+the Cluster Version Operator on port `9099`.
+
+|`10250`-`10259`
+|The default ports that Kubernetes reserves
+
+|`10256`
+|openshift-sdn
+
+.5+|UDP
+|`4789`
+|virtual extensible LAN (VXLAN)
+
+|`6081`
+|Geneve
+
+|`9000`-`9999`
+|Host level services, including the node exporter on ports `9100`-`9101`.
+
+|`500`
+|IPsec IKE packets
+
+|`4500`
+|IPsec NAT-T packets
+
+|TCP/UDP
+|`30000`-`32767`
+|Kubernetes node port
+
+|ESP
+|N/A
+|IPsec Encapsulating Security Payload (ESP)
+
+|===
+
+.Ports used for all-machine to control plane communications
+[cols="2a,2a,5a",options="header"]
+|===
+
+|Protocol
+|Port
+|Description
+
+|TCP
+|`6443`
+|Kubernetes API
+
+|===
+
+.Ports used for control plane machine to control plane machine communications
+[cols="2a,2a,5a",options="header"]
+|===
+
+|Protocol
+|Port
+|Description
+
+|TCP
+|`2379`-`2380`
+|etcd server and peer ports
+
+|===
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/preparing-to-install-on-vsphere.adoc
+// * storage/container_storage_interface/persistent-storage-csi-vsphere.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="vsphere-csi-driver-reqs_{context}"]
+= VMware vSphere CSI Driver Operator requirements
+
+To install the vSphere CSI Driver Operator, the following requirements must be met:
+
+* VMware vSphere version 7.0 Update 2 or later
+* vCenter 7.0 Update 2 or later
+* Virtual machines of hardware version 15 or later
+* No third-party vSphere CSI driver already installed in the cluster
+
+If a third-party vSphere CSI driver is present in the cluster, {product-title} does not overwrite it. The presence of a third-party vSphere CSI driver prevents {product-title} from updating to {product-title} 4.13 or later.
+
+[NOTE]
+====
+The VMware vSphere CSI Driver Operator is supported only on clusters deployed with `platform: vsphere` in the installation manifest.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* To remove a third-party vSphere CSI driver, see xref:../../storage/container_storage_interface/persistent-storage-csi-vsphere.adoc#persistent-storage-csi-vsphere-install-issues_persistent-storage-csi-vsphere[Removing a third-party vSphere CSI Driver].
+* To update the hardware version for your vSphere nodes, see xref:../../updating/updating_a_cluster/updating-hardware-on-nodes-running-on-vsphere.adoc#updating-hardware-on-nodes-running-on-vsphere[Updating hardware on nodes running in vSphere].
+
+:leveloffset: +1
+
+// Module included in the following assemblies for vSphere:
+//
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+
+
+
+
+[id="installation-vsphere-installer-infra-requirements_{context}"]
+= vCenter requirements
+
+Before you install an {product-title} cluster on your vCenter that uses infrastructure that the installer provisions, you must prepare your environment.
+
+
+[discrete]
+[id="installation-vsphere-installer-infra-requirements-account_{context}"]
+== Required vCenter account privileges
+
+To install an {product-title} cluster in a vCenter, the installation program requires access to an account with privileges to read and create the required resources. Using an account that has global administrative privileges is the simplest way to access all of the necessary permissions.
+
+If you cannot use an account with global administrative privileges, you must create roles to grant the privileges necessary for {product-title} cluster installation. While most of the privileges are always required, some are required only if you plan for the installation program to provision a folder to contain the {product-title} cluster on your vCenter instance, which is the default behavior. You must create or amend vSphere roles for the specified objects to grant the required privileges.
+
+An additional role is required if the installation program is to create a vSphere virtual machine folder.
+
+
+
+.Roles and privileges required for installation in vSphere API
+[%collapsible]
+====
+[cols="3a,3a,3a",options="header"]
+|===
+|vSphere object for role
+|When required
+|Required privileges in vSphere API
+
+|vSphere vCenter
+|Always
+|
+[%hardbreaks]
+`Cns.Searchable`
+`InventoryService.Tagging.AttachTag`
+`InventoryService.Tagging.CreateCategory`
+`InventoryService.Tagging.CreateTag`
+`InventoryService.Tagging.DeleteCategory`
+`InventoryService.Tagging.DeleteTag`
+`InventoryService.Tagging.EditCategory`
+`InventoryService.Tagging.EditTag`
+`Sessions.ValidateSession`
+`StorageProfile.Update`
+`StorageProfile.View`
+
+|vSphere vCenter Cluster
+|If VMs will be created in the cluster root
+|
+[%hardbreaks]
+`Host.Config.Storage`
+`Resource.AssignVMToPool`
+`VApp.AssignResourcePool`
+`VApp.Import`
+`VirtualMachine.Config.AddNewDisk`
+
+|vSphere vCenter Resource Pool
+|If an existing resource pool is provided
+|
+[%hardbreaks]
+`Host.Config.Storage`
+`Resource.AssignVMToPool`
+`VApp.AssignResourcePool`
+`VApp.Import`
+`VirtualMachine.Config.AddNewDisk`
+
+|vSphere Datastore
+|Always
+|
+[%hardbreaks]
+`Datastore.AllocateSpace`
+`Datastore.Browse`
+`Datastore.FileManagement`
+`InventoryService.Tagging.ObjectAttachable`
+
+|vSphere Port Group
+|Always
+|`Network.Assign`
+
+|Virtual Machine Folder
+|Always
+|
+[%hardbreaks]
+`InventoryService.Tagging.ObjectAttachable`
+`Resource.AssignVMToPool`
+`VApp.Import`
+`VirtualMachine.Config.AddExistingDisk`
+`VirtualMachine.Config.AddNewDisk`
+`VirtualMachine.Config.AddRemoveDevice`
+`VirtualMachine.Config.AdvancedConfig`
+`VirtualMachine.Config.Annotation`
+`VirtualMachine.Config.CPUCount`
+`VirtualMachine.Config.DiskExtend`
+`VirtualMachine.Config.DiskLease`
+`VirtualMachine.Config.EditDevice`
+`VirtualMachine.Config.Memory`
+`VirtualMachine.Config.RemoveDisk`
+`VirtualMachine.Config.Rename`
+`VirtualMachine.Config.ResetGuestInfo`
+`VirtualMachine.Config.Resource`
+`VirtualMachine.Config.Settings`
+`VirtualMachine.Config.UpgradeVirtualHardware`
+`VirtualMachine.Interact.GuestControl`
+`VirtualMachine.Interact.PowerOff`
+`VirtualMachine.Interact.PowerOn`
+`VirtualMachine.Interact.Reset`
+`VirtualMachine.Inventory.Create`
+`VirtualMachine.Inventory.CreateFromExisting`
+`VirtualMachine.Inventory.Delete`
+`VirtualMachine.Provisioning.Clone`
+`VirtualMachine.Provisioning.MarkAsTemplate`
+`VirtualMachine.Provisioning.DeployTemplate`
+
+|vSphere vCenter Datacenter
+|If the installation program creates the virtual machine folder. For UPI, `VirtualMachine.Inventory.Create` and `VirtualMachine.Inventory.Delete` privileges are optional if your cluster does not use the Machine API.
+|
+[%hardbreaks]
+`InventoryService.Tagging.ObjectAttachable`
+`Resource.AssignVMToPool`
+`VApp.Import`
+`VirtualMachine.Config.AddExistingDisk`
+`VirtualMachine.Config.AddNewDisk`
+`VirtualMachine.Config.AddRemoveDevice`
+`VirtualMachine.Config.AdvancedConfig`
+`VirtualMachine.Config.Annotation`
+`VirtualMachine.Config.CPUCount`
+`VirtualMachine.Config.DiskExtend`
+`VirtualMachine.Config.DiskLease`
+`VirtualMachine.Config.EditDevice`
+`VirtualMachine.Config.Memory`
+`VirtualMachine.Config.RemoveDisk`
+`VirtualMachine.Config.Rename`
+`VirtualMachine.Config.ResetGuestInfo`
+`VirtualMachine.Config.Resource`
+`VirtualMachine.Config.Settings`
+`VirtualMachine.Config.UpgradeVirtualHardware`
+`VirtualMachine.Interact.GuestControl`
+`VirtualMachine.Interact.PowerOff`
+`VirtualMachine.Interact.PowerOn`
+`VirtualMachine.Interact.Reset`
+`VirtualMachine.Inventory.Create`
+`VirtualMachine.Inventory.CreateFromExisting`
+`VirtualMachine.Inventory.Delete`
+`VirtualMachine.Provisioning.Clone`
+`VirtualMachine.Provisioning.DeployTemplate`
+`VirtualMachine.Provisioning.MarkAsTemplate`
+`Folder.Create`
+`Folder.Delete`
+|===
+====
+
+.Roles and privileges required for installation in vCenter graphical user interface (GUI)
+[%collapsible]
+====
+[cols="3a,3a,3a",options="header"]
+|===
+|vSphere object for role
+|When required
+|Required privileges in vCenter GUI
+
+|vSphere vCenter
+|Always
+|
+[%hardbreaks]
+`Cns.Searchable`
+`"vSphere Tagging"."Assign or Unassign vSphere Tag"`
+`"vSphere Tagging"."Create vSphere Tag Category"`
+`"vSphere Tagging"."Create vSphere Tag"`
+`vSphere Tagging"."Delete vSphere Tag Category"`
+`"vSphere Tagging"."Delete vSphere Tag"`
+`"vSphere Tagging"."Edit vSphere Tag Category"`
+`"vSphere Tagging"."Edit vSphere Tag"`
+`Sessions."Validate session"`
+`"Profile-driven storage"."Profile-driven storage update"`
+`"Profile-driven storage"."Profile-driven storage view"`
+
+|vSphere vCenter Cluster
+|If VMs will be created in the cluster root
+|
+[%hardbreaks]
+`Host.Configuration."Storage partition configuration"`
+`Resource."Assign virtual machine to resource pool"`
+`VApp."Assign resource pool"`
+`VApp.Import`
+`"Virtual machine"."Change Configuration"."Add new disk"`
+
+|vSphere vCenter Resource Pool
+|If an existing resource pool is provided
+|
+[%hardbreaks]
+`Host.Configuration."Storage partition configuration"`
+`Resource."Assign virtual machine to resource pool"`
+`VApp."Assign resource pool"`
+`VApp.Import`
+`"Virtual machine"."Change Configuration"."Add new disk"`
+
+|vSphere Datastore
+|Always
+|
+[%hardbreaks]
+`Datastore."Allocate space"`
+`Datastore."Browse datastore"`
+`Datastore."Low level file operations"`
+`"vSphere Tagging"."Assign or Unassign vSphere Tag on Object"`
+
+|vSphere Port Group
+|Always
+|`Network."Assign network"`
+
+|Virtual Machine Folder
+|Always
+|
+[%hardbreaks]
+`"vSphere Tagging"."Assign or Unassign vSphere Tag on Object"`
+`Resource."Assign virtual machine to resource pool"`
+`VApp.Import`
+`"Virtual machine"."Change Configuration"."Add existing disk"`
+`"Virtual machine"."Change Configuration"."Add new disk"`
+`"Virtual machine"."Change Configuration"."Add or remove device"`
+`"Virtual machine"."Change Configuration"."Advanced configuration"`
+`"Virtual machine"."Change Configuration"."Set annotation"`
+`"Virtual machine"."Change Configuration"."Change CPU count"`
+`"Virtual machine"."Change Configuration"."Extend virtual disk"`
+`"Virtual machine"."Change Configuration"."Acquire disk lease"`
+`"Virtual machine"."Change Configuration"."Modify device settings"`
+`"Virtual machine"."Change Configuration"."Change Memory"`
+`"Virtual machine"."Change Configuration"."Remove disk"`
+`"Virtual machine"."Change Configuration".Rename`
+`"Virtual machine"."Change Configuration"."Reset guest information"`
+`"Virtual machine"."Change Configuration"."Change resource"`
+`"Virtual machine"."Change Configuration"."Change Settings"`
+`"Virtual machine"."Change Configuration"."Upgrade virtual machine compatibility"`
+`"Virtual machine".Interaction."Guest operating system management by VIX API"`
+`"Virtual machine".Interaction."Power off"`
+`"Virtual machine".Interaction."Power on"`
+`"Virtual machine".Interaction.Reset`
+`"Virtual machine"."Edit Inventory"."Create new"`
+`"Virtual machine"."Edit Inventory"."Create from existing"`
+`"Virtual machine"."Edit Inventory"."Remove"`
+`"Virtual machine".Provisioning."Clone virtual machine"`
+`"Virtual machine".Provisioning."Mark as template"`
+`"Virtual machine".Provisioning."Deploy template"`
+
+|vSphere vCenter Datacenter
+|If the installation program creates the virtual machine folder. For UPI, `VirtualMachine.Inventory.Create` and `VirtualMachine.Inventory.Delete` privileges are optional if your cluster does not use the Machine API.
+|
+[%hardbreaks]
+`"vSphere Tagging"."Assign or Unassign vSphere Tag on Object"`
+`Resource."Assign virtual machine to resource pool"`
+`VApp.Import`
+`"Virtual machine"."Change Configuration"."Add existing disk"`
+`"Virtual machine"."Change Configuration"."Add new disk"`
+`"Virtual machine"."Change Configuration"."Add or remove device"`
+`"Virtual machine"."Change Configuration"."Advanced configuration"`
+`"Virtual machine"."Change Configuration"."Set annotation"`
+`"Virtual machine"."Change Configuration"."Change CPU count"`
+`"Virtual machine"."Change Configuration"."Extend virtual disk"`
+`"Virtual machine"."Change Configuration"."Acquire disk lease"`
+`"Virtual machine"."Change Configuration"."Modify device settings"`
+`"Virtual machine"."Change Configuration"."Change Memory"`
+`"Virtual machine"."Change Configuration"."Remove disk"`
+`"Virtual machine"."Change Configuration".Rename`
+`"Virtual machine"."Change Configuration"."Reset guest information"`
+`"Virtual machine"."Change Configuration"."Change resource"`
+`"Virtual machine"."Change Configuration"."Change Settings"`
+`"Virtual machine"."Change Configuration"."Upgrade virtual machine compatibility"`
+`"Virtual machine".Interaction."Guest operating system management by VIX API"`
+`"Virtual machine".Interaction."Power off"`
+`"Virtual machine".Interaction."Power on"`
+`"Virtual machine".Interaction.Reset`
+`"Virtual machine"."Edit Inventory"."Create new"`
+`"Virtual machine"."Edit Inventory"."Create from existing"`
+`"Virtual machine"."Edit Inventory"."Remove"`
+`"Virtual machine".Provisioning."Clone virtual machine"`
+`"Virtual machine".Provisioning."Deploy template"`
+`"Virtual machine".Provisioning."Mark as template"`
+`Folder."Create folder"`
+`Folder."Delete folder"`
+|===
+====
+
+
+Additionally, the user requires some `ReadOnly` permissions, and some of the roles require permission to propogate the permissions to child objects. These settings vary depending on whether or not you install the cluster into an existing folder.
+
+.Required permissions and propagation settings
+[%collapsible]
+====
+[cols="3a,3a,3a,3a",options="header"]
+|===
+|vSphere object
+|When required
+|Propagate to children
+|Permissions required
+
+|vSphere vCenter
+|Always
+|False
+|Listed required privileges
+
+.2+|vSphere vCenter Datacenter
+|Existing folder
+|False
+|`ReadOnly` permission
+
+|Installation program creates the folder
+|True
+|Listed required privileges
+
+.2+|vSphere vCenter Cluster
+|Existing resource pool
+|False
+|`ReadOnly` permission
+
+|VMs in cluster root
+|True
+|Listed required privileges
+
+|vSphere vCenter Datastore
+|Always
+|False
+|Listed required privileges
+
+|vSphere Switch
+|Always
+|False
+|`ReadOnly` permission
+
+|vSphere Port Group
+|Always
+|False
+|Listed required privileges
+
+|vSphere vCenter Virtual Machine Folder
+|Existing folder
+|True
+|Listed required privileges
+
+|vSphere vCenter Resource Pool
+|Existing resource pool
+|True
+|Listed required privileges
+|===
+====
+
+For more information about creating an account with only the required privileges, see link:https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.security.doc/GUID-5372F580-5C23-4E9C-8A4E-EF1B4DD9033E.html[vSphere Permissions and User Management Tasks] in the vSphere documentation.
+
+[discrete]
+[id="installation-vsphere-installer-infra-requirements-vmotion_{context}"]
+== Using {product-title} with vMotion
+
+If you intend on using vMotion in your vSphere environment, consider the following before installing an {product-title} cluster.
+
+* {product-title} generally supports compute-only vMotion. Using Storage vMotion can cause issues and is not supported.
++
+--
+To help ensure the uptime of your compute and control plane nodes, it is recommended that you follow the VMware best practices for vMotion. It is also recommended to use VMware anti-affinity rules to improve the availability of {product-title} during maintenance or hardware issues.
+
+For more information about vMotion and anti-affinity rules, see the VMware vSphere documentation for  link:https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.vcenterhost.doc/GUID-3B41119A-1276-404B-8BFB-A32409052449.html[vMotion networking requirements] and link:https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.resmgmt.doc/GUID-FBE46165-065C-48C2-B775-7ADA87FF9A20.html[VM anti-affinity rules].
+--
+* If you are using vSphere volumes in your pods, migrating a VM across datastores either manually or through Storage vMotion causes, invalid references within {product-title} persistent volume (PV) objects. These references prevent affected pods from starting up and can result in data loss.
+* Similarly, {product-title} does not support selective migration of VMDKs across datastores, using datastore clusters for VM provisioning or for dynamic or static provisioning of PVs, or using a datastore that is part of a datastore cluster for dynamic or static provisioning of PVs.
++
+[IMPORTANT]
+====
+You can specify the path of any datastore that exists in a datastore cluster. By default, Storage Distributed Resource Scheduler (SDRS), which uses Storage vMotion, is automatically enabled for a datastore cluster. Red Hat does not support Storage vMotion, so you must disable Storage DRS to avoid data loss issues for your {product-title} cluster.
+
+If you must specify VMs across multiple datastores, use a `datastore` object to specify a failure domain in your cluster's `install-config.yaml` configuration file. For more information, see "VMware vSphere region and zone enablement".
+====
+
+[discrete]
+[id="installation-vsphere-installer-infra-requirements-resources_{context}"]
+== Cluster resources
+
+When you deploy an {product-title} cluster that uses installer-provisioned infrastructure, the installation program must be able to create several resources in your vCenter instance.
+
+A standard {product-title} installation creates the following vCenter resources:
+
+
+* 1 Folder
+* 1 Tag category
+* 1 Tag
+* Virtual machines:
+** 1 template
+** 1 temporary bootstrap node
+** 3 control plane nodes
+** 3 compute machines
+
+Although these resources use 856 GB of storage, the bootstrap node is destroyed during the cluster installation process. A minimum of 800 GB of storage is required to use a standard cluster.
+
+If you deploy more compute machines, the {product-title} cluster will use more storage.
+
+[discrete]
+[id="installation-vsphere-installer-infra-requirements-limits_{context}"]
+== Cluster limits
+
+Available resources vary between clusters. The number of possible clusters within a vCenter is limited primarily by available storage space and any limitations on the number of required resources. Be sure to consider both limitations to the vCenter resources that the cluster creates and the resources that you require to deploy a cluster, such as IP addresses and networks.
+
+[discrete]
+[id="installation-vsphere-installer-infra-requirements-networking_{context}"]
+== Networking requirements
+Use Dynamic Host Configuration Protocol (DHCP) for the network and ensure that the DHCP server is configured to provide persistent IP addresses to the cluster machines.
+
+[NOTE]
+====
+You do not need to use the DHCP for the network if you want to provision nodes with static IP addresses.
+====
+
+Configure the default gateway to use the DHCP server. All nodes must be in the same VLAN. You cannot scale the cluster using a second VLAN as a Day 2 operation.
+
+You must use the Dynamic Host Configuration Protocol (DHCP) for the network and ensure that the DHCP server is configured to provide persistent IP addresses to the cluster machines. In the DHCP lease, you must configure the DHCP to use the default gateway. All nodes must be in the same VLAN. You cannot scale the cluster using a second VLAN as a Day 2 operation.
+
+Additionally, you must create the following networking resources before you install the {product-title} cluster:
+
+[NOTE]
+====
+It is recommended that each {product-title} node in the cluster must have access to a Network Time Protocol (NTP) server that is discoverable via DHCP. Installation is possible without an NTP server. However, asynchronous server clocks will cause errors, which NTP server prevents.
+====
+
+[discrete]
+[id="installation-vsphere-installer-infra-requirements-_{context}"]
+=== Required IP Addresses
+For a network that uses DHCP, an installer-provisioned vSphere installation requires two static IP addresses:
+
+* The **API** address is used to access the cluster API.
+* The **Ingress** address is used for cluster ingress traffic.
+
+You must provide these IP addresses to the installation program when you install the {product-title} cluster.
+
+[discrete]
+[id="installation-vsphere-installer-infra-requirements-dns-records_{context}"]
+=== DNS records
+You must create DNS records for two static IP addresses in the appropriate DNS server for the vCenter instance that hosts your {product-title} cluster. In each record, `<cluster_name>` is the cluster name and `<base_domain>` is the cluster base domain that you specify when you install the cluster. A complete DNS record takes the form: `<component>.<cluster_name>.<base_domain>.`.
+
+.Required DNS records
+[cols="1a,5a,3a",options="header"]
+|===
+
+|Component
+|Record
+|Description
+
+|API VIP
+|`api.<cluster_name>.<base_domain>.`
+|This DNS A/AAAA or CNAME record must point to the load balancer
+for the control plane machines. This record must be resolvable by both clients
+external to the cluster and from all the nodes within the cluster.
+
+|Ingress VIP
+|`*.apps.<cluster_name>.<base_domain>.`
+|A wildcard DNS A/AAAA or CNAME record that points to the load balancer that targets the
+machines that run the Ingress router pods, which are the worker nodes by
+default. This record must be resolvable by both clients external to the cluster
+and from all the nodes within the cluster.
+|===
+
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+////
+Module included in the following assemblies:
+* xref:../installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc[Installing a cluster on vSphere]
+* xref:../installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc[Installing a cluster on vSphere with customizations]
+* xref:../installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc[Installing a cluster on vSphere with network customizations]
+* xref:../installing/installing_vsphere/installing-restricted-networks-vsphere.adoc[Installing a cluster on vSphere in a restricted network]
+////
+
+:_mod-docs-content-type: CONCEPT
+[discrete]
+[id="installation-vsphere-installer-infra-static-ip-nodes_{context}"]
+== Static IP addresses for vSphere nodes
+
+You can provision bootstrap, control plane, and compute nodes to be configured with static IP addresses in environments where Dynamic Host Configuration Protocol (DHCP) does not exist. To configure this environment, you must provide values to the `platform.vsphere.hosts.role` parameter in the `install-config.yaml` file.
+
+:FeatureName: Static IP addresses for vSphere nodes
+:leveloffset: +1
+
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+:leveloffset: 2
+
+By default, the installation program is configured to use the DHCP for the network, but this network has limited configurable capabilities.
+
+After you define one or more machine pools in your `install-config.yaml` file, you can define network definitions for nodes on your network. Ensure that the number of network definitions matches the number of machine pools that you configured for your cluster.
+
+The following example shows a network configuration for a node with the role `compute`:
+
+[source,yaml]
+----
+---
+platform:
+  vsphere:
+    hosts:
+    - role: compute <1>
+      networkDevice:
+        ipAddrs:
+        - 192.168.204.10/24 <2>
+        gateway: 192.168.204.1 <3>
+        nameservers:
+        - 192.168.204.1 <4>
+---
+----
+<1> Valid network definition values include `bootstrap`, `control-plane`, and `compute`. You must list at least one `bootstrap` network definition in your `install-config.yaml` configuration file.
+<2> Lists IPv4, IPv6, or both IP addresses that the installation program passes to the network interface. The machine API controller assigns all configured IP addresses to the default network interface.
+<3> The default gateway for the network interface.
+<4> Lists up to 3 DNS nameservers.
++
+[IMPORTANT]
+====
+To enable the Technology Preview feature of static IP addresses for vSphere nodes for your cluster, you must include `featureSet:TechPreviewNoUpgrade` as the initial entry in the `install-config.yaml` file.
+====
+
+After you deployed your cluster to run nodes with static IP addresses, you can scale a machine to use one of these static IP addresses. Additionally, you can use a machine set to configure a machine to use one of the configured static IP addresses.
+
+:leveloffset!:
+
+* xref:../../post_installation_configuration/node-tasks.html#nodes-vsphere-scaling-machines-static-ip_post-install-node-tasks[Scaling machines to use static IP addresses]
+* xref:../../post_installation_configuration/node-tasks.html#nodes-vsphere-machine-set-scaling-static-ip_post-install-node-tasks[Using a machine set to scale machines with configured static IP addresses]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-customizations.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-power.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="ssh-agent-using_{context}"]
+= Generating a key pair for cluster node SSH access
+
+During an {product-title} installation, you can provide an SSH public key to the installation program. The key is passed to the {op-system-first} nodes through their Ignition config files and is used to authenticate SSH access to the nodes. The key is added to the `~/.ssh/authorized_keys` list for the `core` user on each node, which enables password-less authentication.
+
+After the key is passed to the nodes, you can use the key pair to SSH in to the {op-system} nodes as the user `core`. To access the nodes through SSH, the private key identity must be managed by SSH for your local user.
+
+If you want to SSH in to your cluster nodes to perform installation debugging or disaster recovery, you must provide the SSH public key during the installation process. The `./openshift-install gather` command also requires the SSH public key to be in place on the cluster nodes.
+
+[IMPORTANT]
+====
+Do not skip this procedure in production environments, where disaster recovery and debugging is required.
+====
+
+[NOTE]
+====
+You must use a local key, not one that you configured with platform-specific
+approaches such as
+link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html[AWS key pairs].
+====
+
+
+.Procedure
+
+. If you do not have an existing SSH key pair on your local machine to use for authentication onto your cluster nodes, create one. For example, on a computer that uses a Linux operating system, run the following command:
++
+[source,terminal]
+----
+$ ssh-keygen -t ed25519 -N '' -f <path>/<file_name> <1>
+----
+<1> Specify the path and file name, such as `~/.ssh/id_ed25519`, of the new SSH key. If you have an existing key pair, ensure your public key is in the your `~/.ssh` directory.
++
+[NOTE]
+====
+If you plan to install an {product-title} cluster that uses the {op-system-base} cryptographic libraries that have been submitted to NIST for FIPS 140-2/140-3 Validation on only the `x86_64`, `ppc64le`, and `s390x` architectures, do not create a key that uses the `ed25519` algorithm. Instead, create a key that uses the `rsa` or `ecdsa` algorithm.
+====
+
+. View the public SSH key:
++
+[source,terminal]
+----
+$ cat <path>/<file_name>.pub
+----
++
+For example, run the following to view the `~/.ssh/id_ed25519.pub` public key:
++
+[source,termanal]
+----
+$ cat ~/.ssh/id_ed25519.pub
+----
+
+. Add the SSH private key identity to the SSH agent for your local user, if it has not already been added. SSH agent management of the key is required for password-less SSH authentication onto your cluster nodes, or if you want to use the `./openshift-install gather` command.
++
+[NOTE]
+====
+On some distributions, default SSH private key identities such as `~/.ssh/id_rsa` and `~/.ssh/id_dsa` are managed automatically.
+====
++
+.. If the `ssh-agent` process is not already running for your local user, start it as a background task:
++
+[source,terminal]
+----
+$ eval "$(ssh-agent -s)"
+----
++
+.Example output
+[source,terminal]
+----
+Agent pid 31874
+----
++
+[NOTE]
+====
+If your cluster is in FIPS mode, only use FIPS-compliant algorithms to generate the SSH key. The key must be either RSA or ECDSA.
+====
+
+. Add your SSH private key to the `ssh-agent`:
++
+[source,terminal]
+----
+$ ssh-add <path>/<file_name> <1>
+----
+<1> Specify the path and file name for your SSH private key, such as `~/.ssh/id_ed25519`
++
+.Example output
+[source,terminal]
+----
+Identity added: /home/<you>/<path>/<file_name> (<computer_name>)
+----
+
+.Next steps
+
+* When you install {product-title}, provide the SSH public key to the installation program.
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+:vsphere:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-obtaining-installer_{context}"]
+= Obtaining the installation program
+
+Before you install {product-title}, download the installation file on
+ your provisioning machine.
+ the host you are using for installation.
+//mpytlak: Added "private" in the context of a review for the IBM Cloud VPC private work. In an effort to keep updates to other platforms separate, I will open a doc story for each platform that supports a private install.
+
+.Prerequisites
+
+* You have a machine that runs Linux, for example Red Hat Enterprise Linux 8, with 500 MB of local disk space.
++
+[IMPORTANT]
+====
+If you attempt to run the installation program on macOS, a known issue related to the `golang` compiler causes the installation of the {product-title} cluster to fail. For more information about this issue, see the section named "Known Issues" in the _{product-title} {product-version} release notes_ document.
+====
+* You have a computer that runs Linux or macOS, with 500 MB of local disk space.
+
+.Procedure
+
+. Access the link:https://console.redhat.com/openshift/install[Infrastructure Provider] page on the {cluster-manager} site. If you have a Red Hat account, log in with your credentials. If you do not, create an account.
+. Select your infrastructure provider.
+. Navigate to the page for your installation type, download the installation program that corresponds with your host operating system and architecture, and place the file in the directory where you will store the installation configuration files.
+
++
+[IMPORTANT]
+====
+The installation program creates several files on the computer that you use to install your cluster. You must keep the installation program and the files that the installation program creates after you finish installing the cluster. Both files are required to delete the cluster.
+====
++
+[IMPORTANT]
+====
+Deleting the files created by the installation program does not remove your cluster, even if the cluster failed during installation. To remove your cluster, complete the {product-title} uninstallation procedures for your specific cloud provider.
+====
+
+. Extract the installation program. For example, on a computer that uses a Linux
+operating system, run the following command:
++
+[source,terminal]
+----
+$ tar -xvf openshift-install-linux.tar.gz
+----
+
+. Download your installation {cluster-manager-url-pull}. This pull secret allows you to authenticate with the services that are provided by the included authorities, including Quay.io, which serves the container images for {product-title} components.
+
+:!vsphere:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-adding-vcenter-root-certificates_{context}"]
+= Adding vCenter root CA certificates to your system trust
+
+Because the installation program requires access to your vCenter's API, you must add your vCenter's trusted root CA certificates to your system trust before you install an {product-title} cluster.
+
+.Procedure
+
+. From the vCenter home page, download the vCenter's root CA certificates. Click *Download trusted root CA certificates* in the vSphere Web Services SDK section. The `<vCenter>/certs/download.zip` file downloads.
+
+. Extract the compressed file that contains the vCenter root CA certificates. The contents of the compressed file resemble the following file structure:
++
+----
+certs
+├── lin
+│   ├── 108f4d17.0
+│   ├── 108f4d17.r1
+│   ├── 7e757f6a.0
+│   ├── 8e4f8471.0
+│   └── 8e4f8471.r0
+├── mac
+│   ├── 108f4d17.0
+│   ├── 108f4d17.r1
+│   ├── 7e757f6a.0
+│   ├── 8e4f8471.0
+│   └── 8e4f8471.r0
+└── win
+    ├── 108f4d17.0.crt
+    ├── 108f4d17.r1.crl
+    ├── 7e757f6a.0.crt
+    ├── 8e4f8471.0.crt
+    └── 8e4f8471.r0.crl
+
+3 directories, 15 files
+----
+
+. Add the files for your operating system to the system trust. For example, on a Fedora operating system, run the following command:
++
+[source,terminal]
+----
+# cp certs/lin/* /etc/pki/ca-trust/source/anchors
+----
+
+. Update your system trust. For example, on a Fedora operating system, run the following command:
++
+[source,terminal]
+----
+# update-ca-trust extract
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+//* installing/installing-vsphere-installer-provisioned-customizations.adoc [IPI]
+//* installing/installing-vsphere-installer-provisioned-network-customizations.adoc [IPI]
+//* installing/installing-vsphere.adoc [UPI]
+//* installing/installing-vsphere-network-customizations.adoc [UPI]
+//* installing/installing-restricted-networks-installer-provisioned-vsphere.adoc [IPI]
+//* installing/installing-restricted-networks-vsphere.adoc [IPI]
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-vsphere-regions-zones_{context}"]
+= VMware vSphere region and zone enablement
+
+You can deploy an {product-title} cluster to multiple vSphere datacenters that run in a single VMware vCenter. Each datacenter can run multiple clusters. This configuration reduces the risk of a hardware failure or network outage that can cause your cluster to fail.
+
+[IMPORTANT]
+====
+The VMware vSphere region and zone enablement feature requires the vSphere Container Storage Interface (CSI) driver as the default storage driver in the cluster. As a result, the feature only available on a newly installed cluster.
+
+A cluster that was upgraded from a previous release defaults to using the in-tree vSphere driver, so you must enable CSI automatic migration for the cluster. You can then configure multiple regions and zones for the upgraded cluster.
+====
+
+The default installation configuration deploys a cluster to a single vSphere datacenter. If you want to deploy a cluster to multiple vSphere datacenters, you must create an installation configuration file that enables the region and zone feature.
+
+The default `install-config.yaml` file includes `vcenters` and `failureDomains` fields, where you can specify multiple vSphere datacenters and clusters for your {product-title} cluster. You can leave these fields blank if you want to install an {product-title} cluster in a vSphere environment that consists of single datacenter.
+
+The following list describes terms associated with defining zones and regions for your cluster:
+
+* Failure domain: Establishes the relationships between a region and zone. You define a failure domain by using vCenter objects, such as a `datastore` object. A failure domain defines the vCenter location for {product-title} cluster nodes.
+* Region: Specifies a vCenter datacenter. You define a region by using a tag from the  `openshift-region` tag category.
+* Zone: Specifies a vCenter cluster. You define a zone by using a tag from the `openshift-zone` tag category.
+
+[NOTE]
+====
+If you plan on specifying more than one failure domain in your `install-config.yaml` file, you must create tag categories, zone tags, and region tags in advance of creating the configuration file.
+====
+
+You must create a vCenter tag for each vCenter datacenter, which represents a region. Additionally, you must create a vCenter tag for each cluster than runs in a datacenter, which represents a zone. After you create the tags, you must attach each tag to their respective datacenters and clusters.
+
+The following table outlines an example of the relationship among regions, zones, and tags for a configuration with multiple vSphere datacenters running in a single VMware vCenter.
+
+[cols="2,2a,4a",options="header"]
+|===
+|Datacenter (region)| Cluster (zone)| Tags
+
+.4+|us-east
+
+.2+|us-east-1
+|us-east-1a
+|us-east-1b
+.2+|us-east-2
+|us-east-2a
+|us-east-2b
+
+.4+|us-west
+.2+|us-west-1
+|us-west-1a
+|us-west-1b
+.2+|us-west-2
+|us-west-2a
+|us-west-2b
+|===
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../installing/installing_vsphere/installation-config-parameters-vsphere.adoc#installation-configuration-parameters-additional-vsphere_installation-config-parameters-vsphere[Additional VMware vSphere configuration parameters]
+
+* xref:../../installing/installing_vsphere/installation-config-parameters-vsphere.adoc#deprecated-parameters-vsphere_installation-config-parameters-vsphere[Deprecated VMware vSphere configuration parameters]
+
+* xref:../../storage/container_storage_interface/persistent-storage-csi-migration.adoc#persistent-storage-csi-migration-sc-vsphere_persistent-storage-csi-migration[vSphere automatic migration]
+
+* xref:../../storage/container_storage_interface/persistent-storage-csi-vsphere.adoc#persistent-storage-csi-vsphere-top-aware_persistent-storage-csi-vsphere[VMware vSphere CSI Driver Operator]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-alibaba-default.adoc
+// * installing/installing_aws/installing-alibaba-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_aws/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-network-customizations
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-shared-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-customizations.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-user-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_vmc/installing-vmc-customizations.adoc
+// * installing/installing_vmc/installing-vmc-network-customizations.adoc
+// * installing/installing_vmc/installing-restricted-networks-vmc.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_nutanix/configuring-iam-nutanix.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+// * installing/installing_gcp/installing-openstack-installer-restricted.adoc
+// Consider also adding the installation-configuration-parameters.adoc module.
+//YOU MUST SET AN IFEVAL FOR EACH NEW MODULE
+
+:vsphere:
+:three-node-cluster:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-initializing_{context}"]
+= Creating the installation configuration file
+
+You can customize the {product-title} cluster you install on
+VMware vSphere.
+
+.Prerequisites
+
+* You have the {product-title} installation program and the pull secret for your cluster.
+
+.Procedure
+
+. Create the `install-config.yaml` file.
++
+.. Change to the directory that contains the installation program and run the following command:
++
+[source,terminal]
+----
+$ ./openshift-install create install-config --dir <installation_directory> <1>
+----
+<1> For `<installation_directory>`, specify the directory name to store the
+files that the installation program creates.
++
+When specifying the directory:
+* Verify that the directory has the `execute` permission. This permission is required to run Terraform binaries under the installation directory.
+* Use an empty directory. Some installation assets, such as bootstrap X.509 certificates, have short expiration intervals, therefore you must not reuse an installation directory. If you want to reuse individual files from another cluster installation, you can copy them into your directory. However, the file names for the installation assets might change between releases. Use caution when copying installation files from an earlier {product-title} version.
++
+[NOTE]
+=====
+Always delete the `~/.powervs` directory to avoid reusing a stale configuration. Run the following command:
+[source,terminal]
+----
+$ rm -rf ~/.powervs
+----
+=====
+.. At the prompts, provide the configuration details for your cloud:
+... Optional: Select an SSH key to use to access your cluster machines.
++
+[NOTE]
+====
+For production {product-title} clusters on which you want to perform installation debugging or disaster recovery, specify an SSH key that your `ssh-agent` process uses.
+====
+... Select *vsphere* as the platform to target.
+... Specify the name of your vCenter instance.
+... Specify the user name and password for the vCenter account that has the required permissions to create the cluster.
++
+The installation program connects to your vCenter instance.
+... Select the data center in your vCenter instance to connect to.
++
+[NOTE]
+====
+After you create the installation configuration file, you can modify the file to create a multiple vSphere datacenters environment. This means that you can deploy an {product-title} cluster to multiple vSphere datacenters that run in a single VMware vCenter. For more information about creating this environment, see the section named _VMware vSphere region and zone enablement_.
+====
+
+... Select the default vCenter datastore to use.
++
+[WARNING]
+====
+You can specify the path of any datastore that exists in a datastore cluster. By default, Storage Distributed Resource Scheduler (SDRS), which uses Storage vMotion, is automatically enabled for a datastore cluster. Red Hat does not support Storage vMotion, so you must disable Storage DRS to avoid data loss issues for your {product-title} cluster.
+
+You cannot specify more than one datastore path. If you must specify VMs across multiple datastores, use a `datastore` object to specify a failure domain in your cluster's `install-config.yaml` configuration file. For more information, see "VMware vSphere region and zone enablement".
+====
+... Select the vCenter cluster to install the {product-title} cluster in. The installation program uses the root resource pool of the vSphere cluster as the default resource pool.
+... Select the network in the vCenter instance that contains the virtual IP addresses and DNS records that you configured.
+... Enter the virtual IP address that you configured for control plane API access.
+... Enter the virtual IP address that you configured for cluster ingress.
+... Enter the base domain. This base domain must be the same one that you used in the DNS records that you configured.
+... Enter a descriptive name for your cluster.
++
+
+The cluster name you enter must match the cluster name you specified when configuring the DNS records.
+
+
+
+. Modify the `install-config.yaml` file. You can find more information about the available parameters in the "Installation configuration parameters" section.
++
+[NOTE]
+====
+If you are installing a three-node cluster, be sure to set the `compute.replicas` parameter to `0`. This ensures that the cluster's control planes are schedulable. For more information, see "Installing a three-node cluster on {platform}".
+====
+
+
+
+
+
+
+. Back up the `install-config.yaml` file so that you can use
+it to install multiple clusters.
++
+[IMPORTANT]
+====
+The `install-config.yaml` file is consumed during the installation process. If
+you want to reuse the file, you must back it up now.
+====
+
+
+You now have the file `install-config.yaml` in the directory that you specified.
+
+:!vsphere:
+:!three-node-cluster:
+:!platform:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../installing/installing_vsphere/installation-config-parameters-vsphere.adoc#installation-config-parameters-vsphere[Installation configuration parameters]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+
+
+[id="installation-installer-provisioned-vsphere-config-yaml_{context}"]
+= Sample install-config.yaml file for an installer-provisioned VMware vSphere cluster
+
+You can customize the `install-config.yaml` file to specify more details about
+your {product-title} cluster's platform or modify the values of the required
+parameters.
+
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: example.com <1>
+compute: <2>
+- architecture: amd64
+  hyperthreading: Enabled <3>
+  name:  <worker_node>
+  platform: {}
+  replicas: 3
+controlPlane: <2>
+  architecture: amd64
+  hyperthreading: Enabled <3>
+  name: <parent_node>
+  platform: {}
+  replicas: 3
+metadata:
+  creationTimestamp: null
+  name: test <4>
+platform:
+  vsphere: <5>
+    apiVIPs:
+      - 10.0.0.1
+    failureDomains: <6>
+    - name: <failure_domain_name>
+      region: <default_region_name>
+      server: <fully_qualified_domain_name>
+      topology:
+        computeCluster: "/<datacenter>/host/<cluster>"
+        datacenter: <datacenter>
+        datastore: "/<datacenter>/datastore/<datastore>" <7>
+        networks:
+        - <VM_Network_name>
+        resourcePool: "/<datacenter>/host/<cluster>/Resources/<resourcePool>" <8>
+        folder: "/<datacenter_name>/vm/<folder_name>/<subfolder_name>"
+      zone: <default_zone_name>
+    ingressVIPs:
+    - 10.0.0.2
+    vcenters:
+    - datacenters:
+      - <datacenter>
+      password: <password>
+      port: 443
+      server: <fully_qualified_domain_name>
+      user: administrator@vsphere.local
+    diskType: thin <9>
+fips: false
+pullSecret: '{"auths": ...}'
+sshKey: 'ssh-ed25519 AAAA...'
+----
+<1> The base domain of the cluster. All DNS records must be sub-domains of this base and include the cluster name.
+<2> The `controlPlane` section is a single mapping, but the `compute` section is a sequence of mappings. To meet the requirements of the different data structures, the first line of the `compute` section must begin with a hyphen, `-`, and the first line of the `controlPlane` section must not. Only one control plane pool is used.
+<3> Whether to enable or disable simultaneous multithreading, or `hyperthreading`. By default, simultaneous multithreading is enabled
+to increase the performance of your machines' cores. You can disable it by setting the parameter value to `Disabled`. If you disable simultaneous multithreading in some cluster machines, you must disable it in all cluster machines.
++
+[IMPORTANT]
+====
+If you disable simultaneous multithreading, ensure that your capacity planning accounts for the dramatically decreased machine performance. Your machines must use at least 8 CPUs and 32 GB of RAM if you disable simultaneous multithreading.
+====
+<4> The cluster name that you specified in your DNS records.
+<5> Optional: Provides additional configuration for the machine pool parameters for the compute and control plane machines.
+<6> Establishes the relationships between a region and zone. You define a failure domain by using vCenter objects, such as a `datastore` object. A failure domain defines the vCenter location for {product-title} cluster nodes.
+<7> The path to the vSphere datastore that holds virtual machine files, templates, and ISO images.
++
+[IMPORTANT]
+====
+You can specify the path of any datastore that exists in a datastore cluster. By default, Storage vMotion is automatically enabled for a datastore cluster. Red Hat does not support Storage vMotion, so you must disable Storage vMotion to avoid data loss issues for your {product-title} cluster.
+
+If you must specify VMs across multiple datastores, use a `datastore` object to specify a failure domain in your cluster's `install-config.yaml` configuration file. For more information, see "VMware vSphere region and zone enablement".
+====
+<8> Optional: Provides an existing resource pool for machine creation. If you do not specify a value, the installation program uses the root resource pool of the vSphere cluster.
+<9> The vSphere disk provisioning method.
+
+[NOTE]
+====
+In {product-title} 4.12 and later, the `apiVIP` and `ingressVIP` configuration settings are deprecated. Instead, use a list format to enter values in the `apiVIPs` and `ingressVIPs` configuration settings.
+====
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_aws/installing_aws-customizations.adoc
+// * installing/installing_aws/installing_aws-network-customizations.adoc
+// * installing/installing_aws/installing_aws-private.adoc
+// * installing/installing_aws/installing_aws-vpc.adoc
+// * installing/installing_aws/installing_aws-china.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-sr-iov.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-customizations.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * networking/configuring-a-custom-pki.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:vsphere:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-configure-proxy_{context}"]
+= Configuring the cluster-wide proxy during installation
+
+Production environments can deny direct access to the internet and instead have
+an HTTP or HTTPS proxy available. You can configure a new {product-title}
+cluster to use a proxy by configuring the proxy settings in the
+`install-config.yaml` file.
+
+
+
+.Prerequisites
+
+* You have an existing `install-config.yaml` file.
+// TODO: xref (../../installing/install_config/configuring-firewall.adoc#configuring-firewall)
+* You reviewed the sites that your cluster requires access to and determined whether any of them need to bypass the proxy. By default, all cluster egress traffic is proxied, including calls to hosting cloud provider APIs. You added sites to the `Proxy` object's `spec.noProxy` field to bypass the proxy if necessary.
++
+[NOTE]
+====
+The `Proxy` object `status.noProxy` field is populated with the values of the `networking.machineNetwork[].cidr`, `networking.clusterNetwork[].cidr`, and `networking.serviceNetwork[]` fields from your installation configuration.
+
+For installations on Amazon Web Services (AWS), Google Cloud Platform (GCP), Microsoft Azure, and {rh-openstack-first}, the `Proxy` object `status.noProxy` field is also populated with the instance metadata endpoint (`169.254.169.254`).
+====
+
+.Procedure
+
+. Edit your `install-config.yaml` file and add the proxy settings. For example:
++
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: my.domain.com
+proxy:
+  httpProxy: http://<username>:<pswd>@<ip>:<port> <1>
+  httpsProxy: https://<username>:<pswd>@<ip>:<port> <2>
+  noProxy: example.com <3>
+additionalTrustBundle: | <4>
+    -----BEGIN CERTIFICATE-----
+    <MY_TRUSTED_CA_CERT>
+    -----END CERTIFICATE-----
+additionalTrustBundlePolicy: <policy_to_add_additionalTrustBundle> <5>
+----
+<1> A proxy URL to use for creating HTTP connections outside the cluster. The
+URL scheme must be `http`.
+<2> A proxy URL to use for creating HTTPS connections outside the cluster.
+<3> A comma-separated list of destination domain names, IP addresses, or other network CIDRs to exclude from proxying. Preface a domain with `.` to match subdomains only. For example, `.y.com` matches `x.y.com`, but not `y.com`. Use `*` to bypass the proxy for all destinations.
+You must include vCenter's IP address and the IP range that you use for its machines.
+<4> If provided, the installation program generates a config map that is named `user-ca-bundle` in
+the `openshift-config` namespace that contains one or more additional CA
+certificates that are required for proxying HTTPS connections. The Cluster Network
+Operator then creates a `trusted-ca-bundle` config map that merges these contents
+with the {op-system-first} trust bundle, and this config map is referenced in the `trustedCA` field of the `Proxy` object. The `additionalTrustBundle` field is required unless
+the proxy's identity certificate is signed by an authority from the {op-system} trust
+bundle.
+<5> Optional: The policy to determine the configuration of the `Proxy` object to reference the `user-ca-bundle` config map in the `trustedCA` field. The allowed values are `Proxyonly` and `Always`. Use `Proxyonly` to reference the `user-ca-bundle` config map only when `http/https` proxy is configured. Use `Always` to always reference the `user-ca-bundle` config map. The default value is `Proxyonly`.
++
+[NOTE]
+====
+The installation program does not support the proxy `readinessEndpoints` field.
+====
++
+[NOTE]
+====
+If the installer times out, restart and then complete the deployment by using the `wait-for` command of the installer. For example:
+
+[source,terminal]
+----
+$ ./openshift-install wait-for install-complete --log-level debug
+----
+====
+
+. Save the file and reference it when installing {product-title}.
+
+The installation program creates a cluster-wide proxy that is named `cluster` that uses the proxy
+settings in the provided `install-config.yaml` file. If no proxy settings are
+provided, a `cluster` `Proxy` object is still created, but it will have a nil
+`spec`.
+
+[NOTE]
+====
+Only the `Proxy` object named `cluster` is supported, and no additional
+proxies can be created.
+====
+
+:!vsphere:
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+//* installing/Installing-vsphere-installer-provisioned-customizations.adoc [IPI]
+//* installing/installing-vsphere-installer-provisioned-network-customizations.adoc [IPI]
+//* installing/installing-vsphere.adoc [UPI]
+//* installing/installing-vsphere-network-customizations.adoc [UPI]
+//* installing/installing-restricted-networks-installer-provisioned-vsphere.adoc [IPI]
+//* installing/installing-restricted-networks-vsphere.adoc [IPI]
+
+:_mod-docs-content-type: PROCEDURE
+[id="configuring-vsphere-regions-zones_{context}"]
+= Configuring regions and zones for a VMware vCenter
+You can modify the default installation configuration file, so that you can deploy an {product-title} cluster to multiple vSphere datacenters that run in a single VMware vCenter.
+
+The default `install-config.yaml` file configuration from the previous release of {product-title} is deprecated. You can continue to use the deprecated default configuration, but the `openshift-installer` will prompt you with a warning message that indicates the use of deprecated fields in the configuration file.
+
+[IMPORTANT]
+====
+The example uses the `govc` command. The `govc` command is an open source command available from VMware; it is not available from Red Hat. The Red Hat support team does not maintain the `govc` command. Instructions for downloading and installing `govc` are found on the VMware documentation website
+====
+
+.Prerequisites
+* You have an existing `install-config.yaml` installation configuration file.
++
+[IMPORTANT]
+====
+You must specify at least one failure domain for your {product-title} cluster, so that you can provision datacenter objects for your VMware vCenter server. Consider specifying multiple failure domains if you need to provision virtual machine nodes in different datacenters, clusters, datastores, and other components.
+====
+
+.Procedure
+
+. Enter the following `govc` command-line tool commands to create the `openshift-region` and `openshift-zone` vCenter tag categories:
++
+[IMPORTANT]
+====
+If you specify different names for the `openshift-region` and `openshift-zone` vCenter tag categories, the installation of the {product-title} cluster fails.
+====
++
+[source,terminal]
+----
+$ govc tags.category.create -d "OpenShift region" openshift-region
+----
++
+[source,terminal]
+----
+$ govc tags.category.create -d "OpenShift zone" openshift-zone
+----
+
+. To create a region tag for each region vSphere datacenter where you want to deploy your cluster, enter the following command in your terminal:
++
+[source,terminal]
+----
+$ govc tags.create -c <region_tag_category> <region_tag>
+----
+
+. To create a zone tag for each vSphere cluster where you want to deploy your cluster, enter the following command:
++
+[source,terminal]
+----
+$ govc tags.create -c <zone_tag_category> <zone_tag>
+----
+
+. Attach region tags to each vCenter datacenter object by entering the following command:
++
+[source,terminal]
+----
+$ govc tags.attach -c <region_tag_category> <region_tag_1> /<datacenter_1>
+----
+
+. Attach the zone tags to each vCenter datacenter object by entering the following command:
++
+[source,terminal]
+----
+$ govc tags.attach -c <zone_tag_category> <zone_tag_1> /<datacenter_1>/host/vcs-mdcnc-workload-1
+----
+
+. Change to the directory that contains the installation program and initialize the cluster deployment according to your chosen installation requirements.
+
+.Sample `install-config.yaml` file with multiple datacenters defined in a vSphere center
+
+[source,yaml]
+----
+---
+compute:
+---
+  vsphere:
+      zones:
+        - "<machine_pool_zone_1>"
+        - "<machine_pool_zone_2>"
+---
+controlPlane:
+---
+vsphere:
+      zones:
+        - "<machine_pool_zone_1>"
+        - "<machine_pool_zone_2>"
+---
+platform:
+  vsphere:
+    vcenters:
+---
+    datacenters:
+      - <datacenter1_name>
+      - <datacenter2_name>
+    failureDomains:
+    - name: <machine_pool_zone_1>
+      region: <region_tag_1>
+      zone: <zone_tag_1>
+      server: <fully_qualified_domain_name>
+      topology:
+        datacenter: <datacenter1>
+        computeCluster: "/<datacenter1>/host/<cluster1>"
+        networks:
+        - <VM_Network1_name>
+        datastore: "/<datacenter1>/datastore/<datastore1>"
+        resourcePool: "/<datacenter1>/host/<cluster1>/Resources/<resourcePool1>"
+        folder: "/<datacenter1>/vm/<folder1>"
+    - name: <machine_pool_zone_2>
+      region: <region_tag_2>
+      zone: <zone_tag_2>
+      server: <fully_qualified_domain_name>
+      topology:
+        datacenter: <datacenter2>
+        computeCluster: "/<datacenter2>/host/<cluster2>"
+        networks:
+        - <VM_Network2_name>
+        datastore: "/<datacenter2>/datastore/<datastore2>"
+        resourcePool: "/<datacenter2>/host/<cluster2>/Resources/<resourcePool2>"
+        folder: "/<datacenter2>/vm/<folder2>"
+---
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-default.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-shared-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-ibm-cloud-customizations.adoc
+// * installing/installing_gcp/installing-ibm-cloud-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-customizations.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// If you use this module in any other assembly, you must update the ifeval
+// statements.
+
+:custom-config:
+:vsphere:
+:single-step:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-launching-installer_{context}"]
+= Deploying the cluster
+
+You can install {product-title} on a compatible cloud platform.
+
+[IMPORTANT]
+====
+You can run the `create cluster` command of the installation program only once, during initial installation.
+====
+
+.Prerequisites
+
+* You have configured an account with the cloud platform that hosts your cluster.
+
+* You have the {product-title} installation program and the pull secret for your cluster.
+* You have verified that the cloud provider account on your host has the correct permissions to deploy the cluster. An account with incorrect permissions causes the installation process to fail with an error message that displays the missing permissions.
+* Optional: Before you create the cluster, configure an external load balancer in place of the default load balancer.
++
+[IMPORTANT]
+====
+You do not need to specify API and Ingress static addresses for your installation program. If you choose this configuration, you must take additional actions to define network targets that accept an IP address from each referenced vSphere subnet. See the section "Configuring an external load balancer".
+====
+
+.Procedure
+
+* Change to the directory that contains the installation program and initialize the cluster deployment:
++
+[source,terminal]
+----
+$ ./openshift-install create cluster --dir <installation_directory> \ <1>
+    --log-level=info <2>
+----
+<1> For `<installation_directory>`, specify the
+location of your customized `./install-config.yaml` file.
+<2> To view different installation details, specify `warn`, `debug`, or
+`error` instead of `info`.
+
+
+
+
+
+.Verification
+When the cluster deployment completes successfully:
+
+* The terminal displays directions for accessing your cluster, including a link to the web console and credentials for the `kubeadmin` user.
+* Credential information also outputs to `<installation_directory>/.openshift_install.log`.
+
+[IMPORTANT]
+====
+Do not delete the installation program or the files that the installation program creates. Both are required to delete the cluster.
+====
+
+.Example output
+[source,terminal]
+----
+...
+INFO Install complete!
+INFO To access the cluster as the system:admin user when using 'oc', run 'export KUBECONFIG=/home/myuser/install_dir/auth/kubeconfig'
+INFO Access the OpenShift web-console here: https://console-openshift-console.apps.mycluster.example.com
+INFO Login to the console with user: "kubeadmin", and password: "password"
+INFO Time elapsed: 36m22s
+----
+
+[IMPORTANT]
+====
+* The Ignition config files that the installation program generates contain certificates that expire after 24 hours, which are then renewed at that time. If the cluster is shut down before renewing the certificates and the cluster is later restarted after the 24 hours have elapsed, the cluster automatically recovers the expired certificates. The exception is that you must manually approve the pending `node-bootstrapper` certificate signing requests (CSRs) to recover kubelet certificates. See the documentation for _Recovering from expired control plane certificates_ for more information.
+
+* It is recommended that you use Ignition config files within 12 hours after they are generated because the 24-hour certificate rotates from 16 to 22 hours after the cluster is installed. By using the Ignition config files within 12 hours, you can avoid installation failure if the certificate update runs during installation.
+====
+
+:!custom-config:
+:!vsphere:
+:!single-step:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * cli_reference/openshift_cli/getting-started.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adocs
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/install_config/installing-restricted-networks-preparations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * openshift_images/samples-operator-alt-registry.adoc
+// * updating/updating-restricted-network-cluster/mirroring-image-repository.adoc
+// * microshift_cli_ref/microshift-oc-cli-install.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/mirroring-image-repository.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+// AMQ docs link to this; do not change anchor
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="cli-installing-cli_{context}"]
+= Installing the OpenShift CLI by downloading the binary
+
+You can install the {oc-first} to interact with
+{product-title}
+from a command-line interface. You can install `oc` on Linux, Windows, or macOS.
+
+[IMPORTANT]
+====
+If you installed an earlier version of `oc`, you cannot use it to complete all of the commands in
+{product-title} {product-version}.
+Download and install the new version of `oc`.
+====
+
+[discrete]
+== Installing the OpenShift CLI on Linux
+
+You can install the OpenShift CLI (`oc`) binary on Linux by using the following procedure.
+
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the architecture from the *Product Variant* drop-down list.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} Linux Client* entry and save the file.
+. Unpack the archive:
++
+[source,terminal]
+----
+$ tar xvf <file>
+----
+. Place the `oc` binary in a directory that is on your `PATH`.
++
+To check your `PATH`, execute the following command:
++
+[source,terminal]
+----
+$ echo $PATH
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+$ oc <command>
+----
+
+[discrete]
+== Installing the OpenShift CLI on Windows
+
+You can install the OpenShift CLI (`oc`) binary on Windows by using the following procedure.
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} Windows Client* entry and save the file.
+. Unzip the archive with a ZIP program.
+. Move the `oc` binary to a directory that is on your `PATH`.
++
+To check your `PATH`, open the command prompt and execute the following command:
++
+[source,terminal]
+----
+C:\> path
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+C:\> oc <command>
+----
+
+[discrete]
+== Installing the OpenShift CLI on macOS
+
+You can install the OpenShift CLI (`oc`) binary on macOS by using the following procedure.
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} macOS Client* entry and save the file.
++
+[NOTE]
+====
+For macOS arm64, choose the *OpenShift v{product-version} macOS arm64 Client* entry.
+====
+. Unpack and unzip the archive.
+. Move the `oc` binary to a directory on your PATH.
++
+To check your `PATH`, open a terminal and execute the following command:
++
+[source,terminal]
+----
+$ echo $PATH
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+$ oc <command>
+----
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp_user_infra/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="cli-logging-in-kubeadmin_{context}"]
+= Logging in to the cluster by using the CLI
+
+You can log in to your cluster as a default system user by exporting the cluster `kubeconfig` file.
+The `kubeconfig` file contains information about the cluster that is used by the CLI to connect a client to the correct cluster and API server.
+The file is specific to a cluster and is created during {product-title} installation.
+
+.Prerequisites
+
+* You deployed an {product-title} cluster.
+* You installed the `oc` CLI.
+
+.Procedure
+
+. Export the `kubeadmin` credentials:
++
+[source,terminal]
+----
+$ export KUBECONFIG=<installation_directory>/auth/kubeconfig <1>
+----
+<1> For `<installation_directory>`, specify the path to the directory that you stored
+the installation files in.
+
+. Verify you can run `oc` commands successfully using the exported configuration:
++
+[source,terminal]
+----
+$ oc whoami
+----
++
+.Example output
+[source,terminal]
+----
+system:admin
+----
+
+:leveloffset!:
+
+[id="installing-vsphere-installer-provisioned-customizations-registry"]
+== Creating registry storage
+After you install the cluster, you must create storage for the registry Operator.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * registry/configuring-registry-operator.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+
+[id="registry-removed_{context}"]
+= Image registry removed during installation
+
+On platforms that do not provide shareable object storage, the OpenShift Image Registry Operator bootstraps itself as `Removed`. This allows `openshift-installer` to complete installations on these platform types.
+
+After installation, you must edit the Image Registry Operator configuration to switch the `managementState` from `Removed` to `Managed`.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-registry-storage-config_{context}"]
+= Image registry storage configuration
+
+The Image Registry Operator is not initially available for platforms that do
+not provide default storage. After installation, you must configure your
+registry to use storage so that the Registry Operator is made available.
+
+Instructions are shown for configuring a persistent volume, which is required for production clusters. Where applicable, instructions are shown for configuring an empty directory as the storage location, which is available for only non-production clusters.
+
+Additional instructions are provided for allowing the image registry to use block storage types by using the `Recreate` rollout strategy during upgrades.
+
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="registry-configuring-storage-vsphere_{context}"]
+= Configuring registry storage for VMware vSphere
+
+As a cluster administrator, following installation you must configure your registry to use storage.
+
+.Prerequisites
+
+* Cluster administrator permissions.
+* A cluster on VMware vSphere.
+* Persistent storage provisioned for your cluster, such as {rh-storage-first}.
++
+[IMPORTANT]
+====
+{product-title} supports `ReadWriteOnce` access for image registry storage when you have only one replica. `ReadWriteOnce` access also requires that the registry uses the `Recreate` rollout strategy. To deploy an image registry that supports high availability with two or more replicas, `ReadWriteMany` access is required.
+====
++
+* Must have "100Gi" capacity.
+
+[IMPORTANT]
+====
+Testing shows issues with using the NFS server on RHEL as storage backend for
+core services. This includes the OpenShift Container Registry and Quay,
+Prometheus for monitoring storage, and Elasticsearch for logging storage.
+Therefore, using RHEL NFS to back PVs used by core services is not recommended.
+
+Other NFS implementations on the marketplace might not have these issues.
+Contact the individual NFS implementation vendor for more information on any
+testing that was possibly completed against these {product-title} core
+components.
+====
+
+.Procedure
+
+. To configure your registry to use storage, change the `spec.storage.pvc` in the `configs.imageregistry/cluster` resource.
++
+[NOTE]
+====
+When you use shared storage, review your security settings to prevent outside access.
+====
+
+. Verify that you do not have a registry pod:
++
+[source,terminal]
+----
+$ oc get pod -n openshift-image-registry -l docker-registry=default
+----
++
+.Example output
+[source,terminal]
+----
+No resourses found in openshift-image-registry namespace
+----
++
+[NOTE]
+=====
+If you do have a registry pod in your output, you do not need to continue with this procedure.
+=====
+. Check the registry configuration:
++
+[source,terminal]
+----
+$ oc edit configs.imageregistry.operator.openshift.io
+----
++
+.Example output
+[source,yaml]
+----
+storage:
+  pvc:
+    claim: <1>
+----
++
+<1> Leave the `claim` field blank to allow the automatic creation of an `image-registry-storage` persistent volume claim (PVC). The PVC is generated based on the default storage class. However, be aware that the default storage class might provide ReadWriteOnce (RWO) volumes, such as a RADOS Block Device (RBD), which can cause issues when you replicate to more than one replica.
+
+. Check the `clusteroperator` status:
++
+[source,terminal]
+----
+$ oc get clusteroperator image-registry
+----
++
+.Example output
+[source,terminal]
+----
+NAME             VERSION                              AVAILABLE   PROGRESSING   DEGRADED   SINCE   MESSAGE
+image-registry   4.7                                  True        False         False      6h50m
+----
+
+//+
+//There will be warning similar to:
+//+
+//----
+//- lastTransitionTime: 2019-03-26T12:45:46Z
+//message: storage backend not configured
+//reason: StorageNotConfigured
+//status: "True"
+//type: Degraded
+//----
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-registry-storage-block-recreate-rollout_{context}"]
+= Configuring block registry storage for VMware vSphere
+
+To allow the image registry to use block storage types such as vSphere Virtual Machine Disk (VMDK) during upgrades as a cluster administrator, you can use the `Recreate` rollout strategy.
+
+[IMPORTANT]
+====
+Block storage volumes are supported but not recommended for use with image
+registry on production clusters. An installation where the registry is
+configured on block storage is not highly available because the registry cannot
+have more than one replica.
+====
+
+.Procedure
+
+. To set the image registry storage as a block storage type, patch the registry so that it uses the `Recreate` rollout strategy and runs with only `1` replica:
++
+[source,terminal]
+----
+$ oc patch config.imageregistry.operator.openshift.io/cluster --type=merge -p '{"spec":{"rolloutStrategy":"Recreate","replicas":1}}'
+----
++
+. Provision the PV for the block storage device, and create a PVC for that volume. The requested block volume uses the ReadWriteOnce (RWO) access mode.
+.. Create a `pvc.yaml` file with the following contents to define a VMware vSphere `PersistentVolumeClaim` object:
++
+[source,yaml]
+----
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: image-registry-storage <1>
+  namespace: openshift-image-registry <2>
+spec:
+  accessModes:
+  - ReadWriteOnce <3>
+  resources:
+    requests:
+      storage: 100Gi <4>
+----
+<1> A unique name that represents the `PersistentVolumeClaim` object.
+<2> The namespace for the `PersistentVolumeClaim` object, which is `openshift-image-registry`.
+<3> The access mode of the persistent volume claim. With `ReadWriteOnce`, the volume can be mounted with read and write permissions by a single node.
+<4> The size of the persistent volume claim.
+
+.. Create the `PersistentVolumeClaim` object from the file:
++
+[source,terminal]
+----
+$ oc create -f pvc.yaml -n openshift-image-registry
+----
+
++
+. Edit the registry configuration so that it references the correct PVC:
++
+[source,terminal]
+----
+$ oc edit config.imageregistry.operator.openshift.io -o yaml
+----
++
+.Example output
+[source,yaml]
+----
+storage:
+  pvc:
+    claim: <1>
+----
+<1> By creating a custom PVC, you can leave the `claim` field blank for the default automatic creation of an `image-registry-storage` PVC.
+
+:leveloffset!:
+
+For instructions about configuring registry storage so that it references the correct PVC, see xref:../../registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc#registry-configuring-storage-vsphere_configuring-registry-storage-vsphere[Configuring the registry for vSphere].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/persistent_storage/persistent-storage-vsphere.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="vsphere-pv-backup_{context}"]
+= Backing up VMware vSphere volumes
+
+{product-title} provisions new volumes as independent persistent disks to freely attach and detach the volume on any node in the cluster. As a consequence, it is not possible to back up volumes that use snapshots, or to restore volumes from snapshots. See link:https://docs.vmware.com/en/VMware-vSphere/6.7/com.vmware.vsphere.vm_admin.doc/GUID-53F65726-A23B-4CF0-A7D5-48E584B88613.html[Snapshot Limitations] for more information.
+
+.Procedure
+
+To create a backup of persistent volumes:
+
+.  Stop the application that is using the persistent volume.
+.  Clone the persistent volume.
+.  Restart the application.
+.  Create a backup of the cloned volume.
+.  Delete the cloned volume.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-user-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_openstack/installing-openstack-installer-sr-iov.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cluster-telemetry_{context}"]
+= Telemetry access for {product-title}
+
+In {product-title} {product-version}, the Telemetry service, which runs by default to provide metrics about cluster health and the success of updates, requires internet access. If your cluster is connected to the internet, Telemetry runs automatically, and your cluster is registered to {cluster-manager-url}.
+
+After you confirm that your {cluster-manager-url} inventory is correct, either maintained automatically by Telemetry or manually by using {cluster-manager}, link:https://access.redhat.com/documentation/en-us/subscription_central/2020-04/html/getting_started_with_subscription_watch/con-how-to-select-datacollection-tool_assembly-requirements-and-your-responsibilities-ctxt#red_hat_openshift[use subscription watch] to track your {product-title} subscriptions at the account or multi-cluster level.
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See xref:../../support/remote_health_monitoring/about-remote-health-monitoring.adoc#about-remote-health-monitoring[About remote health monitoring] for more information about the Telemetry service
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+// TODO
+// * networking/TBD
+// * networking/load-balancing-openstack.adoc
+// * installing/installing_bare_metal_ipi/ipi-install-post-installation-configuration.adoc jowilkin
+// * installing/installing-vsphere-installer-provisioned.adoc
+// * installing/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing-restricted-networks-installer-provisioned-vsphere.adoc
+
+
+:vsphere:
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-osp-configuring-external-load-balancer_{context}"]
+= Configuring an external load balancer
+
+You can configure an {product-title} cluster
+to use an external load balancer in place of the default load balancer.
+
+[IMPORTANT]
+====
+Configuring an external load balancer depends on your vendor's load balancer.
+
+The information and examples in this section are for guideline purposes only. Consult the vendor documentation for more specific information about the vendor's load balancer.
+====
+
+Red Hat supports the following services for an external load balancer:
+
+* OpenShift API
+* Ingress Controller
+
+You can choose to configure one or both of these services for an external load balancer. Configuring only the Ingress Controller service is a common configuration option.
+
+The following configuration options are supported for external load balancers:
+
+* Use a node selector to map the Ingress Controller to a specific set of nodes. You must assign a static IP address to each node in this set, or configure each node to receive the same IP address from the Dynamic Host Configuration Protocol (DHCP). Infrastructure nodes commonly receive this type of configuration.
+
+* Target all IP addresses on a subnet. This configuration can reduce maintenance overhead, because you can create and destroy nodes within those networks without reconfiguring the load balancer targets. If you deploy your ingress pods by using a machine set on a smaller network, such as a `/27` or `/28`, you can simplify your load balancer targets.
++
+[TIP]
+====
+You can list all IP addresses that exist in a network by checking the machine config pool's resources.
+====
+
+.Considerations
+
+* For a front-end IP address, you can use the same IP address for the front-end IP address, the Ingress Controller's load balancer, and API load balancer. Check the vendor's documentation for this capability.
+
+* For a back-end IP address, ensure that an IP address for an {product-title} control plane node does not change during the lifetime of the external load balancer. You can achieve this by completing one of the following actions:
+** Assign a static IP address to each control plane node.
+** Configure each node to receive the same IP address from the DHCP every time the node requests a DHCP lease. Depending on the vendor, the DHCP lease might be in the form of an IP reservation or a static DHCP assignment.
+
+* Manually define each node that runs the Ingress Controller in the external load balancer for the Ingress Controller back-end service. For example, if the Ingress Controller moves to an undefined node, a connection outage can occur.
+
+.OpenShift API prerequisites
+
+* You defined a front-end IP address.
+* TCP ports 6443 and 22623 are exposed on the front-end IP address of your load balancer. Check the following items:
+** Port 6443 provides access to the OpenShift API service.
+** Port 22623 can provide ignition startup configurations to nodes.
+* The front-end IP address and port 6443 are reachable by all users of your system with a location external to your {product-title} cluster.
+* The front-end IP address and port 22623 are reachable only by {product-title} nodes.
+* The load balancer backend can communicate with {product-title} control plane nodes on port 6443 and 22623.
+
+.Ingress Controller prerequisites
+
+* You defined a front-end IP address.
+* TCP ports 443 and 80 are exposed on the front-end IP address of your load balancer.
+* The front-end IP address, port 80 and port 443 are be reachable by all users of your system with a location external to your {product-title} cluster.
+* The front-end IP address, port 80 and port 443 are reachable to all nodes that operate in your {product-title} cluster.
+* The load balancer backend can communicate with {product-title} nodes that run the Ingress Controller on ports 80, 443, and 1936.
+
+.Prerequisite for health check URL specifications
+
+You can configure most load balancers by setting health check URLs that determine if a service is available or unavailable. {product-title} provides these health checks for the OpenShift API, Machine Configuration API, and Ingress Controller backend services.
+
+The following examples demonstrate health check specifications for the previously listed backend services:
+
+.Example of a Kubernetes API health check specification
+
+[source,terminal]
+----
+Path: HTTPS:6443/readyz
+Healthy threshold: 2
+Unhealthy threshold: 2
+Timeout: 10
+Interval: 10
+----
+
+.Example of a Machine Config API health check specification
+
+[source,terminal]
+----
+Path: HTTPS:22623/healthz
+Healthy threshold: 2
+Unhealthy threshold: 2
+Timeout: 10
+Interval: 10
+----
+
+.Example of an Ingress Controller health check specification
+
+[source,terminal]
+----
+Path: HTTP:1936/healthz/ready
+Healthy threshold: 2
+Unhealthy threshold: 2
+Timeout: 5
+Interval: 10
+----
+
+.Procedure
+
+. Configure the HAProxy Ingress Controller, so that you can enable access to the cluster from your load balancer on ports 6443, 443, and 80:
++
+.Example HAProxy configuration
+[source,terminal]
+----
+#...
+listen my-cluster-api-6443
+    bind 192.168.1.100:6443
+    mode tcp
+    balance roundrobin
+  option httpchk
+  http-check connect
+  http-check send meth GET uri /readyz
+  http-check expect status 200
+    server my-cluster-master-2 192.168.1.101:6443 check inter 10s rise 2 fall 2
+    server my-cluster-master-0 192.168.1.102:6443 check inter 10s rise 2 fall 2
+    server my-cluster-master-1 192.168.1.103:6443 check inter 10s rise 2 fall 2
+
+listen my-cluster-machine-config-api-22623
+    bind 192.168.1.1000.0.0.0:22623
+    mode tcp
+    balance roundrobin
+  option httpchk
+  http-check connect
+  http-check send meth GET uri /healthz
+  http-check expect status 200
+    server my-cluster-master-2 192.0168.21.2101:22623 check inter 10s rise 2 fall 2
+    server my-cluster-master-0 192.168.1.1020.2.3:22623 check inter 10s rise 2 fall 2
+    server my-cluster-master-1 192.168.1.1030.2.1:22623 check inter 10s rise 2 fall 2
+
+listen my-cluster-apps-443
+        bind 192.168.1.100:443
+        mode tcp
+        balance roundrobin
+    option httpchk
+    http-check connect
+    http-check send meth GET uri /healthz/ready
+    http-check expect status 200
+        server my-cluster-worker-0 192.168.1.111:443 check port 1936 inter 10s rise 2 fall 2
+        server my-cluster-worker-1 192.168.1.112:443 check port 1936 inter 10s rise 2 fall 2
+        server my-cluster-worker-2 192.168.1.113:443 check port 1936 inter 10s rise 2 fall 2
+
+listen my-cluster-apps-80
+        bind 192.168.1.100:80
+        mode tcp
+        balance roundrobin
+    option httpchk
+    http-check connect
+    http-check send meth GET uri /healthz/ready
+    http-check expect status 200
+        server my-cluster-worker-0 192.168.1.111:80 check port 1936 inter 10s rise 2 fall 2
+        server my-cluster-worker-1 192.168.1.112:80 check port 1936 inter 10s rise 2 fall 2
+        server my-cluster-worker-2 192.168.1.113:80 check port 1936 inter 10s rise 2 fall 2
+# ...
+----
+
+. Use the `curl` CLI command to verify that the external load balancer and its resources are operational:
++
+.. Verify that the cluster machine configuration API is accessible to the Kubernetes API server resource, by running the following command and observing the response:
++
+[source,terminal]
+----
+$ curl https://<loadbalancer_ip_address>:6443/version --insecure
+----
++
+If the configuration is correct, you receive a JSON object in response:
++
+[source,json]
+----
+{
+  "major": "1",
+  "minor": "11+",
+  "gitVersion": "v1.11.0+ad103ed",
+  "gitCommit": "ad103ed",
+  "gitTreeState": "clean",
+  "buildDate": "2019-01-09T06:44:10Z",
+  "goVersion": "go1.10.3",
+  "compiler": "gc",
+  "platform": "linux/amd64"
+}
+----
++
+.. Verify that the cluster machine configuration API is accessible to the Machine config server resource, by running the following command and observing the output:
++
+[source,terminal]
+----
+$ curl -v https://<loadbalancer_ip_address>:22623/healthz --insecure
+----
++
+If the configuration is correct, the output from the command shows the following response:
++
+[source,terminal]
+----
+HTTP/1.1 200 OK
+Content-Length: 0
+----
++
+.. Verify that the controller is accessible to the Ingress Controller resource on port 80, by running the following command and observing the output:
++
+[source,terminal]
+----
+$ curl -I -L -H "Host: console-openshift-console.apps.<cluster_name>.<base_domain>" http://<load_balancer_front_end_IP_address>
+----
++
+If the configuration is correct, the output from the command shows the following response:
++
+[source,terminal]
+----
+HTTP/1.1 302 Found
+content-length: 0
+location: https://console-openshift-console.apps.ocp4.private.opequon.net/
+cache-control: no-cache
+----
++
+.. Verify that the controller is accessible to the Ingress Controller resource on port 443, by running the following command and observing the output:
++
+[source,terminal]
+----
+$ curl -I -L --insecure --resolve console-openshift-console.apps.<cluster_name>.<base_domain>:443:<Load Balancer Front End IP Address> https://console-openshift-console.apps.<cluster_name>.<base_domain>
+----
++
+If the configuration is correct, the output from the command shows the following response:
++
+[source,terminal]
+----
+HTTP/1.1 200 OK
+referrer-policy: strict-origin-when-cross-origin
+set-cookie: csrf-token=UlYWOyQ62LWjw2h003xtYSKlh1a0Py2hhctw0WmV2YEdhJjFyQwWcGBsja261dGLgaYO0nxzVErhiXt6QepA7g==; Path=/; Secure; SameSite=Lax
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-frame-options: DENY
+x-xss-protection: 1; mode=block
+date: Wed, 04 Oct 2023 16:29:38 GMT
+content-type: text/html; charset=utf-8
+set-cookie: 1e2670d92730b515ce3a1bb65da45062=1bf5e9573c9a2760c964ed1659cc1673; path=/; HttpOnly; Secure; SameSite=None
+cache-control: private
+----
+
+. Configure the DNS records for your cluster to target the front-end IP addresses of the external load balancer. You must update records to your DNS server for the cluster API and applications over the load balancer.
++
+.Examples of modified DNS records
++
+[source,dns]
+----
+<load_balancer_ip_address>  A  api.<cluster_name>.<base_domain>
+A record pointing to Load Balancer Front End
+----
++
+[source,dns]
+----
+<load_balancer_ip_address>   A apps.<cluster_name>.<base_domain>
+A record pointing to Load Balancer Front End
+----
++
+[IMPORTANT]
+====
+DNS propagation might take some time for each DNS record to become available. Ensure that each DNS record propagates before validating each record.
+====
+
+. Use the `curl` CLI command to verify that the external load balancer and DNS record configuration are operational:
++
+.. Verify that you can access the cluster API, by running the following command and observing the output:
++
+[source,terminal]
+----
+$ curl https://api.<cluster_name>.<base_domain>:6443/version --insecure
+----
++
+If the configuration is correct, you receive a JSON object in response:
++
+[source,json]
+----
+{
+  "major": "1",
+  "minor": "11+",
+  "gitVersion": "v1.11.0+ad103ed",
+  "gitCommit": "ad103ed",
+  "gitTreeState": "clean",
+  "buildDate": "2019-01-09T06:44:10Z",
+  "goVersion": "go1.10.3",
+  "compiler": "gc",
+  "platform": "linux/amd64"
+  }
+----
++
+.. Verify that you can access the cluster machine configuration, by running the following command and observing the output:
++
+[source,terminal]
+----
+$ curl -v https://api.<cluster_name>.<base_domain>:22623/healthz --insecure
+----
++
+If the configuration is correct, the output from the command shows the following response:
++
+[source,terminal]
+----
+HTTP/1.1 200 OK
+Content-Length: 0
+----
++
+.. Verify that you can access each cluster application on port, by running the following command and observing the output:
++
+[source,terminal]
+----
+$ curl http://console-openshift-console.apps.<cluster_name>.<base_domain> -I -L --insecure
+----
++
+If the configuration is correct, the output from the command shows the following response:
++
+[source,terminal]
+----
+HTTP/1.1 302 Found
+content-length: 0
+location: https://console-openshift-console.apps.<cluster-name>.<base domain>/
+cache-control: no-cacheHTTP/1.1 200 OK
+referrer-policy: strict-origin-when-cross-origin
+set-cookie: csrf-token=39HoZgztDnzjJkq/JuLJMeoKNXlfiVv2YgZc09c3TBOBU4NI6kDXaJH1LdicNhN1UsQWzon4Dor9GWGfopaTEQ==; Path=/; Secure
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-frame-options: DENY
+x-xss-protection: 1; mode=block
+date: Tue, 17 Nov 2020 08:42:10 GMT
+content-type: text/html; charset=utf-8
+set-cookie: 1e2670d92730b515ce3a1bb65da45062=9b714eb87e93cf34853e87a92d6894be; path=/; HttpOnly; Secure; SameSite=None
+cache-control: private
+----
++
+.. Verify that you can access each cluster application on port 443, by running the following command and observing the output:
++
+[source,terminal]
+----
+$ curl https://console-openshift-console.apps.<cluster_name>.<base_domain> -I -L --insecure
+----
++
+If the configuration is correct, the output from the command shows the following response:
++
+[source,terminal]
+----
+HTTP/1.1 200 OK
+referrer-policy: strict-origin-when-cross-origin
+set-cookie: csrf-token=UlYWOyQ62LWjw2h003xtYSKlh1a0Py2hhctw0WmV2YEdhJjFyQwWcGBsja261dGLgaYO0nxzVErhiXt6QepA7g==; Path=/; Secure; SameSite=Lax
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-frame-options: DENY
+x-xss-protection: 1; mode=block
+date: Wed, 04 Oct 2023 16:29:38 GMT
+content-type: text/html; charset=utf-8
+set-cookie: 1e2670d92730b515ce3a1bb65da45062=1bf5e9573c9a2760c964ed1659cc1673; path=/; HttpOnly; Secure; SameSite=None
+cache-control: private
+----
+
+:!vsphere:
+
+:leveloffset!:
+
+== Next steps
+
+* xref:../../post_installation_configuration/cluster-tasks.adoc#available_cluster_customizations[Customize your cluster].
+* If necessary, you can
+xref:../../support/remote_health_monitoring/opting-out-of-remote-health-reporting.adoc#opting-out-remote-health-reporting_opting-out-remote-health-reporting[opt out of remote health reporting].
+* xref:../../registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc#configuring-registry-storage-vsphere[Set up your registry and configure registry storage].
+* Optional: xref:../../installing/installing_vsphere/using-vsphere-problem-detector-operator.adoc#vsphere-problem-detector-viewing-events_vsphere-problem-detector[View the events from the vSphere Problem Detector Operator] to determine if the cluster has permission or storage configuration issues.
+
+//# includes=_attributes/common-attributes,snippets/vcenter-support,modules/cluster-entitlements,modules/installation-vsphere-infrastructure,modules/installation-vsphere-installer-network-requirements,modules/vmware-csi-driver-reqs,modules/installation-vsphere-installer-infra-requirements,modules/installation-vsphere-installer-infra-static-ip-nodes,modules/snippets/technology-preview,modules/ssh-agent-using,modules/installation-obtaining-installer,modules/installation-adding-vcenter-root-certificates,modules/installation-vsphere-regions-zones,modules/installation-initializing,modules/installation-installer-provisioned-vsphere-config-yaml,modules/installation-configure-proxy,modules/configuring-vsphere-regions-zones,modules/installation-launching-installer,modules/cli-installing-cli,modules/cli-logging-in-kubeadmin,modules/registry-removed,modules/installation-registry-storage-config,modules/registry-configuring-storage-vsphere,modules/installation-registry-storage-block-recreate-rollout,modules/persistent-storage-vsphere-backup,modules/cluster-telemetry,modules/nw-osp-configuring-external-load-balancer

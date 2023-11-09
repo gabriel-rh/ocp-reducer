@@ -1,0 +1,643 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="preparing-an-agent-based-installed-cluster-for-mce"]
+= Preparing an Agent-based installed cluster for the multicluster engine for Kubernetes Operator
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: preparing-an-agent-based-installed-cluster-for-mce
+
+toc::[]
+
+You can install the multicluster engine for Kubernetes Operator and deploy a hub cluster with the Agent-based {product-title} Installer.
+The following procedure is partially automated and requires manual steps after the initial cluster is deployed.
+
+== Prerequisites
+* You have read the following documentation:
+** link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html/clusters/cluster_mce_overview[Cluster lifecycle with multicluster engine operator overview].
+** xref:../../storage/persistent_storage/persistent_storage_local/persistent-storage-local.adoc#persistent-storage-using-local-volume[Persistent storage using local volumes].
+** xref:../../scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-clusters-at-scale.adoc#about-ztp_ztp-deploying-far-edge-clusters-at-scale[Using ZTP to provision clusters at the network far edge].
+** xref:../../installing/installing_with_agent_based_installer/preparing-to-install-with-agent-based-installer.adoc#preparing-to-install-with-agent-based-installer[Preparing to install with the Agent-based Installer].
+** xref:../../installing/disconnected_install/index.adoc#installing-mirroring-disconnected-about[About disconnected installation mirroring].
+* You have access to the internet to obtain the necessary container images.
+* You have installed the OpenShift CLI (`oc`).
+* If you are installing in a disconnected environment, you must have a configured local mirror registry for disconnected installation mirroring.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing_with_agent_based_installer/preparing-an-agent-based-installed-cluster-for-mce.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="preparing-an-inital-cluster-deployment-for-mce-disconnected_{context}"]
+
+= Preparing an agent-based cluster deployment for the multicluster engine for Kubernetes Operator while disconnected
+
+You can mirror the required {product-title} container images, the multicluster engine for Kubernetes Operator, and the Local Storage Operator (LSO) into your local mirror registry in a disconnected environment.
+Ensure that you note the local DNS hostname and port of your mirror registry.
+
+[NOTE]
+====
+To mirror your {product-title} image repository to your mirror registry, you can use either the `oc adm release image` or `oc mirror` command. In this procedure, the `oc mirror` command is used as an example.
+====
+
+.Procedure
+
+. Create an `<assets_directory>` folder to contain valid `install-config.yaml` and `agent-config.yaml` files. This directory is used to store all the assets.
+
+. To mirror an {product-title} image repository, the multicluster engine, and the LSO, create a `ImageSetConfiguration.yaml` file with the following settings:
++
+.Example `ImageSetConfiguration.yaml`
+
+[source,yaml,subs="attributes+"]
+----
+  kind: ImageSetConfiguration
+  apiVersion: mirror.openshift.io/v1alpha2
+  archiveSize: 4 <1>
+  storageConfig: <2>
+    imageURL: <your-local-registry-dns-name>:<your-local-registry-port>/mirror/oc-mirror-metadata <3>
+    skipTLS: true
+  mirror:
+    platform:
+      architectures:
+        - "amd64"
+      channels:
+        - name: stable-{product-version} <4>
+          type: ocp
+    additionalImages:
+      - name: registry.redhat.io/ubi9/ubi:latest
+    operators:
+      - catalog: registry.redhat.io/redhat/redhat-operator-index:v{product-version} <5>
+        packages: <6>
+          - name: multicluster-engine <7>
+          - name: local-storage-operator <8>
+----
++
+<1> Specify the maximum size, in GiB, of each file within the image set.
+<2> Set the back-end location to receive the image set metadata. This location can be a registry or local directory. It is required to specify `storageConfig` values.
+<3> Set the registry URL for the storage backend.
+<4> Set the channel that contains the {product-title} images for the version you are installing.
+<5> Set the Operator catalog that contains the {product-title} images that you are installing.
+<6> Specify only certain Operator packages and channels to include in the image set. Remove this field to retrieve all packages in the catalog.
+<7> The multicluster engine packages and channels.
+<8> The LSO packages and channels.
++
+[NOTE]
+====
+This file is required by the `oc mirror` command when mirroring content.
+====
+
+. To mirror a specific {product-title} image repository, the multicluster engine, and the LSO, run the following command:
++
+[source,terminal]
+----
+$ oc mirror --dest-skip-tls --config ocp-mce-imageset.yaml docker://<your-local-registry-dns-name>:<your-local-registry-port>
+----
+
+. Update the registry and certificate in the `install-config.yaml` file:
++
+.Example `imageContentSources.yaml`
+
+[source,yaml]
+----
+  imageContentSources:
+    - source: "quay.io/openshift-release-dev/ocp-release"
+      mirrors:
+        - "<your-local-registry-dns-name>:<your-local-registry-port>/openshift/release-images"
+    - source: "quay.io/openshift-release-dev/ocp-v4.0-art-dev"
+      mirrors:
+        - "<your-local-registry-dns-name>:<your-local-registry-port>/openshift/release"
+    - source: "registry.redhat.io/ubi9"
+      mirrors:
+        - "<your-local-registry-dns-name>:<your-local-registry-port>/ubi9"
+    - source: "registry.redhat.io/multicluster-engine"
+      mirrors:
+        - "<your-local-registry-dns-name>:<your-local-registry-port>/multicluster-engine"
+    - source: "registry.redhat.io/rhel8"
+      mirrors:
+        - "<your-local-registry-dns-name>:<your-local-registry-port>/rhel8"
+    - source: "registry.redhat.io/redhat"
+      mirrors:
+        - "<your-local-registry-dns-name>:<your-local-registry-port>/redhat"
+----
++
+Additionally, ensure your certificate is present in the `additionalTrustBundle` field of the `install-config.yaml`.
++
+.Example `install-config.yaml`
+[source,yaml]
+----
+additionalTrustBundle: |
+  -----BEGIN CERTIFICATE-----
+  zzzzzzzzzzz
+  -----END CERTIFICATE-------
+----
++
+[IMPORTANT]
+====
+The `oc mirror` command  creates a folder called `oc-mirror-workspace` with several outputs.
+This includes the `imageContentSourcePolicy.yaml` file that identifies all the mirrors you need for {product-title} and your selected Operators.
+====
+
+. Generate the cluster manifests by running the following command:
++
+[source,terminal]
+----
+$ openshift-install agent create cluster-manifests
+----
+This command updates the cluster manifests folder to include a `mirror` folder that contains your mirror configuration.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing_with_agent_based_installer/preparing-an-agent-based-installed-cluster-for-mce.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="preparing-an-inital-cluster-deployment-for-mce-connected_{context}"]
+
+= Preparing an agent-based cluster deployment for the multicluster engine for Kubernetes Operator while connected
+
+Create the required manifests for the multicluster engine for Kubernetes Operator, the Local Storage Operator (LSO), and to deploy an agent-based {product-title} cluster as a hub cluster.
+
+.Procedure
+
+. Create a sub-folder named  `openshift` in the `<assets_directory>` folder. This sub-folder is used to store the extra manifests that will be applied during the installation to further customize the deployed cluster.
+The `<assets_directory>` folder contains all the assets including the `install-config.yaml` and `agent-config.yaml` files.
++
+[NOTE]
+====
+The installer does not validate extra manifests.
+====
+
+. For the multicluster engine, create the following manifests and save them in the `<assets_directory>/openshift` folder:
++
+.Example `mce_namespace.yaml`
++
+[source,yaml]
+----
+  apiVersion: v1
+  kind: Namespace
+  metadata:
+    labels:
+      openshift.io/cluster-monitoring: "true"
+    name: multicluster-engine
+----
++
+.Example `mce_operatorgroup.yaml`
++
+[source,yaml]
+----
+  apiVersion: operators.coreos.com/v1
+  kind: OperatorGroup
+  metadata:
+    name: multicluster-engine-operatorgroup
+    namespace: multicluster-engine
+  spec:
+    targetNamespaces:
+    - multicluster-engine
+----
++
+.Example `mce_subscription.yaml`
++
+[source,yaml]
+----
+  apiVersion: operators.coreos.com/v1alpha1
+  kind: Subscription
+  metadata:
+    name: multicluster-engine
+    namespace: multicluster-engine
+  spec:
+    channel: "stable-2.1"
+    name: multicluster-engine
+    source: redhat-operators
+    sourceNamespace: openshift-marketplace
+----
++
+[NOTE]
+====
+You can install a distributed unit (DU) at scale with the {rh-rhacm-first} using the assisted installer (AI). These distributed units must be enabled in the hub cluster.
+The AI service requires persistent volumes (PVs), which are manually created.
+====
+
+. For the AI service, create the following manifests and save them in the `<assets_directory>/openshift` folder:
++
+.Example `lso_namespace.yaml`
++
+[source,yaml]
+----
+  apiVersion: v1
+  kind: Namespace
+  metadata:
+    annotations:
+      openshift.io/cluster-monitoring: "true"
+    name: openshift-local-storage
+----
++
+.Example `lso_operatorgroup.yaml`
++
+[source,yaml]
+----
+  apiVersion: operators.coreos.com/v1
+  kind: OperatorGroup
+  metadata:
+    name: local-operator-group
+    namespace: openshift-local-storage
+  spec:
+    targetNamespaces:
+      - openshift-local-storage
+----
++
+.Example `lso_subscription.yaml`
++
+[source,yaml]
+----
+  apiVersion: operators.coreos.com/v1alpha1
+  kind: Subscription
+  metadata:
+    name: local-storage-operator
+    namespace: openshift-local-storage
+  spec:
+    installPlanApproval: Automatic
+    name: local-storage-operator
+    source: redhat-operators
+    sourceNamespace: openshift-marketplace
+----
++
+[NOTE]
+====
+After creating all the manifests, your filesystem must display as follows:
+
+.Example Filesystem
+
+[source,terminal]
+----
+<assets_directory>
+    ├─ install-config.yaml
+    ├─ agent-config.yaml
+    └─ /openshift
+        ├─ mce_namespace.yaml
+        ├─ mce_operatorgroup.yaml
+        ├─ mce_subscription.yaml
+        ├─ lso_namespace.yaml
+        ├─ lso_operatorgroup.yaml
+        └─ lso_subscription.yaml
+----
+====
+
+. Create the agent ISO image by running the following command:
++
+[source,terminal]
+----
+$ openshift-install agent create image --dir <assets_directory>
+----
+
+. When the image is ready, boot the target machine and wait for the installation to complete.
+
+. To monitor the installation, run the following command:
++
+[source,terminal]
+----
+$ openshift-install agent wait-for install-complete --dir <assets_directory>
+----
++
+[NOTE]
+====
+To configure a fully functional hub cluster, you must create the following manifests and manually apply them by running the command `$ oc apply -f <manifest-name>`.
+The order of the manifest creation is important and where required, the waiting condition is displayed.
+====
+
+. For the PVs that are required by the AI service, create the following manifests:
++
+[source,yaml]
+----
+  apiVersion: local.storage.openshift.io/v1
+  kind: LocalVolume
+  metadata:
+   name: assisted-service
+   namespace: openshift-local-storage
+  spec:
+   logLevel: Normal
+   managementState: Managed
+   storageClassDevices:
+     - devicePaths:
+         - /dev/vda
+         - /dev/vdb
+       storageClassName: assisted-service
+       volumeMode: Filesystem
+----
++
+. Use the following command to wait for the availability of the PVs, before applying the subsequent manifests:
++
+[source,terminal]
+----
+$ oc wait localvolume -n openshift-local-storage assisted-service --for condition=Available --timeout 10m
+----
++
+[NOTE]
+====
+ The `devicePath` is an example and may vary depending on the actual hardware configuration used.
+====
++
+. Create a manifest for a multicluster engine instance.
++
+.Example `MultiClusterEngine.yaml`
++
+[source,yaml]
+----
+  apiVersion: multicluster.openshift.io/v1
+  kind: MultiClusterEngine
+  metadata:
+    name: multiclusterengine
+  spec: {}
+----
+
+. Create a manifest to enable the AI service.
++
+.Example `agentserviceconfig.yaml`
++
+[source,yaml]
+----
+  apiVersion: agent-install.openshift.io/v1beta1
+  kind: AgentServiceConfig
+  metadata:
+    name: agent
+    namespace: assisted-installer
+  spec:
+   databaseStorage:
+    storageClassName: assisted-service
+    accessModes:
+    - ReadWriteOnce
+    resources:
+     requests:
+      storage: 10Gi
+   filesystemStorage:
+    storageClassName: assisted-service
+    accessModes:
+    - ReadWriteOnce
+    resources:
+     requests:
+      storage: 10Gi
+----
+
+. Create a manifest to deploy subsequently spoke clusters.
++
+.Example `clusterimageset.yaml`
++
+[source,yaml,subs="attributes+"]
+----
+  apiVersion: hive.openshift.io/v1
+  kind: ClusterImageSet
+  metadata:
+    name: "{product-version}"
+  spec:
+    releaseImage: quay.io/openshift-release-dev/ocp-release:{product-version}.0-x86_64
+----
+
+. Create a manifest to import the agent installed cluster (that hosts the multicluster engine and the Assisted Service) as the hub cluster.
++
+.Example `autoimport.yaml`
++
+[source,yaml]
+----
+  apiVersion: cluster.open-cluster-management.io/v1
+  kind: ManagedCluster
+  metadata:
+   labels:
+     local-cluster: "true"
+     cloud: auto-detect
+     vendor: auto-detect
+   name: local-cluster
+  spec:
+   hubAcceptsClient: true
+----
+
+. Wait for the managed cluster to be created.
++
+[source,terminal]
+----
+$ oc wait -n multicluster-engine managedclusters local-cluster --for condition=ManagedClusterJoined=True --timeout 10m
+----
+
+.Verification
+* To confirm that the managed cluster installation is successful, run the following command:
++
+[source,terminal]
+----
+$ oc get managedcluster
+NAME            HUB ACCEPTED   MANAGED CLUSTER URLS             JOINED   AVAILABLE  AGE
+local-cluster   true           https://<your cluster url>:6443   True     True       77m
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../storage/persistent_storage/persistent_storage_local/persistent-storage-local.adoc#persistent-storage-using-local-volume[The Local Storage Operator]
+
+//# includes=_attributes/common-attributes,modules/preparing-an-inital-cluster-deployment-for-mce-disconnected,modules/preparing-an-inital-cluster-deployment-for-mce-connected

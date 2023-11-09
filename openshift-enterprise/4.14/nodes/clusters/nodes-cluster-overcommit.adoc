@@ -1,0 +1,1234 @@
+:_mod-docs-content-type: ASSEMBLY
+:context: nodes-cluster-overcommit
+[id="nodes-cluster-overcommit"]
+= Configuring your cluster to place pods on overcommitted nodes
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+
+toc::[]
+
+
+
+
+
+
+In an _overcommitted_ state, the sum of the container compute resource requests
+and limits exceeds the resources available on the system. For example, you might
+want to use overcommitment in development environments where a trade-off of
+guaranteed performance for capacity is acceptable.
+
+Containers can specify compute resource requests and limits. Requests are used
+for scheduling your container and provide a minimum service guarantee. Limits
+constrain the amount of compute resource that can be consumed on your node.
+
+The scheduler attempts to optimize the compute resource use across all nodes
+in your cluster. It places pods onto specific nodes, taking the pods' compute
+resource requests and nodes' available capacity into consideration.
+
+{product-title} administrators can control the level of overcommit and manage
+container density on nodes. You can configure cluster-level overcommit using
+the xref:#nodes-cluster-resource-override_nodes-cluster-overcommit[ClusterResourceOverride Operator]
+to override the ratio between requests and limits set on developer containers.
+In conjunction with xref:#nodes-cluster-node-overcommit_nodes-cluster-overcommit[node overcommit] and
+xref:../../applications/deployments/managing-deployment-processes.adoc#deployments-setting-resources_deployment-operations[project memory and CPU limits and defaults], you can adjust the resource limit and request to achieve the desired level of overcommit.
+
+[NOTE]
+====
+In {product-title}, you must enable cluster-level overcommit. Node overcommitment is enabled by default.
+See xref:#nodes-cluster-overcommit-node-disable_nodes-cluster-overcommit[Disabling overcommitment for a node].
+====
+
+// The following include statements pull in the module files that comprise
+// the assembly. Include any combination of concept, procedure, or reference
+// modules required to cover the user story. You can also include other
+// assemblies.
+
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+[id="nodes-cluster-overcommit-resource-requests_{context}"]
+= Resource requests and overcommitment
+
+For each compute resource, a container may specify a resource request and limit.
+Scheduling decisions are made based on the request to ensure that a node has
+enough capacity available to meet the requested value. If a container specifies
+limits, but omits requests, the requests are defaulted to the limits. A
+container is not able to exceed the specified limit on the node.
+
+The enforcement of limits is dependent upon the compute resource type. If a
+container makes no request or limit, the container is scheduled to a node with
+no resource guarantees. In practice, the container is able to consume as much of
+the specified resource as is available with the lowest local priority. In low
+resource situations, containers that specify no resource requests are given the
+lowest quality of service.
+
+Scheduling is based on resources requested, while quota and hard limits refer
+to resource limits, which can be set higher than requested resources. The
+difference between request and limit determines the level of overcommit;
+for instance, if a container is given a memory request of 1Gi and a memory limit
+of 2Gi, it is scheduled based on the 1Gi request being available on the node,
+but could use up to 2Gi; so it is 200% overcommitted.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/clusters/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+[id="nodes-cluster-resource-override_{context}"]
+= Cluster-level overcommit using the Cluster Resource Override Operator
+
+The Cluster Resource Override Operator is an admission webhook that allows you to control the level of overcommit and manage
+container density across all the nodes in your cluster. The Operator controls how nodes in specific projects can exceed defined memory and CPU limits.
+
+You must install the Cluster Resource Override Operator using the {product-title} console or CLI as shown in the following sections.
+During the installation, you create a `ClusterResourceOverride` custom resource (CR), where you set the level of overcommit, as shown in the
+following example:
+
+[source,yaml]
+----
+apiVersion: operator.autoscaling.openshift.io/v1
+kind: ClusterResourceOverride
+metadata:
+    name: cluster <1>
+spec:
+  podResourceOverride:
+    spec:
+      memoryRequestToLimitPercent: 50 <2>
+      cpuRequestToLimitPercent: 25 <3>
+      limitCPUToMemoryPercent: 200 <4>
+# ...
+----
+<1> The name must be `cluster`.
+<2> Optional. If a container memory limit has been specified or defaulted, the memory request is overridden to this percentage of the limit, between 1-100. The default is 50.
+<3> Optional. If a container CPU limit has been specified or defaulted, the CPU request is overridden to this percentage of the limit, between 1-100. The default is 25.
+<4> Optional. If a container memory limit has been specified or defaulted, the CPU limit is overridden to a percentage of the memory limit, if specified. Scaling 1Gi of RAM at 100 percent is equal to 1 CPU core. This is processed prior to overriding the CPU request (if configured). The default is 200.
+
+[NOTE]
+====
+The Cluster Resource Override Operator overrides have no effect if limits have not
+been set on containers. Create a `LimitRange` object with default limits per individual project
+or configure limits in `Pod` specs for the overrides to apply.
+====
+
+When configured, overrides can be enabled per-project by applying the following
+label to the Namespace object for each project:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+
+# ...
+
+  labels:
+    clusterresourceoverrides.admission.autoscaling.openshift.io/enabled: "true"
+
+# ...
+----
+
+The Operator watches for the `ClusterResourceOverride` CR and ensures that the `ClusterResourceOverride` admission webhook is installed into the same namespace as the operator.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * nodes/clusters/nodes-cluster-overcommit.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-cluster-resource-override-deploy-console_{context}"]
+= Installing the Cluster Resource Override Operator using the web console
+
+You can use the {product-title} web console to install the Cluster Resource Override Operator to help control overcommit in your cluster.
+
+.Prerequisites
+
+* The Cluster Resource Override Operator has no effect if limits have not
+been set on containers. You must specify default limits for a project using a `LimitRange` object or configure limits in `Pod` specs for the overrides to apply.
+
+.Procedure
+
+To install the Cluster Resource Override Operator using the {product-title} web console:
+
+. In the {product-title} web console, navigate to *Home* -> *Projects*
+
+.. Click *Create Project*.
+
+.. Specify `clusterresourceoverride-operator` as the name of the project.
+
+.. Click *Create*.
+
+. Navigate to *Operators* -> *OperatorHub*.
+
+.. Choose  *ClusterResourceOverride Operator* from the list of available Operators and click *Install*.
+
+.. On the *Install Operator* page, make sure *A specific Namespace on the cluster* is selected for *Installation Mode*.
+
+.. Make sure *clusterresourceoverride-operator* is selected for *Installed Namespace*.
+
+.. Select an *Update Channel* and *Approval Strategy*.
+
+.. Click *Install*.
+
+. On the *Installed Operators* page, click *ClusterResourceOverride*.
+
+.. On the *ClusterResourceOverride Operator* details page, click *Create ClusterResourceOverride*.
+
+.. On the *Create ClusterResourceOverride* page, click *YAML view* and edit the YAML template to set the overcommit values as needed:
++
+[source,yaml]
+----
+apiVersion: operator.autoscaling.openshift.io/v1
+kind: ClusterResourceOverride
+metadata:
+  name: cluster <1>
+spec:
+  podResourceOverride:
+    spec:
+      memoryRequestToLimitPercent: 50 <2>
+      cpuRequestToLimitPercent: 25 <3>
+      limitCPUToMemoryPercent: 200 <4>
+# ...
+----
+<1> The name must be `cluster`.
+<2> Optional. Specify the percentage to override the container memory limit, if used, between 1-100. The default is 50.
+<3> Optional. Specify the percentage to override the container CPU limit, if used, between 1-100. The default is 25.
+<4> Optional. Specify the percentage to override the container memory limit, if used. Scaling 1Gi of RAM at 100 percent is equal to 1 CPU core. This is processed prior to overriding the CPU request, if configured. The default is 200.
+
+.. Click *Create*.
+
+. Check the current state of the admission webhook by checking the status of the cluster custom resource:
+
+.. On the *ClusterResourceOverride Operator* page, click *cluster*.
+
+.. On the *ClusterResourceOverride Details* page, click *YAML*. The `mutatingWebhookConfigurationRef` section appears when the webhook is called.
++
+[source,yaml]
+----
+apiVersion: operator.autoscaling.openshift.io/v1
+kind: ClusterResourceOverride
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"operator.autoscaling.openshift.io/v1","kind":"ClusterResourceOverride","metadata":{"annotations":{},"name":"cluster"},"spec":{"podResourceOverride":{"spec":{"cpuRequestToLimitPercent":25,"limitCPUToMemoryPercent":200,"memoryRequestToLimitPercent":50}}}}
+  creationTimestamp: "2019-12-18T22:35:02Z"
+  generation: 1
+  name: cluster
+  resourceVersion: "127622"
+  selfLink: /apis/operator.autoscaling.openshift.io/v1/clusterresourceoverrides/cluster
+  uid: 978fc959-1717-4bd1-97d0-ae00ee111e8d
+spec:
+  podResourceOverride:
+    spec:
+      cpuRequestToLimitPercent: 25
+      limitCPUToMemoryPercent: 200
+      memoryRequestToLimitPercent: 50
+status:
+
+# ...
+
+    mutatingWebhookConfigurationRef: <1>
+      apiVersion: admissionregistration.k8s.io/v1
+      kind: MutatingWebhookConfiguration
+      name: clusterresourceoverrides.admission.autoscaling.openshift.io
+      resourceVersion: "127621"
+      uid: 98b3b8ae-d5ce-462b-8ab5-a729ea8f38f3
+
+# ...
+
+----
+<1> Reference to the `ClusterResourceOverride` admission webhook.
+
+////
+. When the webhook is called, you can add a label to any Namespaces where you want overrides enabled:
+
+.. Click `Administration` -> `Namespaces`.
+
+.. Click the Namespace to edit then click *YAML*.
+
+.. Add the label under `metadata`:
++
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+
+# ...
+
+  labels:
+    clusterresourceoverrides.admission.autoscaling.openshift.io: enabled <1>
+# ...
+----
+<1> Add the `clusterresourceoverrides.admission.autoscaling.openshift.io: enabled` label to the Namespace.
+////
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * nodes/clusters/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-cluster-resource-override-deploy-cli_{context}"]
+= Installing the Cluster Resource Override Operator using the CLI
+
+You can use the {product-title} CLI to install the Cluster Resource Override Operator to help control overcommit in your cluster.
+
+.Prerequisites
+
+* The Cluster Resource Override Operator has no effect if limits have not been set on containers. You must specify default limits for a project using a `LimitRange` object or configure limits in `Pod` specs for the overrides to apply.
+
+.Procedure
+
+To install the Cluster Resource Override Operator using the CLI:
+
+. Create a namespace for the Cluster Resource Override Operator:
+
+.. Create a `Namespace` object YAML file (for example, `cro-namespace.yaml`) for the Cluster Resource Override Operator:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: clusterresourceoverride-operator
+----
+
+.. Create the namespace:
++
+[source,terminal]
+----
+$ oc create -f <file-name>.yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc create -f cro-namespace.yaml
+----
+
+. Create an Operator group:
+
+.. Create an `OperatorGroup` object YAML file (for example, cro-og.yaml) for the Cluster Resource Override Operator:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: clusterresourceoverride-operator
+  namespace: clusterresourceoverride-operator
+spec:
+  targetNamespaces:
+    - clusterresourceoverride-operator
+----
+
+.. Create the Operator Group:
++
+[source,terminal]
+----
+$ oc create -f <file-name>.yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc create -f cro-og.yaml
+----
+
+. Create a subscription:
+
+.. Create a `Subscription` object YAML file (for example, cro-sub.yaml) for the Cluster Resource Override Operator:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: clusterresourceoverride
+  namespace: clusterresourceoverride-operator
+spec:
+  channel: "{product-version}"
+  name: clusterresourceoverride
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+----
+
+.. Create the subscription:
++
+[source,terminal]
+----
+$ oc create -f <file-name>.yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc create -f cro-sub.yaml
+----
+
+. Create a `ClusterResourceOverride` custom resource (CR) object in the `clusterresourceoverride-operator` namespace:
+
+.. Change to the `clusterresourceoverride-operator` namespace.
++
+[source,terminal]
+----
+$ oc project clusterresourceoverride-operator
+----
+
+.. Create a `ClusterResourceOverride` object YAML file (for example, cro-cr.yaml) for the Cluster Resource Override Operator:
++
+[source,yaml]
+----
+apiVersion: operator.autoscaling.openshift.io/v1
+kind: ClusterResourceOverride
+metadata:
+    name: cluster <1>
+spec:
+  podResourceOverride:
+    spec:
+      memoryRequestToLimitPercent: 50 <2>
+      cpuRequestToLimitPercent: 25 <3>
+      limitCPUToMemoryPercent: 200 <4>
+----
+<1> The name must be `cluster`.
+<2> Optional. Specify the percentage to override the container memory limit, if used, between 1-100. The default is 50.
+<3> Optional. Specify the percentage to override the container CPU limit, if used, between 1-100. The default is 25.
+<4> Optional. Specify the percentage to override the container memory limit, if used. Scaling 1Gi of RAM at 100 percent is equal to 1 CPU core. This is processed prior to overriding the CPU request, if configured. The default is 200.
+
+.. Create the `ClusterResourceOverride` object:
++
+[source,terminal]
+----
+$ oc create -f <file-name>.yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc create -f cro-cr.yaml
+----
+
+. Verify the current state of the admission webhook by checking the status of the cluster custom resource.
++
+[source,terminal]
+----
+$ oc get clusterresourceoverride cluster -n clusterresourceoverride-operator -o yaml
+----
++
+The `mutatingWebhookConfigurationRef` section appears when the webhook is called.
++
+.Example output
+[source,yaml]
+----
+apiVersion: operator.autoscaling.openshift.io/v1
+kind: ClusterResourceOverride
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"operator.autoscaling.openshift.io/v1","kind":"ClusterResourceOverride","metadata":{"annotations":{},"name":"cluster"},"spec":{"podResourceOverride":{"spec":{"cpuRequestToLimitPercent":25,"limitCPUToMemoryPercent":200,"memoryRequestToLimitPercent":50}}}}
+  creationTimestamp: "2019-12-18T22:35:02Z"
+  generation: 1
+  name: cluster
+  resourceVersion: "127622"
+  selfLink: /apis/operator.autoscaling.openshift.io/v1/clusterresourceoverrides/cluster
+  uid: 978fc959-1717-4bd1-97d0-ae00ee111e8d
+spec:
+  podResourceOverride:
+    spec:
+      cpuRequestToLimitPercent: 25
+      limitCPUToMemoryPercent: 200
+      memoryRequestToLimitPercent: 50
+status:
+
+# ...
+
+    mutatingWebhookConfigurationRef: <1>
+      apiVersion: admissionregistration.k8s.io/v1
+      kind: MutatingWebhookConfiguration
+      name: clusterresourceoverrides.admission.autoscaling.openshift.io
+      resourceVersion: "127621"
+      uid: 98b3b8ae-d5ce-462b-8ab5-a729ea8f38f3
+
+# ...
+----
+<1> Reference to the `ClusterResourceOverride` admission webhook.
+
+////
+. When the webhook is called, you can add a label to any Namespaces where you want overrides enabled:
++
+----
+$ oc edit namespace <name>
+----
++
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+
+# ...
+
+  labels:
+    clusterresourceoverrides.admission.autoscaling.openshift.io: enabled <1>
+# ...
+----
+<1> Add the `clusterresourceoverrides.admission.autoscaling.openshift.io: enabled` label to the Namespace.
+////
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * nodes/clusters/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-cluster-resource-configure_{context}"]
+= Configuring cluster-level overcommit
+
+
+The Cluster Resource Override Operator requires a `ClusterResourceOverride` custom resource (CR)
+and a label for each project where you want the Operator to control overcommit.
+
+.Prerequisites
+
+* The Cluster Resource Override Operator has no effect if limits have not
+been set on containers. You must specify default limits for a project using a `LimitRange` object or configure limits in `Pod` specs for the overrides to apply.
+
+.Procedure
+
+To modify cluster-level overcommit:
+
+. Edit the `ClusterResourceOverride` CR:
++
+[source,yaml]
+----
+apiVersion: operator.autoscaling.openshift.io/v1
+kind: ClusterResourceOverride
+metadata:
+    name: cluster
+spec:
+  podResourceOverride:
+    spec:
+      memoryRequestToLimitPercent: 50 <1>
+      cpuRequestToLimitPercent: 25 <2>
+      limitCPUToMemoryPercent: 200 <3>
+# ...
+----
+<1> Optional. Specify the percentage to override the container memory limit, if used, between 1-100. The default is 50.
+<2> Optional. Specify the percentage to override the container CPU limit, if used, between 1-100. The default is 25.
+<3> Optional. Specify the percentage to override the container memory limit, if used. Scaling 1Gi of RAM at 100 percent is equal to 1 CPU core. This is processed prior to overriding the CPU request, if configured. The default is 200.
+
+. Ensure the following label has been added to the Namespace object for each project where you want the Cluster Resource Override Operator to control overcommit:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+
+# ...
+
+  labels:
+    clusterresourceoverrides.admission.autoscaling.openshift.io/enabled: "true" <1>
+
+# ...
+----
+<1> Add this label to each project.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/clusters/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+[id="nodes-cluster-node-overcommit_{context}"]
+= Node-level overcommit
+
+You can use various ways to control overcommit on specific nodes, such as quality of service (QOS)
+guarantees, CPU limits, or reserve resources. You can also disable overcommit for specific nodes
+and specific projects.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-cluster-overcommit-reserving-memory_{context}"]
+= Understanding compute resources and containers
+The node-enforced behavior for compute resources is specific to the resource
+type.
+
+[id="understanding-container-CPU-requests_{context}"]
+== Understanding container CPU requests
+
+A container is guaranteed the amount of CPU it requests and is additionally able
+to consume excess CPU available on the node, up to any limit specified by the
+container. If multiple containers are attempting to use excess CPU, CPU time is
+distributed based on the amount of CPU requested by each container.
+
+For example, if one container requested 500m of CPU time and another container
+requested 250m of CPU time, then any extra CPU time available on the node is
+distributed among the containers in a 2:1 ratio. If a container specified a
+limit, it will be throttled not to use more CPU than the specified limit.
+CPU requests are enforced using the CFS shares support in the Linux kernel. By
+default, CPU limits are enforced using the CFS quota support in the Linux kernel
+over a 100ms measuring interval, though this can be disabled.
+
+[id="understanding-memory-requests-container_{context}"]
+== Understanding container memory requests
+
+A container is guaranteed the amount of memory it requests. A container can use
+more memory than requested, but once it exceeds its requested amount, it could
+be terminated in a low memory situation on the node.
+If a container uses less memory than requested, it will not be terminated unless
+system tasks or daemons need more memory than was accounted for in the node's
+resource reservation. If a container specifies a limit on memory, it is
+immediately terminated if it exceeds the limit amount.
+
+////
+Not in 4.1
+[id="containers-ephemeral_{context}"]
+== Understanding containers and ephemeral storage
+
+[NOTE]
+====
+The {product-title} cluster uses ephemeral storage to store information that does not have to persist after the cluster is destroyed.
+====
+
+A container is guaranteed the amount of ephemeral storage it requests. A
+container can use more ephemeral storage than requested, but once it exceeds its
+requested amount, it can be terminated if the available ephemeral disk space gets
+too low.
+
+If a container uses less ephemeral storage than requested, it will not be
+terminated unless system tasks or daemons need more local ephemeral storage than
+was accounted for in the node's resource reservation. If a container specifies a
+limit on ephemeral storage, it is immediately terminated if it exceeds the limit
+amount.
+////
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-cluster-overcommit-qos-about_{context}"]
+= Understanding overcomitment and quality of service classes
+
+A node is _overcommitted_ when it has a pod scheduled that makes no request, or
+when the sum of limits across all pods on that node exceeds available machine
+capacity.
+
+In an overcommitted environment, it is possible that the pods on the node will
+attempt to use more compute resource than is available at any given point in
+time. When this occurs, the node must give priority to one pod over another. The
+facility used to make this decision is referred to as a Quality of Service (QoS)
+Class.
+
+A pod is designated as one of three QoS classes with decreasing order of priority:
+
+.Quality of Service Classes
+[options="header",cols="1,1,5"]
+|===
+|Priority |Class Name |Description
+
+|1 (highest)
+|*Guaranteed*
+|If limits and optionally requests are set (not equal to 0) for all resources
+and they are equal, then the pod is classified as *Guaranteed*.
+
+|2
+|*Burstable*
+|If requests and optionally limits are set (not equal to 0) for all resources,
+and they are not equal, then the pod is classified as *Burstable*.
+
+|3 (lowest)
+|*BestEffort*
+|If requests and limits are not set for any of the resources, then the pod
+is classified as *BestEffort*.
+|===
+
+Memory is an incompressible resource, so in low memory situations, containers
+that have the lowest priority are terminated first:
+
+- *Guaranteed* containers are considered top priority, and are guaranteed to
+only be terminated if they exceed their limits, or if the system is under memory
+pressure and there are no lower priority containers that can be evicted.
+- *Burstable* containers under system memory pressure are more likely to be
+terminated once they exceed their requests and no other *BestEffort* containers
+exist.
+- *BestEffort* containers are treated with the lowest priority. Processes in
+these containers are first to be terminated if the system runs out of memory.
+
+[id="qos-about-reserve_{context}"]
+== Understanding how to reserve memory across quality of service tiers
+
+You can use the `qos-reserved` parameter to specify a percentage of memory to be reserved
+by a pod in a particular QoS level. This feature attempts to reserve requested resources to exclude pods
+from lower OoS classes from using resources requested by pods in higher QoS classes.
+
+{product-title} uses the `qos-reserved` parameter as follows:
+
+- A value of `qos-reserved=memory=100%` will prevent the `Burstable` and `BestEffort` QoS classes from consuming memory
+that was requested by a higher QoS class. This increases the risk of inducing OOM
+on `BestEffort` and `Burstable` workloads in favor of increasing memory resource guarantees
+for `Guaranteed` and `Burstable` workloads.
+
+- A value of `qos-reserved=memory=50%` will allow the `Burstable` and `BestEffort` QoS classes
+to consume half of the memory requested by a higher QoS class.
+
+- A value of `qos-reserved=memory=0%`
+will allow a `Burstable` and `BestEffort` QoS classes to consume up to the full node
+allocatable amount if available, but increases the risk that a `Guaranteed` workload
+will not have access to requested memory. This condition effectively disables this feature.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-qos-about-swap_{context}"]
+= Understanding swap memory and QOS
+
+You can disable swap by default on your nodes to preserve quality of
+service (QOS) guarantees. Otherwise, physical resources on a node can oversubscribe,
+affecting the resource guarantees the Kubernetes scheduler makes during pod
+placement.
+
+For example, if two guaranteed pods have reached their memory limit, each
+container could start using swap memory. Eventually, if there is not enough swap
+space, processes in the pods can be terminated due to the system being
+oversubscribed.
+
+Failing to disable swap results in nodes not recognizing that they are
+experiencing *MemoryPressure*, resulting in pods not receiving the memory they
+made in their scheduling request. As a result, additional pods are placed on the
+node to further increase memory pressure, ultimately increasing your risk of
+experiencing a system out of memory (OOM) event.
+
+[IMPORTANT]
+====
+If swap is enabled, any out-of-resource handling eviction thresholds for available memory will not work as
+expected. Take advantage of out-of-resource handling to allow pods to be evicted
+from a node when it is under memory pressure, and rescheduled on an alternative
+node that has no such pressure.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-cluster-overcommit-configure-nodes_{context}"]
+= Understanding nodes overcommitment
+
+In an overcommitted environment, it is important to properly configure your node to provide best system behavior.
+
+When the node starts, it ensures that the kernel tunable flags for memory
+management are set properly. The kernel should never fail memory allocations
+unless it runs out of physical memory.
+
+To ensure this behavior, {product-title} configures the kernel to always overcommit
+memory by setting the `vm.overcommit_memory` parameter to `1`, overriding the
+default operating system setting.
+
+{product-title} also configures the kernel not to panic when it runs out of memory
+by setting the `vm.panic_on_oom` parameter to `0`. A setting of 0 instructs the
+kernel to call oom_killer in an Out of Memory (OOM) condition, which kills
+processes based on priority
+
+You can view the current setting by running the following commands on your nodes:
+
+[source,terminal]
+----
+$ sysctl -a |grep commit
+----
+
+.Example output
+[source,terminal]
+----
+#...
+vm.overcommit_memory = 0
+#...
+----
+
+[source,terminal]
+----
+$ sysctl -a |grep panic
+----
+
+.Example output
+[source,terminal]
+----
+#...
+vm.panic_on_oom = 0
+#...
+----
+
+[NOTE]
+====
+The above flags should already be set on nodes, and no further action is
+required.
+====
+
+You can also perform the following configurations for each node:
+
+* Disable or enforce CPU limits using CPU CFS quotas
+
+* Reserve resources for system processes
+
+* Reserve memory across quality of service tiers
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-cluster-overcommit-node-enforcing_{context}"]
+
+= Disabling or enforcing CPU limits using CPU CFS quotas
+
+Nodes by default enforce specified CPU limits using the Completely Fair Scheduler (CFS) quota support in the Linux kernel.
+
+If you disable CPU limit enforcement, it is important to understand the impact on your node:
+
+* If a container has a CPU request, the request continues to be enforced by CFS shares in the Linux kernel.
+* If a container does not have a CPU request, but does have a CPU limit, the CPU request defaults to the specified CPU limit, and is enforced by CFS shares in the Linux kernel.
+* If a container has both a CPU request and limit, the CPU request is enforced by CFS shares in the Linux kernel, and the CPU limit has no impact on the node.
+
+.Prerequisites
+
+* Obtain the label associated with the static `MachineConfigPool` CRD for the type of node you want to configure by entering the following command:
++
+[source,terminal]
+----
+$ oc edit machineconfigpool <name>
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc edit machineconfigpool worker
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  creationTimestamp: "2022-11-16T15:34:25Z"
+  generation: 4
+  labels:
+    pools.operator.machineconfiguration.openshift.io/worker: "" <1>
+  name: worker
+----
+<1> The label appears under Labels.
++
+[TIP]
+====
+If the label is not present, add a key/value pair such as:
+
+[source,terminal]
+----
+$ oc label machineconfigpool worker custom-kubelet=small-pods
+----
+====
+
+.Procedure
+
+. Create a custom resource (CR) for your configuration change.
++
+.Sample configuration for a disabling CPU limits
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: KubeletConfig
+metadata:
+  name: disable-cpu-units <1>
+spec:
+  machineConfigPoolSelector:
+    matchLabels:
+      pools.operator.machineconfiguration.openshift.io/worker: "" <2>
+  kubeletConfig:
+    cpuCfsQuota: false <3>
+----
+<1> Assign a name to CR.
+<2> Specify the label from the machine config pool.
+<3> Set the `cpuCfsQuota` parameter to `false`.
+
+. Run the following command to create the CR:
++
+[source,terminal]
+----
+$ oc create -f <file_name>.yaml
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-cluster-overcommit-node-resources_{context}"]
+
+= Reserving resources for system processes
+
+To provide more reliable scheduling and minimize node resource overcommitment,
+each node can reserve a portion of its resources for use by system daemons
+that are required to run on your node for your cluster to function.
+In particular, it is recommended that you reserve resources for incompressible resources such as memory.
+
+.Procedure
+
+To explicitly reserve resources for non-pod processes, allocate node resources by specifying resources
+available for scheduling.
+For more details, see Allocating Resources for Nodes.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-cluster-overcommit-node-disable_{context}"]
+= Disabling overcommitment for a node
+
+When enabled, overcommitment can be disabled on each node.
+
+.Procedure
+
+To disable overcommitment in a node run the following command on that node:
+
+[source,terminal]
+----
+$ sysctl -w vm.overcommit_memory=0
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/clusters/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+[id="nodes-cluster-project-overcommit_{context}"]
+= Project-level limits
+
+To help control overcommit, you can set per-project resource limit ranges,
+specifying memory and CPU limits and defaults for a project that overcommit
+cannot exceed.
+
+For information on project-level resource limits, see Additional resources.
+
+Alternatively, you can disable overcommitment for specific projects.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-overcommit.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-cluster-overcommit-project-disable_{context}"]
+= Disabling overcommitment for a project
+
+When enabled, overcommitment can be disabled per-project. For example, you can allow infrastructure components to be configured independently of overcommitment.
+
+.Procedure
+
+To disable overcommitment in a project:
+
+. Create or edit the namespace object file.
+// Invalid value: "false": field is immutable, try updating the namespace
+
+. Add the following annotation:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    quota.openshift.io/cluster-resource-override-enabled: "false" <1>
+# ...
+----
+<1> Setting this annotation to `false` disables overcommit for this namespace.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="nodes-cluster-overcommit-addtl-resources"]
+== Additional resources
+
+* xref:../../applications/deployments/managing-deployment-processes.adoc#deployments-triggers_deployment-operations[Setting deployment resources].
+* xref:../../nodes/nodes/nodes-nodes-resources-configuring.adoc#nodes-nodes-resources-configuring-setting_nodes-nodes-resources-configuring[Allocating resources for nodes].
+
+//# includes=_attributes/common-attributes,modules/nodes-cluster-overcommit-resource-requests,modules/nodes-cluster-resource-override,modules/nodes-cluster-resource-override-deploy-console,modules/nodes-cluster-resource-override-deploy-cli,modules/nodes-cluster-resource-configure,modules/nodes-cluster-node-overcommit,modules/nodes-cluster-overcommit-resources-containers,modules/nodes-cluster-overcommit-qos-about,modules/nodes-qos-about-swap,modules/nodes-cluster-overcommit-configure-nodes,modules/nodes-cluster-overcommit-node-enforcing,modules/nodes-cluster-overcommit-node-resources,modules/nodes-cluster-overcommit-node-disable,modules/nodes-cluster-project-overcommit,modules/nodes-cluster-overcommit-project-disable

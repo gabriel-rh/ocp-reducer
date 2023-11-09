@@ -1,0 +1,695 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="changing-cluster-network-mtu"]
+= Changing the MTU for the cluster network
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: changing-cluster-network-mtu
+
+toc::[]
+
+[role="_abstract"]
+As a cluster administrator, you can change the MTU for the cluster network after cluster installation. This change is disruptive as cluster nodes must be rebooted to finalize the MTU change. You can change the MTU only for clusters using the OVN-Kubernetes or OpenShift SDN network plugins.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/changing-cluster-network-mtu.adoc
+// * post_installation_configuration/aws-compute-edge-tasks.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-cluster-mtu-change-about_{context}"]
+= About the cluster MTU
+
+During installation the maximum transmission unit (MTU) for the cluster network is detected automatically based on the MTU of the primary network interface of nodes in the cluster. You do not usually need to override the detected MTU.
+
+You might want to change the MTU of the cluster network for several reasons:
+
+* The MTU detected during cluster installation is not correct for your infrastructure.
+* Your cluster infrastructure now requires a different MTU, such as from the addition of nodes that need a different MTU for optimal performance.
+
+You can change the cluster MTU for only the OVN-Kubernetes and OpenShift SDN cluster network plugins.
+
+// https://github.com/openshift/enhancements/blob/master/enhancements/network/allow-mtu-changes.md
+[id="service-interruption-considerations_{context}"]
+== Service interruption considerations
+
+When you initiate an MTU change on your cluster the following effects might impact service availability:
+
+* At least two rolling reboots are required to complete the migration to a new MTU. During this time, some nodes are not available as they restart.
+
+* Specific applications deployed to the cluster with shorter timeout intervals than the absolute TCP timeout interval might experience disruption during the MTU change.
+
+[id="mtu-value-selection_{context}"]
+== MTU value selection
+
+When planning your MTU migration there are two related but distinct MTU values to consider.
+
+* *Hardware MTU*: This MTU value is set based on the specifics of your network infrastructure.
+* *Cluster network MTU*: This MTU value is always less than your hardware MTU to account for the cluster network overlay overhead. The specific overhead is determined by your network plugin:
+** *OVN-Kubernetes*: `100` bytes
+** *OpenShift SDN*: `50` bytes
+
+If your cluster requires different MTU values for different nodes, you must subtract the overhead value for your network plugin from the lowest MTU value that is used by any node in your cluster. For example, if some nodes in your cluster have an MTU of `9001`, and some have an MTU of `1500`, you must set this value to `1400`.
+
+[id="how-the-migration-process-works_{context}"]
+== How the migration process works
+
+The following table summarizes the migration process by segmenting between the user-initiated steps in the process and the actions that the migration performs in response.
+
+.Live migration of the cluster MTU
+[cols="1a,1a",options="header"]
+|===
+
+|User-initiated steps|{product-title} activity
+
+|
+Set the following values in the Cluster Network Operator configuration:
+
+- `spec.migration.mtu.machine.to`
+- `spec.migration.mtu.network.from`
+- `spec.migration.mtu.network.to`
+
+|
+*Cluster Network Operator (CNO)*: Confirms that each field is set to a valid value.
+
+- The `mtu.machine.to` must be set to either the new hardware MTU or to the current hardware MTU if the MTU for the hardware is not changing. This value is transient and is used as part of the migration process. Separately, if you specify a hardware MTU that is different from your existing hardware MTU value, you must manually configure the MTU to persist by other means, such as with a machine config, DHCP setting, or a Linux kernel command line.
+- The `mtu.network.from` field must equal the `network.status.clusterNetworkMTU` field, which is the current MTU of the cluster network.
+- The `mtu.network.to` field must be set to the target cluster network MTU and must be lower than the hardware MTU to allow for the overlay overhead of the network plugin. For OVN-Kubernetes, the overhead is `100` bytes and for OpenShift SDN the overhead is `50` bytes.
+
+If the values provided are valid, the CNO writes out a new temporary configuration with the MTU for the cluster network set to the value of the `mtu.network.to` field.
+
+*Machine Config Operator (MCO)*: Performs a rolling reboot of each node in the cluster.
+
+|Reconfigure the MTU of the primary network interface for the nodes on the cluster. You can use a variety of methods to accomplish this, including:
+
+- Deploying a new NetworkManager connection profile with the MTU change
+- Changing the MTU through a DHCP server setting
+- Changing the MTU through boot parameters
+|N/A
+
+|Set the `mtu` value in the CNO configuration for the network plugin and set `spec.migration` to `null`.
+
+|
+*Machine Config Operator (MCO)*: Performs a rolling reboot of each node in the cluster with the new MTU configuration.
+
+|===
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/changing-cluster-network-mtu.adoc
+// * post_installation_configuration/aws-compute-edge-tasks.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-cluster-mtu-change_{context}"]
+= Changing the cluster MTU
+
+As a cluster administrator, you can change the maximum transmission unit (MTU) for your cluster. The migration is disruptive and nodes in your cluster might be temporarily unavailable as the MTU update rolls out.
+
+The following procedure describes how to change the cluster MTU by using either machine configs, DHCP, or an ISO. If you use the DHCP or ISO approach, you must refer to configuration artifacts that you kept after installing your cluster to complete the procedure.
+
+.Prerequisites
+
+* You installed the OpenShift CLI (`oc`).
+* You are logged in to the cluster with a user with `cluster-admin` privileges.
+* You identified the target MTU for your cluster. The correct MTU varies depending on the network plugin that your cluster uses:
+** *OVN-Kubernetes*: The cluster MTU must be set to `100` less than the lowest hardware MTU value in your cluster.
+** *OpenShift SDN*: The cluster MTU must be set to `50` less than the lowest hardware MTU value in your cluster.
+
+.Procedure
+
+To increase or decrease the MTU for the cluster network complete the following procedure.
+
+. To obtain the current MTU for the cluster network, enter the following command:
++
+[source,terminal]
+----
+$ oc describe network.config cluster
+----
++
+.Example output
+[source,text]
+----
+...
+Status:
+  Cluster Network:
+    Cidr:               10.217.0.0/22
+    Host Prefix:        23
+  Cluster Network MTU:  1400
+  Network Type:         OpenShiftSDN
+  Service Network:
+    10.217.4.0/23
+...
+----
+
+. Prepare your configuration for the hardware MTU:
+
+** If your hardware MTU is specified with DHCP, update your DHCP configuration such as with the following dnsmasq configuration:
++
+[source,text]
+----
+dhcp-option-force=26,<mtu>
+----
++
+--
+where:
+
+`<mtu>`:: Specifies the hardware MTU for the DHCP server to advertise.
+--
+
+** If your hardware MTU is specified with a kernel command line with PXE, update that configuration accordingly.
+
+** If your hardware MTU is specified in a NetworkManager connection configuration, complete the following steps. This approach is the default for {product-title} if you do not explicitly specify your network configuration with DHCP, a kernel command line, or some other method. Your cluster nodes must all use the same underlying network configuration for the following procedure to work unmodified.
+
+... Find the primary network interface:
+
+**** If you are using the OpenShift SDN network plugin, enter the following command:
++
+[source,terminal]
+----
+$ oc debug node/<node_name> -- chroot /host ip route list match 0.0.0.0/0 | awk '{print $5 }'
+----
++
+--
+where:
+
+`<node_name>`:: Specifies the name of a node in your cluster.
+--
+
+**** If you are using the OVN-Kubernetes network plugin, enter the following command:
++
+[source,terminal]
+----
+$ oc debug node/<node_name> -- chroot /host nmcli -g connection.interface-name c show ovs-if-phys0
+----
++
+--
+where:
+
+`<node_name>`:: Specifies the name of a node in your cluster.
+--
+
+... Create the following NetworkManager configuration in the `<interface>-mtu.conf` file:
++
+.Example NetworkManager connection configuration
+[source,ini]
+----
+[connection-<interface>-mtu]
+match-device=interface-name:<interface>
+ethernet.mtu=<mtu>
+----
++
+--
+where:
+
+`<mtu>`:: Specifies the new hardware MTU value.
+`<interface>`:: Specifies the primary network interface name.
+--
+
+... Create two `MachineConfig` objects, one for the control plane nodes and another for the worker nodes in your cluster:
+
+.... Create the following Butane config in the `control-plane-interface.bu` file:
++
+[source,yaml, subs="attributes+"]
+----
+variant: openshift
+version: {product-version}.0
+metadata:
+  name: 01-control-plane-interface
+  labels:
+    machineconfiguration.openshift.io/role: master
+storage:
+  files:
+    - path: /etc/NetworkManager/conf.d/99-<interface>-mtu.conf <1>
+      contents:
+        local: <interface>-mtu.conf <2>
+      mode: 0600
+----
+<1> Specify the NetworkManager connection name for the primary network interface.
+<2> Specify the local filename for the updated NetworkManager configuration file from the previous step.
+
+.... Create the following Butane config in the `worker-interface.bu` file:
++
+[source,yaml, subs="attributes+"]
+----
+variant: openshift
+version: {product-version}.0
+metadata:
+  name: 01-worker-interface
+  labels:
+    machineconfiguration.openshift.io/role: worker
+storage:
+  files:
+    - path: /etc/NetworkManager/conf.d/99-<interface>-mtu.conf <1>
+      contents:
+        local: <interface>-mtu.conf <2>
+      mode: 0600
+----
+<1> Specify the NetworkManager connection name for the primary network interface.
+<2> Specify the local filename for the updated NetworkManager configuration file from the previous step.
+
+.... Create `MachineConfig` objects from the Butane configs by running the following command:
++
+[source,terminal]
+----
+$ for manifest in control-plane-interface worker-interface; do
+    butane --files-dir . $manifest.bu > $manifest.yaml
+  done
+----
+
+. To begin the MTU migration, specify the migration configuration by entering the following command. The Machine Config Operator performs a rolling reboot of the nodes in the cluster in preparation for the MTU change.
++
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type=merge --patch \
+  '{"spec": { "migration": { "mtu": { "network": { "from": <overlay_from>, "to": <overlay_to> } , "machine": { "to" : <machine_to> } } } } }'
+----
++
+--
+where:
+
+`<overlay_from>`:: Specifies the current cluster network MTU value.
+`<overlay_to>`:: Specifies the target MTU for the cluster network. This value is set relative to the value for `<machine_to>` and for OVN-Kubernetes must be `100` less and for OpenShift SDN must be `50` less.
+`<machine_to>`:: Specifies the MTU for the primary network interface on the underlying host network.
+--
++
+.Example that increases the cluster MTU
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type=merge --patch \
+  '{"spec": { "migration": { "mtu": { "network": { "from": 1400, "to": 9000 } , "machine": { "to" : 9100} } } } }'
+----
+
+. As the MCO updates machines in each machine config pool, it reboots each node one by one. You must wait until all the nodes are updated. Check the machine config pool status by entering the following command:
++
+[source,terminal]
+----
+$ oc get mcp
+----
++
+A successfully updated node has the following status: `UPDATED=true`, `UPDATING=false`, `DEGRADED=false`.
++
+[NOTE]
+====
+By default, the MCO updates one machine per pool at a time, causing the total time the migration takes to increase with the size of the cluster.
+====
+
+. Confirm the status of the new machine configuration on the hosts:
+
+.. To list the machine configuration state and the name of the applied machine configuration, enter the following command:
++
+[source,terminal]
+----
+$ oc describe node | egrep "hostname|machineconfig"
+----
++
+.Example output
+[source,text]
+----
+kubernetes.io/hostname=master-0
+machineconfiguration.openshift.io/currentConfig: rendered-master-c53e221d9d24e1c8bb6ee89dd3d8ad7b
+machineconfiguration.openshift.io/desiredConfig: rendered-master-c53e221d9d24e1c8bb6ee89dd3d8ad7b
+machineconfiguration.openshift.io/reason:
+machineconfiguration.openshift.io/state: Done
+----
++
+Verify that the following statements are true:
++
+--
+* The value of `machineconfiguration.openshift.io/state` field is `Done`.
+* The value of the `machineconfiguration.openshift.io/currentConfig` field is equal to the value of the `machineconfiguration.openshift.io/desiredConfig` field.
+--
+
+.. To confirm that the machine config is correct, enter the following command:
++
+[source,terminal]
+----
+$ oc get machineconfig <config_name> -o yaml | grep ExecStart
+----
++
+where `<config_name>` is the name of the machine config from the `machineconfiguration.openshift.io/currentConfig` field.
++
+The machine config must include the following update to the systemd configuration:
++
+[source,plain]
+----
+ExecStart=/usr/local/bin/mtu-migration.sh
+----
+
+. Update the underlying network interface MTU value:
+
+** If you are specifying the new MTU with a NetworkManager connection configuration, enter the following command. The MachineConfig Operator automatically performs a rolling reboot of the nodes in your cluster.
++
+[source,terminal]
+----
+$ for manifest in control-plane-interface worker-interface; do
+    oc create -f $manifest.yaml
+  done
+----
+
+** If you are specifying the new MTU with a DHCP server option or a kernel command line and PXE, make the necessary changes for your infrastructure.
+
+. As the MCO updates machines in each machine config pool, it reboots each node one by one. You must wait until all the nodes are updated. Check the machine config pool status by entering the following command:
++
+[source,terminal]
+----
+$ oc get mcp
+----
++
+A successfully updated node has the following status: `UPDATED=true`, `UPDATING=false`, `DEGRADED=false`.
++
+[NOTE]
+====
+By default, the MCO updates one machine per pool at a time, causing the total time the migration takes to increase with the size of the cluster.
+====
+
+. Confirm the status of the new machine configuration on the hosts:
+
+.. To list the machine configuration state and the name of the applied machine configuration, enter the following command:
++
+[source,terminal]
+----
+$ oc describe node | egrep "hostname|machineconfig"
+----
++
+.Example output
+[source,text]
+----
+kubernetes.io/hostname=master-0
+machineconfiguration.openshift.io/currentConfig: rendered-master-c53e221d9d24e1c8bb6ee89dd3d8ad7b
+machineconfiguration.openshift.io/desiredConfig: rendered-master-c53e221d9d24e1c8bb6ee89dd3d8ad7b
+machineconfiguration.openshift.io/reason:
+machineconfiguration.openshift.io/state: Done
+----
++
+Verify that the following statements are true:
++
+--
+ * The value of `machineconfiguration.openshift.io/state` field is `Done`.
+ * The value of the `machineconfiguration.openshift.io/currentConfig` field is equal to the value of the `machineconfiguration.openshift.io/desiredConfig` field.
+--
+
+.. To confirm that the machine config is correct, enter the following command:
++
+[source,terminal]
+----
+$ oc get machineconfig <config_name> -o yaml | grep path:
+----
++
+where `<config_name>` is the name of the machine config from the `machineconfiguration.openshift.io/currentConfig` field.
++
+If the machine config is successfully deployed, the previous output contains the `/etc/NetworkManager/system-connections/<connection_name>` file path.
++
+The machine config must not contain the `ExecStart=/usr/local/bin/mtu-migration.sh` line.
+
+. To finalize the MTU migration, enter one of the following commands:
+** If you are using the OVN-Kubernetes network plugin:
++
+[source,terminal]
++
+----
+$ oc patch Network.operator.openshift.io cluster --type=merge --patch \
+  '{"spec": { "migration": null, "defaultNetwork":{ "ovnKubernetesConfig": { "mtu": <mtu> }}}}'
+----
++
+--
+where:
+
+`<mtu>`:: Specifies the new cluster network MTU that you specified with `<overlay_to>`.
+--
+
+** If you are using the OpenShift SDN network plugin:
++
+[source,terminal]
+----
+$ oc patch Network.operator.openshift.io cluster --type=merge --patch \
+  '{"spec": { "migration": null, "defaultNetwork":{ "openshiftSDNConfig": { "mtu": <mtu> }}}}'
+----
++
+--
+where:
+
+`<mtu>`:: Specifies the new cluster network MTU that you specified with `<overlay_to>`.
+--
+
+.Verification
+
+
+You can verify that a node in your cluster uses an MTU that you specified in the previous procedure.
+
+. To get the current MTU for the cluster network, enter the following command:
++
+[source,terminal]
+----
+$ oc describe network.config cluster
+----
+
+. Get the current MTU for the primary network interface of a node.
+
+.. To list the nodes in your cluster, enter the following command:
++
+[source,terminal]
+----
+$ oc get nodes
+----
+
+.. To obtain the current MTU setting for the primary network interface on a node, enter the following command:
++
+[source,terminal]
+----
+$ oc debug node/<node> -- chroot /host ip address show <interface>
+----
++
+where:
++
+--
+`<node>`:: Specifies a node from the output from the previous step.
+`<interface>`:: Specifies the primary network interface name for the node.
+--
++
+.Example output
+[source,text]
+----
+ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 8051
+----
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="{context}-additional-resources"]
+== Additional resources
+
+* xref:../installing/installing_bare_metal/installing-bare-metal.adoc#installation-user-infra-machines-advanced_network_installing-bare-metal[Using advanced networking options for PXE and ISO installations]
+* link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_networking/assembly_manually-creating-networkmanager-profiles-in-key-file-format_configuring-and-managing-networking[Manually creating NetworkManager profiles in key file format]
+* link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/configuring_and_managing_networking/index#configuring-a-dynamic-ethernet-connection-using-nmcli_configuring-an-ethernet-connection[Configuring a dynamic Ethernet connection using nmcli]
+
+//# includes=_attributes/common-attributes,modules/nw-cluster-mtu-change-about,modules/nw-cluster-mtu-change

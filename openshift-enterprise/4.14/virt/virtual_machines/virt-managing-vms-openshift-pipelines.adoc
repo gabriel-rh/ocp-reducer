@@ -1,0 +1,495 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="virt-managing-vms-openshift-pipelines"]
+= Managing virtual machines with OpenShift Pipelines
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: virt-managing-vms-openshift-pipelines
+
+toc::[]
+
+link:https://docs.openshift.com/pipelines/latest/about/understanding-openshift-pipelines.html[{pipelines-title}] is a Kubernetes-native CI/CD framework that allows developers to design and run each step of the CI/CD pipeline in its own container.
+
+The Scheduling, Scale, and Performance (SSP) Operator integrates {VirtProductName} with {pipelines-shortname}. The SSP Operator includes tasks and example pipelines that allow you to:
+
+* Create and manage virtual machines (VMs), persistent volume claims (PVCs), and data volumes
+* Run commands in VMs
+* Manipulate disk images with `libguestfs` tools
+
+:FeatureName: Managing virtual machines with {pipelines-title}
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+
+[id="prerequisites_virt-managing-vms-openshift-pipelines"]
+== Prerequisites
+
+* You have access to an {product-title} cluster with `cluster-admin` permissions.
+* You have installed the OpenShift CLI (`oc`).
+* You have link:https://docs.openshift.com/pipelines/latest/install_config/installing-pipelines.html[installed {pipelines-shortname}].
+
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-managing-vms-openshift-pipelines.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-deploying-ssp_{context}"]
+= Deploying the Scheduling, Scale, and Performance (SSP) resources
+
+The SSP Operator example Tekton Tasks and Pipelines are not deployed by default when you install {VirtProductName}. To deploy the SSP Operator's Tekton resources, enable the `deployTektonTaskResources` feature gate in the `HyperConverged` custom resource (CR).
+
+.Procedure
+
+. Open the `HyperConverged` CR in your default editor by running the following command:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc edit hyperconverged kubevirt-hyperconverged -n {CNVNamespace}
+----
+
+. Set the `spec.featureGates.deployTektonTaskResources` field to `true`.
++
+[source,yaml]
+----
+apiVersion: hco.kubevirt.io/v1beta1
+kind: HyperConverged
+metadata:
+  name: kubevirt-hyperconverged
+  namespace: kubevirt-hyperconverged
+spec:
+  tektonPipelinesNamespace: <user_namespace> <1>
+  featureGates:
+    deployTektonTaskResources: true <2>
+# ...
+----
+<1> The namespace where the pipelines are to be run.
+<2> The feature gate to be enabled to deploy Tekton resources by SSP operator.
++
+[NOTE]
+====
+The tasks and example pipelines remain available even if you disable the feature gate later.
+====
+
+. Save your changes and exit the editor.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-managing-vms-openshift-pipelines.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-supported-ssp-tasks_{context}"]
+= Virtual machine tasks supported by the SSP Operator
+
+The following table shows the tasks that are included as part of the SSP Operator.
+
+.Virtual machine tasks supported by the SSP Operator
+[cols="1,1",options="header"]
+|===
+| Task | Description
+
+| `create-vm-from-manifest`
+| Create a virtual machine from a provided manifest or with `virtctl`.
+
+| `create-vm-from-template`
+| Create a virtual machine from a template.
+
+| `copy-template`
+| Copy a virtual machine template.
+
+| `modify-vm-template`
+| Modify a virtual machine template.
+
+| `modify-data-object`
+| Create or delete data volumes or data sources.
+
+| `cleanup-vm`
+| Run a script or a command in a virtual machine and stop or delete the virtual machine afterward.
+
+| `disk-virt-customize`
+| Use the `virt-customize` tool to run a customization script on a target PVC.
+
+| `disk-virt-sysprep`
+| Use the `virt-sysprep` tool to run a sysprep script on a target PVC.
+
+| `wait-for-vmi-status`
+| Wait for a specific status of a virtual machine instance and fail or succeed based on the status.
+|===
+
+[NOTE]
+====
+Virtual machine creation in pipelines now utilizes `ClusterInstanceType` and `ClusterPreference` instead of template-based tasks, which have been deprecated. The `create-vm-from-template`, `copy-template`, and `modify-vm-template` commands remain available but are not used in default pipeline tasks.
+====
+
+:leveloffset!:
+
+
+[id="example-pipelines_virt-managing-vms-openshift-pipelines"]
+== Example pipelines
+
+The SSP Operator includes the following example `Pipeline` manifests. You can run the example pipelines by using the web console or CLI.
+
+You might have to run more than one installer pipline if you need multiple versions of Windows. If you run more than one installer pipeline, each one requires unique parameters, such as the `autounattend` config map and base image name. For example, if you need Windows 10 and Windows 11 or Windows Server 2022 images, you have to run both the Windows efi installer pipeline and the Windows bios installer pipeline. However, if you need Windows 11 and Windows Server 2022 images, you have to run only the Windows efi installer pipeline.
+
+Windows EFI installer pipeline:: This pipeline installs Windows 11 or Windows Server 2022 into a new data volume from a Windows installation image (ISO file). A custom answer file is used to run the installation process.
+
+Windows BIOS installer pipeline:: This pipeline installs Windows 10 into a new data volume from a Windows installation image, also called an ISO file. A custom answer file is used to run the installation process.
+
+Windows customize pipeline:: This pipeline clones the data volume of a basic Windows 10, 11, or Windows Server 2022 installation, customizes it by installing Microsoft SQL Server Express or Microsoft Visual Studio Code, and then creates a new image and template.
+
+[NOTE]
+====
+The example pipelines use a config map file with `sysprep` predefined by {product-title} and suitable for Microsoft ISO files. For ISO files pertaining to different Windows editions, it may be necessary to create a new config map file with a system-specific sysprep definition.
+====
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-managing-vms-openshift-pipelines.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-running-tto-pipeline-web_{context}"]
+= Running the example pipelines using the web console
+
+You can run the example pipelines from the *Pipelines* menu in the web console.
+
+.Procedure
+
+. Click *Pipelines* -> *Pipelines* in the side menu.
+
+. Select a pipeline to open the *Pipeline details* page.
+
+. From the *Actions* list, select *Start*. The *Start Pipeline* dialog is displayed.
+
+. Keep the default values for the parameters and then click *Start* to run the pipeline. The *Details* tab tracks the progress of each task and displays the pipeline status.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/virt-managing-vms-openshift-pipelines.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-running-tto-pipeline-cli_{context}"]
+= Running the example pipelines using the CLI
+
+Use a `PipelineRun` resource to run the example pipelines. A `PipelineRun` object is the running instance of a pipeline. It instantiates a pipeline for execution with specific inputs, outputs, and execution parameters on a cluster. It also creates a `TaskRun` object for each task in the pipeline.
+
+.Procedure
+
+. To run the Windows 10 installer pipeline, create the following `PipelineRun` manifest:
++
+[source,yaml]
+----
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: windows10-installer-run-
+  labels:
+    pipelinerun: windows10-installer-run
+spec:
+  params:
+  - name: winImageDownloadURL
+    value: <link_to_windows_10_iso> <1>
+  pipelineRef:
+    name: windows10-installer
+  taskRunSpecs:
+    - pipelineTaskName: copy-template
+      taskServiceAccountName: copy-template-task
+    - pipelineTaskName: modify-vm-template
+      taskServiceAccountName: modify-vm-template-task
+    - pipelineTaskName: create-vm-from-template
+      taskServiceAccountName: create-vm-from-template-task
+    - pipelineTaskName: wait-for-vmi-status
+      taskServiceAccountName: wait-for-vmi-status-task
+    - pipelineTaskName: create-base-dv
+      taskServiceAccountName: modify-data-object-task
+    - pipelineTaskName: cleanup-vm
+      taskServiceAccountName: cleanup-vm-task
+  status: {}
+----
+<1> Specify the URL for the Windows 10 64-bit ISO file. The product language must be English (United States).
+
+. Apply the `PipelineRun` manifest:
++
+[source,terminal]
+----
+$ oc apply -f windows10-installer-run.yaml
+----
+
+. To run the Windows 10 customize pipeline, create the following `PipelineRun` manifest:
++
+[source,yaml]
+----
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: windows10-customize-run-
+  labels:
+    pipelinerun: windows10-customize-run
+spec:
+  params:
+    - name: allowReplaceGoldenTemplate
+      value: true
+    - name: allowReplaceCustomizationTemplate
+      value: true
+  pipelineRef:
+    name: windows10-customize
+  taskRunSpecs:
+    - pipelineTaskName: copy-template-customize
+      taskServiceAccountName: copy-template-task
+    - pipelineTaskName: modify-vm-template-customize
+      taskServiceAccountName: modify-vm-template-task
+    - pipelineTaskName: create-vm-from-template
+      taskServiceAccountName: create-vm-from-template-task
+    - pipelineTaskName: wait-for-vmi-status
+      taskServiceAccountName: wait-for-vmi-status-task
+    - pipelineTaskName: create-base-dv
+      taskServiceAccountName: modify-data-object-task
+    - pipelineTaskName: cleanup-vm
+      taskServiceAccountName: cleanup-vm-task
+    - pipelineTaskName: copy-template-golden
+      taskServiceAccountName: copy-template-task
+    - pipelineTaskName: modify-vm-template-golden
+      taskServiceAccountName: modify-vm-template-task
+status: {}
+----
+
+. Apply the `PipelineRun` manifest:
++
+[source,terminal]
+----
+$ oc apply -f windows10-customize-run.yaml
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_virt-managing-vms-openshift-pipelines"]
+== Additional resources
+* link:https://docs.openshift.com/pipelines/latest/create/creating-applications-with-cicd-pipelines.html[Creating CI/CD solutions for applications using {pipelines-title}]
+* xref:../../virt/virtual_machines/creating_vms_custom/virt-creating-vms-uploading-images.adoc#virt-creating-windows-vm_virt-creating-vms-uploading-images[Creating a Windows VM]
+
+//# includes=_attributes/common-attributes,snippets/technology-preview,modules/virt-deploying-ssp,modules/virt-supported-ssp-tasks,modules/virt-running-ssp-pipeline-web,modules/virt-running-ssp-pipeline-cli

@@ -1,0 +1,1093 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ztp-deploying-far-edge-sites"]
+= Installing managed clusters with {rh-rhacm} and SiteConfig resources
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: ztp-deploying-far-edge-sites
+
+toc::[]
+
+You can provision {product-title} clusters at scale with {rh-rhacm-first} using the assisted service and the GitOps plugin policy generator with core-reduction technology enabled. The {ztp-first} pipeline performs the cluster installations. {ztp} can be used in a disconnected environment.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+
+:_module-type: CONCEPT
+[id="ztp-talo-integration_{context}"]
+= {ztp} and {cgu-operator-full}
+
+{ztp-first} generates installation and configuration CRs from manifests stored in Git. These artifacts are applied to a centralized hub cluster where {rh-rhacm-first}, the assisted service, and the {cgu-operator-first} use the CRs to install and configure the managed cluster. The configuration phase of the {ztp} pipeline uses the {cgu-operator} to orchestrate the application of the configuration CRs to the cluster. There are several key integration points between {ztp} and the {cgu-operator}.
+
+Inform policies::
+By default, {ztp} creates all policies with a remediation action of `inform`. These policies cause {rh-rhacm} to report on compliance status of clusters relevant to the policies but does not apply the desired configuration. During the {ztp} process, after OpenShift installation, the {cgu-operator} steps through the created `inform` policies and enforces them on the target managed cluster(s). This applies the configuration to the managed cluster. Outside of the {ztp} phase of the cluster lifecycle, this allows you to change policies without the risk of immediately rolling those changes out to affected managed clusters. You can control the timing and the set of remediated clusters by using {cgu-operator}.
+
+Automatic creation of ClusterGroupUpgrade CRs::
+To automate the initial configuration of newly deployed clusters, {cgu-operator} monitors the state of all `ManagedCluster` CRs on the hub cluster. Any `ManagedCluster` CR that does not have a `ztp-done` label applied, including newly created `ManagedCluster` CRs, causes the {cgu-operator} to automatically create a `ClusterGroupUpgrade` CR with the following characteristics:
+
+* The `ClusterGroupUpgrade` CR is created and enabled in the `ztp-install` namespace.
+* `ClusterGroupUpgrade` CR has the same name as the `ManagedCluster` CR.
+* The cluster selector includes only the cluster associated with that `ManagedCluster` CR.
+* The set of managed policies includes all policies that {rh-rhacm} has bound to the cluster at the time the `ClusterGroupUpgrade` is created.
+* Pre-caching is disabled.
+* Timeout set to 4 hours (240 minutes).
+
++
+The automatic creation of an enabled `ClusterGroupUpgrade` ensures that initial zero-touch deployment of clusters proceeds without the need for user intervention. Additionally, the automatic creation of a `ClusterGroupUpgrade` CR for any `ManagedCluster` without the `ztp-done` label allows a failed {ztp} installation to be restarted by simply deleting the `ClusterGroupUpgrade` CR for the cluster.
+
+Waves::
+Each policy generated from a `PolicyGenTemplate` CR includes a `ztp-deploy-wave` annotation. This annotation is based on the same annotation from each CR which is included in that policy. The wave annotation is used to order the policies in the auto-generated `ClusterGroupUpgrade` CR. The wave annotation is not used other than for the auto-generated `ClusterGroupUpgrade` CR.
++
+[NOTE]
+====
+All CRs in the same policy must have the same setting for the `ztp-deploy-wave` annotation. The default value of this annotation for each CR can be overridden in the `PolicyGenTemplate`. The wave annotation in the source CR is used for determining and setting the policy wave annotation. This annotation is removed from each built CR which is included in the generated policy at runtime.
+====
++
+The {cgu-operator} applies the configuration policies in the order specified by the wave annotations. The {cgu-operator} waits for each policy to be compliant before moving to the next policy. It is important to ensure that the wave annotation for each CR takes into account any prerequisites for those CRs to be applied to the cluster. For example, an Operator must be installed before or concurrently with the configuration for the Operator. Similarly, the `CatalogSource` for an Operator must be installed in a wave before or concurrently with the Operator Subscription. The default wave value for each CR takes these prerequisites into account.
++
+Multiple CRs and policies can share the same wave number. Having fewer policies can result in faster deployments and lower CPU usage. It is a best practice to group many CRs into relatively few waves.
+
+To check the default wave value in each source CR, run the following command against the `out/source-crs` directory that is extracted from the `ztp-site-generate` container image:
+
+[source,terminal]
+----
+$ grep -r "ztp-deploy-wave" out/source-crs
+----
+
+Phase labels::
+The `ClusterGroupUpgrade` CR is automatically created and includes directives to annotate the `ManagedCluster` CR with labels at the start and end of the {ztp} process.
++
+When {ztp} configuration postinstallation commences, the `ManagedCluster` has the `ztp-running` label applied. When all policies are remediated to the cluster and are fully compliant, these directives cause the {cgu-operator} to remove the `ztp-running` label and apply the `ztp-done` label.
++
+For deployments that make use of the `informDuValidator` policy, the `ztp-done` label is applied when the cluster is fully ready for deployment of applications. This includes all reconciliation and resulting effects of the {ztp} applied configuration CRs. The `ztp-done` label affects automatic `ClusterGroupUpgrade` CR creation by {cgu-operator}. Do not manipulate this label after the initial {ztp} installation of the cluster.
+
+Linked CRs::
+The automatically created `ClusterGroupUpgrade` CR has the owner reference set as the `ManagedCluster` from which it was derived. This reference ensures that deleting the `ManagedCluster` CR causes the instance of the `ClusterGroupUpgrade` to be deleted along with any supporting resources.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="ztp-ztp-building-blocks_{context}"]
+= Overview of deploying managed clusters with {ztp}
+
+{rh-rhacm-first} uses {ztp-first} to deploy single-node {product-title} clusters, three-node clusters, and standard clusters. You manage site configuration data as {product-title} custom resources (CRs) in a Git repository. {ztp} uses a declarative GitOps approach for a develop once, deploy anywhere model to deploy the managed clusters.
+
+The deployment of the clusters includes:
+
+* Installing the host operating system (RHCOS) on a blank server
+
+* Deploying {product-title}
+
+* Creating cluster policies and site subscriptions
+
+* Making the necessary network configurations to the server operating system
+
+* Deploying profile Operators and performing any needed software-related configuration, such as performance profile, PTP, and SR-IOV
+
+[discrete]
+[id="ztp-overview-managed-site-installation-process_{context}"]
+== Overview of the managed site installation process
+
+After you apply the managed site custom resources (CRs) on the hub cluster, the following actions happen automatically:
+
+. A Discovery image ISO file is generated and booted on the target host.
+
+. When the ISO file successfully boots on the target host it reports the host hardware information to {rh-rhacm}.
+
+. After all hosts are discovered, {product-title} is installed.
+
+. When {product-title} finishes installing, the hub installs the `klusterlet` service on the target cluster.
+
+. The requested add-on services are installed on the target cluster.
+
+The Discovery image ISO process is complete when the `Agent` CR  for the managed cluster is created on the hub cluster.
+
+:leveloffset!:
+
+[IMPORTANT]
+====
+The target bare-metal host must meet the networking, firmware, and hardware requirements listed in xref:../../scalability_and_performance/ztp_far_edge/ztp-reference-cluster-configuration-for-vdu.adoc#sno-configure-for-vdu[Recommended {sno} cluster configuration for vDU application workloads].
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+// * scalability_and_performance/ztp_far_edge/ztp-manual-install.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-creating-the-site-secrets_{context}"]
+= Creating the managed bare-metal host secrets
+
+Add the required `Secret` custom resources (CRs) for the managed bare-metal host to the hub cluster. You need a secret for the {ztp-first} pipeline to access the Baseboard Management Controller (BMC) and a secret for the assisted installer service to pull cluster installation images from the registry.
+
+[NOTE]
+====
+The secrets are referenced from the `SiteConfig` CR by name. The namespace
+must match the `SiteConfig` namespace.
+====
+
+.Procedure
+
+. Create a YAML secret file containing credentials for the host Baseboard Management Controller (BMC) and a pull secret required for installing OpenShift and all add-on cluster Operators:
+
+.. Save the following YAML as the file `example-sno-secret.yaml`:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-sno-bmc-secret
+  namespace: example-sno <1>
+data: <2>
+  password: <base64_password>
+  username: <base64_username>
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pull-secret
+  namespace: example-sno  <3>
+data:
+  .dockerconfigjson: <pull_secret> <4>
+type: kubernetes.io/dockerconfigjson
+----
+<1> Must match the namespace configured in the related `SiteConfig` CR
+<2> Base64-encoded values for `password` and `username`
+<3> Must match the namespace configured in the related `SiteConfig` CR
+<4> Base64-encoded pull secret
+
+. Add the relative path to `example-sno-secret.yaml` to the `kustomization.yaml` file that you use to install the cluster.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+:_mod-docs-content-type: PROCEDURE
+[id="setting-managed-bare-metal-host-kernel-arguments_{context}"]
+= Configuring Discovery ISO kernel arguments for installations using {ztp}
+
+The {ztp-first} workflow uses the Discovery ISO as part of the {product-title} installation process on managed bare-metal hosts. You can edit the `InfraEnv` resource to specify kernel arguments for the Discovery ISO. This is useful for cluster installations with specific environmental requirements. For example, configure the `rd.net.timeout.carrier` kernel argument for the Discovery ISO to facilitate static networking for the cluster or to receive a DHCP address before downloading the root file system during installation.
+
+[NOTE]
+====
+In {product-title} {product-version}, you can only add kernel arguments. You can not replace or delete kernel arguments.
+====
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (oc).
+* You have logged in to the hub cluster as a user with cluster-admin privileges.
+
+.Procedure
+
+. Create the `InfraEnv` CR and edit the `spec.kernelArguments` specification to configure kernel arguments.
+
+.. Save the following YAML in an `InfraEnv-example.yaml` file:
++
+[NOTE]
+====
+The `InfraEnv` CR in this example uses template syntax such as `{{ .Cluster.ClusterName }}` that is populated based on values in the `SiteConfig` CR. The `SiteConfig` CR automatically populates values for these templates during deployment. Do not edit the templates manually.
+====
++
+[source,yaml]
+----
+apiVersion: agent-install.openshift.io/v1beta1
+kind: InfraEnv
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  name: "{{ .Cluster.ClusterName }}"
+  namespace: "{{ .Cluster.ClusterName }}"
+spec:
+  clusterRef:
+    name: "{{ .Cluster.ClusterName }}"
+    namespace: "{{ .Cluster.ClusterName }}"
+  kernelArguments:
+    - operation: append <1>
+      value: audit=0 <2>
+    - operation: append
+      value: trace=1
+  sshAuthorizedKey: "{{ .Site.SshPublicKey }}"
+  proxy: "{{ .Cluster.ProxySettings }}"
+  pullSecretRef:
+    name: "{{ .Site.PullSecretRef.Name }}"
+  ignitionConfigOverride: "{{ .Cluster.IgnitionConfigOverride }}"
+  nmStateConfigLabelSelector:
+    matchLabels:
+      nmstate-label: "{{ .Cluster.ClusterName }}"
+  additionalNTPSources: "{{ .Cluster.AdditionalNTPSources }}"
+----
+<1> Specify the append operation to add a kernel argument.
+<2> Specify the kernel argument you want to configure. This example configures the audit kernel argument and the trace kernel argument.
+
+. Commit the `InfraEnv-example.yaml` CR to the same location in your Git repository that has the `SiteConfig` CR and push your changes. The following example shows a sample Git repository structure:
+
++
+[source,text]
+----
+~/example-ztp/install
+          └── site-install
+               ├── siteconfig-example.yaml
+               ├── InfraEnv-example.yaml
+               ...
+----
+
+. Edit the `spec.clusters.crTemplates` specification in the `SiteConfig` CR to reference the `InfraEnv-example.yaml` CR in your Git repository:
++
+[source,yaml,options="nowrap",role="white-space-pre"]
+----
+clusters:
+  crTemplates:
+    InfraEnv: "InfraEnv-example.yaml"
+----
++
+When you are ready to deploy your cluster by committing and pushing the `SiteConfig` CR, the build pipeline uses the custom `InfraEnv-example` CR in your Git repository to configure the infrastructure environment, including the custom kernel arguments.
+
+.Verification
+To verify that the kernel arguments are applied, after the Discovery image verifies that {product-title} is ready for installation, you can SSH to the target host before the installation process begins. At that point, you can view the kernel arguments for the Discovery ISO in the `/proc/cmdline` file.
+
+. Begin an SSH session with the target host:
++
+[source,terminal]
+----
+$ ssh -i /path/to/privatekey core@<host_name>
+----
+
+. View the system's kernel arguments by using the following command:
++
+[source,terminal]
+----
+$ cat /proc/cmdline
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-deploying-a-site_{context}"]
+= Deploying a managed cluster with SiteConfig and {ztp}
+
+Use the following procedure to create a `SiteConfig` custom resource (CR) and related files and initiate the {ztp-first} cluster deployment.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+* You configured the hub cluster for generating the required installation and policy CRs.
+
+* You created a Git repository where you manage your custom site configuration data. The repository must be accessible from the hub cluster and you must configure it as a source repository for the ArgoCD application. See "Preparing the {ztp} site configuration repository" for more information.
++
+[NOTE]
+====
+When you create the source repository, ensure that you patch the ArgoCD application with the `argocd/deployment/argocd-openshift-gitops-patch.json` patch-file that you extract from the `ztp-site-generate` container. See "Configuring the hub cluster with ArgoCD".
+====
+
+* To be ready for provisioning managed clusters, you require the following for each bare-metal host:
++
+Network connectivity:: Your network requires DNS. Managed cluster hosts should be reachable from the hub cluster. Ensure that Layer 3 connectivity exists between the hub cluster and the managed cluster host.
++
+Baseboard Management Controller (BMC) details:: {ztp} uses BMC username and password details to connect to the BMC during cluster installation. The {ztp} plugin manages the `ManagedCluster` CRs on the hub cluster based on the `SiteConfig` CR in your site Git repo. You create individual `BMCSecret` CRs for each host manually.
+
+.Procedure
+
+. Create the required managed cluster secrets on the hub cluster. These resources must be in a namespace with a name matching the cluster name. For example, in `out/argocd/example/siteconfig/example-sno.yaml`, the cluster name and namespace is `example-sno`.
+
+.. Export the cluster namespace by running the following command:
++
+[source,terminal]
+----
+$ export CLUSTERNS=example-sno
+----
+
+.. Create the namespace:
++
+[source,terminal]
+----
+$ oc create namespace $CLUSTERNS
+----
+
+. Create pull secret and BMC `Secret` CRs for the managed cluster. The pull secret must contain all the credentials necessary for installing {product-title} and all required Operators. See "Creating the managed bare-metal host secrets" for more information.
++
+[NOTE]
+====
+The secrets are referenced from the `SiteConfig` custom resource (CR) by name. The namespace must match the `SiteConfig` namespace.
+====
+
+. Create a `SiteConfig` CR for your cluster in your local clone of the Git repository:
+
+.. Choose the appropriate example for your CR from the  `out/argocd/example/siteconfig/` folder.
+The folder includes example files for single node, three-node, and standard clusters:
++
+*** `example-sno.yaml`
+*** `example-3node.yaml`
+*** `example-standard.yaml`
+
+.. Change the cluster and host details in the example file to match the type of cluster you want. For example:
++
+.Example {sno} SiteConfig CR
+[source,yaml]
+----
+# example-node1-bmh-secret & assisted-deployment-pull-secret need to be created under same namespace example-sno
+---
+apiVersion: ran.openshift.io/v1
+kind: SiteConfig
+metadata:
+  name: "example-sno"
+  namespace: "example-sno"
+spec:
+  baseDomain: "example.com"
+  cpuPartitioningMode: AllNodes
+  pullSecretRef:
+    name: "assisted-deployment-pull-secret"
+  clusterImageSetNameRef: "openshift-4.10"
+  sshPublicKey: "ssh-rsa AAAA..."
+  clusters:
+  - clusterName: "example-sno"
+    networkType: "OVNKubernetes"
+    installConfigOverrides: |
+      {
+        "capabilities": {
+          "baselineCapabilitySet": "None",
+          "additionalEnabledCapabilities": [
+            "marketplace",
+            "NodeTuning"
+          ]
+        }
+      }
+    clusterLabels:
+      common: true
+      group-du-sno: ""
+      sites : "example-sno"
+    clusterNetwork:
+      - cidr: 1001:1::/48
+        hostPrefix: 64
+    machineNetwork:
+      - cidr: 1111:2222:3333:4444::/64
+    serviceNetwork:
+      - 1001:2::/112
+    additionalNTPSources:
+      - 1111:2222:3333:4444::2
+    # crTemplates:
+    #   KlusterletAddonConfig: "KlusterletAddonConfigOverride.yaml"
+    nodes:
+      - hostName: "example-node1.example.com"
+        role: "master"
+        bmcAddress: "idrac-virtualmedia+https://[1111:2222:3333:4444::bbbb:1]/redfish/v1/Systems/System.Embedded.1"
+        bmcCredentialsName:
+          name: "example-node1-bmh-secret"
+        bootMACAddress: "AA:BB:CC:DD:EE:11"
+        bootMode: "UEFI"
+        rootDeviceHints:
+          wwn: "0x11111000000asd123"
+        # diskPartition:
+        #   - device: /dev/disk/by-id/wwn-0x11111000000asd123 # match rootDeviceHints
+        #     partitions:
+        #       - mount_point: /var/imageregistry
+        #         size: 102500
+        #         start: 344844
+        ignitionConfigOverride: |
+          {
+            "ignition": {
+              "version": "3.2.0"
+            },
+            "storage": {
+              "disks": [
+                {
+                  "device": "/dev/disk/by-id/wwn-0x11111000000asd123",
+                  "wipeTable": false,
+                  "partitions": [
+                    {
+                      "sizeMiB": 16,
+                      "label": "httpevent1",
+                      "startMiB": 350000
+                    },
+                    {
+                      "sizeMiB": 16,
+                      "label": "httpevent2",
+                      "startMiB": 350016
+                    }
+                  ]
+                }
+              ],
+              "filesystem": [
+                {
+                  "device": "/dev/disk/by-partlabel/httpevent1",
+                  "format": "xfs",
+                  "wipeFilesystem": true
+                },
+                {
+                  "device": "/dev/disk/by-partlabel/httpevent2",
+                  "format": "xfs",
+                  "wipeFilesystem": true
+                }
+              ]
+            }
+          }
+        nodeNetwork:
+          interfaces:
+            - name: eno1
+              macAddress: "AA:BB:CC:DD:EE:11"
+          config:
+            interfaces:
+              - name: eno1
+                type: ethernet
+                state: up
+                ipv4:
+                  enabled: false
+                ipv6:
+                  enabled: true
+                  address:
+                  - ip: 1111:2222:3333:4444::aaaa:1
+                    prefix-length: 64
+            dns-resolver:
+              config:
+                search:
+                - example.com
+                server:
+                - 1111:2222:3333:4444::2
+            routes:
+              config:
+              - destination: ::/0
+                next-hop-interface: eno1
+                next-hop-address: 1111:2222:3333:4444::1
+                table-id: 254
+----
++
+[NOTE]
+====
+For more information about BMC addressing, see the "Additional resources" section.
+====
+
+.. You can inspect the default set of extra-manifest `MachineConfig` CRs in `out/argocd/extra-manifest`. It is automatically applied to the cluster when it is installed.
+
+.. Optional: To provision additional install-time manifests on the provisioned cluster, create a directory in your Git repository, for example, `sno-extra-manifest/`, and add your custom manifest CRs to this directory. If your `SiteConfig.yaml` refers to this directory in the `extraManifestPath` field, any CRs in this referenced directory are appended to the default set of extra manifests.
++
+.Enabling the crun OCI container runtime
+[IMPORTANT]
+====
+For optimal cluster performance, enable crun for master and worker nodes in {sno}, {sno} with additional worker nodes, {3no}, and standard clusters.
+
+Enable crun in a `ContainerRuntimeConfig` CR as an additional Day 0 install-time manifest to avoid the cluster having to reboot.
+
+The `enable-crun-master.yaml` and `enable-crun-worker.yaml` CR files are in the `out/source-crs/optional-extra-manifest/` folder that you can extract from the `ztp-site-generate` container.
+For more information, see "Customizing extra installation manifests in the {ztp} pipeline".
+====
+
+. Add the `SiteConfig` CR to the `kustomization.yaml` file in the `generators` section, similar to the example shown in `out/argocd/example/siteconfig/kustomization.yaml`.
+
+. Commit the `SiteConfig` CR and associated `kustomization.yaml` changes in your Git repository and push the changes.
++
+The ArgoCD pipeline detects the changes and begins the managed cluster deployment.
+
+.Verification
+
+* Verify that the custom roles and labels are applied after the node is deployed:
++
+[source,terminal]
+----
+$ oc describe node example-node.example.com
+----
+
+.Example output
+[source,terminal]
+----
+Name:   example-node.example.com
+Roles:  control-plane,example-label,master,worker
+Labels: beta.kubernetes.io/arch=amd64
+        beta.kubernetes.io/os=linux
+        custom-label/parameter1=true
+        kubernetes.io/arch=amd64
+        kubernetes.io/hostname=cnfdf03.telco5gran.eng.rdu2.redhat.com
+        kubernetes.io/os=linux
+        node-role.kubernetes.io/control-plane=
+        node-role.kubernetes.io/example-label= <1>
+        node-role.kubernetes.io/master=
+        node-role.kubernetes.io/worker=
+        node.openshift.io/os_id=rhcos
+----
+<1> The custom label is applied to the node.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc#ztp-sno-siteconfig-config-reference_ztp-deploying-far-edge-sites[{sno-caps} SiteConfig CR installation reference]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="ztp-sno-siteconfig-config-reference_{context}"]
+= {sno-caps} SiteConfig CR installation reference
+
+.SiteConfig CR installation options for {sno} clusters
+[cols="1,3", options="header"]
+|====
+|SiteConfig CR field
+|Description
+
+|`spec.cpuPartitioningMode`
+a|Configure workload partitioning by setting the value for `cpuPartitioningMode` to `AllNodes`.
+To complete the configuration, specify the `isolated` and `reserved` CPUs in the `PerformanceProfile` CR.
+
+[NOTE]
+====
+Configuring workload partitioning by using the `cpuPartitioningMode` field in the `SiteConfig` CR is a Tech Preview feature in {product-title} 4.13.
+====
+
+|`metadata.name`
+|Set `name` to `assisted-deployment-pull-secret` and create the `assisted-deployment-pull-secret` CR in the same namespace as the `SiteConfig` CR.
+
+|`clusterImageSetNameRef`
+|Configure the image set available on the hub cluster.
+To see the list of supported versions on your hub cluster, run `oc get clusterimagesets`.
+
+|`installConfigOverrides`
+a|Set the `installConfigOverrides` field to enable or disable optional components prior to cluster installation.
+[IMPORTANT]
+====
+Use the reference configuration as specified in the example `SiteConfig` CR.
+Adding additional components back into the system might require additional reserved CPU capacity.
+====
+
+|`spec.clusters.clusterLabels`
+|Configure cluster labels to correspond to the `bindingRules` field in the `PolicyGenTemplate` CRs that you define.
+For example, `policygentemplates/common-ranGen.yaml` applies to all clusters with `common: true` set, `policygentemplates/group-du-sno-ranGen.yaml` applies to all clusters with `group-du-sno: ""` set.
+
+|`spec.clusters.crTemplates.KlusterletAddonConfig`
+|Optional. Set `KlusterletAddonConfig` to `KlusterletAddonConfigOverride.yaml to override the default `KlusterletAddonConfig` that is created for the cluster.
+
+|`spec.clusters.nodes.hostName`
+|For single-node deployments, define a single host.
+For three-node deployments, define three hosts.
+For standard deployments, define three hosts with `role: master` and two or more hosts defined with `role: worker`.
+
+|`spec.clusters.nodes.nodeLabels`
+|Specify custom roles for your nodes in your managed clusters. These are additional roles are not used by any {product-title} components, only by the user. When you add a custom role, it can be associated with a custom machine config pool that references a specific configuration for that role. Adding custom labels or roles during installation makes the deployment process more effective and prevents the need for additional reboots after the installation is complete.
+
+|`spec.clusters.nodes.bmcAddress`
+|BMC address that you use to access the host. Applies to all cluster types. {ztp} supports iPXE and virtual media booting by using Redfish or IPMI protocols. To use iPXE booting, you must use {rh-rhacm} 2.8 or later. For more information about BMC addressing, see the "Additional resources" section.
+
+|`spec.clusters.nodes.bmcAddress`
+a|BMC address that you use to access the host.
+Applies to all cluster types.
+{ztp} supports iPXE and virtual media booting by using Redfish or IPMI protocols.
+To use iPXE booting, you must use {rh-rhacm} 2.8 or later.
+For more information about BMC addressing, see the "Additional resources" section.
+[NOTE]
+====
+In far edge Telco use cases, only virtual media is supported for use with {ztp}.
+====
+
+|`spec.clusters.nodes.bmcCredentialsName`
+|Configure the `bmh-secret` CR that you separately create with the host BMC credentials.
+When creating the `bmh-secret` CR, use the same namespace as the `SiteConfig` CR that provisions the host.
+
+|`spec.clusters.nodes.bootMode`
+|Set the boot mode for the host to `UEFI`.
+The default value is `UEFI`. Use `UEFISecureBoot` to enable secure boot on the host.
+
+|`spec.clusters.nodes.rootDeviceHints`
+|Specifies the device for deployment. Identifiers that are stable across reboots are recommended, for example, `wwn: <disk_wwn>` or `deviceName: /dev/disk/by-path/<device_path>`. For a detailed list of stable identifiers, see the "About root device hints section".
+
+|`spec.clusters.nodes.diskPartition`
+|Optional. The provided example `diskPartition` is used to configure additional disk partitions.
+
+|`spec.clusters.nodes.ignitionConfigOverride`
+|Optional. Use this field to assign partitions for persistent storage.
+Adjust disk ID and size to the specific hardware.
+
+|`spec.clusters.nodes.cpuset`
+|Configure `cpuset` to match value that you set in the cluster `PerformanceProfile` CR `spec.cpu.reserved` field for workload partitioning.
+
+|`spec.clusters.nodes.nodeNetwork`
+|Configure the network settings for the node.
+
+|`spec.clusters.nodes.nodeNetwork.config.interfaces.ipv6`
+|Configure the IPv6 address for the host.
+For {sno} clusters with static IP addresses, the node-specific API and Ingress IPs should be the same.
+|====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-advanced-install-ztp.adoc#ztp-customizing-the-install-extra-manifests_ztp-advanced-install-ztp[Customizing extra installation manifests in the {ztp} pipeline]
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc#ztp-preparing-the-ztp-git-repository_ztp-preparing-the-hub-cluster[Preparing the {ztp} site configuration repository]
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc#ztp-configuring-hub-cluster-with-argocd_ztp-preparing-the-hub-cluster[Configuring the hub cluster with ArgoCD]
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-advanced-policy-config.adoc#ztp-creating-a-validator-inform-policy_ztp-advanced-policy-config[Signalling ZTP cluster deployment completion with validator inform policies]
+
+* xref:../../scalability_and_performance/ztp_far_edge/ztp-manual-install.adoc#ztp-creating-the-site-secrets_ztp-manual-install[Creating the managed bare-metal host secrets]
+
+* xref:../../installing/installing_bare_metal_ipi/ipi-install-installation-workflow.adoc#bmc-addressing_ipi-install-installation-workflow[BMC addressing]
+
+* xref:../../installing/installing_with_agent_based_installer/preparing-to-install-with-agent-based-installer.adoc#root-device-hints_preparing-to-install-with-agent-based-installer[About root device hints]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-monitoring-deployment-progress_{context}"]
+= Monitoring managed cluster installation progress
+
+The ArgoCD pipeline uses the `SiteConfig` CR to generate the cluster configuration CRs and syncs it with the hub cluster. You can monitor the progress of the synchronization in the ArgoCD dashboard.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+.Procedure
+
+When the synchronization is complete, the installation generally proceeds as follows:
+
+. The Assisted Service Operator installs {product-title} on the cluster. You can monitor the progress of cluster installation from the {rh-rhacm} dashboard or from the command line by running the following commands:
+
+.. Export the cluster name:
++
+[source,terminal]
+----
+$ export CLUSTER=<clusterName>
+----
+
+.. Query the `AgentClusterInstall` CR for the managed cluster:
++
+[source,terminal]
+----
+$ oc get agentclusterinstall -n $CLUSTER $CLUSTER -o jsonpath='{.status.conditions[?(@.type=="Completed")]}' | jq
+----
+
+.. Get the installation events for the cluster:
++
+[source,terminal]
+----
+$ curl -sk $(oc get agentclusterinstall -n $CLUSTER $CLUSTER -o jsonpath='{.status.debugInfo.eventsURL}')  | jq '.[-2,-1]'
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-troubleshooting-ztp-gitops-installation-crs_{context}"]
+= Troubleshooting {ztp} by validating the installation CRs
+
+The ArgoCD pipeline uses the `SiteConfig` and `PolicyGenTemplate` custom resources (CRs) to generate the cluster configuration CRs and {rh-rhacm-first} policies. Use the following steps to troubleshoot issues that might occur during this process.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Check that the installation CRs were created by using the following command:
++
+[source,terminal]
+----
+$ oc get AgentClusterInstall -n <cluster_name>
+----
++
+If no object is returned, use the following steps to troubleshoot the ArgoCD pipeline flow from `SiteConfig` files to the installation CRs.
+
+. Verify that the `ManagedCluster` CR was generated using the `SiteConfig` CR on the hub cluster:
++
+[source,terminal]
+----
+$ oc get managedcluster
+----
+
+. If the `ManagedCluster` is missing, check if the `clusters` application failed to synchronize the files from the Git repository to the hub cluster:
++
+[source,terminal]
+----
+$ oc describe -n openshift-gitops application clusters
+----
+
+.. Check for the `Status.Conditions` field to view the error logs for the managed cluster. For example, setting an invalid value for `extraManifestPath:` in the `SiteConfig` CR raises the following error:
++
+[source,text]
+----
+Status:
+  Conditions:
+    Last Transition Time:  2021-11-26T17:21:39Z
+    Message:               rpc error: code = Unknown desc = `kustomize build /tmp/https___git.com/ran-sites/siteconfigs/ --enable-alpha-plugins` failed exit status 1: 2021/11/26 17:21:40 Error could not create extra-manifest ranSite1.extra-manifest3 stat extra-manifest3: no such file or directory 2021/11/26 17:21:40 Error: could not build the entire SiteConfig defined by /tmp/kust-plugin-config-913473579: stat extra-manifest3: no such file or directory Error: failure in plugin configured via /tmp/kust-plugin-config-913473579; exit status 1: exit status 1
+    Type:  ComparisonError
+----
+
+.. Check the `Status.Sync` field. If there are log errors, the `Status.Sync` field could indicate an `Unknown` error:
++
+[source,text]
+----
+Status:
+  Sync:
+    Compared To:
+      Destination:
+        Namespace:  clusters-sub
+        Server:     https://kubernetes.default.svc
+      Source:
+        Path:             sites-config
+        Repo URL:         https://git.com/ran-sites/siteconfigs/.git
+        Target Revision:  master
+    Status:               Unknown
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-site-cleanup_{context}"]
+= Removing a managed cluster site from the {ztp} pipeline
+
+You can remove a managed site and the associated installation and configuration policy CRs from the {ztp-first} pipeline.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Remove a site and the associated CRs by removing the associated `SiteConfig` and `PolicyGenTemplate` files from the `kustomization.yaml` file.
++
+When you run the {ztp} pipeline again, the generated CRs are removed.
+
+. Optional: If you want to permanently remove a site, you should also remove the `SiteConfig` and site-specific `PolicyGenTemplate` files from the Git repository.
+
+. Optional: If you want to remove a site temporarily, for example when redeploying a site, you can leave the `SiteConfig` and site-specific `PolicyGenTemplate` CRs in the Git repository.
+
+[NOTE]
+====
+After removing the `SiteConfig` file from the Git repository, if the corresponding clusters get stuck in the detach process, check {rh-rhacm-first} on the hub cluster for information about cleaning up the detached cluster.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For information about removing a cluster, see link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html/clusters/cluster_mce_overview#remove-managed-cluster[Removing a cluster from management].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-removing-obsolete-content_{context}"]
+= Removing obsolete content from the {ztp} pipeline
+
+If a change to the `PolicyGenTemplate` configuration results in obsolete policies, for example, if you rename policies, use the following procedure to remove the obsolete policies.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Remove the affected `PolicyGenTemplate` files from the Git repository, commit and push to the remote repository.
+
+. Wait for the changes to synchronize through the application and the affected policies to be removed from the hub cluster.
+
+. Add the updated `PolicyGenTemplate` files back to the Git repository, and then commit and push to the remote repository.
++
+[NOTE]
+====
+Removing {ztp-first} policies from the Git repository, and as a result also removing them from the hub cluster, does not affect the configuration of the managed cluster. The policy and CRs managed by that policy remains in place on the managed cluster.
+====
+
+. Optional: As an alternative, after making changes to `PolicyGenTemplate` CRs that result in obsolete policies, you can remove these policies from the hub cluster manually. You can delete policies from the {rh-rhacm} console using the *Governance* tab or by running the following command:
++
+[source,terminal]
+----
+$ oc delete policy -n <namespace> <policy_name>
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-sites.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="ztp-tearing-down-the-pipeline_{context}"]
+= Tearing down the {ztp} pipeline
+
+You can remove the ArgoCD pipeline and all generated {ztp-first} artifacts.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in to the hub cluster as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Detach all clusters from {rh-rhacm-first} on the hub cluster.
+
+. Delete the `kustomization.yaml` file in the `deployment` directory using the following command:
++
+[source,terminal]
+----
+$ oc delete -k out/argocd/deployment
+----
+
+. Commit and push your changes to the site repository.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/ztp-talo-integration,modules/ztp-ztp-building-blocks,modules/ztp-creating-the-site-secrets,modules/ztp-configuring-kernel-arguments-for-discovery-iso,modules/ztp-deploying-a-site,modules/ztp-sno-siteconfig-config-reference,modules/ztp-monitoring-installation-progress,modules/ztp-troubleshooting-ztp-gitops-installation-crs,modules/ztp-site-cleanup,modules/ztp-removing-obsolete-content,modules/ztp-tearing-down-the-pipeline

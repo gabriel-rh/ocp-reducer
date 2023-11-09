@@ -1,0 +1,755 @@
+:_mod-docs-content-type: ASSEMBLY
+:context: nodes-cluster-resource-configure
+[id="nodes-cluster-resource-configure"]
+= Configuring cluster memory to meet container memory and risk requirements
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+
+toc::[]
+
+
+
+As a cluster administrator, you can help your clusters operate efficiently through
+managing application memory by:
+
+* Determining the memory and risk requirements of a containerized application
+   component and configuring the container memory parameters to suit those
+   requirements.
+
+* Configuring containerized application runtimes (for example, OpenJDK) to adhere
+   optimally to the configured container memory parameters.
+
+* Diagnosing and resolving memory-related error conditions associated with
+   running in a container.
+
+// The following include statements pull in the module files that comprise
+// the assembly. Include any combination of concept, procedure, or reference
+// modules required to cover the user story. You can also include other
+// assemblies.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-resource-configure.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-cluster-resource-configure-about_{context}"]
+= Understanding managing application memory
+
+It is recommended to fully read the overview of how {product-title} manages
+Compute Resources before proceeding.
+
+For each kind of resource (memory, CPU, storage), {product-title} allows
+optional *request* and *limit* values to be placed on each container in a
+pod.
+
+Note the following about memory requests and memory limits:
+
+* *Memory request*
+
+  - The memory request value, if specified, influences the {product-title}
+    scheduler. The scheduler considers the memory request when scheduling a
+    container to a node, then fences off the requested memory on the chosen node
+    for the use of the container.
+
+  - If a node's memory is exhausted, {product-title} prioritizes evicting its
+    containers whose memory usage most exceeds their memory request. In serious
+    cases of memory exhaustion, the node OOM killer may select and kill a
+    process in a container based on a similar metric.
+
+  - The cluster administrator can assign quota or assign default values for the memory request value.
+
+  - The cluster administrator can override the memory request values that a developer specifies, to manage cluster overcommit.
+
+* *Memory limit*
+
+  - The memory limit value, if specified, provides a hard limit on the memory
+    that can be allocated across all the processes in a container.
+
+  - If the memory allocated by all of the processes in a container exceeds the
+    memory limit, the node Out of Memory (OOM) killer will immediately select and kill a
+    process in the container.
+
+  - If both memory request and limit are specified, the memory limit value must
+    be greater than or equal to the memory request.
+
+  - The cluster administrator can assign quota or assign default values for the memory limit value.
+
+  - The minimum memory limit is 12 MB. If a container fails to start due to a `Cannot allocate memory` pod event, the memory limit is too low.
+Either increase or remove the memory limit. Removing the limit allows pods to consume unbounded node resources.
+
+[id="nodes-cluster-resource-configure-about-memory_{context}"]
+== Managing application memory strategy
+
+The steps for sizing application memory on {product-title} are as follows:
+
+. *Determine expected container memory usage*
++
+Determine expected mean and peak container memory usage, empirically if
+necessary (for example, by separate load testing). Remember to consider all the
+processes that may potentially run in parallel in the container: for example,
+does the main application spawn any ancillary scripts?
+
+. *Determine risk appetite*
++
+Determine risk appetite for eviction. If the risk appetite is low, the
+container should request memory according to the expected peak usage plus a
+percentage safety margin. If the risk appetite is higher, it may be more
+appropriate to request memory according to the expected mean usage.
+
+. *Set container memory request*
++
+Set container memory request based on the above. The more accurately the
+request represents the application memory usage, the better. If the request is
+too high, cluster and quota usage will be inefficient. If the request is too
+low, the chances of application eviction increase.
+
+. *Set container memory limit, if required*
++
+Set container memory limit, if required. Setting a limit has the effect of
+immediately killing a container process if the combined memory usage of all
+processes in the container exceeds the limit, and is therefore a mixed blessing.
+On the one hand, it may make unanticipated excess memory usage obvious early
+("fail fast"); on the other hand it also terminates processes abruptly.
++
+Note that some {product-title} clusters may require a limit value to be set;
+some may override the request based on the limit; and some application images
+rely on a limit value being set as this is easier to detect than a request
+value.
++
+If the memory limit is set, it should not be set to less than the expected peak
+container memory usage plus a percentage safety margin.
+
+. *Ensure application is tuned*
++
+Ensure application is tuned with respect to configured request and limit values,
+if appropriate. This step is particularly relevant to applications which pool
+memory, such as the JVM. The rest of this page discusses this.
+
+:leveloffset!:
+
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-resource-configure.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-cluster-resource-configure-jdk_{context}"]
+= Understanding OpenJDK settings for {product-title}
+
+The default OpenJDK settings do not work well with containerized
+environments. As a result, some additional Java memory
+settings must always be provided whenever running the OpenJDK in a container.
+
+The JVM memory layout is complex, version dependent, and describing it in detail
+is beyond the scope of this documentation. However, as a starting point for
+running OpenJDK in a container, at least the following three memory-related
+tasks are key:
+
+. Overriding the JVM maximum heap size.
+
+. Encouraging the JVM to release unused memory to the operating system, if
+   appropriate.
+
+. Ensuring all JVM processes within a container are appropriately configured.
+
+Optimally tuning JVM workloads for running in a container is beyond the scope of
+this documentation, and may involve setting multiple additional JVM options.
+
+[id="nodes-cluster-resource-configure-jdk-heap_{context}"]
+== Understanding how to override the JVM maximum heap size
+
+For many Java workloads, the JVM heap is the largest single consumer of memory.
+Currently, the OpenJDK defaults to allowing up to 1/4 (1/`-XX:MaxRAMFraction`)
+of the compute node's memory to be used for the heap, regardless of whether the
+OpenJDK is running in a container or not. It is therefore *essential* to
+override this behavior, especially if a container memory limit is also set.
+
+There are at least two ways the above can be achieved:
+
+* If the container memory limit is set and the experimental options are
+   supported by the JVM, set `-XX:+UnlockExperimentalVMOptions
+   -XX:+UseCGroupMemoryLimitForHeap`.
++
+[NOTE]
+====
+The `UseCGroupMemoryLimitForHeap` option has been removed in JDK 11. Use `-XX:+UseContainerSupport` instead.
+====
++
+This sets `-XX:MaxRAM` to the container memory limit, and the maximum heap size
+(`-XX:MaxHeapSize` / `-Xmx`) to 1/`-XX:MaxRAMFraction` (1/4 by default).
+
+* Directly override one of `-XX:MaxRAM`, `-XX:MaxHeapSize` or `-Xmx`.
++
+This option involves hard-coding a value, but has the advantage of allowing a
+safety margin to be calculated.
+
+[id="nodes-cluster-resource-configure-jdk-unused_{context}"]
+== Understanding how to encourage the JVM to release unused memory to the operating system
+
+By default, the OpenJDK does not aggressively return unused memory to the
+operating system. This may be appropriate for many containerized Java
+workloads, but notable exceptions include workloads where additional active
+processes co-exist with a JVM within a container, whether those additional
+processes are native, additional JVMs, or a combination of the two.
+
+Java-based agents can use the following JVM arguments to encourage the JVM
+to release unused memory to the operating system:
+
+[source,terminal]
+----
+-XX:+UseParallelGC
+-XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4
+-XX:AdaptiveSizePolicyWeight=90.
+----
+
+These arguments are intended to return heap
+memory to the operating system whenever allocated memory exceeds 110% of in-use
+memory (`-XX:MaxHeapFreeRatio`), spending up to 20% of CPU time in the garbage
+collector (`-XX:GCTimeRatio`). At no time will the application heap allocation
+be less than the initial heap allocation (overridden by `-XX:InitialHeapSize` /
+`-Xms`). Detailed additional information is available
+link:https://developers.redhat.com/blog/2014/07/15/dude-wheres-my-paas-memory-tuning-javas-footprint-in-openshift-part-1/[Tuning Java's footprint in OpenShift (Part 1)],
+link:https://developers.redhat.com/blog/2014/07/22/dude-wheres-my-paas-memory-tuning-javas-footprint-in-openshift-part-2/[Tuning Java's footprint in OpenShift (Part 2)],
+and at
+link:https://developers.redhat.com/blog/2017/04/04/openjdk-and-containers/[OpenJDK
+and Containers].
+
+[id="nodes-cluster-resource-configure-jdk-proc_{context}"]
+== Understanding how to ensure all JVM processes within a container are appropriately configured
+
+In the case that multiple JVMs run in the same container, it is essential to
+ensure that they are all configured appropriately. For many workloads it will
+be necessary to grant each JVM a percentage memory budget, leaving a perhaps
+substantial additional safety margin.
+
+Many Java tools use different environment variables (`JAVA_OPTS`, `GRADLE_OPTS`, and so on) to configure their JVMs and it can be challenging to ensure
+that the right settings are being passed to the right JVM.
+
+The `JAVA_TOOL_OPTIONS` environment variable is always respected by the OpenJDK,
+and values specified in `JAVA_TOOL_OPTIONS` will be overridden by other options
+specified on the JVM command line. By default, to ensure that these options are
+used by default for all JVM workloads run in the Java-based agent image, the {product-title} Jenkins
+Maven agent image sets:
+
+[source,terminal]
+----
+JAVA_TOOL_OPTIONS="-XX:+UnlockExperimentalVMOptions
+-XX:+UseCGroupMemoryLimitForHeap -Dsun.zip.disableMemoryMapping=true"
+----
+
+[NOTE]
+====
+The `UseCGroupMemoryLimitForHeap` option has been removed in JDK 11. Use `-XX:+UseContainerSupport` instead.
+====
+
+This does not guarantee that additional options are not required, but is
+intended to be a helpful starting point.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-resource-configure.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nodes-cluster-resource-configure-request-limit_{context}"]
+= Finding the memory request and limit from within a pod
+
+An application wishing to dynamically discover its memory request and limit from
+within a pod should use the Downward API.
+
+.Procedure
+
+. Configure the pod to add the `MEMORY_REQUEST` and `MEMORY_LIMIT` stanzas:
+
+.. Create a YAML file similar to the following:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test
+spec:
+  containers:
+  - name: test
+    image: fedora:latest
+    command:
+    - sleep
+    - "3600"
+    env:
+    - name: MEMORY_REQUEST <1>
+      valueFrom:
+        resourceFieldRef:
+          containerName: test
+          resource: requests.memory
+    - name: MEMORY_LIMIT <2>
+      valueFrom:
+        resourceFieldRef:
+          containerName: test
+          resource: limits.memory
+    resources:
+      requests:
+        memory: 384Mi
+      limits:
+        memory: 512Mi
+----
+<1> Add this stanza to discover the application memory request value.
+<2> Add this stanza to discover the application memory limit value.
+
+.. Create the pod by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <file-name>.yaml
+----
+
+.Verification
+
+. Access the pod using a remote shell:
++
+[source,terminal]
+----
+$ oc rsh test
+----
+
+. Check that the requested values were applied:
++
+[source,terminal]
+----
+$ env | grep MEMORY | sort
+----
++
+.Example output
+[source,terminal]
+----
+MEMORY_LIMIT=536870912
+MEMORY_REQUEST=402653184
+----
+
+[NOTE]
+====
+The memory limit value can also be read from inside the container by the
+`/sys/fs/cgroup/memory/memory.limit_in_bytes` file.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-resource-configure.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-cluster-resource-configure-oom_{context}"]
+= Understanding OOM kill policy
+
+{product-title} can kill a process in a container if the total memory usage of
+all the processes in the container exceeds the memory limit, or in serious cases
+of node memory exhaustion.
+
+When a process is Out of Memory (OOM) killed, this might result in the container
+exiting immediately. If the container PID 1 process receives the *SIGKILL*, the
+container will exit immediately. Otherwise, the container behavior is
+dependent on the behavior of the other processes.
+
+For example, a container process exited with code 137, indicating it received a SIGKILL signal.
+
+If the container does not exit immediately, an OOM kill is detectable as
+follows:
+
+. Access the pod using a remote shell:
++
+[source,terminal]
+----
+# oc rsh test
+----
+
+. Run the following command to see the current OOM kill count in `/sys/fs/cgroup/memory/memory.oom_control`:
++
+[source,terminal]
+----
+$ grep '^oom_kill ' /sys/fs/cgroup/memory/memory.oom_control
+----
++
+.Example output
+[source,terminal]
+----
+oom_kill 0
+----
+
+. Run the following command to provoke an OOM kill:
++
+[source,terminal]
+----
+$ sed -e '' </dev/zero
+----
++
+.Example output
+[source,terminal]
+----
+Killed
+----
+
+. Run the following command to view the exit status of the `sed` command:
++
+[source,terminal]
+----
+$ echo $?
+----
++
+.Example output
+[source,terminal]
+----
+137
+----
++
+The `137` code indicates the container process exited with code 137, indicating it received a SIGKILL signal.
+
+. Run the following command to see that the OOM kill counter in `/sys/fs/cgroup/memory/memory.oom_control` incremented:
++
+[source,terminal]
+----
+$ grep '^oom_kill ' /sys/fs/cgroup/memory/memory.oom_control
+----
++
+.Example output
+[source,terminal]
+----
+oom_kill 1
+----
++
+If one or more processes in a pod are OOM killed, when the pod subsequently
+exits, whether immediately or not, it will have phase *Failed* and reason
+*OOMKilled*. An OOM-killed pod might be restarted depending on the value of
+`restartPolicy`. If not restarted, controllers such as the
+replication controller will notice the pod's failed status and create a new pod
+to replace the old one.
++
+Use the follwing command to get the pod status:
++
+[source,terminal]
+----
+$ oc get pod test
+----
++
+.Example output
+[source,terminal]
+----
+NAME      READY     STATUS      RESTARTS   AGE
+test      0/1       OOMKilled   0          1m
+----
+
+* If the pod has not restarted, run the following command to view the pod:
++
+[source,terminal]
+----
+$ oc get pod test -o yaml
+----
++
+.Example output
+[source,terminal]
+----
+...
+status:
+  containerStatuses:
+  - name: test
+    ready: false
+    restartCount: 0
+    state:
+      terminated:
+        exitCode: 137
+        reason: OOMKilled
+  phase: Failed
+----
+
+* If restarted, run the following command to view the pod:
++
+[source,terminal]
+----
+$ oc get pod test -o yaml
+----
++
+.Example output
+[source,terminal]
+----
+...
+status:
+  containerStatuses:
+  - name: test
+    ready: true
+    restartCount: 1
+    lastState:
+      terminated:
+        exitCode: 137
+        reason: OOMKilled
+    state:
+      running:
+  phase: Running
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * nodes/nodes-cluster-resource-configure.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nodes-cluster-resource-configure-evicted_{context}"]
+= Understanding pod eviction
+
+{product-title} may evict a pod from its node when the node's memory is
+exhausted. Depending on the extent of memory exhaustion, the eviction may or
+may not be graceful. Graceful eviction implies the main process (PID 1) of each
+container receiving a SIGTERM signal, then some time later a SIGKILL signal if
+the process has not exited already. Non-graceful eviction implies the main
+process of each container immediately receiving a SIGKILL signal.
+
+An evicted pod has phase *Failed* and reason *Evicted*. It will not be
+restarted, regardless of the value of `restartPolicy`. However, controllers
+such as the replication controller will notice the pod's failed status and create
+a new pod to replace the old one.
+
+[source,terminal]
+----
+$ oc get pod test
+----
+
+.Example output
+[source,terminal]
+----
+NAME      READY     STATUS    RESTARTS   AGE
+test      0/1       Evicted   0          1m
+----
+
+[source,terminal]
+----
+$ oc get pod test -o yaml
+----
+
+.Example output
+[source,terminal]
+----
+...
+status:
+  message: 'Pod The node was low on resource: [MemoryPressure].'
+  phase: Failed
+  reason: Evicted
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/nodes-cluster-resource-configure-about,modules/nodes-cluster-resource-configure-jdk,modules/nodes-cluster-resource-configure-request-limit,modules/nodes-cluster-resource-configure-oom,modules/nodes-cluster-resource-configure-evicted

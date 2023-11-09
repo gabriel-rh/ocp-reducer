@@ -1,0 +1,618 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="updating-cluster-rhel-compute"]
+= Updating a cluster that includes RHEL compute machines
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: updating-cluster-rhel-compute
+
+toc::[]
+
+////
+WARNING: This assembly has been moved into a subdirectory for 4.14+. Changes to this assembly for earlier versions should be done in separate PRs based off of their respective version branches. Otherwise, your cherry picks may fail.
+
+To do: Remove this comment once 4.13 docs are EOL.
+////
+
+You can update, or upgrade, an {product-title} cluster. If your cluster contains
+Red Hat Enterprise Linux (RHEL) machines, you must perform more steps to update
+those machines.
+
+== Prerequisites
+
+* Have access to the cluster as a user with `admin` privileges.
+See xref:../../authentication/using-rbac.adoc#using-rbac[Using RBAC to define and apply permissions].
+* Have a recent xref:../../backup_and_restore/control_plane_backup_and_restore/backing-up-etcd.adoc#backup-etcd[etcd backup] in case your update fails and you must restore your cluster to a previous state.
+* Support for {op-system-base}7 workers is removed in {product-title} {product-version}. You must replace {op-system-base}7 workers with {op-system-base}8 or {op-system} workers before updating to {product-title} {product-version}. Red Hat does not support in-place {op-system-base}7 to {op-system-base}8 updates for {op-system-base} workers; those hosts must be replaced with a clean operating system install.
+* If your cluster uses manually maintained credentials, update the cloud provider resources for the new release. For more information, including how to determine if this is a requirement for your cluster, see xref:../../updating/preparing_for_updates/preparing-manual-creds-update.adoc#preparing-manual-creds-update[Preparing to update a cluster with manually maintained credentials].
+* If you run an Operator or you have configured any application with the pod disruption budget, you might experience an interruption during the update process. If `minAvailable` is set to 1 in `PodDisruptionBudget`, the nodes are drained to apply pending machine configs which might block the eviction process. If several nodes are rebooted, all the pods might run on only one node, and the `PodDisruptionBudget` field can prevent the node drain.
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../architecture/architecture-installation.adoc#unmanaged-operators_architecture-installation[Support policy for unmanaged Operators]
+
+
+// Updating a cluster by using the web console
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-rhel-compute.adoc
+// * updating/updating_a_cluster/updating-cluster-web-console.adoc
+
+:rhel:
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-upgrading-web_{context}"]
+= Updating a cluster by using the web console
+
+If updates are available, you can update your cluster from the web console.
+
+You can find information about available {product-title} advisories and updates
+link:https://access.redhat.com/downloads/content/290[in the errata section] of the Customer Portal.
+
+.Prerequisites
+
+* Have access to the web console as a user with `admin` privileges.
+* Pause all `MachineHealthCheck` resources.
+
+.Procedure
+
+. From the web console, click *Administration* -> *Cluster Settings* and review the contents of the *Details* tab.
+
+. For production clusters, ensure that the *Channel* is set to the correct channel for the version that you want to update to, such as `stable-{product-version}`.
++
+[IMPORTANT]
+====
+For production clusters, you must subscribe to a `stable-\*`, `eus-*` or `fast-*` channel.
+====
++
+[NOTE]
+====
+When you are ready to move to the next minor version, choose the channel that corresponds to that minor version.
+The sooner the update channel is declared, the more effectively the cluster can recommend update paths to your target version.
+The cluster might take some time to evaluate all the possible updates that are available and offer the best update recommendations to choose from.
+Update recommendations can change over time, as they are based on what update options are available at the time.
+
+If you cannot see an update path to your target minor version, keep updating your cluster to the latest patch release for your current version until the next minor version is available in the path.
+====
+** If the *Update status* is not *Updates available*, you cannot update your cluster.
+** *Select channel* indicates the cluster version that your cluster is running or is updating to.
+
+. Select a version to update to, and click *Save*.
++
+The Input channel
+*Update status* changes to *Update to <product-version> in progress*, and you can review the progress of the cluster update by watching the progress bars for the Operators and nodes.
++
+[NOTE]
+====
+If you are update your cluster to the next minor version, like version 4.y to 4.(y+1), it is recommended to confirm your nodes are updated before deploying workloads that rely on a new feature. Any pools with worker nodes that are not yet updated are displayed on the *Cluster Settings* page.
+====
+
+. After the update completes and the Cluster Version Operator refreshes the available updates, check if more updates are available in your current channel.
++
+--
+** If updates are available, continue to perform updates in the current channel until you can no longer update.
+** If no updates are available, change the *Channel* to the `stable-\*`, `eus-*` or `fast-*` channel for the next minor version, and update to the version that you want in that channel.
+--
++
+You might need to perform several intermediate updates until you reach the version that you want.
++
+[NOTE]
+====
+When you update a cluster that contains Red Hat Enterprise Linux (RHEL) worker machines, those workers temporarily become unavailable during the update process. You must run the update playbook against each RHEL machine as it enters the `NotReady` state for the cluster to finish updating.
+====
+
+
+:leveloffset!:
+
+[id="updating-cluster-rhel-compute-hooks"]
+== Optional: Adding hooks to perform Ansible tasks on RHEL machines
+
+You can use _hooks_ to run Ansible tasks on the RHEL compute machines during
+the {product-title} update.
+
+// About Ansible hooks for updates
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-rhel-compute.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="rhel-compute-about-hooks_{context}"]
+= About Ansible hooks for updates
+
+When you update {product-title}, you can run custom tasks on your Red Hat
+Enterprise Linux (RHEL) nodes during specific operations by using _hooks_. Hooks
+allow you to provide files that define tasks to run before or after specific
+update tasks. You can use hooks to validate or modify custom
+infrastructure when you update the RHEL compute nodes in you {product-title}
+cluster.
+
+Because when a hook fails, the operation fails, you must design hooks that are
+idempotent, or can run multiple times and provide the same results.
+
+Hooks have the following important limitations:
+- Hooks do not have a defined or versioned interface. They can use internal
+`openshift-ansible` variables, but it is possible that the variables will be
+modified or removed in future {product-title} releases.
+- Hooks do not have error handling, so an error in a hook halts the update
+process. If you get an error, you must address the problem and then start the
+update again.
+
+:leveloffset!:
+
+// Configuring the Ansible inventory file to use hooks
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-rhel-compute.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="rhel-compute-using-hooks_{context}"]
+= Configuring the Ansible inventory file to use hooks
+
+You define the hooks to use when you update the Red Hat Enterprise Linux (RHEL)
+compute machines, which are also known as worker machines, in the `hosts` inventory file under the `all:vars`
+section.
+
+.Prerequisites
+
+* You have access to the machine that you used to add the RHEL compute machines
+cluster. You must have access to the `hosts` Ansible inventory file that defines
+your RHEL machines.
+
+
+.Procedure
+
+. After you design the hook, create a YAML file that defines the Ansible tasks
+for it. This file must be a set of tasks and cannot be a playbook, as shown in
+the following example:
++
+[source.yaml]
+----
+---
+# Trivial example forcing an operator to acknowledge the start of an upgrade
+# file=/home/user/openshift-ansible/hooks/pre_compute.yml
+
+- name: note the start of a compute machine update
+  debug:
+      msg: "Compute machine upgrade of {{ inventory_hostname }} is about to start"
+
+- name: require the user agree to start an upgrade
+  pause:
+      prompt: "Press Enter to start the compute machine update"
+----
+
+. Modify the `hosts` Ansible inventory file to specify the hook files. The
+hook files are specified as parameter values in the `[all:vars]` section,
+as shown:
++
+.Example hook definitions in an inventory file
+[source]
+----
+[all:vars]
+openshift_node_pre_upgrade_hook=/home/user/openshift-ansible/hooks/pre_node.yml
+openshift_node_post_upgrade_hook=/home/user/openshift-ansible/hooks/post_node.yml
+----
++
+To avoid ambiguity in the paths to the hook, use absolute paths instead of a
+relative paths in their definitions.
+
+:leveloffset!:
+
+// Available hooks for RHEL compute machines
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-rhel-compute.adoc
+
+[id="rhel-compute-available-hooks_{context}"]
+= Available hooks for RHEL compute machines
+
+You can use the following hooks when you update the Red Hat Enterprise Linux (RHEL)
+compute machines in your {product-title} cluster.
+
+
+[cols="1,1",options="header"]
+|===
+|Hook name |Description
+
+
+|`openshift_node_pre_cordon_hook`
+a|- Runs *before* each node is cordoned.
+- This hook runs against *each node* in serial.
+- If a task must run against a different host, the task must use
+link:https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html[`delegate_to` or `local_action`].
+
+|`openshift_node_pre_upgrade_hook`
+a|- Runs *after* each node is cordoned but *before* it is updated.
+- This hook runs against *each node* in serial.
+- If a task must run against a different host, the task must use
+link:https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html[`delegate_to` or `local_action`].
+
+|`openshift_node_pre_uncordon_hook`
+a|- Runs *after* each node is updated but *before* it is uncordoned.
+- This hook runs against *each node* in serial.
+- If a task must run against a different host, they task must use
+link:https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html[`delegate_to` or `local_action`].
+
+|`openshift_node_post_upgrade_hook`
+a|- Runs *after* each node uncordoned. It is the *last* node update action.
+- This hook runs against *each node* in serial.
+- If a task must run against a different host, the task must use
+link:https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html[`delegate_to` or `local_action`].
+
+|===
+
+
+:leveloffset!:
+
+// Updating {op-system-base} compute machines in your cluster
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updating/updating_a_cluster/updating-cluster-rhel-compute.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="rhel-compute-updating-minor_{context}"]
+= Updating {op-system-base} compute machines in your cluster
+
+After you update your cluster, you must update the {op-system-base-full} compute machines in your cluster.
+
+[IMPORTANT]
+====
+{op-system-base-full} versions 8.6, 8.7 and 8.8 are supported for {op-system-base} compute machines.
+====
+
+You can also update your compute machines to another minor version of {product-title} if you are using {op-system-base} as the operating system. You do not need to exclude any RPM packages from {op-system-base} when performing a minor version update.
+
+[IMPORTANT]
+====
+You cannot update {op-system-base} 7 compute machines to {op-system-base} 8. You must deploy new {op-system-base} 8 hosts, and the old {op-system-base} 7 hosts should be removed.
+====
+
+.Prerequisites
+
+* You updated your cluster.
++
+[IMPORTANT]
+====
+Because the {op-system-base} machines require assets that are generated by the cluster to complete the update process, you must update the cluster before you update the {op-system-base} worker machines in it.
+====
+
+* You have access to the local machine that you used to add the {op-system-base} compute machines to your cluster. You must have access to the `hosts` Ansible inventory file that defines your {op-system-base} machines and the `upgrade` playbook.
+
+* For updates to a minor version, the RPM repository is using the same version of {product-title} that is running on your cluster.
+
+.Procedure
+
+. Stop and disable firewalld on the host:
++
+[source,terminal]
+----
+# systemctl disable --now firewalld.service
+----
++
+[NOTE]
+====
+By default, the base OS RHEL with "Minimal" installation option enables firewalld service.  Having the firewalld service enabled on your host prevents you from accessing {product-title} logs on the worker. Do not enable firewalld later if you wish to continue accessing {product-title} logs on the worker.
+====
+
+. Enable the repositories that are required for {product-title} {product-version}:
+.. On the machine that you run the Ansible playbooks, update the required repositories:
++
+[source,terminal,subs="attributes+"]
+----
+# subscription-manager repos --disable=rhocp-4.13-for-rhel-8-x86_64-rpms \
+                             --enable=rhocp-{product-version}-for-rhel-8-x86_64-rpms
+----
++
+[IMPORTANT]
+====
+As of {product-title} 4.11, the Ansible playbooks are provided only for {op-system-base} 8.  If a {op-system-base} 7 system was used as a host for the {product-title} 4.10 Ansible playbooks, you must either update the Ansible host to {op-system-base} 8, or create a new Ansible host on a {op-system-base} 8 system and copy over the inventories from the old Ansible host.
+====
+
+.. On the machine that you run the Ansible playbooks, update the Ansible package:
++
+[source,terminal]
+----
+# yum swap ansible ansible-core
+----
+
+.. On the machine that you run the Ansible playbooks, update the required packages, including `openshift-ansible`:
++
+[source,terminal]
+----
+# yum update openshift-ansible openshift-clients
+----
+
+.. On each {op-system-base} compute node, update the required repositories:
++
+[source,terminal,subs="attributes+"]
+----
+# subscription-manager repos --disable=rhocp-4.13-for-rhel-8-x86_64-rpms \
+                             --enable=rhocp-{product-version}-for-rhel-8-x86_64-rpms
+----
+
+. Update a {op-system-base} worker machine:
+
+.. Review your Ansible inventory file at `/<path>/inventory/hosts` and update its contents so that the {op-system-base} 8 machines are listed in the `[workers]` section, as shown in the following example:
++
+----
+[all:vars]
+ansible_user=root
+#ansible_become=True
+
+openshift_kubeconfig_path="~/.kube/config"
+
+[workers]
+mycluster-rhel8-0.example.com
+mycluster-rhel8-1.example.com
+mycluster-rhel8-2.example.com
+mycluster-rhel8-3.example.com
+----
+
+.. Change to the `openshift-ansible` directory:
++
+[source,terminal]
+----
+$ cd /usr/share/ansible/openshift-ansible
+----
+
+.. Run the `upgrade` playbook:
++
+[source,terminal]
+----
+$ ansible-playbook -i /<path>/inventory/hosts playbooks/upgrade.yml <1>
+----
+<1> For `<path>`, specify the path to the Ansible inventory file that you created.
++
+[NOTE]
+====
+The `upgrade` playbook only updates the {product-title} packages. It does not update the operating system packages.
+====
+
+. After you update all of the workers, confirm that all of your cluster nodes have updated to the new version:
++
+[source,terminal]
+----
+# oc get node
+----
++
+.Example output
+[source,terminal]
+----
+NAME                        STATUS                        ROLES    AGE    VERSION
+mycluster-control-plane-0   Ready                         master   145m   v1.27.3
+mycluster-control-plane-1   Ready                         master   145m   v1.27.3
+mycluster-control-plane-2   Ready                         master   145m   v1.27.3
+mycluster-rhel8-0           Ready                         worker   98m    v1.27.3
+mycluster-rhel8-1           Ready                         worker   98m    v1.27.3
+mycluster-rhel8-2           Ready                         worker   98m    v1.27.3
+mycluster-rhel8-3           Ready                         worker   98m    v1.27.3
+----
+
+. Optional: Update the operating system packages that were not updated by the `upgrade` playbook. To update packages that are not on {product-version}, use the following command:
++
+[source,terminal]
+----
+# yum update
+----
++
+[NOTE]
+====
+You do not need to exclude RPM packages if you are using the same RPM repository that you used when you installed {product-version}.
+====
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/update-upgrading-web,modules/rhel-compute-about-hooks,modules/rhel-compute-using-hooks,modules/rhel-compute-available-hooks,modules/rhel-compute-updating

@@ -1,0 +1,706 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ovn-kubernetes-troubleshooting-sources"]
+= Troubleshooting OVN-Kubernetes
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: ovn-kubernetes-sources-of-troubleshooting-information
+
+toc::[]
+
+OVN-Kubernetes has many sources of built-in health checks and logs.
+
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/ovn-kubernetes-troubleshooting-sources.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ovn-kubernetes-readiness-probes_{context}"]
+= Monitoring OVN-Kubernetes health by using readiness probes
+
+The `ovnkube-control-plane` and `ovnkube-node` pods have containers configured with readiness probes.
+
+.Prerequisites
+
+* Access to the OpenShift CLI (`oc`).
+* You have access to the cluster with `cluster-admin` privileges.
+* You have installed `jq`.
+
+.Procedure
+
+. Review the details of the `ovnkube-node` readiness probe by running the following command:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-ovn-kubernetes -l app=ovnkube-node \
+-o json | jq '.items[0].spec.containers[] | .name,.readinessProbe'
+----
++
+The readiness probe for the northbound and southbound database containers in the `ovnkube-node` pod checks for the health of the databases and the `ovnkube-controller` container.
+
++
+The `ovnkube-node` container in the `ovnkube-node` pod has a readiness probe to verify the presence of the OVN-Kubernetes CNI configuration file, the absence of which would indicate that the pod is not running or is not ready to accept requests to configure pods.
+
+. Show all events including the probe failures, for the namespace by using the following command:
++
+[source,terminal]
+----
+$ oc get events -n openshift-ovn-kubernetes
+----
+
+. Show the events for just a specific pod:
++
+[source,terminal]
+----
+$ oc describe pod ovnkube-node-9lqfk -n openshift-ovn-kubernetes
+----
+
+. Show the messages and statuses from the cluster network operator:
++
+[source,terminal]
+----
+$ oc get co/network -o json | jq '.status.conditions[]'
+----
+
+. Show the `ready` status of each container in `ovnkube-node` pods by running the following script:
++
+[source,terminal]
+----
+$ for p in $(oc get pods --selector app=ovnkube-node -n openshift-ovn-kubernetes \
+-o jsonpath='{range.items[*]}{" "}{.metadata.name}'); do echo === $p ===;  \
+oc get pods -n openshift-ovn-kubernetes $p -o json | jq '.status.containerStatuses[] | .name, .ready'; \
+done
+----
++
+[NOTE]
+====
+The expectation is all container statuses are reporting as `true`. Failure of a readiness probe sets the status to `false`.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../applications/application-health.adoc#application-health[Monitoring application health by using health checks]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/ovn-kubernetes-troubleshooting-sources.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ovn-kubernetes-alerts-console_{context}"]
+= Viewing OVN-Kubernetes alerts in the console
+
+The Alerting UI provides detailed information about alerts and their governing alerting rules and silences.
+
+.Prerequisites
+
+* You have access to the cluster as a developer or as a user with view permissions for the project that you are viewing metrics for.
+
+.Procedure (UI)
+
+. In the *Administrator* perspective, select *Observe* -> *Alerting*. The three main pages in the Alerting UI in this perspective are the *Alerts*, *Silences*, and *Alerting Rules* pages.
+
+. View the rules for OVN-Kubernetes alerts by selecting *Observe* -> *Alerting* -> *Alerting Rules*.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/ovn-kubernetes-troubleshooting-sources.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ovn-kubernetes-alerts-cli_{context}"]
+= Viewing OVN-Kubernetes alerts in the CLI
+
+You can get information about alerts and their governing alerting rules and silences from the command line.
+
+.Prerequisites
+
+* Access to the cluster as a user with the `cluster-admin` role.
+* The OpenShift CLI (`oc`) installed.
+* You have installed `jq`.
+
+.Procedure
+
+. View active or firing alerts by running the following commands.
+
+.. Set the alert manager route environment variable by running the following command:
++
+[source,terminal]
+----
+$ ALERT_MANAGER=$(oc get route alertmanager-main -n openshift-monitoring \
+-o jsonpath='{@.spec.host}')
+----
+
+.. Issue a `curl` request to the alert manager route API by running the following command, replacing `$ALERT_MANAGER` with the URL of your `Alertmanager` instance:
++
+[source,terminal]
+----
+$ curl -s -k -H "Authorization: Bearer $(oc create token prometheus-k8s -n openshift-monitoring)" https://$ALERT_MANAGER/api/v1/alerts | jq '.data[] | "\(.labels.severity) \(.labels.alertname) \(.labels.pod) \(.labels.container) \(.labels.endpoint) \(.labels.instance)"'
+----
+
+. View alerting rules by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-monitoring exec -c prometheus prometheus-k8s-0 -- curl -s 'http://localhost:9090/api/v1/rules' | jq '.data.groups[].rules[] | select(((.name|contains("ovn")) or (.name|contains("OVN")) or (.name|contains("Ovn")) or (.name|contains("North")) or (.name|contains("South"))) and .type=="alerting")'
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/ovn-kubernetes-troubleshooting-sources.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ovn-kubernetes-logs-cli_{context}"]
+= Viewing the OVN-Kubernetes logs using the CLI
+
+You can view the logs for each of the pods in the `ovnkube-master` and `ovnkube-node` pods using the OpenShift CLI (`oc`).
+
+.Prerequisites
+
+* Access to the cluster as a user with the `cluster-admin` role.
+* Access to the OpenShift CLI (`oc`).
+* You have installed `jq`.
+
+.Procedure
+
+. View the log for a specific pod:
++
+[source,terminal]
+----
+$ oc logs -f <pod_name> -c <container_name> -n <namespace>
+----
++
+--
+where:
+
+`-f`:: Optional: Specifies that the output follows what is being written into the logs.
+`<pod_name>`:: Specifies the name of the pod.
+`<container_name>`:: Optional: Specifies the name of a container. When a pod has more than one container, you must specify the container name.
+`<namespace>`:: Specify the namespace the pod is running in.
+--
++
+For example:
++
+[source,terminal]
+----
+$ oc logs ovnkube-node-5dx44 -n openshift-ovn-kubernetes
+----
++
+[source,terminal]
+----
+$ oc logs -f ovnkube-node-5dx44 -c ovnkube-controller -n openshift-ovn-kubernetes
+----
++
+The contents of log files are printed out.
+
+. Examine the most recent entries in all the containers in the `ovnkube-node` pods:
++
+[source,terminal]
+----
+$ for p in $(oc get pods --selector app=ovnkube-node -n openshift-ovn-kubernetes \
+-o jsonpath='{range.items[*]}{" "}{.metadata.name}'); \
+do echo === $p ===; for container in $(oc get pods -n openshift-ovn-kubernetes $p \
+-o json | jq -r '.status.containerStatuses[] | .name');do echo ---$container---; \
+oc logs -c $container $p -n openshift-ovn-kubernetes --tail=5; done; done
+----
+
+. View the last 5 lines of every log in every container in an `ovnkube-node` pod using the following command:
++
+[source,terminal]
+----
+$ oc logs -l app=ovnkube-node -n openshift-ovn-kubernetes --all-containers --tail 5
+----
+
+
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/ovn-kubernetes-troubleshooting-sources.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ovn-kubernetes-logs-console_{context}"]
+= Viewing the OVN-Kubernetes logs using the web console
+
+You can view the logs for each of the pods in the `ovnkube-master` and `ovnkube-node` pods in the web console.
+
+.Prerequisites
+
+* Access to the OpenShift CLI (`oc`).
+
+.Procedure
+
+. In the {product-title} console, navigate to *Workloads* -> *Pods* or navigate to the pod through the resource you want to investigate.
+
+. Select the `openshift-ovn-kubernetes` project from the drop-down menu.
+
+. Click the name of the pod you want to investigate.
+
+. Click *Logs*. By default for the `ovnkube-master` the logs associated with the `northd` container are displayed.
+
+. Use the down-down menu to select logs for each container in turn.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/ovn-kubernetes-troubleshooting-sources.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ovn-kubernetes-change-log-levels_{context}"]
+= Changing the OVN-Kubernetes log levels
+
+The default log level for OVN-Kubernetes is 4. To debug OVN-Kubernetes, set the log level to 5.
+Follow this procedure to increase the log level of the OVN-Kubernetes to help you debug an issue.
+
+.Prerequisites
+
+* You have access to the cluster with `cluster-admin` privileges.
+* You have access to the OpenShift Container Platform web console.
+
+.Procedure
+
+. Run the following command to get detailed information for all pods in the OVN-Kubernetes project:
++
+[source,terminal]
+----
+$ oc get po -o wide -n openshift-ovn-kubernetes
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                     READY   STATUS    RESTARTS       AGE    IP           NODE                                       NOMINATED NODE   READINESS GATES
+ovnkube-control-plane-65497d4548-9ptdr   2/2     Running   2 (128m ago)   147m   10.0.0.3     ci-ln-3njdr9b-72292-5nwkp-master-0         <none>           <none>
+ovnkube-control-plane-65497d4548-j6zfk   2/2     Running   0              147m   10.0.0.5     ci-ln-3njdr9b-72292-5nwkp-master-2         <none>           <none>
+ovnkube-control-plane-65497d4548-k7xqt   2/2     Running   0              147m   10.0.0.4     ci-ln-3njdr9b-72292-5nwkp-master-1         <none>           <none>
+ovnkube-node-5dx44                       8/8     Running   0              146m   10.0.0.3     ci-ln-3njdr9b-72292-5nwkp-master-0         <none>           <none>
+ovnkube-node-dpfn4                       8/8     Running   0              146m   10.0.0.4     ci-ln-3njdr9b-72292-5nwkp-master-1         <none>           <none>
+ovnkube-node-kwc9l                       8/8     Running   0              134m   10.0.128.2   ci-ln-3njdr9b-72292-5nwkp-worker-a-2fjcj   <none>           <none>
+ovnkube-node-mcrhl                       8/8     Running   0              134m   10.0.128.4   ci-ln-3njdr9b-72292-5nwkp-worker-c-v9x5v   <none>           <none>
+ovnkube-node-nsct4                       8/8     Running   0              146m   10.0.0.5     ci-ln-3njdr9b-72292-5nwkp-master-2         <none>           <none>
+ovnkube-node-zrj9f                       8/8     Running   0              134m   10.0.128.3   ci-ln-3njdr9b-72292-5nwkp-worker-b-v78h7   <none>           <none>
+----
+
+. Create a `ConfigMap` file similar to the following example and use a filename such as `env-overrides.yaml`:
++
+[source,yaml]
+.Example `ConfigMap` file
+----
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: env-overrides
+  namespace: openshift-ovn-kubernetes
+data:
+  ci-ln-3njdr9b-72292-5nwkp-master-0: | <1>
+    # This sets the log level for the ovn-kubernetes node process:
+    OVN_KUBE_LOG_LEVEL=5
+    # You might also/instead want to enable debug logging for ovn-controller:
+    OVN_LOG_LEVEL=dbg
+  ci-ln-3njdr9b-72292-5nwkp-master-2: |
+    # This sets the log level for the ovn-kubernetes node process:
+    OVN_KUBE_LOG_LEVEL=5
+    # You might also/instead want to enable debug logging for ovn-controller:
+    OVN_LOG_LEVEL=dbg
+  _master: | <2>
+    # This sets the log level for the ovn-kubernetes master process as well as the ovn-dbchecker:
+    OVN_KUBE_LOG_LEVEL=5
+    # You might also/instead want to enable debug logging for northd, nbdb and sbdb on all masters:
+    OVN_LOG_LEVEL=dbg
+----
+<1> Specify the name of the node you want to set the debug log level on.
+<2> Specify `_master` to set the log levels of `ovnkube-master` components.
+
+. Apply the `ConfigMap` file by using the following command:
++
+[source,terminal]
+----
+$ oc create configmap env-overrides.yaml -n openshift-ovn-kubernetes
+----
++
+.Example output
+[source,terminal]
+----
+configmap/env-overrides.yaml created
+----
+
+. Restart the `ovnkube` pods to apply the new log level by using the following commands:
++
+[source,terminal]
+----
+$ oc delete pod -n openshift-ovn-kubernetes \
+--field-selector spec.nodeName=ci-ln-3njdr9b-72292-5nwkp-master-0 -l app=ovnkube-node
+----
++
+[source,terminal]
+----
+$ oc delete pod -n openshift-ovn-kubernetes \
+--field-selector spec.nodeName=ci-ln-3njdr9b-72292-5nwkp-master-2 -l app=ovnkube-node
+----
++
+[source,terminal]
+----
+$ oc delete pod -n openshift-ovn-kubernetes -l app=ovnkube-node
+----
+
+. To verify that the `ConfigMap`file has been applied to all nodes for a specific pod, run the following command:
++
+[source,terminal]
+----
+$ oc logs -n openshift-ovn-kubernetes --all-containers --prefix ovnkube-node-<xxxx> | grep -E -m 10 '(Logging config:|vconsole|DBG)'
+----
++
+where:
+
+`<XXXX>`:: Specifies the random sequence of letters for a pod from the previous step.
++
+.Example output
+[source,terminal]
+----
+[pod/ovnkube-node-2cpjc/sbdb] + exec /usr/share/ovn/scripts/ovn-ctl --no-monitor '--ovn-sb-log=-vconsole:info -vfile:off -vPATTERN:console:%D{%Y-%m-%dT%H:%M:%S.###Z}|%05N|%c%T|%p|%m' run_sb_ovsdb
+[pod/ovnkube-node-2cpjc/ovnkube-controller] I1012 14:39:59.984506   35767 config.go:2247] Logging config: {File: CNIFile:/var/log/ovn-kubernetes/ovn-k8s-cni-overlay.log LibovsdbFile:/var/log/ovnkube/libovsdb.log Level:5 LogFileMaxSize:100 LogFileMaxBackups:5 LogFileMaxAge:0 ACLLoggingRateLimit:20}
+[pod/ovnkube-node-2cpjc/northd] + exec ovn-northd --no-chdir -vconsole:info -vfile:off '-vPATTERN:console:%D{%Y-%m-%dT%H:%M:%S.###Z}|%05N|%c%T|%p|%m' --pidfile /var/run/ovn/ovn-northd.pid --n-threads=1
+[pod/ovnkube-node-2cpjc/nbdb] + exec /usr/share/ovn/scripts/ovn-ctl --no-monitor '--ovn-nb-log=-vconsole:info -vfile:off -vPATTERN:console:%D{%Y-%m-%dT%H:%M:%S.###Z}|%05N|%c%T|%p|%m' run_nb_ovsdb
+[pod/ovnkube-node-2cpjc/ovn-controller] 2023-10-12T14:39:54.552Z|00002|hmap|DBG|lib/shash.c:114: 1 bucket with 6+ nodes, including 1 bucket with 6 nodes (32 nodes total across 32 buckets)
+[pod/ovnkube-node-2cpjc/ovn-controller] 2023-10-12T14:39:54.553Z|00003|hmap|DBG|lib/shash.c:114: 1 bucket with 6+ nodes, including 1 bucket with 6 nodes (64 nodes total across 64 buckets)
+[pod/ovnkube-node-2cpjc/ovn-controller] 2023-10-12T14:39:54.553Z|00004|hmap|DBG|lib/shash.c:114: 1 bucket with 6+ nodes, including 1 bucket with 7 nodes (32 nodes total across 32 buckets)
+[pod/ovnkube-node-2cpjc/ovn-controller] 2023-10-12T14:39:54.553Z|00005|reconnect|DBG|unix:/var/run/openvswitch/db.sock: entering BACKOFF
+[pod/ovnkube-node-2cpjc/ovn-controller] 2023-10-12T14:39:54.553Z|00007|reconnect|DBG|unix:/var/run/openvswitch/db.sock: entering CONNECTING
+[pod/ovnkube-node-2cpjc/ovn-controller] 2023-10-12T14:39:54.553Z|00008|ovsdb_cs|DBG|unix:/var/run/openvswitch/db.sock: SERVER_SCHEMA_REQUESTED -> SERVER_SCHEMA_REQUESTED at lib/ovsdb-cs.c:423
+----
+
+. Optional: Check the `ConfigMap` file has been applied by running the following command:
++
+[source,terminal]
+----
+for f in $(oc -n openshift-ovn-kubernetes get po -l 'app=ovnkube-node' --no-headers -o custom-columns=N:.metadata.name) ; do echo "---- $f ----" ; oc -n openshift-ovn-kubernetes exec -c ovnkube-controller $f --  pgrep -a -f  init-ovnkube-controller | grep -P -o '^.*loglevel\s+\d' ; done
+----
++
+.Example output
+[source,terminal]
+----
+---- ovnkube-node-2dt57 ----
+60981 /usr/bin/ovnkube --init-ovnkube-controller xpst8-worker-c-vmh5n.c.openshift-qe.internal --init-node xpst8-worker-c-vmh5n.c.openshift-qe.internal --config-file=/run/ovnkube-config/ovnkube.conf --ovn-empty-lb-events --loglevel 4
+---- ovnkube-node-4zznh ----
+178034 /usr/bin/ovnkube --init-ovnkube-controller xpst8-master-2.c.openshift-qe.internal --init-node xpst8-master-2.c.openshift-qe.internal --config-file=/run/ovnkube-config/ovnkube.conf --ovn-empty-lb-events --loglevel 4
+---- ovnkube-node-548sx ----
+77499 /usr/bin/ovnkube --init-ovnkube-controller xpst8-worker-a-fjtnb.c.openshift-qe.internal --init-node xpst8-worker-a-fjtnb.c.openshift-qe.internal --config-file=/run/ovnkube-config/ovnkube.conf --ovn-empty-lb-events --loglevel 4
+---- ovnkube-node-6btrf ----
+73781 /usr/bin/ovnkube --init-ovnkube-controller xpst8-worker-b-p8rww.c.openshift-qe.internal --init-node xpst8-worker-b-p8rww.c.openshift-qe.internal --config-file=/run/ovnkube-config/ovnkube.conf --ovn-empty-lb-events --loglevel 4
+---- ovnkube-node-fkc9r ----
+130707 /usr/bin/ovnkube --init-ovnkube-controller xpst8-master-0.c.openshift-qe.internal --init-node xpst8-master-0.c.openshift-qe.internal --config-file=/run/ovnkube-config/ovnkube.conf --ovn-empty-lb-events --loglevel 5
+---- ovnkube-node-tk9l4 ----
+181328 /usr/bin/ovnkube --init-ovnkube-controller xpst8-master-1.c.openshift-qe.internal --init-node xpst8-master-1.c.openshift-qe.internal --config-file=/run/ovnkube-config/ovnkube.conf --ovn-empty-lb-events --loglevel 4
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/ovn-kubernetes-troubleshooting-sources.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ovn-kubernetes-pod-connectivity-checks_{context}"]
+= Checking the OVN-Kubernetes pod network connectivity
+
+The connectivity check controller, in {product-title} 4.10 and later, orchestrates connection verification checks in your cluster. These include Kubernetes API, OpenShift API and individual nodes. The results for the connection tests are stored in `PodNetworkConnectivity` objects in the `openshift-network-diagnostics` namespace. Connection tests are performed every minute in parallel.
+
+.Prerequisites
+
+* Access to the OpenShift CLI (`oc`).
+* Access to the cluster as a user with the `cluster-admin` role.
+* You have installed `jq`.
+
+.Procedure
+
+. To list the current `PodNetworkConnectivityCheck` objects, enter the following command:
++
+[source,terminal]
+----
+$ oc get podnetworkconnectivitychecks -n openshift-network-diagnostics
+----
+
+. View the most recent success for each connection object by using the following command:
++
+[source,terminal]
+----
+$ oc get podnetworkconnectivitychecks -n openshift-network-diagnostics \
+-o json | jq '.items[]| .spec.targetEndpoint,.status.successes[0]'
+----
+
+. View the most recent failures for each connection object by using the following command:
++
+[source,terminal]
+----
+$ oc get podnetworkconnectivitychecks -n openshift-network-diagnostics \
+-o json | jq '.items[]| .spec.targetEndpoint,.status.failures[0]'
+----
+
+. View the most recent outages for each connection object by using the following command:
++
+[source,terminal]
+----
+$ oc get podnetworkconnectivitychecks -n openshift-network-diagnostics \
+-o json | jq '.items[]| .spec.targetEndpoint,.status.outages[0]'
+----
++
+The connectivity check controller also logs metrics from these checks into Prometheus.
+
+. View all the metrics by running the following command:
++
+[source,terminal]
+----
+$ oc exec prometheus-k8s-0 -n openshift-monitoring -- \
+promtool query instant  http://localhost:9090 \
+'{component="openshift-network-diagnostics"}'
+----
+
+. View the latency between the source pod and the openshift api service for the last 5 minutes:
++
+[source,terminal]
+----
+$ oc exec prometheus-k8s-0 -n openshift-monitoring -- \
+promtool query instant  http://localhost:9090 \
+'{component="openshift-network-diagnostics"}'
+----
+
+
+
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_ovn-kubernetes-sources-of-troubleshooting-information"]
+== Additional resources
+
+* xref:../../networking/verifying-connectivity-endpoint.adoc#nw-pod-network-connectivity-implementation_verifying-connectivity-endpoint[Implementation of connection health checks]
+* xref:../../networking/verifying-connectivity-endpoint.adoc#nw-pod-network-connectivity-verify_verifying-connectivity-endpoint[Verifying network connectivity for an endpoint]
+
+//# includes=_attributes/common-attributes,modules/nw-ovn-kubernetes-readiness-probes,modules/nw-ovn-kubernetes-alerts-console,modules/nw-ovn-kubernetes-alerts-cli,modules/nw-ovn-kubernetes-logs-cli,modules/nw-ovn-kubernetes-logs-console,modules/nw-ovn-kubernetes-change-log-levels,modules/nw-ovn-kubernetes-pod-connectivity-checks

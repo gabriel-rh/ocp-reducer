@@ -1,0 +1,590 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="configuring-secondary-external-gateway"]
+= Configure an external gateway through a secondary network interface
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: configuring-secondary-external-gateway
+
+toc::[]
+
+As a cluster administrator, you can configure an external gateway on a secondary network.
+
+This feature offers the following benefits:
+
+- Granular control over egress traffic on a per-namespace basis
+- Flexible configuration of static and dynamic external gateway IP addresses
+- Support for both IPv4 and IPv6 address families
+
+[id="{context}_prerequisites"]
+== Prerequisites
+
+* Your cluster uses the OVN-Kubernetes network plugin.
+* Your infrastructure is configured to route traffic from the secondary external gateway.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/configuring-secondary-external-gateway.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-secondary-ext-gw-about_{context}"]
+= How {product-title} determines the external gateway IP address
+
+You configure a secondary external gateway with the `AdminPolicyBasedExternalRoute` custom resource from the the `k8s.ovn.org` API group. The custom resource (CR) supports static and dynamic approaches to specifying an external gateway's IP address. Each namespace that a `AdminPolicyBasedExternalRoute` CR targets cannot be selected by any other `AdminPolicyBasedExternalRoute` CR. A namespace cannot have concurrent secondary external gateways.
+
+Static assignment:: You specify an IP address directly.
+Dynamic assignment:: You specify an IP address indirectly, with namespace and pod selectors, and an optional network attachment definition.
++
+--
+- If the name of a network attachment definition is provided, the external gateway IP address of the network attachment is used.
+- If the name of a network attachment definition is not provided, the external gateway IP address for the pod itself is used. However, this approach works only if the pod is configured with `hostNetwork` set to `true`.
+--
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/configuring-secondary-external-gateway.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-secondary-ext-gw-object_{context}"]
+= AdminPolicyBasedExternalRoute object configuration
+
+You can define an `AdminPolicyBasedExternalRoute` object, which is cluster scoped, with the following properties. A namespace can be selected by only one `AdminPolicyBasedExternalRoute` CR at a time.
+
+.`AdminPolicyBasedExternalRoute` object
+[cols=".^3,.^2,.^5a",options="header"]
+
+|====
+|Field|Type|Description
+
+|`metadata.name`
+|`string`
+|
+Specifies the name of the  `AdminPolicyBasedExternalRoute` object.
+
+|`spec.from`
+|`string`
+|
+Specifies a namespace selector that the routing polices apply to. Only `namespaceSelector` is supported for external traffic. For example:
+
+[source,yaml]
+----
+from:
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: novxlan-externalgw-ecmp-4059
+----
+
+A namespace can be targeted by only one `AdminPolicyBasedExternalRoute` CR. If a namespace is selected by more than one `AdminPolicyBasedExternalRoute` CR, a `failed` error status occurs on the second and subsequent CRs targeting the same namespace.
+
+|`spec.nextHops`
+|`object`
+|
+Specifies the destinations where the packets are forwarded to. Must be either or both of `static` and `dynamic`. You must have at least one next hop defined.
+
+|====
+
+
+.`nextHops` object
+[cols=".^3,.^2,.^5a",options="header"]
+|====
+|Field|Type|Description
+
+|`static`
+|`array`
+| Specifies an array of static IP addresses.
+
+|`dynamic`
+|`array`
+| Specifies an array of pod selectors corresponding to pods configured with a network attachment definition to use as the external gateway target.
+
+|====
+
+
+.`nextHops.static` object
+[cols=".^3,.^2,.^5a",options="header"]
+|====
+|Field|Type|Description
+
+|`ip`
+|`string`
+| Specifies either an IPv4 or IPv6 address of the next destination hop.
+
+|`bfdEnabled`
+|`boolean`
+|Optional: Specifies whether Bi-Directional Forwarding Detection (BFD) is supported by the network. The default value is `false`.
+
+|====
+
+.`nextHops.dynamic` object
+[cols=".^3,.^2,.^5a",options="header"]
+|====
+|Field|Type|Description
+
+|`podSelector`
+|`string`
+|
+Specifies a [set-based](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#set-based-requirement) label selector to filter the pods in the namespace that match this network configuration.
+
+|`namespaceSelector`
+|`string`
+| Specifies a `set-based` selector to filter the namespaces that the `podSelector` applies to. You must specify a value for this field.
+
+
+|`bfdEnabled`
+|`boolean`
+|Optional: Specifies whether Bi-Directional Forwarding Detection (BFD) is supported by the network. The default value is `false`.
+
+|`networkAttachmentName`
+|`string`
+|
+Optional: Specifies the name of a network attachment definition. The name must match the list of logical networks associated with the pod. If this field is not specified, the host network of the pod is used. However, the pod must be configure as a host network pod to use the host network.
+
+|====
+
+[id="example-secondary-external-gateway-configurations_{context}"]
+== Example secondary external gateway configurations
+
+In the following example, the `AdminPolicyBasedExternalRoute` object configures two static IP addresses as external gateways for pods in namespaces with the `kubernetes.io/metadata.name: novxlan-externalgw-ecmp-4059` label.
+
+[source,yaml]
+----
+apiVersion: k8s.ovn.org/v1
+kind: AdminPolicyBasedExternalRoute
+metadata:
+  name: default-route-policy
+spec:
+  from:
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: novxlan-externalgw-ecmp-4059
+  nextHops:
+    static:
+    - ip: "172.18.0.8"
+    - ip: "172.18.0.9"
+----
+
+In the following example, the `AdminPolicyBasedExternalRoute` object configures a dynamic external gateway. The IP addresses used for the external gateway are derived from the additional network attachments associated with each of the selected pods.
+
+[source,yaml]
+----
+apiVersion: k8s.ovn.org/v1
+kind: AdminPolicyBasedExternalRoute
+metadata:
+  name: shadow-traffic-policy
+spec:
+  from:
+    namespaceSelector:
+      matchLabels:
+        externalTraffic: ""
+  nextHops:
+    dynamic:
+    - podSelector:
+        matchLabels:
+          gatewayPod: ""
+      namespaceSelector:
+        matchLabels:
+          shadowTraffic: ""
+      networkAttachmentName: shadow-gateway
+    - podSelector:
+        matchLabels:
+          gigabyteGW: ""
+      namespaceSelector:
+        matchLabels:
+          gatewayNamespace: ""
+      networkAttachmentName: gateway
+----
+
+In the following example, the `AdminPolicyBasedExternalRoute` object configures both static and dynamic external gateways.
+
+[source,yaml]
+----
+apiVersion: k8s.ovn.org/v1
+kind: AdminPolicyBasedExternalRoute
+metadata:
+  name: multi-hop-policy
+spec:
+  from:
+    namespaceSelector:
+      matchLabels:
+        trafficType: "egress"
+  nextHops:
+    static:
+    - ip: "172.18.0.8"
+    - ip: "172.18.0.9"
+    dynamic:
+    - podSelector:
+        matchLabels:
+          gatewayPod: ""
+      namespaceSelector:
+        matchLabels:
+          egressTraffic: ""
+      networkAttachmentName: gigabyte
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/configuring-secondary-external-gateway.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-secondary-ext-gw-configure_{context}"]
+= Configure a secondary external gateway
+
+You can configure a secondary external gateway for a namespace in your cluster.
+
+.Prerequisites
+
+* You installed the OpenShift CLI (`oc`).
+* You are logged in to the cluster with a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create a YAML file that contains an `AdminPolicyBasedExternalRoute` object.
+. To create an admin policy based external route, enter the following command:
++
+[source,terminal]
+----
+$ oc create -f <file>.yaml
+----
++
+--
+where:
+
+`<file>`:: Specifies the name of the YAML file that you created in the previous step.
+--
++
+.Example output
+[source,text]
+----
+adminpolicybasedexternalroute.k8s.ovn.org/default-route-policy created
+----
+
+. To confirm that the admin policy based external route was created, enter the following command:
++
+[source,terminal]
+----
+$ oc describe apbexternalroute <name> | tail -n 6
+----
++
+--
+where:
+
+`<name>`:: Specifies the name of the `AdminPolicyBasedExternalRoute` object.
+--
++
+.Example output
+[source,text]
+----
+Status:
+  Last Transition Time:  2023-04-24T15:09:01Z
+  Messages:
+  Configured external gateway IPs: 172.18.0.8
+  Status:  Success
+Events:  <none>
+----
+
+////
+.Verification
+
+If you created an `AdminPolicyBasedExternalRoute` object that selects a host-network pod IP address as the secondary external gateway, you can confirm that the next hop is correct for a pod with the following steps:
+
+. To get the IP address of the pod, enter the following command:
++
+[source,terminal]
+----
+oc get pods/<pod_name> -n <namespace> -o wide
+----
++
+--
+where:
+
+`<pod_name>`:: Specifies the name of the pod.
+`<namespace>`:: Specifies the namespace of the pod.
+--
++
+.Example output
+[source,text]
+----
+NAMESPACE  NAME   READY   STATUS      RESTARTS      AGE   IP            NODE      NOMINATED NODE   READINESS GATES
+ns1        pod1   1/1     Running     1 (37m ago)   41m   10.130.0.8    node1     <none>           <none>
+----
+
+. Confirm that the IP address from the previous step is available as an external gateway.
+
+.. To find the the OVN-Kubernetes control plane pod that manages the next hop for the pod, enter the following command:
++
+[source,terminal]
+----
+$ oc get pod -n openshift-ovn-kubernetes \
+  --field-selector spec.nodeName=<node_name> \
+  -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' | \
+    grep ovnkube-node-
+----
++
+--
+where:
+
+`<node_name>`:: Specifies the name of the node from the `NODE` column that the pod from the previous step is running on.
+--
++
+.Example output
+[source,text]
+----
+ovnkube-node-rpt55
+----
+
+.. To confirm that the OVN-Kubernetes node pod includes the correct next hop, enter the following command:
++
+[source,terminal]
+----
+$ oc exec -t <pod_name> -n openshift-ovn-kubernetes  -c nbdb \
+    -- ovn-nbctl lr-route-list GR_ovn-work | grep <pod_ip> -A 6 -B 4
+
+oc exec -ti <pod_name> -n openshift-ovn-kubernetes -c nbdb -- ovn-nbctl lr-route-list GR_<node_name> | grep <pod_id> -A6 -B4
+----
++
+--
+where:
+
+`<pod_name>`:: Specifies the name of the OVN-Kubernetes node pod from the previous step.
+`<node_name>`:: Specifies the name of the cluster node that the OVN-Kubernetes node pod is running on.
+`<pod_ip>`:: Specifies the name of the pod IP address.
+--
++
+.Example output
+[source,text]
+----
+IPv4 Routes
+Route Table
+
+:
+10.128.2.206 172.18.0.10 src-ip rtoe-GR_worker-0-1 ecmp-symmetric-reply bfd
+10.128.3.229 172.18.0.10 src-ip rtoe-GR_worker-0-1 ecmp-symmetric-reply bfd
+169.254.169.0/29 169.254.169.4 dst-ip rtoe-GR_worker-0-1
+10.128.0.0/14 100.64.0.1 dst-ip
+0.0.0.0/0 192.168.123.1 dst-ip rtoe-GR_worker-0-1
+----
+////
+
+:leveloffset!:
+
+// TODO - Resolve this after OCP 4.14 is released
+//include::modules/nw-secondary-ext-gw-status.adoc[leveloffset=+1]
+
+[id="{context}_additional-resources"]
+== Additional resources
+* For more information about additional network attachments, see xref:../../networking/multiple_networks/understanding-multiple-networks.adoc#understanding-multiple-networks[Understanding multiple networks]
+
+//# includes=_attributes/common-attributes,modules/nw-secondary-ext-gw-about,modules/nw-secondary-ext-gw-object,modules/nw-secondary-ext-gw-configure

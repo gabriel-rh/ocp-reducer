@@ -1,0 +1,532 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="virt-node-maintenance"]
+= Node maintenance
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: virt-node-maintenance
+
+toc::[]
+
+Nodes can be placed into maintenance mode by using the `oc adm` utility or `NodeMaintenance` custom resources (CRs).
+
+[NOTE]
+====
+The `node-maintenance-operator` (NMO) is no longer shipped with {VirtProductName}. It is deployed as a standalone Operator from the *OperatorHub* in the {product-title} web console or by using the OpenShift CLI (`oc`).
+
+For more information on remediation, fencing, and maintaining nodes, see the link:https://access.redhat.com/documentation/en-us/workload_availability_for_red_hat_openshift/23.2/html-single/remediation_fencing_and_maintenance/index#about-remediation-fencing-maintenance[Workload Availability for Red Hat OpenShift] documentation.
+====
+
+[IMPORTANT]
+====
+Virtual machines (VMs) must have a persistent volume claim (PVC) with a shared `ReadWriteMany` (RWX) access mode to be live migrated.
+====
+
+The Node Maintenance Operator watches for new or deleted `NodeMaintenance` CRs. When a new `NodeMaintenance` CR is detected, no new workloads are scheduled and the node is cordoned off from the rest of the cluster. All pods that can be evicted are evicted from the node. When a `NodeMaintenance` CR is deleted, the node that is referenced in the CR is made available for new workloads.
+
+[NOTE]
+====
+Using a `NodeMaintenance` CR for node maintenance tasks achieves the same results as the `oc adm cordon` and `oc adm drain` commands using standard {product-title} custom resource processing.
+====
+
+[id="eviction-strategies"]
+== Eviction strategies
+
+Placing a node into maintenance marks the node as unschedulable and drains all the VMs and pods from it.
+
+You can configure eviction strategies for virtual machines (VMs) or for the cluster.
+
+VM eviction strategy::
+
+The VM `LiveMigrate` eviction strategy ensures that a virtual machine instance (VMI) is not interrupted if the node is placed into maintenance or drained. VMIs with this eviction strategy will be live migrated to another node.
++
+You can configure eviction strategies for virtual machines (VMs) by using the xref:../../virt/getting_started/virt-web-console-overview.adoc#virtualmachine-details-scheduling_virt-web-console-overview[web console] or the xref:../../virt/live_migration/virt-configuring-live-migration.adoc#virt-configuring-a-live-migration-policy_virt-configuring-live-migration[command line].
++
+[IMPORTANT]
+====
+The default eviction strategy is `LiveMigrate`. A non-migratable VM with a `LiveMigrate` eviction strategy might prevent nodes from draining or block an infrastructure upgrade because the VM is not evicted from the node. This situation causes a migration to remain in a `Pending` or `Scheduling` state unless you shut down the VM manually.
+
+You must set the eviction strategy of non-migratable VMs to `LiveMigrateIfPossible`, which does not block an upgrade, or to `None`, for VMs that should not be migrated.
+====
+
+Cluster eviction strategy::
+
+You can configure an eviction strategy for the cluster to prioritize workload continuity or infrastructure upgrade.
+
+:FeatureName: Configuring a cluster eviction strategy
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+.Cluster eviction strategies
+[cols="1,2,1,1",options="header"]
+|====
+|Eviction strategy |Description |Interrupts workflow |Blocks upgrades
+
+|`LiveMigrate` ^1^ |Prioritizes workload continuity over upgrades. |No |Yes ^2^
+
+|`LiveMigrateIfPossible` |Prioritizes upgrades over workload continuity to ensure that the environment is updated. |Yes |No
+
+|`None` ^3^ |Shuts down VMs with no eviction strategy. |Yes |No
+|====
+[.small]
+--
+1. Default eviction strategy for multi-node clusters.
+2. If a VM blocks an upgrade, you must shut down the VM manually.
+3. Default eviction strategy for {sno}.
+--
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/live_migration/virt-configuring-live-migration.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-configuring-vm-eviction-strategy-cli_{context}"]
+= Configuring a VM eviction strategy using the command line
+
+You can configure an eviction strategy for a virtual machine (VM) by using the command line.
+
+[IMPORTANT]
+====
+The default eviction strategy is `LiveMigrate`. A non-migratable VM with a `LiveMigrate` eviction strategy might prevent nodes from draining or block an infrastructure upgrade because the VM is not evicted from the node. This situation causes a migration to remain in a `Pending` or `Scheduling` state unless you shut down the VM manually.
+
+You must set the eviction strategy of non-migratable VMs to `LiveMigrateIfPossible`, which does not block an upgrade, or to `None`, for VMs that should not be migrated.
+====
+
+.Procedure
+
+. Edit the `VirtualMachine` resource by running the following command:
++
+[source,terminal]
+----
+$ oc edit vm <vm_name> -n <namespace>
+----
++
+.Example eviction strategy
+[source,yaml]
+----
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: <vm_name>
+spec:
+  template:
+    spec:
+      evictionStrategy: LiveMigrateIfPossible <1>
+# ...
+----
+<1> Specify the eviction strategy. The default value is `LiveMigrate`.
+
+. Restart the VM to apply the changes:
++
+[source,terminal]
+----
+$ virtctl restart <vm_name> -n <namespace>
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/nodes/virt-node-maintenance.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-configuring-cluster-eviction-strategy-cli_{context}"]
+= Configuring a cluster eviction strategy by using the command line
+
+You can configure an eviction strategy for a cluster by using the command line.
+
+:FeatureName: Configuring a cluster eviction strategy
+:leveloffset: +1
+
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+:leveloffset: 2
+
+.Procedure
+
+. Edit the `hyperconverged` resource by running the following command:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc edit hyperconverged kubevirt-hyperconverged -n {CNVNamespace}
+----
+
+. Set the cluster eviction strategy as shown in the following example:
++
+.Example cluster eviction strategy
+[source,yaml]
+----
+apiVersion: hco.kubevirt.io/v1beta1
+kind: HyperConverged
+metadata:
+  name: kubevirt-hyperconverged
+spec:
+  evictionStrategy: LiveMigrate
+# ...
+----
+
+
+:leveloffset!:
+
+[id="run-strategies"]
+== Run strategies
+
+A virtual machine (VM) configured with `spec.running: true` is immediately restarted. The `spec.runStrategy` key provides greater flexibility for determining how a VM behaves under certain conditions.
+
+[IMPORTANT]
+====
+The `spec.runStrategy` and `spec.running` keys are mutually exclusive. Only one of them can be used.
+
+A VM configuration with both keys is invalid.
+====
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/nodes/virt-node-maintenance.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-runstrategies-vms_{context}"]
+= Run strategies
+
+The `spec.runStrategy` key has four possible values:
+
+`Always`::
+The virtual machine instance (VMI) is always present when a virtual machine (VM) is created on another node. A new VMI is created if the original stops for any reason. This is the same behavior as `running: true`.
+
+`RerunOnFailure`::
+The VMI is re-created on another node if the previous instance fails. The instance is not re-created if the VM stops successfully, such as when it is shut down.
+
+`Manual`::
+You control the VMI state manually with the `start`, `stop`, and `restart` virtctl client commands. The VM is not automatically restarted.
+
+`Halted`::
+No VMI is present when a VM is created. This is the same behavior as `running: false`.
+
+Different combinations of the `virtctl start`, `stop` and `restart` commands affect the run strategy.
+
+The following table describes a VM's transition between states. The first column shows the VM's initial run strategy. The remaining columns show a virtctl command and the new run strategy after that command is run.
+
+.Run strategy before and after `virtctl` commands
+[options="header"]
+|===
+|Initial run strategy |Start |Stop |Restart
+
+|Always
+|-
+|Halted
+|Always
+
+|RerunOnFailure
+|-
+|Halted
+|RerunOnFailure
+
+|Manual
+|Manual
+|Manual
+|Manual
+
+|Halted
+|Always
+|-
+|-
+|===
+
+[NOTE]
+====
+If a node in a cluster installed by using installer-provisioned infrastructure fails the machine health check and is unavailable, VMs with `runStrategy: Always` or `runStrategy: RerunOnFailure` are rescheduled on a new node.
+====
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/nodes/virt-node-maintenance.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-configuring-runstrategy-vm_{context}"]
+= Configuring a VM run strategy by using the command line
+
+You can configure a run strategy for a virtual machine (VM) by using the command line.
+
+[IMPORTANT]
+====
+The `spec.runStrategy` and `spec.running` keys are mutually exclusive. A VM configuration that contains values for both keys is invalid.
+====
+
+.Procedure
+
+* Edit the `VirtualMachine` resource by running the following command:
++
+[source,terminal]
+----
+$ oc edit vm <vm_name> -n <namespace>
+----
++
+.Example run strategy
+[source,yaml]
+----
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+spec:
+  runStrategy: Always
+# ...
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// virt/nodes/virt-node-maintenance.adoc
+
+[id="virt-maintaining-bare-metal-nodes_{context}"]
+= Maintaining bare metal nodes
+
+When you deploy {product-title} on bare metal infrastructure, there are additional considerations that must be taken into account compared to deploying on cloud infrastructure. Unlike in cloud environments where the cluster nodes are considered ephemeral, re-provisioning a bare metal node requires significantly more time and effort for maintenance tasks.
+
+When a bare metal node fails, for example, if a fatal kernel error happens or a NIC card hardware failure occurs, workloads on the failed node need to be restarted elsewhere else on the cluster while the problem node is repaired or replaced. Node maintenance mode allows cluster administrators to gracefully power down nodes, moving workloads to other parts of the cluster and ensuring workloads do not get interrupted. Detailed progress and node status details are provided during maintenance.
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_virt-node-maintenance"]
+== Additional resources
+* xref:../../virt/live_migration/virt-about-live-migration.adoc#virt-about-live-migration[About live migration]
+
+//# includes=_attributes/common-attributes,snippets/technology-preview,modules/virt-configuring-vm-eviction-strategy-cli,modules/virt-configuring-cluster-eviction-strategy-cli,modules/snippets/technology-preview,modules/virt-runstrategies-vms,modules/virt-configuring-runstrategy-vm,modules/virt-maintaining-bare-metal-nodes

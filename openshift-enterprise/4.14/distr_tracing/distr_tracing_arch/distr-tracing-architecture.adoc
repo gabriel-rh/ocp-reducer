@@ -1,0 +1,346 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="distr-tracing-architecture"]
+= Distributed tracing architecture
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: distributed-tracing-architecture
+
+toc::[]
+
+Every time a user takes an action in an application, a request is executed by the architecture that may require dozens of different services to participate to produce a response.
+{DTProductName} lets you perform distributed tracing, which records the path of a request through various microservices that make up an application.
+
+_Distributed tracing_ is a technique that is used to tie the information about different units of work together — usually executed in different processes or hosts — to understand a whole chain of events in a distributed transaction.
+Developers can visualize call flows in large microservice architectures with distributed tracing.
+It is valuable for understanding serialization, parallelism, and sources of latency.
+
+{DTProductName} records the execution of individual requests across the whole stack of microservices, and presents them as traces. A _trace_ is a data/execution path through the system. An end-to-end trace is comprised of one or more spans.
+
+A _span_ represents a logical unit of work in {DTProductName} that has an operation name, the start time of the operation, and the duration, as well as potentially tags and logs. Spans may be nested and ordered to model causal relationships.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-0.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-1.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-2.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-3.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-4.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-5.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-6.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-7.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-8.adoc
+// * distr_tracing/distr_tracing_rn/distr-tracing-rn-2-9.adoc
+// * distr_tracing_arch/distr-tracing-architecture.adoc
+// * service_mesh/v2x/ossm-architecture.adoc
+// * serverless/serverless-tracing.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="distr-tracing-product-overview_{context}"]
+= Distributed tracing overview
+
+As a service owner, you can use distributed tracing to instrument your services to gather insights into your service architecture.
+You can use the {DTProductName} for monitoring, network profiling, and troubleshooting the interaction between components in modern, cloud-native, microservices-based applications.
+
+With the {DTShortName}, you can perform the following functions:
+
+* Monitor distributed transactions
+
+* Optimize performance and latency
+
+* Perform root cause analysis
+
+The {DTShortName} consists of three components:
+
+* *{JaegerName}*, which is based on the open source link:https://www.jaegertracing.io/[Jaeger project].
+
+* *{TempoName}*, which is based on the open source link:https://grafana.com/oss/tempo/[Grafana Tempo project].
+
+* *{OTELNAME}*, which is based on the open source link:https://opentelemetry.io/[OpenTelemetry project].
+
+[IMPORTANT]
+====
+Jaeger does not use FIPS validated cryptographic modules.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+-service_mesh/v2x/ossm-architecture.adoc
+-dist_tracing_arch/distr-tracing-architecture.adoc
+////
+
+[id="distr-tracing-features_{context}"]
+= {DTProductName} features
+
+{DTProductName} provides the following capabilities:
+
+* Integration with Kiali – When properly configured, you can view {DTShortName} data from the Kiali console.
+
+* High scalability – The {DTShortName} back end is designed to have no single points of failure and to scale with the business needs.
+
+* Distributed Context Propagation – Enables you to connect data from different components together to create a complete end-to-end trace.
+
+* Backwards compatibility with Zipkin – {DTProductName} has APIs that enable it to be used as a drop-in replacement for Zipkin, but Red Hat is not supporting Zipkin compatibility in this release.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+////
+This module included in the following assemblies:
+-service_mesh/v2x/ossm-architecture.adoc
+-dist_tracing_arch/distr-tracing-architecture.adoc
+////
+:_mod-docs-content-type: CONCEPT
+[id="distr-tracing-architecture_{context}"]
+= {DTProductName} architecture
+
+{DTProductName} is made up of several components that work together to collect, store, and display tracing data.
+
+* *{JaegerName}* - This component is based on the open source link:https://www.jaegertracing.io/[Jaeger project].
+
+** *Client* (Jaeger client, Tracer, Reporter, instrumented application, client libraries)- The {JaegerShortName} clients are language-specific implementations of the OpenTracing API. They can be used to instrument applications for distributed tracing either manually or with a variety of existing open source frameworks, such as Camel (Fuse), Spring Boot (RHOAR), MicroProfile (RHOAR/Thorntail), Wildfly (EAP), and many more, that are already integrated with OpenTracing.
+
+** *Agent* (Jaeger agent, Server Queue, Processor Workers) - The {JaegerShortName} agent is a network daemon that listens for spans sent over User Datagram Protocol (UDP), which it batches and sends to the Collector. The agent is meant to be placed on the same host as the instrumented application. This is typically accomplished by having a sidecar in container environments such as Kubernetes.
+
+** *Jaeger Collector* (Collector, Queue, Workers) - Similar to the Jaeger agent, the Jaeger Collector receives spans and places them in an internal queue for processing. This allows the Jaeger Collector to return immediately to the client/agent instead of waiting for the span to make its way to the storage.
+
+** *Storage* (Data Store) - Collectors require a persistent storage backend. {JaegerName} has a pluggable mechanism for span storage. Note that for this release, the only supported storage is Elasticsearch.
+
+** *Query* (Query Service) - Query is a service that retrieves traces from storage.
+
+** *Ingester* (Ingester Service) - {DTProductName} can use Apache Kafka as a buffer between the Collector and the actual Elasticsearch backing storage. Ingester is a service that reads data from Kafka and writes to the Elasticsearch storage backend.
+
+** *Jaeger Console* – With the {JaegerName} user interface, you can visualize your distributed tracing data. On the Search page, you can find traces and explore details of the spans that make up an individual trace.
+
+* *{TempoName}* - This component is based on the open source link:https://grafana.com/oss/tempo/[Grafana Tempo project].
+
+** *Gateway* – The Gateway handles authentication, authorization, and forwarding requests to the Distributor or Query front-end service.
+
+** *Distributor* – The Distributor accepts spans in multiple formats including Jaeger, OpenTelemetry, and Zipkin. It routes spans to Ingesters by hashing the `+traceID+` and using a distributed consistent hash ring.
+
+** *Ingester* – The Ingester batches a trace into blocks, creates bloom filters and indexes, and then flushes it all to the back end.
+
+** *Query Frontend* – The Query Frontend is responsible for sharding the search space for an incoming query. The search query is then sent to the Queriers. The Query Frontend deployment exposes the Jaeger UI through the Tempo Query sidecar.
+
+** *Querier* - The Querier is responsible for finding the requested trace ID in either the Ingesters or the back-end storage. Depending on parameters, it can query the Ingesters and pull Bloom indexes from the back end to search blocks in object storage.
+
+** *Compactor* – The Compactors stream blocks to and from the back-end storage to reduce the total number of blocks.
+
+* *{OTELName}* - This component is based on the open source link:https://opentelemetry.io/[OpenTelemetry project].
+
+** *OpenTelemetry Collector* - The OpenTelemetry Collector is a vendor-agnostic way to receive, process, and export telemetry data. The OpenTelemetry Collector supports open-source observability data formats, for example, Jaeger and Prometheus, sending to one or more open-source or commercial back-ends. The Collector is the default location instrumentation libraries export their telemetry data.
+
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/distr-tracing-product-overview,modules/distr-tracing-features,modules/distr-tracing-architecture

@@ -1,0 +1,435 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="upgrading-3-4"]
+= Upgrading the Migration Toolkit for Containers
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: upgrading-3-4
+:upgrading-3-4:
+
+toc::[]
+
+You can upgrade the {mtc-full} ({mtc-short}) on {product-title} {product-version} by using Operator Lifecycle Manager.
+
+You can upgrade {mtc-short} on {product-title} 3 by reinstalling the legacy {mtc-full} Operator.
+
+[IMPORTANT]
+====
+If you are upgrading from {mtc-short} version 1.3, you must perform an additional procedure to update the `MigPlan` custom resource (CR).
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * migrating_from_ocp_3_to_4/upgrading-3-4.adoc
+// * migration_toolkit_for_containers/upgrading-mtc.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="migration-upgrading-mtc-on-ocp-4_{context}"]
+= Upgrading the {mtc-full} on {product-title} {product-version}
+
+You can upgrade the {mtc-full} ({mtc-short}) on {product-title} {product-version} by using the Operator Lifecycle Manager.
+
+[IMPORTANT]
+====
+When upgrading the {mtc-short} by using the Operator Lifecycle Manager, you must use a supported migration path.
+====
+
+.Migration paths
+* Migrating from {product-title} 3 to {product-title} 4 requires a legacy {mtc-short} Operator and {mtc-short} 1.7.x.
+* Migrating from {mtc-short} 1.7.x to {mtc-short} 1.8.x is not supported.
+* You must use {mtc-short} 1.7.x to migrate anything with a source of {product-title} 4.9 or earlier.
+** {mtc-short} 1.7.x must be used on both source and destination.
+* MTC 1.8.x only supports migrations from {product-title} 4.10 or later to {product-title} 4.10 or later. For migrations only involving cluster versions 4.10 and later, either 1.7.x or 1.8.x may be used. However, it must be the same MTC version on both source & destination.
+** Migration from source {mtc-short} 1.7.x to destination {mtc-short} 1.8.x is unsupported.
+** Migration from source {mtc-short} 1.8.x to destination {mtc-short} 1.7.x is unsupported.
+** Migration from source {mtc-short} 1.7.x to destination {mtc-short} 1.7.x is supported.
+** Migration from source {mtc-short} 1.8.x to destination {mtc-short} 1.8.x is supported
+
+.Prerequisites
+
+* You must be logged in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. In the {product-title} console, navigate to *Operators* -> *Installed Operators*.
++
+Operators that have a pending upgrade display an *Upgrade available* status.
+
+. Click *{mtc-full} Operator*.
+. Click the *Subscription* tab. Any upgrades requiring approval are displayed next to *Upgrade Status*. For example, it might display *1 requires approval*.
+. Click *1 requires approval*, then click *Preview Install Plan*.
+. Review the resources that are listed as available for upgrade and click *Approve*.
+. Navigate back to the *Operators -> Installed Operators* page to monitor the progress of the upgrade. When complete, the status changes to *Succeeded* and *Up to date*.
+. Click *Workloads* -> *Pods* to verify that the {mtc-short} pods are running.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * migrating_from_ocp_3_to_4/upgrading-3-4.adoc
+// * migration_toolkit_for_containers/upgrading-mtc.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="migration-upgrading-mtc-with-legacy-operator_{context}"]
+= Upgrading the {mtc-full} on {product-title} 3
+
+You can upgrade {mtc-full} ({mtc-short}) on {product-title} 3 by manually installing the legacy {mtc-full} Operator.
+
+.Prerequisites
+
+* You must be logged in as a user with `cluster-admin` privileges.
+* You must have access to `registry.redhat.io`.
+* You must have `podman` installed.
+
+.Procedure
+
+. Log in to `registry.redhat.io` with your Red Hat Customer Portal credentials by entering the following command:
++
+[source,terminal]
+----
+$ podman login registry.redhat.io
+----
+
+. Download the `operator.yml` file by entering the following command:
++
+[source,terminal,subs="attributes+"]
+----
+$ podman cp $(podman create \
+  registry.redhat.io/rhmtc/openshift-migration-legacy-rhel8-operator:v{mtc-version}):/operator.yml ./
+----
+
+. Replace the {mtc-full} Operator by entering the following command:
++
+[source,terminal]
+----
+$ oc replace --force -f operator.yml
+----
+
+. Scale the `migration-operator` deployment to `0` to stop the deployment by entering the following command:
++
+[source,terminal]
+----
+$ oc scale -n openshift-migration --replicas=0 deployment/migration-operator
+----
+
+. Scale the `migration-operator` deployment to `1` to start the deployment and apply the changes by entering the following command:
++
+[source,terminal]
+----
+$ oc scale -n openshift-migration --replicas=1 deployment/migration-operator
+----
+
+. Verify that the `migration-operator` was upgraded by entering the following command:
++
+[source,terminal]
+----
+$ oc -o yaml -n openshift-migration get deployment/migration-operator | grep image: | awk -F ":" '{ print $NF }'
+----
+
+. Download the `controller.yml` file by entering the following command:
++
+[source,terminal,subs="attributes+"]
+----
+$ podman cp $(podman create \
+  registry.redhat.io/rhmtc/openshift-migration-legacy-rhel8-operator:v{mtc-version}):/controller.yml ./
+----
+
+. Create the `migration-controller` object by entering the following command:
++
+[source,terminal]
+----
+$ oc create -f controller.yml
+----
+
+. If you have previously added the {product-title} 3 cluster to the {mtc-short} web console, you must update the service account token in the web console because the upgrade process deletes and restores the `openshift-migration` namespace:
+
+.. Obtain the service account token by entering the following command:
++
+[source,terminal]
+----
+$ oc sa get-token migration-controller -n openshift-migration
+----
+
+.. In the {mtc-short} web console, click *Clusters*.
+.. Click the Options menu {kebab} next to the cluster and select *Edit*.
+.. Enter the new service account token in the *Service account token* field.
+.. Click *Update cluster* and then click *Close*.
+
+. Verify that the {mtc-short} pods are running by entering the following command:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-migration
+----
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * migrating_from_ocp_3_to_4/upgrading-3-4.adoc
+// * migration_toolkit_for_containers/upgrading-mtc.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="migration-upgrading-from-mtc-1-3_{context}"]
+= Upgrading {mtc-short} 1.3 to {mtc-version}
+
+If you are upgrading {mtc-full} ({mtc-short}) version 1.3.x to {mtc-version}, you must update the `MigPlan` custom resource (CR) manifest on the cluster on which the `MigrationController` pod is running.
+
+Because the `indirectImageMigration` and `indirectVolumeMigration` parameters do not exist in {mtc-short} 1.3, their default value in version 1.4 is `false`, which means that direct image migration and direct volume migration are enabled. Because the direct migration requirements are not fulfilled, the migration plan cannot reach a `Ready` state unless these parameter values are changed to `true`.
+
+[IMPORTANT]
+
+====
+* Migrating from {product-title} 3 to {product-title} 4 requires a legacy {mtc-short} Operator and {mtc-short} 1.7.x.
+* Upgrading MTC 1.7.x to 1.8.x requires manually updating the OADP channel from `stable-1.0` to `stable-1.2` in order to successfully complete the upgrade from 1.7.x to 1.8.x.
+====
+
+.Prerequisites
+
+* You must be logged in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Log in to the cluster on which the `MigrationController` pod is running.
+. Get the `MigPlan` CR manifest:
++
+[source,terminal]
+----
+$ oc get migplan <migplan> -o yaml -n openshift-migration
+----
+
+. Update the following parameter values and save the file as `migplan.yaml`:
++
+[source,yaml]
+----
+...
+spec:
+  indirectImageMigration: true
+  indirectVolumeMigration: true
+----
+
+. Replace the `MigPlan` CR manifest to apply the changes:
++
+[source,terminal]
+----
+$ oc replace -f migplan.yaml -n openshift-migration
+----
+
+. Get the updated `MigPlan` CR manifest to verify the changes:
++
+[source,terminal]
+----
+$ oc get migplan <migplan> -o yaml -n openshift-migration
+----
+
+:leveloffset!:
+:upgrading-3-4!:
+
+//# includes=_attributes/common-attributes,modules/migration-upgrading-mtc-on-ocp-4,modules/migration-upgrading-mtc-with-legacy-operator,modules/migration-upgrading-from-mtc-1-3

@@ -1,0 +1,763 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="configuring-custom-helm-chart-repositories"]
+= Configuring custom Helm chart repositories
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: configuring-custom-helm-chart-repositories
+
+toc::[]
+
+[role="_abstract"]
+You can create Helm releases on an {product-title} cluster using the following methods:
+
+* The CLI.
+* The *Developer* perspective of the web console.
+
+The *Developer Catalog*, in the *Developer* perspective of the web console, displays the Helm charts available in the cluster. By default, it lists the Helm charts from the Red Hat OpenShift Helm chart repository. For a list of the charts, see link:https://charts.openshift.io/index.yaml[the Red Hat `Helm index` file].
+
+As a cluster administrator, you can add multiple cluster-scoped and namespace-scoped Helm chart repositories, separate from the default cluster-scoped Helm repository, and display the Helm charts from these repositories in the *Developer Catalog*.
+
+As a regular user or project member with the appropriate role-based access control (RBAC) permissions, you can add multiple namespace-scoped Helm chart repositories, apart from the default cluster-scoped Helm repository, and display the Helm charts from these repositories in the *Developer Catalog*.
+
+In the *Developer* perspective of the web console, you can use the *Helm* page to:
+
+* Create Helm Releases and Repositories using the *Create* button.
+
+* Create, update, or delete a cluster-scoped or namespace-scoped Helm chart repository.
+
+* View the list of the existing Helm chart repositories in the Repositories tab, which can also be easily distinguished as either cluster scoped or namespace scoped.
+
+:leveloffset: +1
+
+:_mod-docs-content-type: PROCEDURE
+[id="installing-a-helm-chart-on-an-openshift-cluster_{context}"]
+
+= Installing a Helm chart on an {product-title} cluster
+
+.Prerequisites
+* You have a running {product-title} cluster and you have logged into it.
+* You have installed Helm.
+
+.Procedure
+
+. Create a new project:
++
+[source,terminal]
+----
+$ oc new-project vault
+----
+
+. Add a repository of Helm charts to your local Helm client:
++
+[source,terminal]
+----
+$ helm repo add openshift-helm-charts https://charts.openshift.io/
+----
++
+.Example output
+[source,terminal]
+----
+"openshift-helm-charts" has been added to your repositories
+----
+
+. Update the repository:
++
+[source,terminal]
+----
+$ helm repo update
+----
+
+. Install an example HashiCorp Vault:
++
+[source,terminal]
+----
+$ helm install example-vault openshift-helm-charts/hashicorp-vault
+----
++
+.Example output
+[source,terminal]
+----
+NAME: example-vault
+LAST DEPLOYED: Fri Mar 11 12:02:12 2022
+NAMESPACE: vault
+STATUS: deployed
+REVISION: 1
+NOTES:
+Thank you for installing HashiCorp Vault!
+----
+
+. Verify that the chart has installed successfully:
++
+[source,terminal]
+----
+$ helm list
+----
++
+.Example output
+[source,terminal]
+----
+NAME         	NAMESPACE	REVISION	UPDATED                                	STATUS  	CHART       	APP VERSION
+example-vault	vault    	1       	2022-03-11 12:02:12.296226673 +0530 IST	deployed	vault-0.19.0	1.9.2
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+:_mod-docs-content-type: PROCEDURE
+[id="odc-creating-helm-releases-using-developer-perspective_{context}"]
+= Creating Helm releases using the Developer perspective
+
+You can use either the *Developer* perspective in the web console or the CLI to select and create a release from the Helm charts listed in the *Developer Catalog*. You can create Helm releases by installing Helm charts and see them in the *Developer* perspective of the web console.
+
+.Prerequisites
+* You have logged in to the web console and have switched to xref:../../web_console/web-console-overview.adoc#about-developer-perspective_web-console-overview[the *Developer* perspective].
+
+.Procedure
+To create Helm releases from the Helm charts provided in the *Developer Catalog*:
+
+. In the *Developer* perspective, navigate to the *+Add* view and select a project. Then click *Helm Chart* option to see all the Helm Charts in the *Developer Catalog*.
+. Select a chart and read the description, README, and other details about the chart.
+. Click *Create*.
++
+.Helm charts in developer catalog
+image::odc_helm_chart_devcatalog_new.png[]
++
+. In the *Create Helm Release* page:
+.. Enter a unique name for the release in the *Release Name* field.
+.. Select the required chart version from the *Chart Version* drop-down list.
+.. Configure your Helm chart by using the *Form View* or the *YAML View*.
++
+[NOTE]
+====
+Where available, you can switch between the *YAML View* and *Form View*. The data is persisted when switching between the views.
+====
++
+.. Click *Create* to create a Helm release. The web console displays the new release in the *Topology* view.
++
+If a Helm chart has release notes, the web console displays them.
++
+If a Helm chart creates workloads, the web console displays them on the *Topology* or *Helm release details* page. The workloads are `DaemonSet`, `CronJob`, `Pod`, `Deployment`, and `DeploymentConfig`.
+
+.. View the newly created Helm release in the *Helm Releases* page.
+
+You can upgrade, rollback, or delete a Helm release by using the *Actions* button on the side panel or by right-clicking a Helm release.
+
+:leveloffset!:
+
+== Using Helm in the web terminal
+
+You can use Helm by xref:../../web_console/web_terminal/odc-using-web-terminal.adoc#odc-access-web-terminal_odc-using-web-terminal[Accessing the web terminal] in the *Developer* perspective of the web console.
+
+:leveloffset: +1
+
+:_mod-docs-content-type: PROCEDURE
+[id="creating-a-custom-helm-chart-on-openshift_{context}"]
+= Creating a custom Helm chart on {product-title}
+
+.Procedure
+. Create a new project:
++
+[source,terminal]
+----
+$ oc new-project nodejs-ex-k
+----
+
+. Download an example Node.js chart that contains {product-title} objects:
++
+[source,terminal]
+----
+$ git clone https://github.com/redhat-developer/redhat-helm-charts
+----
+
+. Go to the directory with the sample chart:
++
+[source,terminal]
+----
+$ cd redhat-helm-charts/alpha/nodejs-ex-k/
+----
+
+. Edit the `Chart.yaml` file  and add a description of your chart:
++
+[source,yaml]
+----
+apiVersion: v2 <1>
+name: nodejs-ex-k <2>
+description: A Helm chart for OpenShift <3>
+icon: https://static.redhat.com/libs/redhat/brand-assets/latest/corp/logo.svg <4>
+version: 0.2.1 <5>
+----
++
+<1> The chart API version. It should be `v2` for Helm charts that require at least Helm 3.
+<2> The name of your chart.
+<3> The description of your chart.
+<4> The URL to an image to be used as an icon.
+<5> The Version of your chart as per the Semantic Versioning (SemVer) 2.0.0 Specification.
+
+. Verify that the chart is formatted properly:
++
+[source,terminal]
+----
+$ helm lint
+----
++
+.Example output
+[source,terminal]
+----
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+----
+
+. Navigate to the previous directory level:
++
+[source,terminal]
+----
+$ cd ..
+----
+
+. Install the chart:
++
+[source,terminal]
+----
+$ helm install nodejs-chart nodejs-ex-k
+----
+
+. Verify that the chart has installed successfully:
++
+[source,terminal]
+----
+$ helm list
+----
++
+.Example output
+[source,terminal]
+----
+NAME NAMESPACE REVISION UPDATED STATUS CHART APP VERSION
+nodejs-chart nodejs-ex-k 1 2019-12-05 15:06:51.379134163 -0500 EST deployed nodejs-0.1.0  1.16.0
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+:_mod-docs-content-type: PROCEDURE
+[id="adding-helm-chart-repositories_{context}"]
+= Adding custom Helm chart repositories
+
+As a cluster administrator, you can add custom Helm chart repositories to your cluster and enable access to the Helm charts from these repositories in the *Developer Catalog*.
+
+.Procedure
+
+. To add a new Helm Chart Repository, you must add the Helm Chart Repository custom resource (CR) to your cluster.
++
+.Sample Helm Chart Repository CR
+
+[source,yaml]
+----
+apiVersion: helm.openshift.io/v1beta1
+kind: HelmChartRepository
+metadata:
+  name: <name>
+spec:
+ # optional name that might be used by console
+ # name: <chart-display-name>
+  connectionConfig:
+    url: <helm-chart-repository-url>
+----
++
+For example, to add an Azure sample chart repository, run:
++
+[source,terminal]
+----
+$ cat <<EOF | oc apply -f -
+apiVersion: helm.openshift.io/v1beta1
+kind: HelmChartRepository
+metadata:
+  name: azure-sample-repo
+spec:
+  name: azure-sample-repo
+  connectionConfig:
+    url: https://raw.githubusercontent.com/Azure-Samples/helm-charts/master/docs
+EOF
+----
++
+. Navigate to  the *Developer Catalog* in the web console to verify that the Helm charts from the chart repository are displayed.
++
+For example, use the *Chart repositories* filter to search for a Helm chart from the repository.
++
+.Chart repositories filter
+image::odc_helm_chart_repo_filter.png[]
++
+[NOTE]
+====
+If a cluster administrator removes all of the chart repositories, then you cannot view the Helm option in the *+Add* view, *Developer Catalog*, and left navigation panel.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * applications/working_with_helm_charts/configuring-custom-helm-chart-repositories.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="adding-namespace-scoped-helm-chart-repositories.adoc_{context}"]
+= Adding namespace-scoped custom Helm chart repositories
+
+[role="_abstract"]
+The cluster-scoped `HelmChartRepository` custom resource definition (CRD) for Helm repository provides the ability for administrators to add Helm repositories as custom resources. The namespace-scoped `ProjectHelmChartRepository` CRD allows project members with the appropriate role-based access control (RBAC) permissions to create Helm repository resources of their choice but scoped to their namespace. Such project members can see charts from both cluster-scoped and namespace-scoped Helm repository resources.
+
+[NOTE]
+====
+* Administrators can limit users from creating namespace-scoped Helm repository resources. By limiting users, administrators have the flexibility to control the RBAC through a namespace role instead of a cluster role. This avoids unnecessary permission elevation for the user and prevents access to unauthorized services or applications.
+* The addition of the namespace-scoped Helm repository does not impact the behavior of the existing cluster-scoped Helm repository.
+====
+
+As a regular user or project member with the appropriate RBAC permissions, you can add custom namespace-scoped Helm chart repositories to your cluster and enable access to the Helm charts from these repositories in the *Developer Catalog*.
+
+.Procedure
+
+. To add a new namespace-scoped Helm Chart Repository, you must add the Helm Chart Repository custom resource (CR) to your namespace.
++
+.Sample Namespace-scoped Helm Chart Repository CR
+
+[source,yaml]
+----
+apiVersion: helm.openshift.io/v1beta1
+kind: ProjectHelmChartRepository
+metadata:
+  name: <name>
+spec:
+  url: https://my.chart-repo.org/stable
+
+  # optional name that might be used by console
+  name: <chart-repo-display-name>
+
+  # optional and only needed for UI purposes
+  description: <My private chart repo>
+
+  # required: chart repository URL
+  connectionConfig:
+    url: <helm-chart-repository-url>
+----
++
+For example, to add an Azure sample chart repository scoped to your `my-namespace` namespace, run:
++
+[source,terminal]
+----
+$ cat <<EOF | oc apply --namespace my-namespace -f -
+apiVersion: helm.openshift.io/v1beta1
+kind: ProjectHelmChartRepository
+metadata:
+  name: azure-sample-repo
+spec:
+  name: azure-sample-repo
+  connectionConfig:
+    url: https://raw.githubusercontent.com/Azure-Samples/helm-charts/master/docs
+EOF
+----
++
+The output verifies that the namespace-scoped Helm Chart Repository CR is created:
++
+.Example output
+----
+projecthelmchartrepository.helm.openshift.io/azure-sample-repo created
+----
+
+. Navigate to  the *Developer Catalog* in the web console to verify that the Helm charts from the chart repository are displayed in your `my-namespace` namespace.
++
+For example, use the *Chart repositories* filter to search for a Helm chart from the repository.
++
+.Chart repositories filter in your namespace
+image::odc_namespace_helm_chart_repo_filter.png[]
++
+Alternatively, run:
++
+[source,terminal]
+----
+$ oc get projecthelmchartrepositories --namespace my-namespace
+----
++
+.Example output
+----
+NAME                     AGE
+azure-sample-repo        1m
+----
++
+[NOTE]
+====
+If a cluster administrator or a regular user with appropriate RBAC permissions removes all of the chart repositories in a specific namespace, then you cannot view the Helm option in the *+Add* view, *Developer Catalog*, and left navigation panel for that specific namespace.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+:_mod-docs-content-type: PROCEDURE
+[id="creating-credentials-and-certificates-to-add-helm-repositories_{context}"]
+= Creating credentials and CA certificates to add Helm chart repositories
+
+Some Helm chart repositories need credentials and custom certificate authority (CA) certificates to connect to it. You can use the web console as well as the CLI to add credentials and certificates.
+
+.Procedure
+To configure the credentials and certificates, and then add a Helm chart repository using the CLI:
+
+. In the `openshift-config` namespace, create a `ConfigMap` object with a custom CA certificate in PEM encoded format, and store it under the `ca-bundle.crt` key within the config map:
++
+[source,terminal]
+----
+$ oc create configmap helm-ca-cert \
+--from-file=ca-bundle.crt=/path/to/certs/ca.crt \
+-n openshift-config
+----
++
+. In the `openshift-config` namespace, create a `Secret` object to add the client TLS configurations:
++
+[source,terminal]
+----
+$ oc create secret tls helm-tls-configs \
+--cert=/path/to/certs/client.crt \
+--key=/path/to/certs/client.key \
+-n openshift-config
+----
++
+Note that the client certificate and key must be in PEM encoded format and stored under the keys `tls.crt` and `tls.key`, respectively.
+
+. Add the Helm repository as follows:
++
+[source,terminal]
+----
+$ cat <<EOF | oc apply -f -
+apiVersion: helm.openshift.io/v1beta1
+kind: HelmChartRepository
+metadata:
+  name: <helm-repository>
+spec:
+  name: <helm-repository>
+  connectionConfig:
+    url: <URL for the Helm repository>
+    tlsConfig:
+        name: helm-tls-configs
+    ca:
+	name: helm-ca-cert
+EOF
+----
++
+The `ConfigMap` and `Secret` are consumed in the HelmChartRepository CR using the `tlsConfig` and `ca` fields. These certificates are used to connect to the Helm repository URL.
+. By default, all authenticated users have access to all configured charts. However, for chart repositories where certificates are needed, you must provide users with read access to the `helm-ca-cert` config map and `helm-tls-configs` secret in the `openshift-config` namespace, as follows:
++
+[source,terminal]
+----
+$ cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: openshift-config
+  name: helm-chartrepos-tls-conf-viewer
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  resourceNames: ["helm-ca-cert"]
+  verbs: ["get"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["helm-tls-configs"]
+  verbs: ["get"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: openshift-config
+  name: helm-chartrepos-tls-conf-viewer
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: 'system:authenticated'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: helm-chartrepos-tls-conf-viewer
+EOF
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+:_mod-docs-content-type: PROCEDURE
+[id="filtering-helm-charts-by-certification-level_{context}"]
+= Filtering Helm Charts by their certification level
+
+You can filter Helm charts based on their certification level in the *Developer Catalog*.
+
+.Procedure
+
+. In the *Developer* perspective, navigate to the *+Add* view and select a project.
+
+. From the *Developer Catalog* tile, select the *Helm Chart* option to see all the Helm charts in the *Developer Catalog*.
+
+. Use the filters to the left of the list of Helm charts to filter the required charts:
+* Use the *Chart Repositories* filter to filter charts provided by *Red Hat Certification Charts* or *OpenShift Helm Charts*.
+* Use the *Source* filter to filter charts sourced from *Partners*, *Community*, or *Red Hat*. Certified charts are indicated with the (image:odc_verified_icon.png[title="Certified icon"]) icon.
+
+[NOTE]
+====
+The *Source* filter will not be visible when there is only one provider type.
+====
+
+You can now select the required chart and install it.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+:_mod-docs-content-type: PROCEDURE
+[id="helm-disabling-helm-chart-repositories_{context}"]
+= Disabling Helm Chart repositories
+
+You can disable Helm Charts from a particular Helm Chart Repository in the catalog by setting the `disabled` property in the `HelmChartRepository` custom resource to `true`.
+
+.Procedure
+
+* To disable a Helm Chart repository by using CLI, add the `disabled: true` flag to the custom resource. For example, to remove an Azure sample chart repository, run:
++
+----
+$ cat <<EOF | oc apply -f -
+apiVersion: helm.openshift.io/v1beta1
+kind: HelmChartRepository
+metadata:
+  name: azure-sample-repo
+spec:
+  connectionConfig:
+   url:https://raw.githubusercontent.com/Azure-Samples/helm-charts/master/docs
+  disabled: true
+EOF
+----
+
+*  To disable a recently added Helm Chart repository by using Web Console:
++
+. Go to *Custom Resource Definitions* and search for the `HelmChartRepository` custom resource.
+
+. Go to *Instances*, find the repository you want to disable, and click its name.
+
+. Go to the *YAML* tab, add the `disabled: true` flag in the `spec` section, and click `Save`.
++
+.Example
+----
+spec:
+  connectionConfig:
+    url: <url-of-the-repositoru-to-be-disabled>
+  disabled: true
+----
++
+The repository is now disabled and will not appear in the catalog.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/helm-installing-a-helm-chart-on-an-openshift-cluster,modules/odc-creating-helm-releases-using-developer-perspective,modules/helm-creating-a-custom-helm-chart-on-openshift,modules/helm-adding-helm-chart-repositories,modules/helm-adding-namespace-scoped-helm-chart-repositories,modules/helm-creating-credentials-and-certificates-to-add-helm-repositories,modules/helm-filtering-helm-charts-by-certification-level,modules/helm-disabling-helm-chart-repositories

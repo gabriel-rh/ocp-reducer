@@ -1,0 +1,572 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="configuring-registry-operator"]
+= Image Registry Operator in {product-title}
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: configuring-registry-operator
+
+toc::[]
+
+[id="image-registry-on-cloud"]
+== Image Registry on cloud platforms and OpenStack
+
+The Image Registry Operator installs a single instance of the {product-registry}, and manages all registry configuration, including setting up registry storage.
+
+[NOTE]
+====
+Storage is only automatically configured when you install an installer-provisioned infrastructure cluster on AWS, Azure, GCP, IBM, or OpenStack.
+
+When you install or upgrade an installer-provisioned infrastructure cluster on AWS, Azure, GCP, IBM, or OpenStack, the Image Registry Operator sets the `spec.storage.managementState` parameter to `Managed`. If the `spec.storage.managementState` parameter is set to `Unmanaged`, the Image Registry Operator takes no action related to storage.
+====
+
+After the control plane deploys, the Operator creates a default `configs.imageregistry.operator.openshift.io` resource instance based on configuration detected in the cluster.
+
+If insufficient information is available to define a complete `configs.imageregistry.operator.openshift.io` resource, the incomplete resource is defined and the Operator updates the resource status with information about what is missing.
+
+The Image Registry Operator runs in the `openshift-image-registry` namespace, and manages the registry instance in that location as well. All configuration and workload resources for the registry reside in that namespace.
+
+[IMPORTANT]
+====
+The Image Registry Operator's behavior for managing the pruner is orthogonal to the `managementState` specified on the `ClusterOperator` object for the Image Registry Operator. If the Image Registry Operator is not in the `Managed` state, the image pruner can still be configured and managed by the `Pruning` custom resource.
+
+However, the `managementState` of the Image Registry Operator alters the behavior of the deployed image pruner job:
+
+* `Managed`: the `--prune-registry` flag for the image pruner is set to `true`.
+* `Removed`: the `--prune-registry` flag for the image pruner is set to `false`, meaning it only prunes image metatdata in etcd.
+====
+
+[id="image-registry-on-bare-metal-vsphere"]
+== Image Registry on bare metal, Nutanix, and vSphere
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * registry/configuring-registry-operator.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc
+// * registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc
+
+[id="registry-removed_{context}"]
+= Image registry removed during installation
+
+On platforms that do not provide shareable object storage, the OpenShift Image Registry Operator bootstraps itself as `Removed`. This allows `openshift-installer` to complete installations on these platform types.
+
+After installation, you must edit the Image Registry Operator configuration to switch the `managementState` from `Removed` to `Managed`.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * openshift_images/configuring-registry-operator.adoc
+
+
+[id="registry-operator-distribution-across-availability-zones_{context}"]
+= Image Registry Operator distribution across availability zones
+
+The default configuration of the Image Registry Operator spreads image registry pods across topology zones to prevent delayed recovery times in case of a complete zone failure where all pods are impacted.
+
+The Image Registry Operator defaults to the following when deployed with a zone-related topology constraint:
+
+.Image Registry Operator deployed with a zone related topology constraint
+[source,yaml]
+----
+  topologySpreadConstraints:
+  - labelSelector:
+      matchLabels:
+        docker-registry: default
+    maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: DoNotSchedule
+  - labelSelector:
+      matchLabels:
+        docker-registry: default
+    maxSkew: 1
+    topologyKey: node-role.kubernetes.io/worker
+    whenUnsatisfiable: DoNotSchedule
+  - labelSelector:
+      matchLabels:
+        docker-registry: default
+    maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: DoNotSchedule
+----
+
+The Image Registry Operator defaults to the following when deployed without a zone-related topology constraint, which applies to bare metal and vSphere instances:
+
+.Image Registry Operator deployed without a zone related topology constraint
+[source,yaml]
+----
+ topologySpreadConstraints:
+  - labelSelector:
+      matchLabels:
+        docker-registry: default
+    maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: DoNotSchedule
+  - labelSelector:
+      matchLabels:
+        docker-registry: default
+    maxSkew: 1
+    topologyKey: node-role.kubernetes.io/worker
+    whenUnsatisfiable: DoNotSchedule
+----
+
+A cluster administrator can override the default `topologySpreadConstraints` by configuring the `configs.imageregistry.operator.openshift.io/cluster` spec file. In that case, only the constraints you provide apply.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+== Additional resources
+
+* xref:../nodes/scheduling/nodes-scheduler-pod-topology-spread-constraints.adoc#nodes-scheduler-pod-topology-spread-constraints[Configuring pod topology spread constraints]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * openshift_images/configuring-registry-operator.adoc
+
+
+[id="registry-operator-configuration-resource-overview_{context}"]
+= Image Registry Operator configuration parameters
+
+The `configs.imageregistry.operator.openshift.io` resource offers the following
+configuration parameters.
+
+[cols="3a,8a",options="header"]
+|===
+|Parameter |Description
+
+|`managementState`
+|`Managed`: The Operator updates the registry as configuration resources
+are updated.
+
+`Unmanaged`: The Operator ignores changes to the configuration resources.
+
+`Removed`: The Operator removes the registry instance and tear down any
+storage that the Operator provisioned.
+
+|`logLevel`
+|Sets `logLevel` of the registry instance. Defaults to  `Normal`.
+
+The following values for `logLevel` are supported:
+
+* `Normal`
+* `Debug`
+* `Trace`
+* `TraceAll`
+
+|`httpSecret`
+|Value needed by the registry to secure uploads, generated by default.
+
+| `operatorLogLevel`
+| The `operatorLogLevel` configuration parameter provides intent-based logging for the Operator itself and a simple way to manage coarse-grained logging choices that Operators must interpret for themselves. This configuration parameter defaults to `Normal`. It does not provide fine-grained control.
+
+The following values for `operatorLogLevel` are supported:
+
+* `Normal`
+* `Debug`
+* `Trace`
+* `TraceAll`
+
+|`proxy`
+|Defines the Proxy to be used when calling master API
+and upstream registries.
+
+|`storage`
+|`Storagetype`: Details for configuring registry storage, for example S3 bucket
+coordinates. Normally configured by default.
+
+|`readOnly`
+|Indicates whether the registry instance should reject attempts to push new images or delete existing ones.
+
+|`requests`
+|API Request Limit details. Controls how many parallel requests a given registry
+instance will handle before queuing additional requests.
+
+|`defaultRoute`
+|Determines whether or not an external route is defined using the default
+hostname. If enabled, the route uses re-encrypt encryption. Defaults to `false`.
+
+|`routes`
+|Array of additional routes to create. You provide the hostname and certificate
+for the route.
+
+|`rolloutStrategy`
+|Defines rollout strategy for the image registry deployment. Defaults to `RollingUpdate`.
+
+|`replicas`
+|Replica count for the registry.
+
+|`disableRedirect`
+| Controls whether to route all data through the registry, rather than redirecting to the back end. Defaults to `false`.
+
+|`spec.storage.managementState`
+
+a|
+The Image Registry Operator sets the `spec.storage.managementState` parameter to `Managed` on new installations or upgrades of clusters using installer-provisioned infrastructure on AWS or Azure.
+
+
+* `Managed`: Determines that the Image Registry Operator manages underlying storage. If the Image Registry Operator's `managementState` is set to `Removed`, then the storage is deleted.
+** If the `managementState` is set to `Managed`, the Image Registry Operator attempts to apply some default configuration on the underlying storage unit. For example, if set to `Managed`, the Operator tries to enable encryption on the S3 bucket before making it available to the registry. If you do not want the default settings to be applied on the storage you are providing, make sure the `managementState` is set to `Unmanaged`.
+* `Unmanaged`: Determines that the Image Registry Operator ignores the storage settings. If the Image Registry Operator's `managementState` is set to `Removed`, then the storage is not deleted. If you provided an underlying storage unit configuration, such as a bucket or container name, and the `spec.storage.managementState` is not yet set to any value, then the Image Registry Operator configures it to `Unmanaged`.
+
+|===
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * openshift_images/configuring-registry-operator.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="registry-operator-default-crd_{context}"]
+= Enable the Image Registry default route with the Custom Resource Definition
+
+In {product-title}, the `Registry` Operator controls the {product-registry} feature. The
+Operator is defined by the `configs.imageregistry.operator.openshift.io` Custom
+Resource Definition (CRD).
+
+If you need to automatically enable the Image Registry default route, patch the
+Image Registry Operator CRD.
+
+.Procedure
+
+* Patch the Image Registry Operator CRD:
++
+[source,terminal]
+----
+$ oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"spec":{"defaultRoute":true}}'
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * registry/configuring-registry-operator.adoc
+// * openshift_images/image-configuration.adoc
+// * post_installation_configuration/preparing-for-users.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="images-configuration-cas_{context}"]
+= Configuring additional trust stores for image registry access
+
+The `image.config.openshift.io/cluster` custom resource can contain a reference to a config map that contains additional certificate authorities to be trusted during image registry access.
+
+.Prerequisites
+* The certificate authorities (CA) must be PEM-encoded.
+
+.Procedure
+
+You can create a config map in the `openshift-config` namespace and use its name in `AdditionalTrustedCA` in the `image.config.openshift.io` custom resource to provide additional CAs that should be trusted when contacting external registries.
+
+The config map key is the hostname of a registry with the port for which this CA is to be trusted, and the PEM certificate content is the value, for each additional registry CA to trust.
+
+.Image registry CA config map example
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-registry-ca
+data:
+  registry.example.com: |
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+  registry-with-port.example.com..5000: | <1>
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+----
+<1>  If the registry has the port, such as `registry-with-port.example.com:5000`, `:` should be replaced with `..`.
+
+You can configure additional CAs with the following procedure.
+
+* To configure an additional CA:
++
+[source,terminal]
+----
+$ oc create configmap registry-config --from-file=<external_registry_address>=ca.crt -n openshift-config
+----
++
+[source,terminal]
+----
+$ oc edit image.config.openshift.io cluster
+----
++
+[source,yaml]
+----
+spec:
+  additionalTrustedCA:
+    name: registry-config
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * registry/configuring-registry-operator.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="registry-operator-config-resources-storage-credentials_{context}"]
+= Configuring storage credentials for the Image Registry Operator
+
+In addition to the `configs.imageregistry.operator.openshift.io` and ConfigMap
+resources, storage credential configuration is provided to the Operator by a separate secret
+resource located within the `openshift-image-registry` namespace.
+
+The `image-registry-private-configuration-user` secret provides
+credentials needed for storage access and management. It overrides the default
+credentials used by the Operator, if default credentials were found.
+
+.Procedure
+
+* Create an {product-title} secret that contains the required keys.
++
+[source,terminal]
+----
+$ oc create secret generic image-registry-private-configuration-user --from-literal=KEY1=value1 --from-literal=KEY2=value2 --namespace openshift-image-registry
+----
+
+
+// Undefine the attribute to catch any errors at the end
+:!KEY1:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+== Additional resources
+
+* xref:../registry/configuring_registry_storage/configuring-registry-storage-aws-user-infrastructure.adoc#configuring-registry-storage-aws-user-infrastructure[Configuring the registry for AWS user-provisioned infrastructure]
+* xref:../registry/configuring_registry_storage/configuring-registry-storage-gcp-user-infrastructure.adoc#configuring-registry-storage-gcp-user-infrastructure[Configuring the registry for GCP user-provisioned infrastructure]
+* xref:../registry/configuring_registry_storage/configuring-registry-storage-azure-user-infrastructure.adoc#configuring-registry-storage-azure-user-infrastructure[Configuring the registry for Azure user-provisioned infrastructure]
+* xref:../registry/configuring_registry_storage/configuring-registry-storage-baremetal.adoc#configuring-registry-storage-baremetal[Configuring the registry for bare metal]
+* xref:../registry/configuring_registry_storage/configuring-registry-storage-vsphere.adoc#configuring-registry-storage-vsphere[Configuring the registry for vSphere]
+
+//# includes=_attributes/common-attributes,modules/registry-removed,modules/registry-operator-distribution-across-availability-zones,modules/registry-operator-configuration-resource-overview,modules/registry-operator-default-crd,modules/images-configuration-cas,modules/registry-operator-config-resources-storage-credentials

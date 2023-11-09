@@ -1,0 +1,652 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ovn-kubernetes-tracing-using-ovntrace"]
+= Tracing Openflow with ovnkube-trace
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: ovn-kubernetes-tracing-with-ovnkube
+
+toc::[]
+
+OVN and OVS traffic flows can be simulated in a single utility called `ovnkube-trace`. The `ovnkube-trace` utility runs `ovn-trace`, `ovs-appctl ofproto/trace` and `ovn-detrace` and correlates that information in a single output.
+
+You can execute the `ovnkube-trace` binary from a dedicated container. For releases after {product-title} 4.7, you can also copy the binary to a local host and execute it from that host.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/ovn-kubernetes-architecture.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ovn-kubernetes-install-ovnkube-trace-local_{context}"]
+= Installing the ovnkube-trace on local host
+
+The `ovnkube-trace` tool traces packet simulations for arbitrary UDP or TCP traffic between points in an OVN-Kubernetes driven {product-title} cluster. Copy the `ovnkube-trace` binary to your local host making it available to run against the cluster.
+
+.Prerequisites
+
+* You installed the OpenShift CLI (`oc`).
+* You are logged in to the cluster with a user with `cluster-admin` privileges.
+
+.Procedure
+. Create a pod variable by using the following command:
++
+[source,terminal]
+----
+$  POD=$(oc get pods -n openshift-ovn-kubernetes -l app=ovnkube-control-plane -o name | head -1 | awk -F '/' '{print $NF}')
+----
+
+. Run the following command on your local host to copy the binary from the `ovnkube-control-plane` pods:
++
+[source,terminal]
+----
+$  oc cp -n openshift-ovn-kubernetes $POD:/usr/bin/ovnkube-trace -c ovnkube-cluster-manager ovnkube-trace
+----
++
+[NOTE]
+====
+If you are using {op-system-base-full} 8 to run the `ovnkube-trace` tool, you must copy the file `/usr/lib/rhel8/ovnkube-trace` to your local host.
+====
+
+. Make `ovnkube-trace` executable by running the following command:
++
+[source,terminal]
+----
+$  chmod +x ovnkube-trace
+----
+
+. Display the options available with `ovnkube-trace` by running the following command:
++
+[source,terminal]
+----
+$  ./ovnkube-trace -help
+----
++
+.Expected output
++
+[source,terminal]
+----
+Usage of ./ovnkube-trace:
+  -addr-family string
+    	Address family (ip4 or ip6) to be used for tracing (default "ip4")
+  -dst string
+    	dest: destination pod name
+  -dst-ip string
+    	destination IP address (meant for tests to external targets)
+  -dst-namespace string
+    	k8s namespace of dest pod (default "default")
+  -dst-port string
+    	dst-port: destination port (default "80")
+  -kubeconfig string
+    	absolute path to the kubeconfig file
+  -loglevel string
+    	loglevel: klog level (default "0")
+  -ovn-config-namespace string
+    	namespace used by ovn-config itself
+  -service string
+    	service: destination service name
+  -skip-detrace
+    	skip ovn-detrace command
+  -src string
+    	src: source pod name
+  -src-namespace string
+    	k8s namespace of source pod (default "default")
+  -tcp
+    	use tcp transport protocol
+  -udp
+    	use udp transport protocol
+----
++
+The command-line arguments supported are familiar Kubernetes constructs, such as namespaces, pods, services so you do not need to find the MAC address, the IP address of the destination nodes, or the ICMP type.
++
+The log levels are:
+
+*  0 (minimal output)
+*  2 (more verbose output showing results of trace commands)
+*  5 (debug output)
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/ovn_kubernetes_network_provider/ovn-kubernetes-architecture.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-ovn-kubernetes-running-ovnkube-trace_{context}"]
+= Running ovnkube-trace
+
+Run `ovn-trace` to simulate packet forwarding within an OVN logical network.
+
+.Prerequisites
+
+* You installed the OpenShift CLI (`oc`).
+* You are logged in to the cluster with a user with `cluster-admin` privileges.
+* You have installed `ovnkube-trace` on local host
+
+.Example: Testing that DNS resolution works from a deployed pod
+
+This example illustrates how to test the DNS resolution from a deployed pod to the core DNS pod that runs in the cluster.
+
+.Procedure
+
+. Start a web service in the default namespace by entering the following command:
++
+[source,terminal]
+----
+$ oc run web --namespace=default --image=quay.io/openshifttest/nginx --labels="app=web" --expose --port=80
+----
+
+. List the pods running in the `openshift-dns` namespace:
++
+[source,terminal]
+----
+oc get pods -n openshift-dns
+----
++
+.Example output
+
+[source,terminal]
+----
+NAME                  READY   STATUS    RESTARTS   AGE
+dns-default-8s42x     2/2     Running   0          5h8m
+dns-default-mdw6r     2/2     Running   0          4h58m
+dns-default-p8t5h     2/2     Running   0          4h58m
+dns-default-rl6nk     2/2     Running   0          5h8m
+dns-default-xbgqx     2/2     Running   0          5h8m
+dns-default-zv8f6     2/2     Running   0          4h58m
+node-resolver-62jjb   1/1     Running   0          5h8m
+node-resolver-8z4cj   1/1     Running   0          4h59m
+node-resolver-bq244   1/1     Running   0          5h8m
+node-resolver-hc58n   1/1     Running   0          4h59m
+node-resolver-lm6z4   1/1     Running   0          5h8m
+node-resolver-zfx5k   1/1     Running   0          5h
+----
+
+. Run the following `ovnkube-trace` command to verify DNS resolution is working:
++
+[source,terminal]
+----
+$ ./ovnkube-trace \
+  -src-namespace default \ <1>
+  -src web \ <2>
+  -dst-namespace openshift-dns \ <3>
+  -dst dns-default-p8t5h \ <4>
+  -udp -dst-port 53 \ <5>
+  -loglevel 0 <6>
+----
++
+<1> Namespace of the source pod
+<2> Source pod name
+<3> Namespace of destination pod
+<4> Destination pod name
+<5> Use the `udp` transport protocol. Port 53 is the port the DNS service uses.
+<6> Set the log level to 0 (0 is minimal and 5 is debug)
++
+.Example output if the `src&dst` pod lands on the same node:
+[source,terminal]
+----
+ovn-trace source pod to destination pod indicates success from web to dns-default-p8t5h
+ovn-trace destination pod to source pod indicates success from dns-default-p8t5h to web
+ovs-appctl ofproto/trace source pod to destination pod indicates success from web to dns-default-p8t5h
+ovs-appctl ofproto/trace destination pod to source pod indicates success from dns-default-p8t5h to web
+ovn-detrace source pod to destination pod indicates success from web to dns-default-p8t5h
+ovn-detrace destination pod to source pod indicates success from dns-default-p8t5h to web
+----
++
+.Example output if the `src&dst` pod lands on a different node:
+[source,terminal]
+----
+ovn-trace source pod to destination pod indicates success from web to dns-default-8s42x
+ovn-trace (remote) source pod to destination pod indicates success from web to dns-default-8s42x
+ovn-trace destination pod to source pod indicates success from dns-default-8s42x to web
+ovn-trace (remote) destination pod to source pod indicates success from dns-default-8s42x to web
+ovs-appctl ofproto/trace source pod to destination pod indicates success from web to dns-default-8s42x
+ovs-appctl ofproto/trace destination pod to source pod indicates success from dns-default-8s42x to web
+ovn-detrace source pod to destination pod indicates success from web to dns-default-8s42x
+ovn-detrace destination pod to source pod indicates success from dns-default-8s42x to web
+
+----
++
+The ouput indicates success from the deployed pod to the DNS port and also indicates that it is
+successful going back in the other direction. So you know bi-directional traffic is supported on UDP port 53 if my web pod wants to do dns resolution from core DNS.
+
+If for example that did not work and you wanted to get the `ovn-trace`, the `ovs-appctl` of `proto/trace` and `ovn-detrace`, and more debug type information increase the log level to 2 and run the command again as follows:
+
+[source,terminal]
+----
+$ ./ovnkube-trace \
+  -src-namespace default \
+  -src web \
+  -dst-namespace openshift-dns \
+  -dst dns-default-467qw \
+  -udp -dst-port 53 \
+  -loglevel 2
+----
+
+The output from this increased log level is too much to list here. In a failure situation the output of this command shows which flow is dropping that traffic. For example an egress or ingress network policy may be configured on the cluster that does not allow that traffic.
+
+.Example: Verifying by using debug output a configured default deny
+
+This example illustrates how to identify by using the debug output that an ingress default deny policy blocks traffic.
+
+.Procedure
+
+. Create the following YAML that defines a `deny-by-default` policy to deny ingress from all pods in all namespaces. Save the YAML in the `deny-by-default.yaml` file:
++
+[source,yaml]
+----
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: deny-by-default
+  namespace: default
+spec:
+  podSelector: {}
+  ingress: []
+----
+
+. Apply the policy by entering the following command:
++
+[source,terminal]
+----
+$ oc apply -f deny-by-default.yaml
+----
++
+.Example output
+[source,terminal]
+----
+networkpolicy.networking.k8s.io/deny-by-default created
+----
+
+. Start a web service in the `default` namespace by entering the following command:
++
+[source,terminal]
+----
+$ oc run web --namespace=default --image=quay.io/openshifttest/nginx --labels="app=web" --expose --port=80
+----
+
+. Run the following command to create the `prod` namespace:
++
+[source,terminal]
+----
+$ oc create namespace prod
+----
+
+. Run the following command to label the `prod` namespace:
++
+[source,terminal]
+----
+$ oc label namespace/prod purpose=production
+----
+
+. Run the following command to deploy an `alpine` image in the `prod` namespace and start a shell:
++
+[source,terminal]
+----
+$ oc run test-6459 --namespace=prod --rm -i -t --image=alpine -- sh
+----
+
+. Open another terminal session.
+
+. In this new terminal session run `ovn-trace` to verify the failure in communication between the source pod `test-6459` running in namespace `prod` and destination pod running in the `default` namespace:
++
+[source,terminal]
+----
+$ ./ovnkube-trace \
+ -src-namespace prod \
+ -src test-6459 \
+ -dst-namespace default \
+ -dst web \
+ -tcp -dst-port 80 \
+ -loglevel 0
+----
++
+.Example output
+[source,terminal]
+----
+ovn-trace source pod to destination pod indicates failure from test-6459 to web
+----
+. Increase the log level to 2 to expose the reason for the failure by running the following command:
++
+[source,terminal]
+----
+$ ./ovnkube-trace \
+ -src-namespace prod \
+ -src test-6459 \
+ -dst-namespace default \
+ -dst web \
+ -tcp -dst-port 80 \
+ -loglevel 2
+----
++
+.Example output
+[source,terminal]
+----
+...
+------------------------------------------------
+ 3. ls_out_acl_hint (northd.c:7454): !ct.new && ct.est && !ct.rpl && ct_mark.blocked == 0, priority 4, uuid 12efc456
+    reg0[8] = 1;
+    reg0[10] = 1;
+    next;
+ 5. ls_out_acl_action (northd.c:7835): reg8[30..31] == 0, priority 500, uuid 69372c5d
+    reg8[30..31] = 1;
+    next(4);
+ 5. ls_out_acl_action (northd.c:7835): reg8[30..31] == 1, priority 500, uuid 2fa0af89
+    reg8[30..31] = 2;
+    next(4);
+ 4. ls_out_acl_eval (northd.c:7691): reg8[30..31] == 2 && reg0[10] == 1 && (outport == @a16982411286042166782_ingressDefaultDeny), priority 2000, uuid 447d0dab
+    reg8[17] = 1;
+    ct_commit { ct_mark.blocked = 1; }; <1>
+    next;
+...
+----
++
+<1> Ingress traffic is blocked due to the default deny policy being in place.
+
+. Create a policy that allows traffic from all pods in a particular namespaces with a label `purpose=production`. Save the YAML in the `web-allow-prod.yaml` file:
++
+[source,terminal]
+----
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: web-allow-prod
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          purpose: production
+----
+
+. Apply the policy by entering the following command:
++
+[source,terminal]
+----
+$ oc apply -f web-allow-prod.yaml
+----
+
+. Run `ovnkube-trace` to verify that traffic is now allowed by entering the following command:
++
+[source,terminal]
+----
+$ ./ovnkube-trace \
+ -src-namespace prod \
+ -src test-6459 \
+ -dst-namespace default \
+ -dst web \
+ -tcp -dst-port 80 \
+ -loglevel 0
+----
++
+.Expected output
+[source,terminal]
+----
+ovn-trace source pod to destination pod indicates success from test-6459 to web
+ovn-trace destination pod to source pod indicates success from web to test-6459
+ovs-appctl ofproto/trace source pod to destination pod indicates success from test-6459 to web
+ovs-appctl ofproto/trace destination pod to source pod indicates success from web to test-6459
+ovn-detrace source pod to destination pod indicates success from test-6459 to web
+ovn-detrace destination pod to source pod indicates success from web to test-6459
+----
+
+. Run the following command in the shell that was opened in step six to connect nginx to the web-server:
++
+[source,terminal]
+----
+ wget -qO- --timeout=2 http://web.default
+----
++
+.Expected output
+
+[source,terminal]
+----
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+  body {
+    width: 35em;
+    margin: 0 auto;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+  }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_ovn-kubernetes-tracing-with-ovnkube"]
+== Additional resources
+
+* link:https://access.redhat.com/solutions/5887511[Tracing Openflow with ovnkube-trace utility]
+* link:https://github.com/ovn-org/ovn-kubernetes/blob/master/docs/ovnkube-trace.md[ovnkube-trace]
+
+//# includes=_attributes/common-attributes,modules/nw-ovn-kubernetes-install-ovnkube-trace-local,modules/nw-ovn-kubernetes-running-ovnkube-trace

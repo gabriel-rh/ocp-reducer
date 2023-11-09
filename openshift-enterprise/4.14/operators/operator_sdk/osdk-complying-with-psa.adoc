@@ -1,0 +1,549 @@
+
+:_mod-docs-content-type: ASSEMBLY
+[id="osdk-complying-with-psa"]
+= Complying with pod security admission
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: osdk-complying-with-psa
+
+toc::[]
+
+_Pod security admission_ is an implementation of the link:https://kubernetes.io/docs/concepts/security/pod-security-standards/[Kubernetes pod security standards]. link:https://kubernetes.io/docs/concepts/security/pod-security-admission/[Pod security admission] restricts the behavior of pods. Pods that do not comply with the pod security admission defined globally or at the namespace level are not admitted to the cluster and cannot run.
+
+If your Operator project does not require escalated permissions to run, you can ensure your workloads run in namespaces set to the `restricted` pod security level. If your Operator project requires escalated permissions to run, you must set the following security context configurations:
+
+* The allowed pod security admission level for the Operator's namespace
+* The allowed security context constraints (SCC) for the workload's service account
+
+// This xref points to a topic that is not currently included in the OSD/ROSA docs.
+For more information, see xref:../../authentication/understanding-and-managing-pod-security-admission.adoc#understanding-and-managing-pod-security-admission[Understanding and managing pod security admission].
+
+// About pod security admission
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/understanding-and-managing-pod-security-admission.adoc
+// * operators/operator_sdk/osdk-complying-with-psa.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="security-context-constraints-psa-about_{context}"]
+= About pod security admission
+
+{product-title} includes link:https://kubernetes.io/docs/concepts/security/pod-security-admission[Kubernetes pod security admission]. Pods that do not comply with the pod security admission defined globally or at the namespace level are not admitted to the cluster and cannot run.
+
+Globally, the `privileged` profile is enforced, and the `restricted` profile is used for warnings and audits.
+
+You can also configure the pod security admission settings at the namespace level.
+
+// Text snippet included in the following assemblies:
+//
+// * applications/projects/working-with-projects.adoc
+// * applications/quotas/quotas-setting-across-multiple-projects.adoc
+// * openshift_images/image-streams-manage.adoc
+//
+// Text snippet included in the following modules:
+//
+// * modules/admission-plug-ins-about.adoc
+// * modules/creating-a-project-using-the-CLI.adoc
+// * modules/creating-a-project-using-the-web-console.adoc
+// * modules/images-managing-images-enabling-imagestreams-kube.adoc
+// * modules/odc-creating-projects-using-developer-perspective.adoc
+// * modules/rbac-default-projects.adoc
+// * modules/security-context-constraints-psa-about.adoc
+// * modules/security-context-constraints-rbac.adoc
+
+:_mod-docs-content-type: SNIPPET
+
+[IMPORTANT]
+====
+Do not run workloads in or share access to default projects. Default projects are reserved for running core cluster components.
+
+The following default projects are considered highly privileged: `default`, `kube-public`, `kube-system`, `openshift`, `openshift-infra`, `openshift-node`, and other system-created projects that have the `openshift.io/run-level` label set to `0` or `1`. Functionality that relies on admission plugins, such as pod security admission, security context constraints, cluster resource quotas, and image reference resolution, does not work in highly privileged projects.
+====
+
+[id="psa-modes_{context}"]
+== Pod security admission modes
+
+You can configure the following pod security admission modes for a namespace:
+
+.Pod security admission modes
+[cols="1,2,3a",options="header"]
+|===
+|Mode
+|Label
+|Description
+
+|`enforce`
+|`pod-security.kubernetes.io/enforce`
+|Rejects a pod from admission if it does not comply with the set profile
+
+|`audit`
+|`pod-security.kubernetes.io/audit`
+|Logs audit events if a pod does not comply with the set profile
+
+|`warn`
+|`pod-security.kubernetes.io/warn`
+|Displays warnings if a pod does not comply with the set profile
+|===
+
+[id="psa-profiles_{context}"]
+== Pod security admission profiles
+
+You can set each of the pod security admission modes to one of the following profiles:
+
+.Pod security admission profiles
+[cols="1,3a",options="header"]
+|===
+|Profile
+|Description
+
+|`privileged`
+|Least restrictive policy; allows for known privilege escalation
+
+|`baseline`
+|Minimally restrictive policy; prevents known privilege escalations
+
+|`restricted`
+|Most restrictive policy; follows current pod hardening best practices
+|===
+
+[id="psa-privileged-namespaces_{context}"]
+== Privileged namespaces
+
+The following system namespaces are always set to the `privileged` pod security admission profile:
+
+* `default`
+* `kube-public`
+* `kube-system`
+
+You cannot change the pod security profile for these privileged namespaces.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * authentication/understanding-and-managing-pod-security-admission.adoc
+// * operators/operator_sdk/osdk-complying-with-psa.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="security-context-constraints-psa-synchronization_{context}"]
+= About pod security admission synchronization
+
+In addition to the global pod security admission control configuration, a controller applies pod security admission control `warn` and `audit` labels to namespaces according to the SCC permissions of the service accounts that are in a given namespace.
+
+The controller examines `ServiceAccount` object permissions to use security context constraints in each namespace. Security context constraints (SCCs) are mapped to pod security profiles based on their field values; the controller uses these translated profiles. Pod security admission `warn` and `audit` labels are set to the most privileged pod security profile in the namespace to prevent displaying warnings and logging audit events when pods are created.
+
+Namespace labeling is based on consideration of namespace-local service account privileges.
+
+Applying pods directly might use the SCC privileges of the user who runs the pod. However, user privileges are not considered during automatic labeling.
+
+:leveloffset!:
+
+// Pod security admission synchronization namespace exclusions
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * authentication/understanding-and-managing-pod-security-admission.adoc
+// * operators/operator_sdk/osdk-complying-with-psa.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="security-context-constraints-psa-sync-exclusions_{context}"]
+= Pod security admission synchronization namespace exclusions
+
+Pod security admission synchronization is permanently disabled on most system-created namespaces. Synchronization is also initially disabled on user-created `openshift-*` prefixed namespaces, but you can enable synchronization on them later.
+
+[IMPORTANT]
+====
+If a pod security admission label (`pod-security.kubernetes.io/<mode>`) is manually modified from the automatically labeled value on a label-synchronized namespace, synchronization is disabled for that label.
+
+If necessary, you can enable synchronization again by using one of the following methods:
+
+* By removing the modified pod security admission label from the namespace
+* By setting the `security.openshift.io/scc.podSecurityLabelSync` label to `true`
++
+If you force synchronization by adding this label, then any modified pod security admission labels will be overwritten.
+====
+
+[discrete]
+== Permanently disabled namespaces
+
+Namespaces that are defined as part of the cluster payload have pod security admission synchronization disabled permanently. The following namespaces are permanently disabled:
+
+* `default`
+* `kube-node-lease`
+* `kube-system`
+* `kube-public`
+* `openshift`
+* All system-created namespaces that are prefixed with `openshift-`, except for `openshift-operators`
+
+[discrete]
+== Initially disabled namespaces
+
+By default, all namespaces that have an `openshift-` prefix have pod security admission synchronization disabled initially. You can enable synchronization for user-created [x-]`openshift-*` namespaces and for the `openshift-operators` namespace.
+
+[NOTE]
+====
+You cannot enable synchronization for any system-created [x-]`openshift-*` namespaces, except for `openshift-operators`.
+====
+
+If an Operator is installed in a user-created `openshift-*` namespace, synchronization is enabled automatically after a cluster service version (CSV) is created in the namespace. The synchronized label is derived from the permissions of the service accounts in the namespace.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-complying-with-psa.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-ensuring-operator-workloads-run-restricted-psa_{context}"]
+= Ensuring Operator workloads run in namespaces set to the restricted pod security level
+
+To ensure your Operator project can run on a wide variety of deployments and environments, configure the Operator's workloads to run in namespaces set to the `restricted` pod security level.
+
+[WARNING]
+====
+You must leave the `runAsUser` field empty. If your image requires a specific user, it cannot be run under restricted security context constraints (SCC) and restricted pod security enforcement.
+====
+
+.Procedure
+
+* To configure Operator workloads to run in namespaces set to the `restricted` pod security level, edit your Operator's namespace definition similar to the following examples:
++
+[IMPORTANT]
+====
+It is recommended that you set the seccomp profile in your Operator's namespace definition. However, setting the seccomp profile is not supported in {product-title} 4.10.
+====
+
+** For Operator projects that must run in only {product-title} 4.11 and later, edit your Operator's namespace definition similar to the following example:
++
+.Example `config/manager/manager.yaml` file
+[source,yaml]
+----
+...
+spec:
+ securityContext:
+   seccompProfile:
+     type: RuntimeDefault <1>
+   runAsNonRoot: true
+ containers:
+   - name: <operator_workload_container>
+     securityContext:
+       allowPrivilegeEscalation: false
+       capabilities:
+         drop:
+           - ALL
+...
+----
+<1> By setting the seccomp profile type to `RuntimeDefault`, the SCC defaults to the pod security profile of the namespace.
+
+** For Operator projects that must also run in {product-title} 4.10, edit your Operator's namespace definition similar to the following example:
++
+.Example `config/manager/manager.yaml` file
+[source,yaml]
+----
+...
+spec:
+ securityContext: <1>
+   runAsNonRoot: true
+ containers:
+   - name: <operator_workload_container>
+     securityContext:
+       allowPrivilegeEscalation: false
+       capabilities:
+         drop:
+           - ALL
+...
+----
+<1> Leaving the seccomp profile type unset ensures your Operator project can run in {product-title} 4.10.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../authentication/managing-security-context-constraints.adoc#managing-security-context-constraints[Managing security context constraints]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-complying-with-psa.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-managing-psa-for-operators-with-escalated-permissions_{context}"]
+= Managing pod security admission for Operator workloads that require escalated permissions
+
+If your Operator project requires escalated permissions to run, you must edit your Operator's cluster service version (CSV).
+
+.Procedure
+
+. Set the security context configuration to the required permission level in your Operator's CSV, similar to the following example:
++
+.Example `<operator_name>.clusterserviceversion.yaml` file with network administrator privileges
+[source,yaml]
+----
+...
+containers:
+   - name: my-container
+     securityContext:
+       allowPrivilegeEscalation: false
+       capabilities:
+         add:
+           - "NET_ADMIN"
+...
+----
+
+. Set the service account privileges that allow your Operator's workloads to use the required security context constraints (SCC), similar to the following example:
++
+.Example `<operator_name>.clusterserviceversion.yaml` file
+[source,yaml]
+----
+...
+  install:
+    spec:
+      clusterPermissions:
+      - rules:
+        - apiGroups:
+          - security.openshift.io
+          resourceNames:
+          - privileged
+          resources:
+          - securitycontextconstraints
+          verbs:
+          - use
+        serviceAccountName: default
+...
+----
+
+. Edit your Operator's CSV description to explain why your Operator project requires escalated permissions similar to the following example:
++
+.Example `<operator_name>.clusterserviceversion.yaml` file
+[source,yaml]
+----
+...
+spec:
+  apiservicedefinitions:{}
+  ...
+description: The <operator_name> requires a privileged pod security admission label set on the Operator's namespace. The Operator's agents require escalated permissions to restart the node if the node needs remediation.
+----
+
+:leveloffset!:
+
+// This xref points to a topic that is not included in the OSD/ROSA docs.
+[id="osdk-complying-with-psa-additional-resources"]
+[role="_additional-resources"]
+== Additional resources
+
+* xref:../../authentication/understanding-and-managing-pod-security-admission.adoc#understanding-and-managing-pod-security-admission[Understanding and managing pod security admission]
+
+//# includes=_attributes/common-attributes,modules/security-context-constraints-psa-about,modules/snippets/default-projects,modules/security-context-constraints-psa-synchronization,modules/security-context-constraints-psa-sync-exclusions,modules/osdk-ensuring-operator-workloads-run-restricted-psa,modules/osdk-managing-psa-for-operators-with-escalated-permissions

@@ -1,0 +1,915 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="samples-operator-alt-registry"]
+= Using the Cluster Samples Operator with an alternate registry
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: samples-operator-alt-registry
+
+toc::[]
+
+You can use the Cluster Samples Operator with an alternate registry by first creating a mirror registry.
+
+[IMPORTANT]
+====
+You must have access to the internet to obtain the necessary container images. In this procedure, you place the mirror registry on a mirror host that has access to both your network and the internet.
+====
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/disconnected_install/installing-mirroring-installation-images.adoc
+// * openshift_images/samples-operator-alt-registry.adoc
+// * scalability_and_performance/ztp-deploying-disconnected.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/mirroring-image-repository.adoc
+
+
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-about-mirror-registry_{context}"]
+= About the mirror registry
+
+You can mirror the images that are required for {product-title} installation and subsequent product updates to a container mirror registry such as Red Hat Quay, JFrog Artifactory, Sonatype Nexus Repository, or Harbor. If you do not have access to a large-scale container registry, you can use the _mirror registry for Red Hat OpenShift_, a small-scale container registry included with {product-title} subscriptions.
+
+You can use any container registry that supports link:https://docs.docker.com/registry/spec/manifest-v2-2[Docker v2-2], such as Red Hat Quay, the _mirror registry for Red Hat OpenShift_, Artifactory, Sonatype Nexus Repository, or Harbor. Regardless of your chosen registry, the procedure to mirror content from Red Hat hosted sites on the internet to an isolated image registry is the same. After you mirror the content, you configure each cluster to retrieve this content from your mirror registry.
+
+[IMPORTANT]
+====
+The {product-registry} cannot be used as the target registry because it does not support pushing without a tag, which is required during the mirroring process.
+====
+
+If choosing a container registry that is not the _mirror registry for Red Hat OpenShift_, it must be reachable by every machine in the clusters that you provision. If the registry is unreachable, installation, updating, or normal operations such as workload relocation might fail. For that reason, you must run mirror registries in a highly available way, and the mirror registries must at least match the production availability of your {product-title} clusters.
+
+When you populate your mirror registry with {product-title} images, you can follow two scenarios. If you have a host that can access both the internet and your mirror registry, but not your cluster nodes, you can directly mirror the content from that machine. This process is referred to as _connected mirroring_. If you have no such host, you must mirror the images to a file system and then bring that host or removable media into your restricted environment. This process is referred to as _disconnected mirroring_.
+
+For mirrored registries, to view the source of pulled images, you must review the `Trying to access` log entry in the CRI-O logs. Other methods to view the image pull source, such as using the `crictl images` command on a node, show the non-mirrored image name, even though the image is pulled from the mirrored location.
+
+[NOTE]
+====
+Red Hat does not test third party registries with {product-title}.
+====
+
+
+
+:leveloffset!:
+
+.Additional information
+
+For information on viewing the CRI-O logs to view the image source, see xref:../installing/validating-an-installation.adoc#viewing-the-image-pull-source_validating-an-installation[Viewing the image pull source].
+
+[id="samples-preparing-bastion"]
+=== Preparing the mirror host
+
+Before you create the mirror registry, you must prepare the mirror host.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * cli_reference/openshift_cli/getting-started.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adocs
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/install_config/installing-restricted-networks-preparations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * openshift_images/samples-operator-alt-registry.adoc
+// * updating/updating-restricted-network-cluster/mirroring-image-repository.adoc
+// * microshift_cli_ref/microshift-oc-cli-install.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/mirroring-image-repository.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+// AMQ docs link to this; do not change anchor
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="cli-installing-cli_{context}"]
+= Installing the OpenShift CLI by downloading the binary
+
+You can install the {oc-first} to interact with
+{product-title}
+from a command-line interface. You can install `oc` on Linux, Windows, or macOS.
+
+[IMPORTANT]
+====
+If you installed an earlier version of `oc`, you cannot use it to complete all of the commands in
+{product-title} {product-version}.
+Download and install the new version of `oc`.
+====
+
+[discrete]
+== Installing the OpenShift CLI on Linux
+
+You can install the OpenShift CLI (`oc`) binary on Linux by using the following procedure.
+
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the architecture from the *Product Variant* drop-down list.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} Linux Client* entry and save the file.
+. Unpack the archive:
++
+[source,terminal]
+----
+$ tar xvf <file>
+----
+. Place the `oc` binary in a directory that is on your `PATH`.
++
+To check your `PATH`, execute the following command:
++
+[source,terminal]
+----
+$ echo $PATH
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+$ oc <command>
+----
+
+[discrete]
+== Installing the OpenShift CLI on Windows
+
+You can install the OpenShift CLI (`oc`) binary on Windows by using the following procedure.
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} Windows Client* entry and save the file.
+. Unzip the archive with a ZIP program.
+. Move the `oc` binary to a directory that is on your `PATH`.
++
+To check your `PATH`, open the command prompt and execute the following command:
++
+[source,terminal]
+----
+C:\> path
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+C:\> oc <command>
+----
+
+[discrete]
+== Installing the OpenShift CLI on macOS
+
+You can install the OpenShift CLI (`oc`) binary on macOS by using the following procedure.
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} macOS Client* entry and save the file.
++
+[NOTE]
+====
+For macOS arm64, choose the *OpenShift v{product-version} macOS arm64 Client* entry.
+====
+. Unpack and unzip the archive.
+. Move the `oc` binary to a directory on your PATH.
++
+To check your `PATH`, open a terminal and execute the following command:
++
+[source,terminal]
+----
+$ echo $PATH
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+$ oc <command>
+----
+
+
+:leveloffset!:
+
+//include::modules/installation-local-registry-pull-secret.adoc[leveloffset=+1]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/disconnected_install/installing-mirroring-installation-images.adoc
+// * installing/disconnected_install/installing-mirroring-disconnected.adoc
+// * openshift_images/samples-operator-alt-registry.adoc
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-clusters-at-scale.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/mirroring-image-repository.adoc
+
+
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-adding-registry-pull-secret_{context}"]
+= Configuring credentials that allow images to be mirrored
+
+Create a container image registry credentials file that allows mirroring
+images from Red Hat to your mirror.
+
+
+
+.Prerequisites
+* You configured a mirror registry to use in your disconnected environment.
+
+.Procedure
+
+Complete the following steps on the installation host:
+
+. Download your `registry.redhat.io` {cluster-manager-url-pull}.
+
+. Make a copy of your pull secret in JSON format:
++
+[source,terminal]
+----
+$ cat ./pull-secret | jq . > <path>/<pull_secret_file_in_json> <1>
+----
+<1> Specify the path to the folder to store the pull secret in and a name for the JSON file that you create.
++
+The contents of the file resemble the following example:
++
+[source,json]
+----
+{
+  "auths": {
+    "cloud.openshift.com": {
+      "auth": "b3BlbnNo...",
+      "email": "you@example.com"
+    },
+    "quay.io": {
+      "auth": "b3BlbnNo...",
+      "email": "you@example.com"
+    },
+    "registry.connect.redhat.com": {
+      "auth": "NTE3Njg5Nj...",
+      "email": "you@example.com"
+    },
+    "registry.redhat.io": {
+      "auth": "NTE3Njg5Nj...",
+      "email": "you@example.com"
+    }
+  }
+}
+----
+// An additional step for following this procedure when using oc-mirror as part of the disconnected install process.
+// Similar to the additional step above, except it is framed as optional because it is included in a disconnected update page (where users may or may not use oc-mirror for their process)
+
+. Generate the base64-encoded user name and password or token for your mirror registry:
++
+[source,terminal]
+----
+$ echo -n '<user_name>:<password>' | base64 -w0 <1>
+BGVtbYk3ZHAtqXs=
+----
+<1> For `<user_name>` and `<password>`, specify the user name and password that you configured for your registry.
+
+. Edit the JSON
+file and add a section that describes your registry to it:
++
+[source,json]
+----
+  "auths": {
+    "<mirror_registry>": { <1>
+      "auth": "<credentials>", <2>
+      "email": "you@example.com"
+    }
+  },
+----
+<1> For `<mirror_registry>`, specify the registry domain name, and optionally the
+port, that your mirror registry uses to serve content. For example,
+`registry.example.com` or `registry.example.com:8443`
+<2> For `<credentials>`, specify the base64-encoded user name and password for
+the mirror registry.
++
+The file resembles the following example:
++
+[source,json]
+----
+{
+  "auths": {
+    "registry.example.com": {
+      "auth": "BGVtbYk3ZHAtqXs=",
+      "email": "you@example.com"
+    },
+    "cloud.openshift.com": {
+      "auth": "b3BlbnNo...",
+      "email": "you@example.com"
+    },
+    "quay.io": {
+      "auth": "b3BlbnNo...",
+      "email": "you@example.com"
+    },
+    "registry.connect.redhat.com": {
+      "auth": "NTE3Njg5Nj...",
+      "email": "you@example.com"
+    },
+    "registry.redhat.io": {
+      "auth": "NTE3Njg5Nj...",
+      "email": "you@example.com"
+    }
+  }
+}
+----
+
+////
+This is not currently working as intended.
+. Log in to your registry by using the following command:
++
+[source,terminal]
+----
+$ oc registry login --to ./pull-secret.json --registry "<registry_host_and_port>" --auth-basic=<username>:<password>
+----
++
+Provide both the registry details and a valid user name and password for the registry.
+////
+
+
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/install_config/installing-restricted-networks-preparations.adoc
+// * openshift_images/samples-operator-alt-registry.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-mirror-repository_{context}"]
+= Mirroring the {product-title} image repository
+
+Mirror the {product-title} image repository to your registry to use during cluster installation or upgrade.
+
+.Prerequisites
+
+* Your mirror host has access to the internet.
+* You configured a mirror registry to use in your restricted network and
+can access the certificate and credentials that you configured.
+* You downloaded the {cluster-manager-url-pull} and modified it to include authentication to your mirror repository.
+
+* If you use self-signed certificates, you have specified a Subject Alternative Name in the certificates.
+
+.Procedure
+
+Complete the following steps on the mirror host:
+
+. Review the
+link:https://access.redhat.com/downloads/content/290/[{product-title} downloads page]
+to determine the version of {product-title} that you want to install and determine the corresponding tag on the link:https://quay.io/repository/openshift-release-dev/ocp-release?tab=tags[Repository Tags] page.
+
+. Set the required environment variables:
+.. Export the release version:
++
+[source,terminal]
+----
+$ OCP_RELEASE=<release_version>
+----
++
+For `<release_version>`, specify the tag that corresponds to the version of {product-title} to
+install, such as `4.5.4`.
+
+.. Export the local registry name and host port:
++
+[source,terminal]
+----
+$ LOCAL_REGISTRY='<local_registry_host_name>:<local_registry_host_port>'
+----
++
+For `<local_registry_host_name>`, specify the registry domain name for your mirror
+repository, and for `<local_registry_host_port>`, specify the port that it
+serves content on.
+
+.. Export the local repository name:
++
+[source,terminal]
+----
+$ LOCAL_REPOSITORY='<local_repository_name>'
+----
++
+For `<local_repository_name>`, specify the name of the repository to create in your
+registry, such as `ocp4/openshift4`.
+
+.. Export the name of the repository to mirror:
++
+[source,terminal]
+----
+$ PRODUCT_REPO='openshift-release-dev'
+----
++
+For a production release, you must specify `openshift-release-dev`.
+
+.. Export the path to your registry pull secret:
++
+[source,terminal]
+----
+$ LOCAL_SECRET_JSON='<path_to_pull_secret>'
+----
++
+For `<path_to_pull_secret>`, specify the absolute path to and file name of the pull secret for your mirror registry that you created.
+
+.. Export the release mirror:
++
+[source,terminal]
+----
+$ RELEASE_NAME="ocp-release"
+----
++
+For a production release, you must specify `ocp-release`.
+
+.. Export the type of architecture for your cluster:
++
+[source,terminal]
+----
+$ ARCHITECTURE=<cluster_architecture> <1>
+----
+<1> Specify the architecture of the cluster, such as `x86_64`, `aarch64`, `s390x`, or `ppc64le`.
+
+
+.. Export the path to the directory to host the mirrored images:
++
+[source,terminal]
+----
+$ REMOVABLE_MEDIA_PATH=<path> <1>
+----
+<1> Specify the full path, including the initial forward slash (/) character.
+
+. Mirror the version images to the mirror registry:
+** If your mirror host does not have internet access, take the following actions:
+... Connect the removable media to a system that is connected to the internet.
+... Review the images and configuration manifests to mirror:
++
+[source,terminal]
+----
+$ oc adm release mirror -a ${LOCAL_SECRET_JSON}  \
+     --from=quay.io/${PRODUCT_REPO}/${RELEASE_NAME}:${OCP_RELEASE}-${ARCHITECTURE} \
+     --to=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY} \
+     --to-release-image=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}:${OCP_RELEASE}-${ARCHITECTURE} --dry-run
+----
+
+... Record the entire `imageContentSources` section from the output of the previous
+command. The information about your mirrors is unique to your mirrored repository, and you must add the `imageContentSources` section to the `install-config.yaml` file during installation.
+... Mirror the images to a directory on the removable media:
++
+[source,terminal]
+----
+$ oc adm release mirror -a ${LOCAL_SECRET_JSON} --to-dir=${REMOVABLE_MEDIA_PATH}/mirror quay.io/${PRODUCT_REPO}/${RELEASE_NAME}:${OCP_RELEASE}-${ARCHITECTURE}
+----
+
+... Take the media to the restricted network environment and upload the images to the local container registry.
++
+[source,terminal]
+----
+$ oc image mirror -a ${LOCAL_SECRET_JSON} --from-dir=${REMOVABLE_MEDIA_PATH}/mirror "file://openshift/release:${OCP_RELEASE}*" ${LOCAL_REGISTRY}/${LOCAL_REPOSITORY} <1>
+----
++
+<1> For `REMOVABLE_MEDIA_PATH`, you must use the same path that you specified when you mirrored the images.
++
+[IMPORTANT]
+====
+Running `oc image mirror` might result in the following error: `error: unable to retrieve source image`. This error occurs when image indexes include references to images that no longer exist on the image registry. Image indexes might retain older references to allow users running those images an upgrade path to newer points on the upgrade graph. As a temporary workaround, you can use the `--skip-missing` option to bypass the error and continue downloading the image index. For more information, see link:https://access.redhat.com/solutions/6975305[Service Mesh Operator mirroring failed].
+====
+
+** If the local container registry is connected to the mirror host, take the following actions:
+... Directly push the release images to the local registry by using following command:
++
+[source,terminal]
+----
+$ oc adm release mirror -a ${LOCAL_SECRET_JSON}  \
+     --from=quay.io/${PRODUCT_REPO}/${RELEASE_NAME}:${OCP_RELEASE}-${ARCHITECTURE} \
+     --to=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY} \
+     --to-release-image=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}:${OCP_RELEASE}-${ARCHITECTURE}
+----
++
+This command pulls the release information as a digest, and its output includes
+the `imageContentSources` data that you require when you install your cluster.
+
+... Record the entire `imageContentSources` section from the output of the previous
+command. The information about your mirrors is unique to your mirrored repository, and you must add the `imageContentSources` section to the `install-config.yaml` file during installation.
++
+[NOTE]
+====
+The image name gets patched to Quay.io during the mirroring process, and the podman images will show Quay.io in the registry on the bootstrap virtual machine.
+====
+
+. To create the installation program that is based on the content that you
+mirrored, extract it and pin it to the release:
+** If your mirror host does not have internet access, run the following command:
++
+[source,terminal]
+----
+$ oc adm release extract -a ${LOCAL_SECRET_JSON} --icsp-file=<file> \ --command=openshift-install "${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}:${OCP_RELEASE}"
+----
+** If the local container registry is connected to the mirror host, run the following command:
++
+[source,terminal]
+----
+$ oc adm release extract -a ${LOCAL_SECRET_JSON} --command=openshift-install "${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}:${OCP_RELEASE}-${ARCHITECTURE}"
+----
++
+[IMPORTANT]
+====
+To ensure that you use the correct images for the version of {product-title}
+that you selected, you must extract the installation program from the mirrored
+content.
+
+You must perform this step on a machine with an active internet connection.
+====
+
+. For clusters using installer-provisioned infrastructure, run the following command:
++
+[source,terminal]
+----
+$ openshift-install
+----
+
+
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * post_installation_configuration/cluster-tasks.adoc
+// * openshift_images/samples-operator-alt-registry.adoc
+
+
+:samplesoperatoraltreg:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-restricted-network-samples_{context}"]
+= Using Cluster Samples Operator image streams with alternate or mirrored registries
+
+Most image streams in the `openshift` namespace managed by the Cluster Samples Operator
+point to images located in the Red Hat registry at link:https://registry.redhat.io[registry.redhat.io].
+
+[NOTE]
+====
+The `cli`, `installer`, `must-gather`, and `tests` image streams, while
+part of the install payload, are not managed by the Cluster Samples Operator. These are
+not addressed in this procedure.
+====
+
+[IMPORTANT]
+====
+The Cluster Samples Operator must be set to `Managed` in a disconnected environment. To install the image streams, you have a mirrored registry.
+====
+
+.Prerequisites
+* Access to the cluster as a user with the `cluster-admin` role.
+* Create a pull secret for your mirror registry.
+
+.Procedure
+
+. Access the images of a specific image stream to mirror, for example:
++
+[source,terminal]
+----
+$ oc get is <imagestream> -n openshift -o json | jq .spec.tags[].from.name | grep registry.redhat.io
+----
++
+. Mirror images from link:https://registry.redhat.io[registry.redhat.io] associated with any image streams you need
++
+[source,terminal]
+----
+$ oc image mirror registry.redhat.io/rhscl/ruby-25-rhel7:latest ${MIRROR_ADDR}/rhscl/ruby-25-rhel7:latest
+----
+
+. Create the cluster's image configuration object:
++
+[source,terminal]
+----
+$ oc create configmap registry-config --from-file=${MIRROR_ADDR_HOSTNAME}..5000=$path/ca.crt -n openshift-config
+----
+
+. Add the required trusted CAs for the mirror in the cluster's image
+configuration object:
++
+[source,terminal]
+----
+$ oc patch image.config.openshift.io/cluster --patch '{"spec":{"additionalTrustedCA":{"name":"registry-config"}}}' --type=merge
+----
+
+. Update the `samplesRegistry` field in the Cluster Samples Operator configuration object
+to contain the `hostname` portion of the mirror location defined in the mirror
+configuration:
++
+[source,terminal]
+----
+$ oc edit configs.samples.operator.openshift.io -n openshift-cluster-samples-operator
+----
++
+[NOTE]
+====
+This is required because the image stream import process does not use the mirror or search mechanism at this time.
+====
++
+. Add any image streams that are not mirrored into the `skippedImagestreams` field
+of the Cluster Samples Operator configuration object. Or if you do not want to support
+any of the sample image streams, set the Cluster Samples Operator to `Removed` in the
+Cluster Samples Operator configuration object.
++
+[NOTE]
+====
+The Cluster Samples Operator issues alerts if image stream imports are failing but the Cluster Samples Operator is either periodically retrying or does not appear to be retrying them.
+====
++
+Many of the templates in the `openshift` namespace
+reference the image streams. So using `Removed` to purge both the image streams
+and templates will eliminate the possibility of attempts to use them if they
+are not functional because of any missing image streams.
+
+
+:!samplesoperatoraltreg:
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/install_config/installing-restricted-networks-preparations.adoc
+// * openshift_images/samples-operator-alt-registry.adoc
+// * openshift_images/configuring-samples-operator.adoc
+
+[id="installation-images-samples-disconnected-mirroring-assist_{context}"]
+= Cluster Samples Operator assistance for mirroring
+
+During installation, {product-title} creates a config map named `imagestreamtag-to-image` in the `openshift-cluster-samples-operator` namespace. The `imagestreamtag-to-image` config map contains an entry, the populating image, for each image stream tag.
+
+The format of the key for each entry in the data field in the config map is `<image_stream_name>_<image_stream_tag_name>`.
+
+During a disconnected installation of {product-title}, the status of the Cluster Samples Operator is set to `Removed`. If you choose to change it to `Managed`, it installs samples.
+[NOTE]
+====
+The use of samples in a network-restricted or discontinued environment may require access to services external to your network. Some example services include: Github, Maven Central, npm, RubyGems, PyPi and others. There might be additional steps to take that allow the cluster samples operators's objects to reach the services they require.
+====
+
+You can use this config map as a reference for which images need to be mirrored for your image streams to import.
+
+* While the Cluster Samples Operator is set to `Removed`, you can create your mirrored registry, or determine which existing mirrored registry you want to use.
+* Mirror the samples you want to the mirrored registry using the new config map as your guide.
+* Add any of the image streams you did not mirror to the `skippedImagestreams` list of the Cluster Samples Operator configuration object.
+* Set `samplesRegistry` of the Cluster Samples Operator configuration object to the mirrored registry.
+* Then set the Cluster Samples Operator to `Managed` to install the image streams you have mirrored.
+
+:leveloffset!:
+
+See xref:../openshift_images/samples-operator-alt-registry.adoc#installation-restricted-network-samples_samples-operator-alt-registry[Using Cluster Samples Operator image streams with alternate or mirrored registries] for a detailed procedure.
+
+//# includes=_attributes/common-attributes,modules/installation-about-mirror-registry,modules/cli-installing-cli,modules/installation-adding-registry-pull-secret,modules/installation-mirror-repository,modules/installation-restricted-network-samples,modules/installation-images-samples-disconnected-mirroring-assist

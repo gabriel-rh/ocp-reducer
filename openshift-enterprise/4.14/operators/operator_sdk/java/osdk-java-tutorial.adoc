@@ -1,0 +1,1362 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="osdk-java-tutorial"]
+= Operator SDK tutorial for Java-based Operators
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: osdk-java-tutorial
+:FeatureName: Java-based Operator SDK
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+// This assembly is not currrently included in the OSD and ROSA distros, because it is Tech Preview. However, some conditionalization has been added for OSD and ROSA so that the content will be applicable to those distros once this feature is GA and included in the OSD and ROSA docs.
+
+toc::[]
+
+Operator developers can take advantage of Java programming language support in the Operator SDK to build an example Java-based Operator for Memcached, a distributed key-value store, and manage its lifecycle.
+
+This process is accomplished using two centerpieces of the Operator Framework:
+
+Operator SDK:: The `operator-sdk` CLI tool and `java-operator-sdk` library API
+
+Operator Lifecycle Manager (OLM):: Installation, upgrade, and role-based access control (RBAC) of Operators on a cluster
+
+[NOTE]
+====
+This tutorial goes into greater detail than xref:../../../operators/operator_sdk/java/osdk-java-quickstart.adoc#osdk-java-quickstart[Getting started with Operator SDK for Java-based Operators].
+====
+
+// The "Getting started" quickstarts require cluster-admin and are therefore only available in OCP.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/golang/osdk-golang-quickstart.adoc
+// * operators/operator_sdk/golang/osdk-golang-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-quickstart.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-helm-quickstart.adoc
+// * operators/operator_sdk/helm/osdk-helm-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+// * operators/operator_sdk/osdk-working-bundle-images.adoc
+// * operators/operator_sdk/java/osdk-java-quickstart.adoc
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+
+:java:
+
+[id="osdk-common-prereqs_{context}"]
+= Prerequisites
+
+* Operator SDK CLI installed
+* OpenShift CLI (`oc`) {product-version}+ installed
+* link:https://java.com/en/download/help/download_options.html[Java] 11+
+* link:https://maven.apache.org/install.html[Maven] 3.6.3+
+* Logged into an {product-title} {product-version} cluster with `oc` with an account that has `cluster-admin` permissions
+* To allow the cluster to pull the image, the repository where you push your image must be set as public, or you must configure an image pull secret
+
+:!java:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../../operators/operator_sdk/osdk-installing-cli.adoc#osdk-installing-cli[Installing the Operator SDK CLI]
+* xref:../../../cli_reference/openshift_cli/getting-started-cli.adoc#getting-started-cli[Getting started with the OpenShift CLI]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/golang/osdk-golang-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-helm-tutorial.adoc
+
+:java:
+:type: Java
+:app: memcached
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-create-project_{context}"]
+= Creating a project
+
+Use the Operator SDK CLI to create a project called `{app}-operator`.
+
+.Procedure
+
+. Create a directory for the project:
++
+[source,terminal,subs="attributes+"]
+----
+$ mkdir -p $HOME/projects/{app}-operator
+----
+
+. Change to the directory:
++
+[source,terminal,subs="attributes+"]
+----
+$ cd $HOME/projects/{app}-operator
+----
+
+
+. Run the `operator-sdk init` command
+with the `quarkus` plugin
+to initialize the project:
++
+[source,terminal,subs="attributes+"]
+----
+$ operator-sdk init \
+    --plugins=quarkus \
+    --domain=example.com \
+    --project-name=memcached-operator
+----
+
+:!java:
+:!type:
+:!app:
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/golang/osdk-golang-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-helm-tutorial.adoc
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+
+:java:
+:type: Java
+:app: memcached
+
+[id="osdk-project-file_{context}"]
+= PROJECT file
+
+Among the files generated by the `operator-sdk init` command is a Kubebuilder `PROJECT` file. Subsequent `operator-sdk` commands, as well as `help` output, that are run from the project root read this file and are aware that the project type is {type}. For example:
+
+[source,yaml]
+----
+domain: example.com
+layout:
+- quarkus.javaoperatorsdk.io/v1-alpha
+projectName: memcached-operator
+version: "3"
+----
+
+:!java:
+:!type:
+:!app:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-java-create-api-controller_{context}"]
+= Creating an API and controller
+
+Use the Operator SDK CLI to create a custom resource definition (CRD) API and controller.
+
+.Procedure
+
+. Run the following command to create an API:
++
+[source,terminal]
+----
+$ operator-sdk create api \
+    --plugins=quarkus \ <1>
+    --group=cache \ <2>
+    --version=v1 \ <3>
+    --kind=Memcached <4>
+----
+<1> Set the plugin flag to `quarkus`.
+<2> Set the group flag to `cache`.
+<3> Set the version flag to `v1`.
+<4> Set the kind flag to `Memcached`.
+
+.Verification
+
+. Run the `tree` command to view the file structure:
++
+[source,terminal]
+----
+$ tree
+----
++
+.Example output
+[source,terminal]
+----
+.
+├── Makefile
+├── PROJECT
+├── pom.xml
+└── src
+    └── main
+        ├── java
+        │   └── com
+        │       └── example
+        │           ├── Memcached.java
+        │           ├── MemcachedReconciler.java
+        │           ├── MemcachedSpec.java
+        │           └── MemcachedStatus.java
+        └── resources
+            └── application.properties
+
+6 directories, 8 files
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-java-define-api_{context}"]
+= Defining the API
+
+Define the API for the `Memcached` custom resource (CR).
+
+.Procedure
+* Edit the following files that were generated as part of the `create api` process:
+
+.. Update the following attributes in the `MemcachedSpec.java` file to define the desired state of the `Memcached` CR:
++
+[source,java]
+----
+public class MemcachedSpec {
+
+    private Integer size;
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+}
+----
+
+.. Update the following attributes in the `MemcachedStatus.java` file to define the observed state of the `Memcached` CR:
++
+[NOTE]
+====
+The example below illustrates a Node status field. It is recommended that you use link:https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties[typical status properties] in practice.
+====
++
+[source,java]
+----
+import java.util.ArrayList;
+import java.util.List;
+
+public class MemcachedStatus {
+
+    // Add Status information here
+    // Nodes are the names of the memcached pods
+    private List<String> nodes;
+
+    public List<String> getNodes() {
+        if (nodes == null) {
+            nodes = new ArrayList<>();
+        }
+        return nodes;
+    }
+
+    public void setNodes(List<String> nodes) {
+        this.nodes = nodes;
+    }
+}
+----
+
+.. Update the `Memcached.java` file to define the Schema for Memcached APIs that extends to both `MemcachedSpec.java` and `MemcachedStatus.java` files.
++
+[source,java]
+----
+@Version("v1")
+@Group("cache.example.com")
+public class Memcached extends CustomResource<MemcachedSpec, MemcachedStatus> implements Namespaced {}
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-java-generate-crd_{context}"]
+= Generating CRD manifests
+
+After the API is defined with `MemcachedSpec` and `MemcachedStatus` files, you can generate CRD manifests.
+
+.Procedure
+
+* Run the following command from the `memcached-operator` directory to generate the CRD:
++
+[source,terminal]
+----
+$ mvn clean install
+----
+
+.Verification
+
+* Verify the contents of the CRD in the `target/kubernetes/memcacheds.cache.example.com-v1.yml` file as shown in the following example:
++
+[source,terminal]
+----
+$ cat target/kubernetes/memcacheds.cache.example.com-v1.yaml
+----
++
+.Example output
+[source,yaml]
+----
+# Generated by Fabric8 CRDGenerator, manual edits might get overwritten!
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: memcacheds.cache.example.com
+spec:
+  group: cache.example.com
+  names:
+    kind: Memcached
+    plural: memcacheds
+    singular: memcached
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              size:
+                type: integer
+            type: object
+          status:
+            properties:
+              nodes:
+                items:
+                  type: string
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-java-create-cr_{context}"]
+= Creating a Custom Resource
+
+After generating the CRD manifests, you can create the Custom Resource (CR).
+
+.Procedure
+* Create a Memcached CR called `memcached-sample.yaml`:
++
+[source,yaml]
+----
+apiVersion: cache.example.com/v1
+kind: Memcached
+metadata:
+  name: memcached-sample
+spec:
+  # Add spec fields here
+  size: 1
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-java-implement-controller_{context}"]
+= Implementing the controller
+
+After creating a new API and controller, you can implement the controller logic.
+
+.Procedure
+
+. Append the following dependency to the `pom.xml` file:
++
+[source,xml]
+----
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.2</version>
+    </dependency>
+----
+
+. For this example, replace the generated controller file `MemcachedReconciler.java` with following example implementation:
++
+.Example `MemcachedReconciler.java`
+[%collapsible]
+====
+[source,java]
+----
+package com.example;
+
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.javaoperatorsdk.operator.api.reconciler.Context;
+import io.javaoperatorsdk.operator.api.reconciler.Reconciler;
+import io.javaoperatorsdk.operator.api.reconciler.UpdateControl;
+import io.fabric8.kubernetes.api.model.ContainerBuilder;
+import io.fabric8.kubernetes.api.model.ContainerPortBuilder;
+import io.fabric8.kubernetes.api.model.LabelSelectorBuilder;
+import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
+import io.fabric8.kubernetes.api.model.OwnerReferenceBuilder;
+import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.api.model.PodSpecBuilder;
+import io.fabric8.kubernetes.api.model.PodTemplateSpecBuilder;
+import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
+import io.fabric8.kubernetes.api.model.apps.DeploymentSpecBuilder;
+import org.apache.commons.collections.CollectionUtils;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class MemcachedReconciler implements Reconciler<Memcached> {
+  private final KubernetesClient client;
+
+  public MemcachedReconciler(KubernetesClient client) {
+    this.client = client;
+  }
+
+  // TODO Fill in the rest of the reconciler
+
+  @Override
+  public UpdateControl<Memcached> reconcile(
+      Memcached resource, Context context) {
+      // TODO: fill in logic
+      Deployment deployment = client.apps()
+              .deployments()
+              .inNamespace(resource.getMetadata().getNamespace())
+              .withName(resource.getMetadata().getName())
+              .get();
+
+      if (deployment == null) {
+          Deployment newDeployment = createMemcachedDeployment(resource);
+          client.apps().deployments().create(newDeployment);
+          return UpdateControl.noUpdate();
+      }
+
+      int currentReplicas = deployment.getSpec().getReplicas();
+      int requiredReplicas = resource.getSpec().getSize();
+
+      if (currentReplicas != requiredReplicas) {
+          deployment.getSpec().setReplicas(requiredReplicas);
+          client.apps().deployments().createOrReplace(deployment);
+          return UpdateControl.noUpdate();
+      }
+
+      List<Pod> pods = client.pods()
+          .inNamespace(resource.getMetadata().getNamespace())
+          .withLabels(labelsForMemcached(resource))
+          .list()
+          .getItems();
+
+      List<String> podNames =
+          pods.stream().map(p -> p.getMetadata().getName()).collect(Collectors.toList());
+
+
+      if (resource.getStatus() == null
+               || !CollectionUtils.isEqualCollection(podNames, resource.getStatus().getNodes())) {
+           if (resource.getStatus() == null) resource.setStatus(new MemcachedStatus());
+           resource.getStatus().setNodes(podNames);
+           return UpdateControl.updateResource(resource);
+      }
+
+      return UpdateControl.noUpdate();
+  }
+
+  private Map<String, String> labelsForMemcached(Memcached m) {
+    Map<String, String> labels = new HashMap<>();
+    labels.put("app", "memcached");
+    labels.put("memcached_cr", m.getMetadata().getName());
+    return labels;
+  }
+
+  private Deployment createMemcachedDeployment(Memcached m) {
+      Deployment deployment = new DeploymentBuilder()
+          .withMetadata(
+              new ObjectMetaBuilder()
+                  .withName(m.getMetadata().getName())
+                  .withNamespace(m.getMetadata().getNamespace())
+                  .build())
+          .withSpec(
+              new DeploymentSpecBuilder()
+                  .withReplicas(m.getSpec().getSize())
+                  .withSelector(
+                      new LabelSelectorBuilder().withMatchLabels(labelsForMemcached(m)).build())
+                  .withTemplate(
+                      new PodTemplateSpecBuilder()
+                          .withMetadata(
+                              new ObjectMetaBuilder().withLabels(labelsForMemcached(m)).build())
+                          .withSpec(
+                              new PodSpecBuilder()
+                                  .withContainers(
+                                      new ContainerBuilder()
+                                          .withImage("memcached:1.4.36-alpine")
+                                          .withName("memcached")
+                                          .withCommand("memcached", "-m=64", "-o", "modern", "-v")
+                                          .withPorts(
+                                              new ContainerPortBuilder()
+                                                  .withContainerPort(11211)
+                                                  .withName("memcached")
+                                                  .build())
+                                          .build())
+                                  .build())
+                          .build())
+                  .build())
+          .build();
+    deployment.addOwnerReference(m);
+    return deployment;
+  }
+}
+----
+====
++
+The example controller runs the following reconciliation logic for each `Memcached` custom resource (CR):
++
+--
+* Creates a Memcached deployment if it does not exist.
+* Ensures that the deployment size matches the size specified by the `Memcached` CR spec.
+* Updates the `Memcached` CR status with the names of the `memcached` pods.
+--
+
+:leveloffset!:
+
+The next subsections explain how the controller in the example implementation watches resources and how the reconcile loop is triggered. You can skip these subsections to go directly to xref:../../../operators/operator_sdk/java/osdk-java-tutorial.adoc#osdk-run-operator_osdk-java-tutorial[Running the Operator].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-java-controller-reconcile-loop_{context}"]
+= Reconcile loop
+
+. Every controller has a reconciler object with a `Reconcile()` method that implements the reconcile loop. The reconcile loop is passed the `Deployment` argument, as shown in the following example:
++
+[source,java]
+----
+        Deployment deployment = client.apps()
+                .deployments()
+                .inNamespace(resource.getMetadata().getNamespace())
+                .withName(resource.getMetadata().getName())
+                .get();
+----
+
+. As shown in the following example, if the `Deployment` is `null`, the deployment needs to be created. After you create the `Deployment`, you can determine if reconciliation is necessary. If there is no need of reconciliation, return the value of `UpdateControl.noUpdate()`, otherwise, return the value of `UpdateControl.updateStatus(resource):
++
+[source, java]
+----
+        if (deployment == null) {
+            Deployment newDeployment = createMemcachedDeployment(resource);
+            client.apps().deployments().create(newDeployment);
+            return UpdateControl.noUpdate();
+        }
+----
+
+. After getting the `Deployment`, get the current and required replicas, as shown in the following example:
++
+[source,java]
+----
+        int currentReplicas = deployment.getSpec().getReplicas();
+        int requiredReplicas = resource.getSpec().getSize();
+----
+
+. If `currentReplicas` does not match the `requiredReplicas`, you must update the `Deployment`, as shown in the following example:
++
+[source,java]
+----
+        if (currentReplicas != requiredReplicas) {
+            deployment.getSpec().setReplicas(requiredReplicas);
+            client.apps().deployments().createOrReplace(deployment);
+            return UpdateControl.noUpdate();
+        }
+----
+
+. The following example shows how to obtain the list of pods and their names:
++
+[source,java]
+----
+        List<Pod> pods = client.pods()
+            .inNamespace(resource.getMetadata().getNamespace())
+            .withLabels(labelsForMemcached(resource))
+            .list()
+            .getItems();
+
+        List<String> podNames =
+            pods.stream().map(p -> p.getMetadata().getName()).collect(Collectors.toList());
+----
+
+. Check if resources were created and verify podnames with the Memcached resources. If a mismatch exists in either of these conditions, perform a reconciliation as shown in the following example:
++
+[source,java]
+----
+        if (resource.getStatus() == null
+                || !CollectionUtils.isEqualCollection(podNames, resource.getStatus().getNodes())) {
+            if (resource.getStatus() == null) resource.setStatus(new MemcachedStatus());
+            resource.getStatus().setNodes(podNames);
+            return UpdateControl.updateResource(resource);
+        }
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-java-controller-labels-memcached_{context}"]
+= Defining `labelsForMemcached`
+
+`labelsForMemcached` is a utility to return a map of the labels to attach to the resources:
+
+[source,java]
+----
+    private Map<String, String> labelsForMemcached(Memcached m) {
+        Map<String, String> labels = new HashMap<>();
+        labels.put("app", "memcached");
+        labels.put("memcached_cr", m.getMetadata().getName());
+        return labels;
+    }
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="osdk-java-controller-memcached-deployment_{context}"]
+=  Define the `createMemcachedDeployment`
+
+The `createMemcachedDeployment` method uses the link:https://fabric8.io/[fabric8] `DeploymentBuilder` class:
+
+[source,java]
+----
+    private Deployment createMemcachedDeployment(Memcached m) {
+        Deployment deployment = new DeploymentBuilder()
+            .withMetadata(
+                new ObjectMetaBuilder()
+                    .withName(m.getMetadata().getName())
+                    .withNamespace(m.getMetadata().getNamespace())
+                    .build())
+            .withSpec(
+                new DeploymentSpecBuilder()
+                    .withReplicas(m.getSpec().getSize())
+                    .withSelector(
+                        new LabelSelectorBuilder().withMatchLabels(labelsForMemcached(m)).build())
+                    .withTemplate(
+                        new PodTemplateSpecBuilder()
+                            .withMetadata(
+                                new ObjectMetaBuilder().withLabels(labelsForMemcached(m)).build())
+                            .withSpec(
+                                new PodSpecBuilder()
+                                    .withContainers(
+                                        new ContainerBuilder()
+                                            .withImage("memcached:1.4.36-alpine")
+                                            .withName("memcached")
+                                            .withCommand("memcached", "-m=64", "-o", "modern", "-v")
+                                            .withPorts(
+                                                new ContainerPortBuilder()
+                                                    .withContainerPort(11211)
+                                                    .withName("memcached")
+                                                    .build())
+                                            .build())
+                                    .build())
+                            .build())
+                    .build())
+            .build();
+      deployment.addOwnerReference(m);
+      return deployment;
+    }
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/golang/osdk-golang-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-helm-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-hybrid-helm.adoc
+
+:java:
+
+[id="osdk-run-operator_{context}"]
+= Running the Operator
+
+// The "run locally" and "run as a deployment" options require cluster-admin. Therefore, these options are not available for OSD/ROSA.
+
+// Deployment options for OCP
+There are three ways you can use the Operator SDK CLI to build and run your Operator:
+
+* Run locally outside the cluster as a Go program.
+* Run as a deployment on the cluster.
+* Bundle your Operator and use Operator Lifecycle Manager (OLM) to deploy on the cluster.
+
+
+// Deployment options for OSD/ROSA
+
+:!java:
+
+:leveloffset!:
+
+
+// In OSD/ROSA, the only applicable option for running the Operator is to bundle and deploy with OLM.
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/golang/osdk-golang-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-helm-tutorial.adoc
+
+:java:
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-run-locally_{context}"]
+= Running locally outside the cluster
+
+You can run your Operator project as a Go program outside of the cluster. This is useful for development purposes to speed up deployment and testing.
+
+.Procedure
+. Run the following command to compile the Operator:
++
+[source,terminal]
+----
+$ mvn clean install
+----
++
+.Example output
+[source,terminal]
+----
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.193 s
+[INFO] Finished at: 2021-05-26T12:16:54-04:00
+[INFO] ------------------------------------------------------------------------
+----
+
+. Run the following command to install the CRD to the default namespace:
++
+[source,terminal]
+----
+$ oc apply -f target/kubernetes/memcacheds.cache.example.com-v1.yml
+----
++
+.Example output
+[source,terminal]
+----
+customresourcedefinition.apiextensions.k8s.io/memcacheds.cache.example.com created
+----
+
+. Create a file called `rbac.yaml` as shown in the following example:
++
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: memcached-operator-admin
+subjects:
+- kind: ServiceAccount
+  name: memcached-quarkus-operator-operator
+  namespace: <operator_namespace>
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: ""
+----
+
+. Run the following command to grant `cluster-admin` privileges to the `memcached-quarkus-operator-operator` by applying the `rbac.yaml` file:
++
+[source,terminal]
+----
+$ oc apply -f rbac.yaml
+----
+
+. Enter the following command to run the Operator:
++
+[source,terminal]
+----
+$ java -jar target/quarkus-app/quarkus-run.jar
+----
++
+[NOTE]
+====
+The `java` command will run the Operator and remain running until you end the process. You will need another terminal to complete the rest of these commands.
+====
+
+. Apply the `memcached-sample.yaml` file with the following command:
++
+[source,terminal]
+----
+$ kubectl apply -f memcached-sample.yaml
+----
++
+.Example output
+[source,terminal]
+----
+memcached.cache.example.com/memcached-sample created
+----
+
+.Verification
+
+* Run the following command to confirm that the pod has started:
++
+[source,terminal]
+----
+$ oc get all
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                       READY   STATUS    RESTARTS   AGE
+pod/memcached-sample-6c765df685-mfqnz                      1/1     Running   0          18s
+----
+:!java:
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/golang/osdk-golang-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-inside-operator.adoc
+// * operators/operator_sdk/helm/osdk-helm-tutorial.adoc
+
+:java:
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-run-deployment_{context}"]
+= Running as a deployment on the cluster
+
+You can run your Operator project as a deployment on your cluster.
+
+
+.Procedure
+
+. Run the following `make` commands to build and push the Operator image. Modify the `IMG` argument in the following steps to reference a repository that you have access to. You can obtain an account for storing containers at repository sites such as Quay.io.
+
+.. Build the image:
++
+[source,terminal]
+----
+$ make docker-build IMG=<registry>/<user>/<image_name>:<tag>
+----
++
+[NOTE]
+====
+The Dockerfile generated by the SDK for the Operator explicitly references `GOARCH=amd64` for `go build`. This can be amended to `GOARCH=$TARGETARCH` for non-AMD64 architectures. Docker will automatically set the environment variable to the value specified by `–platform`. With Buildah, the `–build-arg` will need to be used for the purpose. For more information, see link:https://sdk.operatorframework.io/docs/advanced-topics/multi-arch/#supporting-multiple-architectures[Multiple Architectures].
+====
+
+.. Push the image to a repository:
++
+[source,terminal]
+----
+$ make docker-push IMG=<registry>/<user>/<image_name>:<tag>
+----
++
+[NOTE]
+====
+The name and tag of the image, for example `IMG=<registry>/<user>/<image_name>:<tag>`, in both the commands can also be set in your Makefile. Modify the `IMG ?= controller:latest` value to set your default image name.
+====
+
+. Run the following command to install the CRD to the default namespace:
++
+[source,terminal]
+----
+$ oc apply -f target/kubernetes/memcacheds.cache.example.com-v1.yml
+----
++
+.Example output
+[source,terminal]
+----
+customresourcedefinition.apiextensions.k8s.io/memcacheds.cache.example.com created
+----
+
+. Create a file called `rbac.yaml` as shown in the following example:
++
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: memcached-operator-admin
+subjects:
+- kind: ServiceAccount
+  name: memcached-quarkus-operator-operator
+  namespace: <operator_namespace>
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: ""
+----
++
+[IMPORTANT]
+====
+The `rbac.yaml` file will be applied at a later step.
+====
+
+
+. Run the following command to deploy the Operator:
++
+[source,terminal]
+----
+$ make deploy IMG=<registry>/<user>/<image_name>:<tag>
+----
+
+. Run the following command to grant `cluster-admin` privileges to the `memcached-quarkus-operator-operator` by applying the `rbac.yaml` file created in a previous step:
++
+[source,terminal]
+----
+$ oc apply -f rbac.yaml
+----
+. Run the following command to verify that the Operator is running:
++
+[source,terminal]
+----
+$ oc get all -n default
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                      READY   UP-TO-DATE   AVAILABLE   AGE
+pod/memcached-quarkus-operator-operator-7db86ccf58-k4mlm   0/1       Running   0           18s
+----
+
+. Run the following command to apply the `memcached-sample.yaml` and create the `memcached-sample` pod:
++
+[source,terminal]
+----
+$ oc apply -f memcached-sample.yaml
+----
++
+.Example output
+[source,terminal]
+----
+memcached.cache.example.com/memcached-sample created
+----
+
+.Verification
+
+* Run the following command to confirm the pods have started:
++
+[source,terminal]
+----
+$ oc get all
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                       READY   STATUS    RESTARTS   AGE
+pod/memcached-quarkus-operator-operator-7b766f4896-kxnzt   1/1     Running   1          79s
+pod/memcached-sample-6c765df685-mfqnz                      1/1     Running   0          18s
+----
+:!java:
+
+:leveloffset!:
+
+[id="osdk-bundle-deploy-olm_{context}"]
+=== Bundling an Operator and deploying with Operator Lifecycle Manager
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/golang/osdk-golang-tutorial.adoc
+// * operators/operator_sdk/java/osdk-java-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-helm-tutorial.adoc
+// * operators/operator_sdk/osdk-working-bundle-images.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-bundle-operator_{context}"]
+= Bundling an Operator
+
+The Operator bundle format is the default packaging method for Operator SDK and Operator Lifecycle Manager (OLM). You can get your Operator ready for use on OLM by using the Operator SDK to build and push your Operator project as a bundle image.
+
+.Prerequisites
+
+- Operator SDK CLI installed on a development workstation
+- OpenShift CLI (`oc`) v{product-version}+ installed
+- Operator project initialized by using the Operator SDK
+
+.Procedure
+
+. Run the following `make` commands in your Operator project directory to build and push your Operator image. Modify the `IMG` argument in the following steps to reference a repository that you have access to. You can obtain an account for storing containers at repository sites such as Quay.io.
+
+.. Build the image:
++
+[source,terminal]
+----
+$ make docker-build IMG=<registry>/<user>/<operator_image_name>:<tag>
+----
++
+[NOTE]
+====
+The Dockerfile generated by the SDK for the Operator explicitly references `GOARCH=amd64` for `go build`. This can be amended to `GOARCH=$TARGETARCH` for non-AMD64 architectures. Docker will automatically set the environment variable to the value specified by `–platform`. With Buildah, the `–build-arg` will need to be used for the purpose. For more information, see link:https://sdk.operatorframework.io/docs/advanced-topics/multi-arch/#supporting-multiple-architectures[Multiple Architectures].
+====
+
+.. Push the image to a repository:
++
+[source,terminal]
+----
+$ make docker-push IMG=<registry>/<user>/<operator_image_name>:<tag>
+----
+
+. Create your Operator bundle manifest by running the `make bundle` command, which invokes several commands, including the Operator SDK `generate bundle` and `bundle validate` subcommands:
++
+[source,terminal]
+----
+$ make bundle IMG=<registry>/<user>/<operator_image_name>:<tag>
+----
++
+Bundle manifests for an Operator describe how to display, create, and manage an application. The `make bundle` command creates the following files and directories in your Operator project:
++
+--
+* A bundle manifests directory named `bundle/manifests` that contains a `ClusterServiceVersion` object
+* A bundle metadata directory named `bundle/metadata`
+* All custom resource definitions (CRDs) in a `config/crd` directory
+* A Dockerfile `bundle.Dockerfile`
+--
++
+These files are then automatically validated by using `operator-sdk bundle validate` to ensure the on-disk bundle representation is correct.
+
+. Build and push your bundle image by running the following commands. OLM consumes Operator bundles using an index image, which reference one or more bundle images.
+
+.. Build the bundle image. Set `BUNDLE_IMG` with the details for the registry, user namespace, and image tag where you intend to push the image:
++
+[source,terminal]
+----
+$ make bundle-build BUNDLE_IMG=<registry>/<user>/<bundle_image_name>:<tag>
+----
+
+.. Push the bundle image:
++
+[source,terminal]
+----
+$ docker push <registry>/<user>/<bundle_image_name>:<tag>
+----
+
+
+:leveloffset!:
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/golang/osdk-golang-tutorial.adoc
+// * operators/operator_sdk/ansible/osdk-ansible-tutorial.adoc
+// * operators/operator_sdk/helm/osdk-helm-tutorial.adoc
+// * operators/operator_sdk/osdk-working-bundle-images.adoc
+
+:java:
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-deploy-olm_{context}"]
+= Deploying an Operator with Operator Lifecycle Manager
+
+Operator Lifecycle Manager (OLM) helps you to install, update, and manage the lifecycle of Operators and their associated services on a Kubernetes cluster. OLM is installed by default on {product-title} and runs as a Kubernetes extension so that you can use the web console and the OpenShift CLI (`oc`) for all Operator lifecycle management functions without any additional tools.
+
+The Operator bundle format is the default packaging method for Operator SDK and OLM. You can use the Operator SDK to quickly run a bundle image on OLM to ensure that it runs properly.
+
+.Prerequisites
+
+- Operator SDK CLI installed on a development workstation
+- Operator bundle image built and pushed to a registry
+- OLM installed on a Kubernetes-based cluster (v1.16.0 or later if you use `apiextensions.k8s.io/v1` CRDs, for example {product-title} {product-version})
+- Logged in to the cluster with `oc` using an account with `cluster-admin` permissions
+
+.Procedure
+
+* Enter the following command to run the Operator on the cluster:
++
+[source,terminal]
+----
+$ operator-sdk run bundle \//<1>
+    -n <namespace> \//<2>
+    <registry>/<user>/<bundle_image_name>:<tag> <3>
+----
+<1> The `run bundle` command creates a valid file-based catalog and installs the Operator bundle on your cluster using OLM.
+<2> Optional: By default, the command installs the Operator in the currently active project in your `~/.kube/config` file. You can add the `-n` flag to set a different namespace scope for the installation.
+<3> If you do not specify an image, the command uses `quay.io/operator-framework/opm:latest` as the default index image. If you specify an image, the command uses the bundle image itself as the index image.
++
+[IMPORTANT]
+====
+As of {product-title} 4.11, the `run bundle` command supports the file-based catalog format for Operator catalogs by default. The deprecated SQLite database format for Operator catalogs continues to be supported; however, it will be removed in a future release. It is recommended that Operator authors migrate their workflows to the file-based catalog format.
+====
++
+This command performs the following actions:
++
+--
+* Create an index image referencing your bundle image. The index image is opaque and ephemeral, but accurately reflects how a bundle would be added to a catalog in production.
+* Create a catalog source that points to your new index image, which enables OperatorHub to discover your Operator.
+* Deploy your Operator to your cluster by creating an `OperatorGroup`, `Subscription`, `InstallPlan`, and all other required resources, including RBAC.
+--
+
+:!java:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_osdk-java-tutorial"]
+== Additional resources
+
+* See xref:../../../operators/operator_sdk/java/osdk-java-project-layout.adoc#osdk-java-project-layout[Project layout for Java-based Operators] to learn about the directory structures created by the Operator SDK.
+* If a xref:../../../networking/enable-cluster-wide-proxy.adoc#enable-cluster-wide-proxy[cluster-wide egress proxy is configured], cluster administrators can xref:../../../operators/admin/olm-configuring-proxy-support.adoc#olm-configuring-proxy-support[override the proxy settings or inject a custom CA certificate] for specific Operators running on Operator Lifecycle Manager (OLM).
+
+//# includes=_attributes/common-attributes,snippets/technology-preview,modules/osdk-common-prereqs,modules/osdk-create-project,modules/osdk-project-file,modules/osdk-java-create-api-controller,modules/osdk-java-define-api,modules/osdk-java-generate-crd,modules/osdk-java-create-cr,modules/osdk-java-implement-controller,modules/osdk-java-controller-reconcile-loop,modules/osdk-java-controller-labels-memcached,modules/osdk-java-controller-memcached-deployment,modules/osdk-run-operator,modules/osdk-run-locally,modules/osdk-run-deployment,modules/osdk-bundle-operator,modules/osdk-deploy-olm

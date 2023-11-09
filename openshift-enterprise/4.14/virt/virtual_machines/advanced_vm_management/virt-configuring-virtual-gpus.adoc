@@ -1,0 +1,790 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="virt-configuring-virtual-gpus"]
+= Configuring virtual GPUs
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: virt-configuring-virtual-gpus
+
+toc::[]
+
+If you have graphics processing unit (GPU) cards, {VirtProductName} can automatically create virtual GPUs (vGPUs) that you can assign to virtual machines (VMs).
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/advanced_vm_management/virt-configuring-virtual-gpus.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="virt-about-using-virtual-gpus_{context}"]
+= About using virtual GPUs with {VirtProductName}
+
+Some graphics processing unit (GPU) cards support the creation of virtual GPUs (vGPUs). {VirtProductName} can automatically create vGPUs and other mediated devices if an administrator provides configuration details in the `HyperConverged` custom resource (CR). This automation is especially useful for large clusters.
+
+[NOTE]
+====
+Refer to your hardware vendor's documentation for functionality and support details.
+====
+
+Mediated device:: A physical device that is divided into one or more virtual devices. A vGPU is a type of mediated device (mdev); the performance of the physical GPU is divided among the virtual devices. You can assign mediated devices to one or more virtual machines (VMs), but the number of guests must be compatible with your GPU. Some GPUs do not support multiple guests.
+
+
+:leveloffset!:
+
+[id="preparing-hosts-mdevs_{context}"]
+== Preparing hosts for mediated devices
+
+You must enable the Input-Output Memory Management Unit (IOMMU) driver before you can configure mediated devices.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/advanced_vm_management/configuring-pci-passthrough.adoc
+// * virt/virtual_machines/advanced_vm_management/virt-configuring-virtual-gpus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-adding-kernel-arguments-enable-IOMMU_{context}"]
+= Adding kernel arguments to enable the IOMMU driver
+
+To enable the IOMMU driver in the kernel, create the `MachineConfig` object and add the kernel arguments.
+
+.Prerequisites
+
+* You have cluster administrator permissions.
+* Your CPU hardware is Intel or AMD.
+* You enabled Intel Virtualization Technology for Directed I/O extensions or AMD IOMMU in the BIOS.
+
+.Procedure
+
+. Create a `MachineConfig` object that identifies the kernel argument. The following example shows a kernel argument for an Intel CPU.
+
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker <1>
+  name: 100-worker-iommu <2>
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+  kernelArguments:
+      - intel_iommu=on <3>
+# ...
+----
+<1> Applies the new kernel argument only to worker nodes.
+<2> The `name` indicates the ranking of this kernel argument (100) among the machine configs and its purpose. If you have an AMD CPU, specify the kernel argument as `amd_iommu=on`.
+<3> Identifies the kernel argument as `intel_iommu` for an Intel CPU.
+
+. Create the new `MachineConfig` object:
++
+[source,terminal]
+----
+$ oc create -f 100-worker-kernel-arg-iommu.yaml
+----
+
+.Verification
+
+* Verify that the new `MachineConfig` object was added.
++
+[source,terminal]
+----
+$ oc get MachineConfig
+----
+
+:leveloffset!:
+
+[id="configuring-nvidia-gpu-operator_{context}"]
+== Configuring the NVIDIA GPU Operator
+
+You can use the NVIDIA GPU Operator to provision worker nodes for running GPU-accelerated virtual machines (VMs) in {VirtProductName}.
+
+[NOTE]
+====
+The NVIDIA GPU Operator is supported only by NVIDIA. For more information, see link:https://access.redhat.com/solutions/5174941[Obtaining Support from NVIDIA] in the Red Hat Knowledgebase.
+====
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/advanced_vm_management/virt-configuring-virtual-gpus.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="about-using-nvidia-gpu_{context}"]
+= About using the NVIDIA GPU Operator
+
+You can use the NVIDIA GPU Operator with {VirtProductName} to rapidly provision worker nodes for running GPU-enabled virtual machines (VMs). The NVIDIA GPU Operator manages NVIDIA GPU resources in an {product-title} cluster and automates tasks that are required when preparing nodes for GPU workloads.
+
+Before you can deploy application workloads to a GPU resource, you must install components such as the NVIDIA drivers that enable the compute unified device architecture (CUDA), Kubernetes device plugin, container runtime, and other features, such as automatic node labeling and monitoring. By automating these tasks, you can quickly scale the GPU capacity of your infrastructure. The NVIDIA GPU Operator can especially facilitate provisioning complex artificial intelligence and machine learning (AI/ML) workloads.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/advanced_vm_management/virt-configuring-virtual-gpus.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-options-configuring-mdevs_{context}"]
+= Options for configuring mediated devices
+
+There are two available methods for configuring mediated devices when using the NVIDIA GPU Operator. The method that Red Hat tests uses {VirtProductName} features to schedule mediated devices, while the NVIDIA method only uses the GPU Operator.
+
+Using the NVIDIA GPU Operator to configure mediated devices::
+This method exclusively uses the NVIDIA GPU Operator to configure mediated devices. To use this method, refer to link:https://docs.nvidia.com/datacenter/cloud-native/openshift/latest/openshift-virtualization.html[NVIDIA GPU Operator with {VirtProductName}] in the NVIDIA documentation.
+
+Using {VirtProductName} to configure mediated devices::
+This method, which is tested by Red Hat, uses {VirtProductName}'s capabilities to configure mediated devices. In this case, the NVIDIA GPU Operator is only used for installing drivers with the NVIDIA vGPU Manager. The GPU Operator does not configure mediated devices.
++
+When using the {VirtProductName} method, you still configure the GPU Operator by following link:https://docs.nvidia.com/datacenter/cloud-native/openshift/latest/openshift-virtualization.html[the NVIDIA documentation]. However, this method differs from the NVIDIA documentation in the following ways:
+
+* You must not overwrite the default `disableMDEVConfiguration: false` setting in the `HyperConverged` custom resource (CR).
++
+[IMPORTANT]
+====
+Setting this feature gate as described in the link:https://docs.nvidia.com/datacenter/cloud-native/openshift/latest/openshift-virtualization.html#prerequisites[NVIDIA documentation] prevents {VirtProductName} from configuring mediated devices.
+====
+* You must configure your `ClusterPolicy` manifest so that it matches the following example:
++
+.Example manifest
+[source,yaml]
+----
+kind: ClusterPolicy
+apiVersion: nvidia.com/v1
+metadata:
+  name: gpu-cluster-policy
+spec:
+  operator:
+    defaultRuntime: crio
+    use_ocp_driver_toolkit: true
+    initContainer: {}
+  sandboxWorkloads:
+    enabled: true
+    defaultWorkload: vm-vgpu
+  driver:
+    enabled: false <1>
+  dcgmExporter: {}
+  dcgm:
+    enabled: true
+  daemonsets: {}
+  devicePlugin: {}
+  gfd: {}
+  migManager:
+    enabled: true
+  nodeStatusExporter:
+    enabled: true
+  mig:
+    strategy: single
+  toolkit:
+    enabled: true
+  validator:
+    plugin:
+      env:
+        - name: WITH_WORKLOAD
+          value: "true"
+  vgpuManager:
+    enabled: true <2>
+    repository: <vgpu_container_registry> <3>
+    image: <vgpu_image_name>
+    version: nvidia-vgpu-manager
+  vgpuDeviceManager:
+    enabled: false <4>
+    config:
+      name: vgpu-devices-config
+      default: default
+  sandboxDevicePlugin:
+    enabled: false <5>
+  vfioManager:
+    enabled: false <6>
+----
+<1> Set this value to `false`. Not required for VMs.
+<2> Set this value to `true`. Required for using vGPUs with VMs.
+<3> Substitute `<vgpu_container_registry>` with your registry value.
+<4> Set this value to `false` to allow {VirtProductName} to configure mediated devices instead of the NVIDIA GPU Operator.
+<5> Set this value to `false` to prevent discovery and advertising of the vGPU devices to the kubelet.
+<6> Set this value to `false` to prevent loading the `vfio-pci` driver. Instead, follow the {VirtProductName} documentation to configure PCI passthrough.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../../virt/virtual_machines/advanced_vm_management/virt-configuring-pci-passthrough.adoc#virt-configuring-pci-passthrough[Configuring PCI passthrough]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/advanced_vm_management/virt-configuring-virtual-gpus.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="how-vgpus-are-assigned-to-nodes_{context}"]
+= How vGPUs are assigned to nodes
+
+For each physical device, {VirtProductName} configures the following values:
+
+* A single mdev type.
+* The maximum number of instances of the selected `mdev` type.
+
+The cluster architecture affects how devices are created and assigned to nodes.
+
+Large cluster with multiple cards per node:: On nodes with multiple cards that can support similar vGPU types, the relevant device types are created in a round-robin manner.
+For example:
++
+[source,yaml]
+----
+# ...
+mediatedDevicesConfiguration:
+  mediatedDeviceTypes:
+  - nvidia-222
+  - nvidia-228
+  - nvidia-105
+  - nvidia-108
+# ...
+----
++
+In this scenario, each node has two cards, both of which support the following vGPU types:
++
+[source,yaml]
+----
+nvidia-105
+# ...
+nvidia-108
+nvidia-217
+nvidia-299
+# ...
+----
++
+On each node, {VirtProductName} creates the following vGPUs:
+
+* 16 vGPUs of type nvidia-105 on the first card.
+* 2 vGPUs of type nvidia-108 on the second card.
+
+One node has a single card that supports more than one requested vGPU type:: {VirtProductName} uses the supported type that comes first on the `mediatedDeviceTypes` list.
++
+For example, the card on a node card supports `nvidia-223` and `nvidia-224`. The following `mediatedDeviceTypes` list is configured:
++
+[source,yaml]
+----
+# ...
+mediatedDevicesConfiguration:
+  mediatedDeviceTypes:
+  - nvidia-22
+  - nvidia-223
+  - nvidia-224
+# ...
+----
++
+In this example, {VirtProductName} uses the `nvidia-223` type.
+
+:leveloffset!:
+
+[id="managing-mediated-devices_{context}"]
+== Managing mediated devices
+
+Before you can assign mediated devices to virtual machines, you must create the devices and expose them to the cluster. You can also reconfigure and remove mediated devices.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/advanced_vm_management/virt-configuring-virtual-gpus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-exposing-mediated-devices_{context}"]
+= Creating and exposing mediated devices
+
+As an administrator, you can create mediated devices and expose them to the cluster by editing the `HyperConverged` custom resource (CR).
+
+.Prerequisites
+
+* You enabled the Input-Output Memory Management Unit (IOMMU) driver.
+* If your hardware vendor provides drivers, you installed them on the nodes where you want to create mediated devices.
+** If you use NVIDIA cards, you link:https://docs.nvidia.com/datacenter/cloud-native/openshift/latest/openshift-virtualization.html[installed the NVIDIA GRID driver].
+
+.Procedure
+
+. Open the `HyperConverged` CR in your default editor by running the following command:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc edit hyperconverged kubevirt-hyperconverged -n {CNVNamespace}
+----
++
+.Example configuration file with mediated devices configured
+[%collapsible]
+====
+[source,yaml,subs="attributes+"]
+----
+apiVersion: hco.kubevirt.io/v1
+kind: HyperConverged
+metadata:
+  name: kubevirt-hyperconverged
+  namespace: {CNVNamespace}
+spec:
+  mediatedDevicesConfiguration:
+    mediatedDeviceTypes:
+    - nvidia-231
+    nodeMediatedDeviceTypes:
+    - mediatedDeviceTypes:
+      - nvidia-233
+      nodeSelector:
+        kubernetes.io/hostname: node-11.redhat.com
+  permittedHostDevices:
+    mediatedDevices:
+    - mdevNameSelector: GRID T4-2Q
+      resourceName: nvidia.com/GRID_T4-2Q
+    - mdevNameSelector: GRID T4-8Q
+      resourceName: nvidia.com/GRID_T4-8Q
+# ...
+----
+====
+
+. Create mediated devices by adding them to the `spec.mediatedDevicesConfiguration` stanza:
++
+.Example YAML snippet
+[source,yaml]
+----
+# ...
+spec:
+  mediatedDevicesConfiguration:
+    mediatedDeviceTypes: <1>
+    - <device_type>
+    nodeMediatedDeviceTypes: <2>
+    - mediatedDeviceTypes: <3>
+      - <device_type>
+      nodeSelector: <4>
+        <node_selector_key>: <node_selector_value>
+# ...
+----
+<1> Required: Configures global settings for the cluster.
+<2> Optional: Overrides the global configuration for a specific node or group of nodes. Must be used with the global `mediatedDeviceTypes` configuration.
+<3> Required if you use `nodeMediatedDeviceTypes`. Overrides the global `mediatedDeviceTypes` configuration for the specified nodes.
+<4> Required if you use `nodeMediatedDeviceTypes`. Must include a `key:value` pair.
++
+[IMPORTANT]
+====
+Before {VirtProductName} 4.14, the `mediatedDeviceTypes` field was named `mediatedDevicesTypes`. Ensure that you use the correct field name when configuring mediated devices.
+====
+
+. Identify the name selector and resource name values for the devices that you want to expose to the cluster. You will add these values to the `HyperConverged` CR in the next step.
+.. Find the `resourceName` value by running the following command:
++
+[source,terminal]
+----
+$ oc get $NODE -o json \
+  | jq '.status.allocatable \
+    | with_entries(select(.key | startswith("nvidia.com/"))) \
+    | with_entries(select(.value != "0"))'
+----
+
+.. Find the `mdevNameSelector` value by viewing the contents of `/sys/bus/pci/devices/<slot>:<bus>:<domain>.<function>/mdev_supported_types/<type>/name`, substituting the correct values for your system.
++
+For example, the name file for the `nvidia-231` type contains the selector string `GRID T4-2Q`. Using `GRID T4-2Q` as the `mdevNameSelector` value allows nodes to use the `nvidia-231` type.
+
+. Expose the mediated devices to the cluster by adding the `mdevNameSelector` and `resourceName` values to the
+`spec.permittedHostDevices.mediatedDevices` stanza of the `HyperConverged` CR:
++
+.Example YAML snippet
+[source,yaml]
+----
+# ...
+  permittedHostDevices:
+    mediatedDevices:
+    - mdevNameSelector: GRID T4-2Q <1>
+      resourceName: nvidia.com/GRID_T4-2Q <2>
+# ...
+----
+<1> Exposes the mediated devices that map to this value on the host.
+<2> Matches the resource name that is allocated on the node.
+
+. Save your changes and exit the editor.
+
+.Verification
+
+* Optional: Confirm that a device was added to a specific node by running the following command:
++
+[source,terminal]
+----
+$ oc describe node <node_name>
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/advanced_vm_management/virt-configuring-virtual-gpus.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="about-changing-removing-mediated-devices_{context}"]
+= About changing and removing mediated devices
+
+You can reconfigure or remove mediated devices in several ways:
+
+* Edit the `HyperConverged` CR and change the contents of the `mediatedDeviceTypes` stanza.
+
+* Change the node labels that match the `nodeMediatedDeviceTypes` node selector.
+
+* Remove the device information from the `spec.mediatedDevicesConfiguration` and `spec.permittedHostDevices` stanzas of the `HyperConverged` CR.
++
+[NOTE]
+====
+If you remove the device information from the `spec.permittedHostDevices` stanza without also removing it from the `spec.mediatedDevicesConfiguration` stanza, you cannot create a new mediated device type on the same node. To properly remove mediated devices, remove the device information from both stanzas.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/advanced_vm_management/virt-configuring-virtual-gpus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-removing-mediated-device-from-cluster-cli_{context}"]
+= Removing mediated devices from the cluster
+
+To remove a mediated device from the cluster, delete the information for that device from the `HyperConverged` custom resource (CR).
+
+.Procedure
+
+. Edit the `HyperConverged` CR in your default editor by running the following command:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc edit hyperconverged kubevirt-hyperconverged -n {CNVNamespace}
+----
+
+. Remove the device information from the `spec.mediatedDevicesConfiguration` and `spec.permittedHostDevices` stanzas of the `HyperConverged` CR. Removing both entries ensures that you can later create a new mediated device type on the same node. For example:
++
+.Example configuration file
+[source,yaml,subs="attributes+"]
+----
+apiVersion: hco.kubevirt.io/v1
+kind: HyperConverged
+metadata:
+  name: kubevirt-hyperconverged
+  namespace: {CNVNamespace}
+spec:
+  mediatedDevicesConfiguration:
+    mediatedDeviceTypes: <1>
+      - nvidia-231
+  permittedHostDevices:
+    mediatedDevices: <2>
+    - mdevNameSelector: GRID T4-2Q
+      resourceName: nvidia.com/GRID_T4-2Q
+----
+<1> To remove the `nvidia-231` device type, delete it from the `mediatedDeviceTypes` array.
+<2> To remove the `GRID T4-2Q` device, delete the `mdevNameSelector` field and its corresponding `resourceName` field.
+
+. Save your changes and exit the editor.
+
+:leveloffset!:
+
+[id="using-mediated-devices_{context}"]
+== Using mediated devices
+
+You can assign mediated devices to one or more virtual machines.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/advanced_vm_management/virt-configuring-virtual-gpus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-assigning-mdev-vm-cli_{context}"]
+= Assigning a vGPU to a VM by using the CLI
+
+Assign mediated devices such as virtual GPUs (vGPUs) to virtual machines (VMs).
+
+.Prerequisites
+
+* The mediated device is configured in the `HyperConverged` custom resource.
+* The VM is stopped.
+
+.Procedure
+
+* Assign the mediated device to a virtual machine (VM) by editing the `spec.domain.devices.gpus` stanza of the `VirtualMachine` manifest:
++
+.Example virtual machine manifest
+[source,yaml]
+----
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+spec:
+  domain:
+    devices:
+      gpus:
+      - deviceName: nvidia.com/TU104GL_Tesla_T4 <1>
+        name: gpu1 <2>
+      - deviceName: nvidia.com/GRID_T4-2Q
+        name: gpu2
+----
+<1> The resource name associated with the mediated device.
+<2> A name to identify the device on the VM.
+
+.Verification
+
+* To verify that the device is available from the virtual machine, run the following command, substituting `<device_name>` with the `deviceName` value from the `VirtualMachine` manifest:
++
+[source,terminal]
+----
+$ lspci -nnk | grep <device_name>
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/virtual_machines/advanced_vm_management/virt-configuring-virtual-gpus.adoc
+
+[id="virt-assigning-vgpu-vm-web_{context}"]
+= Assigning a vGPU to a VM by using the web console
+
+You can assign virtual GPUs to virtual machines by using the {product-title} web console.
+[NOTE]
+====
+You can add hardware devices to virtual machines created from customized templates or a YAML file. You cannot add devices to pre-supplied boot source templates for specific operating systems.
+====
+
+.Prerequisites
+
+* The vGPU is configured as a mediated device in your cluster.
+** To view the devices that are connected to your cluster, click *Compute* -> *Hardware Devices* from the side menu.
+* The VM is stopped.
+
+.Procedure
+
+. In the {product-title} web console, click *Virtualization* -> *VirtualMachines* from the side menu.
+. Select the VM that you want to assign the device to.
+. On the *Details* tab, click *GPU devices*.
+. Click *Add GPU device*.
+. Enter an identifying value in the *Name* field.
+. From the *Device name* list, select the device that you want to add to the VM.
+. Click *Save*.
+
+.Verification
+* To confirm that the devices were added to the VM, click the *YAML* tab and review the `VirtualMachine` configuration. Mediated devices are added to the `spec.domain.devices` stanza.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_{context}"]
+== Additional resources
+* link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/virtualization_deployment_and_administration_guide/sect-troubleshooting-enabling_intel_vt_x_and_amd_v_virtualization_hardware_extensions_in_bios[Enabling Intel VT-X and AMD-V Virtualization Hardware Extensions in BIOS]
+
+//# includes=_attributes/common-attributes,modules/virt-about-using-virtual-gpus,modules/virt-adding-kernel-arguments-enable-iommu,modules/about-using-gpu-operator,modules/virt-options-configuring-mdevs,modules/virt-how-virtual-gpus-assigned-nodes,modules/virt-creating-and-exposing-mediated-devices,modules/virt-about-changing-removing-mediated-devices,modules/virt-removing-mediated-device-from-cluster-cli,modules/virt-assigning-vgpu-vm-cli,modules/virt-assigning-vgpu-vm-web

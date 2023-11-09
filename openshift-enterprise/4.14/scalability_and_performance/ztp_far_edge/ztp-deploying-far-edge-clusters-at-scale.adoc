@@ -1,0 +1,359 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="ztp-deploying-far-edge-clusters-at-scale"]
+= Challenges of the network far edge
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: ztp-deploying-far-edge-clusters-at-scale
+
+toc::[]
+
+Edge computing presents complex challenges when managing many sites in geographically displaced locations. Use {ztp-first} to provision and manage sites at the far edge of the network.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-clusters-at-scale.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="ztp-challenges-of-far-edge-deployments_{context}"]
+= Overcoming the challenges of the network far edge
+
+Today, service providers want to deploy their infrastructure at the edge of the network. This presents significant challenges:
+
+* How do you handle deployments of many edge sites in parallel?
+* What happens when you need to deploy sites in disconnected environments?
+* How do you manage the lifecycle of large fleets of clusters?
+
+{ztp-first} and _GitOps_ meets these challenges by allowing you to provision remote edge sites at scale with declarative site definitions and configurations for bare-metal equipment. Template or overlay configurations install {product-title} features that are required for CNF workloads. The full lifecycle of installation and upgrades is handled through the {ztp} pipeline.
+
+{ztp} uses GitOps for infrastructure deployments. With GitOps, you use declarative YAML files and other defined patterns stored in Git repositories. {rh-rhacm-first} uses your Git repositories to drive the deployment of your infrastructure.
+
+GitOps provides traceability, role-based access control (RBAC), and a single source of truth for the desired state of each site. Scalability issues are addressed by Git methodologies and event driven operations through webhooks.
+
+You start the {ztp} workflow by creating declarative site definition and configuration custom resources (CRs) that the {ztp} pipeline delivers to the edge nodes.
+
+The following diagram shows how {ztp} works within the far edge framework.
+
+image::217_OpenShift_Zero_Touch_Provisioning_updates_1022_1.png[{ztp} at the network far edge]
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-clusters-at-scale.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="about-ztp_{context}"]
+= Using {ztp} to provision clusters at the network far edge
+
+{rh-rhacm-first} manages clusters in a hub-and-spoke architecture, where a single hub cluster manages many spoke clusters. Hub clusters running {rh-rhacm} provision and deploy the managed clusters by using {ztp-first} and the assisted service that is deployed when you install {rh-rhacm}.
+
+The assisted service handles provisioning of {product-title} on single node clusters, three-node clusters, or standard clusters running on bare metal.
+
+A high-level overview of using {ztp} to provision and maintain bare-metal hosts with {product-title} is as follows:
+
+* A hub cluster running {rh-rhacm} manages an {product-registry} that mirrors the {product-title} release images. {rh-rhacm} uses the {product-registry} to provision the managed clusters.
+
+* You manage the bare-metal hosts in a YAML format inventory file, versioned in a Git repository.
+
+* You make the hosts ready for provisioning as managed clusters, and use {rh-rhacm} and the assisted service to install the bare-metal hosts on site.
+
+Installing and deploying the clusters is a two-stage process, involving an initial installation phase, and a subsequent configuration phase. The following diagram illustrates this workflow:
+
+image::217_OpenShift_Zero_Touch_Provisioning_updates_1022_2.png[Using GitOps and {ztp} to install and deploy managed clusters]
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-clusters-at-scale.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="ztp-creating-ztp-crs-for-multiple-managed-clusters_{context}"]
+= Installing managed clusters with SiteConfig resources and {rh-rhacm}
+
+{ztp-first} uses `SiteConfig` custom resources (CRs) in a Git repository to manage the processes that install {product-title} clusters. The `SiteConfig` CR contains cluster-specific parameters required for installation. It has options for applying select configuration CRs during installation including user defined extra manifests.
+
+The {ztp} plugin processes `SiteConfig` CRs to generate a collection of CRs on the hub cluster. This triggers the assisted service in {rh-rhacm-first} to install {product-title} on the bare-metal host. You can find installation status and error messages in these CRs on the hub cluster.
+
+You can provision single clusters manually or in batches with {ztp}:
+
+Provisioning a single cluster:: Create a single `SiteConfig` CR and related installation and configuration CRs for the cluster, and apply them in the hub cluster to begin cluster provisioning. This is a good way to test your CRs before deploying on a larger scale.
+
+Provisioning many clusters:: Install managed clusters in batches of up to 400 by defining `SiteConfig` and related CRs in a Git repository. ArgoCD uses the `SiteConfig` CRs to deploy the sites. The {rh-rhacm} policy generator creates the manifests and applies them to the hub cluster. This starts the cluster provisioning process.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/ztp_far_edge/ztp-deploying-far-edge-clusters-at-scale.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="ztp-configuring-cluster-policies_{context}"]
+= Configuring managed clusters with policies and PolicyGenTemplate resources
+
+{ztp-first} uses {rh-rhacm-first} to configure clusters by using a policy-based governance approach to applying the configuration.
+
+The policy generator or `PolicyGen` is a plugin for the GitOps Operator that enables the creation of {rh-rhacm} policies from a concise template. The tool can combine multiple CRs into a single policy, and you can generate multiple policies that apply to various subsets of clusters in your fleet.
+
+[NOTE]
+====
+For scalability and to reduce the complexity of managing configurations across the fleet of clusters, use configuration CRs with as much commonality as possible.
+
+* Where possible, apply configuration CRs using a fleet-wide common policy.
+
+* The next preference is to create logical groupings of clusters to manage as much of the remaining configurations as possible under a group policy.
+
+* When a configuration is unique to an individual site, use {rh-rhacm} templating on the hub cluster to inject the site-specific data into a common or group policy. Alternatively, apply an individual site policy for the site.
+====
+
+The following diagram shows how the policy generator interacts with GitOps and {rh-rhacm} in the configuration phase of cluster deployment.
+
+image::217_OpenShift_Zero_Touch_Provisioning_updates_1022_3.png[Policy generator]
+
+For large fleets of clusters, it is typical for there to be a high-level of consistency in the configuration of those clusters.
+
+The following recommended structuring of policies combines configuration CRs to meet several goals:
+
+* Describe common configurations once and apply to the fleet.
+
+* Minimize the number of maintained and managed policies.
+
+* Support flexibility in common configurations for cluster variants.
+
+.Recommended PolicyGenTemplate policy categories
+[cols="1,5", width="100%", options="header"]
+|====
+|Policy category
+|Description
+
+|Common
+|A policy that exists in the common category is applied to all clusters in the fleet. Use common `PolicyGenTemplate` CRs to apply common installation settings across all cluster types.
+
+|Groups
+|A policy that exists in the groups category is applied to a group of clusters in the fleet. Use group `PolicyGenTemplate` CRs to manage specific aspects of single-node, three-node, and standard cluster installations. Cluster groups can also follow geographic region, hardware variant, etc.
+
+|Sites
+|A policy that exists in the sites category is applied to a specific cluster site. Any cluster
+can have its own specific policies maintained.
+|====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* For more information about extracting the reference `SiteConfig` and `PolicyGenTemplate` CRs from the `ztp-site-generate` container image, see xref:../../scalability_and_performance/ztp_far_edge/ztp-preparing-the-hub-cluster.adoc#ztp-preparing-the-ztp-git-repository_ztp-preparing-the-hub-cluster[Preparing the ZTP Git repository].
+
+//# includes=_attributes/common-attributes,modules/ztp-challenges-of-far-edge-deployments,modules/about-ztp,modules/ztp-creating-ztp-crs-for-multiple-managed-clusters,modules/ztp-configuring-cluster-policies

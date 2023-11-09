@@ -1,0 +1,413 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="security-registries"]
+= Using container registries securely
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: security-registries
+
+toc::[]
+
+Container registries store container images to:
+
+* Make images accessible to others
+* Organize images into repositories that can include multiple versions of an image
+* Optionally limit access to images, based on different authentication methods, or
+make them publicly available
+
+There are public container registries, such as Quay.io and Docker Hub
+where many people and organizations share their images.
+The Red Hat Registry offers supported Red Hat and partner images,
+while the Red Hat Ecosystem Catalog offers detailed descriptions
+and health checks for those images.
+To manage your own registry, you could purchase a container
+registry such as
+link:https://access.redhat.com/products/red-hat-quay[Red Hat Quay].
+
+From a security standpoint, some registries provide special features to
+check and improve the health of your containers.
+For example, Red Hat Quay offers container vulnerability scanning
+with Clair security scanner, build triggers to automatically rebuild
+images when source code changes in GitHub and other locations, and
+the ability to use role-based access control (RBAC) to
+secure access to images.
+
+// Where do your containers come from?
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-registries.adoc
+
+[id="security-registries-where_{context}"]
+= Knowing where containers come from?
+
+There are tools you can use to scan and track the contents of your downloaded
+and deployed container images. However, there are many public sources of
+container images. When using public container registries, you can add a layer of
+protection by using trusted sources.
+
+:leveloffset!:
+
+// Immutable and certified containers
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-registries.adoc
+
+[id="security-registries-immutable_{context}"]
+= Immutable and certified containers
+
+Consuming security updates is particularly important when managing _immutable
+containers_. Immutable containers are containers that will never be changed
+while running. When you deploy immutable containers, you do not step into the
+running container to replace one or more binaries. From an operational
+standpoint, you rebuild and redeploy an updated container image
+to replace a container instead of changing it.
+
+Red Hat certified images are:
+
+* Free of known vulnerabilities in the platform components or layers
+* Compatible across the {op-system-base} platforms, from bare metal to cloud
+* Supported by Red Hat
+
+The list of known vulnerabilities is constantly evolving, so you must track the
+contents of your deployed container images, as well as newly downloaded images,
+over time. You can use
+link:https://access.redhat.com/security/security-updates/#/security-advisories[Red Hat Security Advisories (RHSAs)]
+to alert you to any newly discovered issues in
+Red Hat certified container images, and direct you to the updated image.
+Alternatively, you can go to the Red Hat Ecosystem Catalog
+to look up that and other security-related issues for each Red Hat image.
+
+:leveloffset!:
+
+// Red Hat Registry and Red Hat Ecosystem (Container) Catalog
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-registries.adoc
+
+[id="security-registries-ecosystem_{context}"]
+= Getting containers from Red Hat Registry and Ecosystem Catalog
+
+Red Hat lists certified container images for Red Hat products and partner offerings from the
+link:https://catalog.redhat.com/software/containers/explore[Container Images]
+section of the Red Hat Ecosystem Catalog. From that catalog,
+you can see details of each image, including CVE, software packages listings, and health
+scores.
+
+Red Hat images are actually stored in what is referred to as the _Red Hat Registry_,
+which is represented by a public container registry (`registry.access.redhat.com`)
+and an authenticated registry (`registry.redhat.io`).
+Both include basically the same set of container images, with
+`registry.redhat.io` including some additional images that require authentication
+with Red Hat subscription credentials.
+
+Container content is monitored for vulnerabilities by Red Hat and updated
+regularly. When Red Hat releases security updates, such as fixes to _glibc_,
+link:https://access.redhat.com/security/vulnerabilities/drown[DROWN], or
+link:https://access.redhat.com/blogs/766093/posts/2757141[Dirty Cow],
+any affected container images are also rebuilt and pushed
+to the Red Hat Registry.
+
+Red Hat uses a `health index` to reflect the security risk for each container provided through
+the Red Hat Ecosystem Catalog. Because containers consume software provided by Red
+Hat and the errata process, old, stale containers are insecure whereas new,
+fresh containers are more secure.
+
+To illustrate the age of containers, the Red Hat Ecosystem Catalog uses a
+grading system. A freshness grade is a measure of the oldest and most severe
+security errata available for an image. "A" is more up to date than "F". See
+link:https://access.redhat.com/articles/2803031[Container Health Index grades as used inside the Red Hat Ecosystem Catalog] for more details on this grading system.
+
+See the link:https://access.redhat.com/security/[Red Hat Product Security Center]
+for details on security updates and vulnerabilities related to Red Hat software.
+Check out link:https://access.redhat.com/security/security-updates/#/security-advisories[Red Hat Security Advisories]
+to search for specific advisories and CVEs.
+
+:leveloffset!:
+
+// OpenShift Container Registry
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-registries.adoc
+
+[id="security-registries-openshift_{context}"]
+= OpenShift Container Registry
+
+{product-title} includes the _OpenShift Container Registry_, a private registry
+running as an integrated component of the platform that you can use to manage your container
+images. The OpenShift Container Registry provides role-based access controls
+that allow you to manage who can pull and push which container images.
+
+{product-title} also supports integration with other private registries that you might
+already be using, such as Red Hat Quay.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../registry/index.adoc#registry-overview[Integrated {product-registry}]
+
+// Quay Container Registry
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-registries.adoc
+
+[id="security-registries-quay_{context}"]
+= Storing containers using Red Hat Quay
+link:https://access.redhat.com/products/red-hat-quay[Red Hat Quay] is an
+enterprise-quality container registry product from Red Hat.
+Development for Red Hat Quay is done through the upstream
+link:https://docs.projectquay.io/welcome.html[Project Quay].
+Red Hat Quay is available to deploy on-premise or through the hosted
+version of Red Hat Quay at link:https://quay.io[Quay.io].
+
+Security-related features of Red Hat Quay include:
+
+* *Time machine*: Allows images with older tags to expire after a set
+period of time or based on a user-selected expiration time.
+
+* *link:https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/manage_red_hat_quay/index#repo-mirroring-in-red-hat-quay[Repository mirroring]*: Lets you mirror
+other registries for security reasons, such hosting a public repository
+on Red Hat Quay behind a company firewall, or for performance reasons, to
+keep registries closer to where they are used.
+
+* *Action log storage*: Save Red Hat Quay logging output to link:https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/manage_red_hat_quay/index#proc_manage-log-storage[Elasticsearch storage]
+to allow for later search and analysis.
+
+* *link:https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/manage_red_hat_quay/index#quay-security-scanner[Clair security scanning]*: Scan images against a variety of Linux
+vulnerability databases, based on the origins of each container image.
+
+* *Internal authentication*: Use the default local database to handle RBAC
+authentication to Red Hat Quay or choose from LDAP, Keystone (OpenStack),
+JWT Custom Authentication, or External Application Token authentication.
+
+* *External authorization (OAuth)*: Allow authorization to Red Hat Quay
+from GitHub, GitHub Enterprise, or Google Authentication.
+
+* *Access settings*: Generate tokens to allow access to Red Hat Quay
+from docker, rkt, anonymous access, user-created accounts, encrypted
+client passwords, or prefix username autocompletion.
+
+Ongoing integration of Red Hat Quay with {product-title} continues,
+with several {product-title} Operators of particular interest.
+The link:https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/manage_red_hat_quay/index#quay-bridge-operator[Quay Bridge Operator]
+lets you replace the internal {product-registry} with Red Hat Quay.
+The link:https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/manage_red_hat_quay/index#container-security-operator-setup[{rhq-cso}]
+lets you check vulnerabilities of images running in {product-title} that were
+pulled from Red Hat Quay registries.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/security-registries-where,modules/security-registries-immutable,modules/security-registries-ecosystem,modules/security-registries-openshift,modules/security-registries-quay

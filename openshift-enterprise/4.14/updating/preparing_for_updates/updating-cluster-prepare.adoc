@@ -1,0 +1,478 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="updating-cluster-prepare"]
+= Preparing to update to {product-title} 4.14
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: updating-cluster-prepare
+
+toc::[]
+
+////
+WARNING: This assembly has been moved into a subdirectory for 4.14+. Changes to this assembly for earlier versions should be done in separate PRs based off of their respective version branches. Otherwise, your cherry picks may fail.
+
+To do: Remove this comment once 4.13 docs are EOL.
+////
+
+Learn more about administrative tasks that cluster admins must perform to successfully initialize an update, as well as optional guidelines for ensuring a successful update.
+
+[id="kube-api-removals_{context}"]
+== Kubernetes API deprecations and removals
+
+{product-title} 4.14 uses Kubernetes 1.27, which removed several deprecated APIs.
+
+A cluster administrator must provide a manual acknowledgment before the cluster can be updated from {product-title} 4.13 to 4.14. This is to help prevent issues after upgrading to {product-title} 4.14, where APIs that have been removed are still in use by workloads, tools, or other components running on or interacting with the cluster. Administrators must evaluate their cluster for any APIs in use that will be removed and migrate the affected components to use the appropriate new API version. After this evaluation and migration is complete, the administrator can provide the acknowledgment.
+
+Before you can update your {product-title} 4.13 cluster to 4.14, you must provide the administrator acknowledgment.
+
+// Removed Kubernetes APIs
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * updating/preparing_for_updates/updating-cluster-prepare.adoc
+
+[id="update-preparing-list_{context}"]
+= Removed Kubernetes APIs
+
+{product-title} 4.14 uses Kubernetes 1.27, which removed the following deprecated APIs. You must migrate manifests and API clients to use the appropriate API version. For more information about migrating removed APIs, see the link:https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-27[Kubernetes documentation].
+
+.APIs removed from Kubernetes 1.27
+[cols="2,2,2",options="header",]
+|===
+|Resource |Removed API |Migrate to
+
+|`CSIStorageCapacity`
+|`storage.k8s.io/v1beta1`
+|`storage.k8s.io/v1`
+
+|===
+// Removed the "Notable changes" column since they were all "No" and table so wide it was causing a scrollbar. Add it back in for the next time there are notable changes (1.29)
+
+:leveloffset!:
+
+[id="evaluating-cluster-removed-apis"]
+=== Evaluating your cluster for removed APIs
+
+There are several methods to help administrators identify where APIs that will be removed are in use. However, {product-title} cannot identify all instances, especially workloads that are idle or external tools that are used. It is the responsibility of the administrator to properly evaluate all workloads and other integrations for instances of removed APIs.
+
+// Reviewing alerts to identify uses of removed APIs
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * updating/preparing_for_updates/updating-cluster-prepare.adoc
+
+[id="update-preparing-evaluate-alerts_{context}"]
+= Reviewing alerts to identify uses of removed APIs
+
+Two alerts fire when an API is in use that will be removed in the next release:
+
+* `APIRemovedInNextReleaseInUse` - for APIs that will be removed in the next {product-title} release.
+* `APIRemovedInNextEUSReleaseInUse` - for APIs that will be removed in the next {product-title} Extended Update Support (EUS) release.
+
+If either of these alerts are firing in your cluster, review the alerts and take action to clear the alerts by migrating manifests and API clients to use the new API version.
+
+Use the `APIRequestCount` API to get more information about which APIs are in use and which workloads are using removed APIs, because the alerts do not provide this information. Additionally, some APIs might not trigger these alerts but are still captured by `APIRequestCount`. The alerts are tuned to be less sensitive to avoid alerting fatigue in production systems.
+
+:leveloffset!:
+
+// Using APIRequestCount to identify uses of removed APIs
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * updating/preparing_for_updates/updating-cluster-prepare.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-preparing-evaluate-apirequestcount_{context}"]
+= Using APIRequestCount to identify uses of removed APIs
+
+You can use the `APIRequestCount` API to track API requests and review whether any of them are using one of the removed APIs.
+
+.Prerequisites
+
+* You must have access to the cluster as a user with the `cluster-admin` role.
+
+.Procedure
+
+* Run the following command and examine the `REMOVEDINRELEASE` column of the output to identify the removed APIs that are currently in use:
++
+[source,terminal]
+----
+$ oc get apirequestcounts
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                                 REMOVEDINRELEASE   REQUESTSINCURRENTHOUR   REQUESTSINLAST24H
+...
+csistoragecapacities.v1.storage.k8s.io                                                  14                      380
+csistoragecapacities.v1beta1.storage.k8s.io                          1.27               0                       16
+custompolicydefinitions.v1beta1.capabilities.3scale.net                                 8                       158
+customresourcedefinitions.v1.apiextensions.k8s.io                                       1407                    30148
+...
+----
++
+[IMPORTANT]
+====
+You can safely ignore the following entries that appear in the results:
+
+* The `system:serviceaccount:kube-system:generic-garbage-collector` and the `system:serviceaccount:kube-system:namespace-controller` users might appear in the results because these services invoke all registered APIs when searching for resources to remove.
+* The `system:kube-controller-manager` and `system:cluster-policy-controller` users might appear in the results because they walk through all resources while enforcing various policies.
+====
++
+You can also use `-o jsonpath` to filter the results:
++
+[source,terminal]
+----
+$ oc get apirequestcounts -o jsonpath='{range .items[?(@.status.removedInRelease!="")]}{.status.removedInRelease}{"\t"}{.metadata.name}{"\n"}{end}'
+----
++
+.Example output
+[source,terminal]
+----
+1.27	csistoragecapacities.v1beta1.storage.k8s.io
+1.29	flowschemas.v1beta2.flowcontrol.apiserver.k8s.io
+1.29	prioritylevelconfigurations.v1beta2.flowcontrol.apiserver.k8s.io
+----
+
+:leveloffset!:
+
+// Using APIRequestCount to identify which workloads are using the removed APIs
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * updating/preparing_for_updates/updating-cluster-prepare.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-preparing-evaluate-apirequestcount-workloads_{context}"]
+= Using APIRequestCount to identify which workloads are using the removed APIs
+
+You can examine the `APIRequestCount` resource for a given API version to help identify which workloads are using the API.
+
+.Prerequisites
+
+* You must have access to the cluster as a user with the `cluster-admin` role.
+
+.Procedure
+
+* Run the following command and examine the `username` and `userAgent` fields to help identify the workloads that are using the API:
++
+[source,terminal]
+----
+$ oc get apirequestcounts <resource>.<version>.<group> -o yaml
+----
++
+For example:
++
+[source,terminal]
+----
+$ oc get apirequestcounts csistoragecapacities.v1beta1.storage.k8s.io -o yaml
+----
++
+You can also use `-o jsonpath` to extract the `username` and `userAgent` values from an `APIRequestCount` resource:
++
+[source,terminal]
+----
+$ oc get apirequestcounts csistoragecapacities.v1beta1.storage.k8s.io \
+  -o jsonpath='{range .status.currentHour..byUser[*]}{..byVerb[*].verb}{","}{.username}{","}{.userAgent}{"\n"}{end}' \
+  | sort -k 2 -t, -u | column -t -s, -NVERBS,USERNAME,USERAGENT
+----
++
+.Example output
+[source,terminal]
+----
+VERBS       USERNAME                        USERAGENT
+list watch  system:kube-controller-manager  cluster-policy-controller/v0.0.0
+list watch  system:kube-controller-manager  kube-controller-manager/v1.26.5+0abcdef
+list watch  system:kube-scheduler           kube-scheduler/v1.26.5+0abcdef
+----
+
+:leveloffset!:
+
+// Migrating instances of removed APIs
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * updating/preparing_for_updates/updating-cluster-prepare.adoc
+
+[id="update-preparing-migrate_{context}"]
+= Migrating instances of removed APIs
+
+For information about how to migrate removed Kubernetes APIs, see the link:https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-27[Deprecated API Migration Guide] in the Kubernetes documentation.
+
+:leveloffset!:
+
+// Providing the administrator acknowledgment
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * updating/preparing_for_updates/updating-cluster-prepare.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-preparing-ack_{context}"]
+= Providing the administrator acknowledgment
+
+After you have evaluated your cluster for any removed APIs and have migrated any removed APIs, you can acknowledge that your cluster is ready to upgrade from {product-title} 4.13 to 4.14.
+
+[WARNING]
+====
+Be aware that all responsibility falls on the administrator to ensure that all uses of removed APIs have been resolved and migrated as necessary before providing this administrator acknowledgment. {product-title} can assist with the evaluation, but cannot identify all possible uses of removed APIs, especially idle workloads or external tools.
+====
+
+.Prerequisites
+
+* You must have access to the cluster as a user with the `cluster-admin` role.
+
+.Procedure
+
+* Run the following command to acknowledge that you have completed the evaluation and your cluster is ready for the Kubernetes API removals in {product-title} 4.14:
++
+[source,terminal]
+----
+$ oc -n openshift-config patch cm admin-acks --patch '{"data":{"ack-4.13-kube-1.27-api-removals-in-4.14":"true"}}' --type=merge
+----
+
+:leveloffset!:
+
+// Assessing the risk of conditional updates
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * updating/preparing_for_updates/updating-cluster-prepare.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="update-preparing-conditional_{context}"]
+= Assessing the risk of conditional updates
+
+A _conditional update_ is an update target that is available but not recommended due to a known risk that applies to your cluster.
+The Cluster Version Operator (CVO) periodically queries the OpenShift Update Service (OSUS) for the most recent data about update recommendations, and some potential update targets might have risks associated with them.
+
+The CVO evaluates the conditional risks, and if the risks are not applicable to the cluster, then the target version is available as a recommended update path for the cluster.
+If the risk is determined to be applicable, or if for some reason CVO cannot evaluate the risk, then the update target is available to the cluster as a conditional update.
+
+When you encounter a conditional update while you are trying to update to a target version, you must assess the risk of updating your cluster to that version.
+Generally, if you do not have a specific need to update to that target version, it is best to wait for a recommended update path from Red Hat.
+
+However, if you have a strong reason to update to that version, for example, if you need to fix an important CVE, then the benefit of fixing the CVE might outweigh the risk of the update being problematic for your cluster.
+You can complete the following tasks to determine whether you agree with the Red Hat assessment of the update risk:
+
+* Complete extensive testing in a non-production environment to the extent that you are comfortable completing the update in your production environment.
+* Follow the links provided in the conditional update description, investigate the bug, and determine if it is likely to cause issues for your cluster. If you need help understanding the risk, contact Red Hat Support.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../updating/understanding_updates/how-updates-work.adoc#update-evaluate-availability_how-updates-work[Evaluation of update availability]
+
+//# includes=_attributes/common-attributes,modules/update-preparing-list,modules/update-preparing-evaluate-alerts,modules/update-preparing-evaluate-apirequestcount,modules/update-preparing-evaluate-apirequestcount-workloads,modules/update-preparing-migrate,modules/update-preparing-ack,modules/update-preparing-conditional

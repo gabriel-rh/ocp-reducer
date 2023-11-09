@@ -1,0 +1,597 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="adding-bare-metal-compute-user-infra"]
+= Adding compute machines to bare metal
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: adding-bare-metal-compute-user-infra
+
+toc::[]
+
+You can add more compute machines to your {product-title} cluster on bare metal.
+
+== Prerequisites
+
+* You xref:../../installing/installing_bare_metal/installing-bare-metal.adoc#installing-bare-metal[installed a cluster on bare metal].
+* You have installation media and {op-system-first} images that you used to create your cluster. If you do not have these files, you must obtain them by following the instructions in the xref:../../installing/installing_bare_metal/installing-bare-metal.adoc#installing-bare-metal[installation procedure].
+* If a DHCP server is available for your user-provisioned infrastructure, you have added the details for the additional compute machines to your DHCP server configuration. This includes a persistent IP address, DNS server information, and a hostname for each machine.
+* You have updated your DNS configuration to include the record name and IP address of each compute machine that you are adding. You have validated that DNS lookup and reverse DNS lookup resolve correctly.
+
+[IMPORTANT]
+====
+If you do not have access to the {op-system-first} images that were used to create your cluster, you can add more compute machines to your {product-title} cluster with newer versions of {op-system-first} images. For instructions, see link:https://access.redhat.com/solutions/5514051[Adding new nodes to UPI cluster fails after upgrading to OpenShift 4.6+].
+====
+
+[id="creating-rhcos-machines-bare-metal"]
+== Creating {op-system-first} machines
+
+Before you add more compute machines to a cluster that you installed on bare metal infrastructure, you must create {op-system} machines for it to use. You can either use an ISO image or network PXE booting to create the machines.
+
+[NOTE]
+====
+You must use the same ISO image that you used to install a cluster to deploy all new nodes in a cluster. It is recommended to use the same Ignition config file. The nodes automatically upgrade themselves on the first boot before running the workloads. You can add the nodes before or after the upgrade.
+====
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/user_infra/adding-bare-metal-compute-user-infra.adoc
+// * post_installation_configuration/node-tasks.adoc
+// * post_installation_configuration/configuring-multi-arch-compute-machines/creating-multi-arch-compute-nodes-ibm-power.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="machine-user-infra-machines-iso_{context}"]
+= Creating {op-system} machines using an ISO image
+
+You can create more {op-system-first} compute machines for your bare metal cluster by using an ISO image to create the machines.
+
+.Prerequisites
+
+* Obtain the URL of the Ignition config file for the compute machines for your cluster. You uploaded this file to your HTTP server during installation.
+* You must have the OpenShift CLI (`oc`)  installed.
+
+.Procedure
+
+. Extract the Ignition config file from the cluster by running the following command:
++
+[source,terminal]
+----
+$ oc extract -n openshift-machine-api secret/worker-user-data-managed --keys=userData --to=- > worker.ign
+----
+
+. Upload the `worker.ign` Ignition config file you exported from your cluster to your HTTP server. Note the URLs of these files.
+
+. You can validate that the ignition files are available on the URLs. The following example gets the Ignition config files for the compute node:
++
+[source,terminal]
+----
+$ curl -k http://<HTTP_server>/worker.ign
+----
+
+. You can access the ISO image for booting your new machine by running to following command:
++
+[source,terminal]
+----
+RHCOS_VHD_ORIGIN_URL=$(oc -n openshift-machine-config-operator get configmap/coreos-bootimages -o jsonpath='{.data.stream}' | jq -r '.architectures.<architecture>.artifacts.metal.formats.iso.disk.location')
+----
+
+. Use the ISO file to install {op-system} on more compute machines. Use the same method that you used when you created machines before you installed the cluster:
+** Burn the ISO image to a disk and boot it directly.
+** Use ISO redirection with a LOM interface.
+
+. Boot the {op-system} ISO image without specifying any options, or interrupting the live boot sequence. Wait for the installer to boot into a shell prompt in the {op-system} live environment.
++
+[NOTE]
+====
+You can interrupt the {op-system} installation boot process to add kernel arguments. However, for this ISO procedure you must use the `coreos-installer` command as outlined in the following steps, instead of adding kernel arguments.
+====
+
+. Run the `coreos-installer` command and specify the options that meet your installation requirements. At a minimum, you must specify the URL that points to the Ignition config file for the node type, and the device that you are installing to:
++
+[source,terminal]
+----
+$ sudo coreos-installer install --ignition-url=http://<HTTP_server>/<node_type>.ign <device> --ignition-hash=sha512-<digest> <1><2>
+----
+<1> You must run the `coreos-installer` command by using `sudo`, because the `core` user does not have the required root privileges to perform the installation.
+<2> The `--ignition-hash` option is required when the Ignition config file is obtained through an HTTP URL to validate the authenticity of the Ignition config file on the cluster node. `<digest>` is the Ignition config file SHA512 digest obtained in a preceding step.
++
+[NOTE]
+====
+If you want to provide your Ignition config files through an HTTPS server that uses TLS, you can add the internal certificate authority (CA) to the system trust store before running `coreos-installer`.
+====
++
+The following example initializes a bootstrap node installation to the `/dev/sda` device. The Ignition config file for the bootstrap node is obtained from an HTTP web server with the IP address 192.168.1.2:
++
+[source,terminal]
+----
+$ sudo coreos-installer install --ignition-url=http://192.168.1.2:80/installation_directory/bootstrap.ign /dev/sda --ignition-hash=sha512-a5a2d43879223273c9b60af66b44202a1d1248fc01cf156c46d4a79f552b6bad47bc8cc78ddf0116e80c59d2ea9e32ba53bc807afbca581aa059311def2c3e3b
+----
+
+. Monitor the progress of the {op-system} installation on the console of the machine.
++
+[IMPORTANT]
+====
+Ensure that the installation is successful on each node before commencing with the {product-title} installation. Observing the installation process can also help to determine the cause of {op-system} installation issues that might arise.
+====
+
+. Continue to create more compute machines for your cluster.
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/user_infra/adding-bare-metal-compute-user-infra.adoc
+// * post_installation_configuration/node-tasks.adoc
+// * post_installation_configuration/multi-architecture-configuration.adoc
+// * post_installation_configuration/configuring-multi-arch-compute-machines/creating-multi-arch-compute-nodes-ibm-power.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="machine-user-infra-machines-pxe_{context}"]
+= Creating {op-system} machines by PXE or iPXE booting
+
+You can create more {op-system-first} compute machines for your bare metal cluster by using PXE or iPXE booting.
+
+.Prerequisites
+
+* Obtain the URL of the Ignition config file for the compute machines for your cluster. You uploaded this file to your HTTP server during installation.
+* Obtain the URLs of the {op-system} ISO image, compressed metal BIOS, `kernel`, and `initramfs` files that you uploaded to your HTTP server during cluster installation.
+* You have access to the PXE booting infrastructure that you used to create the machines for your {product-title} cluster during installation. The machines must boot from their local disks after {op-system} is installed on them.
+* If you use UEFI, you have access to the `grub.conf` file that you modified during {product-title} installation.
+
+.Procedure
+
+. Confirm that your PXE or iPXE installation for the {op-system} images is correct.
+
+** For PXE:
++
+----
+DEFAULT pxeboot
+TIMEOUT 20
+PROMPT 0
+LABEL pxeboot
+    KERNEL http://<HTTP_server>/rhcos-<version>-live-kernel-<architecture> <1>
+    APPEND initrd=http://<HTTP_server>/rhcos-<version>-live-initramfs.<architecture>.img coreos.inst.install_dev=/dev/sda coreos.inst.ignition_url=http://<HTTP_server>/worker.ign coreos.live.rootfs_url=http://<HTTP_server>/rhcos-<version>-live-rootfs.<architecture>.img <2>
+----
+<1> Specify the location of the live `kernel` file that you uploaded to your HTTP server.
+<2> Specify locations of the {op-system} files that you uploaded to your HTTP server. The `initrd` parameter value is the location of the live `initramfs` file, the `coreos.inst.ignition_url` parameter value is the location of the worker Ignition config file, and the `coreos.live.rootfs_url` parameter value is the location of the live `rootfs` file. The `coreos.inst.ignition_url` and `coreos.live.rootfs_url` parameters only support HTTP and HTTPS.
++
+[NOTE]
+====
+This configuration does not enable serial console access on machines with a graphical console. To configure a different console, add one or more `console=` arguments to the `APPEND` line. For example, add `console=tty0 console=ttyS0` to set the first PC serial port as the primary console and the graphical console as a secondary console. For more information, see link:https://access.redhat.com/articles/7212[How does one set up a serial terminal and/or console in Red Hat Enterprise Linux?].
+====
+
+** For iPXE (`x86_64` + `aarch64`):
++
+----
+kernel http://<HTTP_server>/rhcos-<version>-live-kernel-<architecture> initrd=main coreos.live.rootfs_url=http://<HTTP_server>/rhcos-<version>-live-rootfs.<architecture>.img coreos.inst.install_dev=/dev/sda coreos.inst.ignition_url=http://<HTTP_server>/worker.ign <1> <2>
+initrd --name main http://<HTTP_server>/rhcos-<version>-live-initramfs.<architecture>.img <3>
+boot
+----
+<1> Specify the locations of the {op-system} files that you uploaded to your
+HTTP server. The `kernel` parameter value is the location of the `kernel` file,
+the `initrd=main` argument is needed for booting on UEFI systems,
+the `coreos.live.rootfs_url` parameter value is the location of the `rootfs` file,
+and the `coreos.inst.ignition_url` parameter value is the
+location of the worker Ignition config file.
+<2> If you use multiple NICs, specify a single interface in the `ip` option.
+For example, to use DHCP on a NIC that is named `eno1`, set `ip=eno1:dhcp`.
+<3> Specify the location of the `initramfs` file that you uploaded to your HTTP server.
++
+[NOTE]
+====
+This configuration does not enable serial console access on machines with a graphical console To configure a different console, add one or more `console=` arguments to the `kernel` line. For example, add `console=tty0 console=ttyS0` to set the first PC serial port as the primary console and the graphical console as a secondary console. For more information, see link:https://access.redhat.com/articles/7212[How does one set up a serial terminal and/or console in Red Hat Enterprise Linux?] and "Enabling the serial console for PXE and ISO installation" in the "Advanced {op-system} installation configuration" section.
+====
++
+[NOTE]
+====
+To network boot the CoreOS `kernel` on `aarch64` architecture, you need to use a version of iPXE build with the `IMAGE_GZIP` option enabled. See link:https://ipxe.org/buildcfg/image_gzip[`IMAGE_GZIP` option in iPXE].
+====
+
+** For PXE (with UEFI and GRUB as second stage) on `aarch64`:
++
+----
+menuentry 'Install CoreOS' {
+    linux rhcos-<version>-live-kernel-<architecture>  coreos.live.rootfs_url=http://<HTTP_server>/rhcos-<version>-live-rootfs.<architecture>.img coreos.inst.install_dev=/dev/sda coreos.inst.ignition_url=http://<HTTP_server>/worker.ign <1> <2>
+    initrd rhcos-<version>-live-initramfs.<architecture>.img <3>
+}
+----
+<1> Specify the locations of the {op-system} files that you uploaded to your
+HTTP/TFTP server. The `kernel` parameter value is the location of the `kernel` file on your TFTP server.
+The `coreos.live.rootfs_url` parameter value is the location of the `rootfs` file, and the `coreos.inst.ignition_url` parameter value is the location of the worker Ignition config file on your HTTP Server.
+<2> If you use multiple NICs, specify a single interface in the `ip` option.
+For example, to use DHCP on a NIC that is named `eno1`, set `ip=eno1:dhcp`.
+<3> Specify the location of the `initramfs` file that you uploaded to your TFTP server.
+
+. Use the PXE or iPXE infrastructure to create the required compute machines for your cluster.
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-restricted-networks.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * machine_management/adding-rhel-compute.adoc
+// * machine_management/more-rhel-compute.adoc
+// * machine_management/user_provisioned/adding-aws-compute-user-infra.adoc
+// * machine_management/user_provisioned/adding-bare-metal-compute-user-infra.adoc
+// * machine_management/user_provisioned/adding-vsphere-compute-user-infra.adoc
+// * post_installation_configuration/node-tasks.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-power.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+// * post_installation_configuration/configuring-multi-arch-compute-machines/creating-multi-arch-compute-nodes-ibm-power.adoc
+
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-approve-csrs_{context}"]
+= Approving the certificate signing requests for your machines
+
+When you add machines to a cluster, two pending certificate signing requests (CSRs) are generated for each machine that you added. You must confirm that these CSRs are approved or, if necessary, approve them yourself. The client requests must be approved first, followed by the server requests.
+
+.Prerequisites
+
+* You added machines to your cluster.
+
+.Procedure
+
+. Confirm that the cluster recognizes the machines:
++
+[source,terminal]
+----
+$ oc get nodes
+----
++
+.Example output
+[source,terminal]
+----
+NAME      STATUS    ROLES   AGE  VERSION
+master-0  Ready     master  63m  v1.27.3
+master-1  Ready     master  63m  v1.27.3
+master-2  Ready     master  64m  v1.27.3
+----
++
+The output lists all of the machines that you created.
++
+[NOTE]
+====
+The preceding output might not include the compute nodes, also known as worker nodes, until some CSRs are approved.
+====
+
+. Review the pending CSRs and ensure that you see the client requests with the `Pending` or `Approved` status for each machine that you added to the cluster:
++
+[source,terminal]
+----
+$ oc get csr
+----
++
+.Example output
+[source,terminal]
+----
+NAME        AGE     REQUESTOR                                                                   CONDITION
+csr-8b2br   15m     system:serviceaccount:openshift-machine-config-operator:node-bootstrapper   Pending
+csr-8vnps   15m     system:serviceaccount:openshift-machine-config-operator:node-bootstrapper   Pending
+...
+----
++
+In this example, two machines are joining the cluster. You might see more approved CSRs in the list.
+
+. If the CSRs were not approved, after all of the pending CSRs for the machines you added are in `Pending` status, approve the CSRs for your cluster machines:
++
+[NOTE]
+====
+Because the CSRs rotate automatically, approve your CSRs within an hour of adding the machines to the cluster. If you do not approve them within an hour, the certificates will rotate, and more than two certificates will be present for each node. You must approve all of these certificates. After the client CSR is approved, the Kubelet creates a secondary CSR for the serving certificate, which requires manual approval. Then, subsequent serving certificate renewal requests are automatically approved by the `machine-approver` if the Kubelet requests a new certificate with identical parameters.
+====
++
+[NOTE]
+====
+For clusters running on platforms that are not machine API enabled, such as bare metal and other user-provisioned infrastructure, you must implement a method of automatically approving the kubelet serving certificate requests (CSRs). If a request is not approved, then the `oc exec`, `oc rsh`, and `oc logs` commands cannot succeed, because a serving certificate is required when the API server connects to the kubelet. Any operation that contacts the Kubelet endpoint requires this certificate approval to be in place. The method must watch for new CSRs, confirm that the CSR was submitted by the `node-bootstrapper` service account in the `system:node` or `system:admin` groups, and confirm the identity of the node.
+====
+
+** To approve them individually, run the following command for each valid CSR:
++
+[source,terminal]
+----
+$ oc adm certificate approve <csr_name> <1>
+----
+<1> `<csr_name>` is the name of a CSR from the list of current CSRs.
+
+** To approve all pending CSRs, run the following command:
++
+[source,terminal]
+----
+$ oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' | xargs --no-run-if-empty oc adm certificate approve
+----
++
+[NOTE]
+====
+Some Operators might not become available until some CSRs are approved.
+====
+
+. Now that your client requests are approved, you must review the server requests for each machine that you added to the cluster:
++
+[source,terminal]
+----
+$ oc get csr
+----
++
+.Example output
+[source,terminal]
+----
+NAME        AGE     REQUESTOR                                                                   CONDITION
+csr-bfd72   5m26s   system:node:ip-10-0-50-126.us-east-2.compute.internal                       Pending
+csr-c57lv   5m26s   system:node:ip-10-0-95-157.us-east-2.compute.internal                       Pending
+...
+----
+
+. If the remaining CSRs are not approved, and are in the `Pending` status, approve the CSRs for your cluster machines:
+
+** To approve them individually, run the following command for each valid CSR:
++
+[source,terminal]
+----
+$ oc adm certificate approve <csr_name> <1>
+----
+<1> `<csr_name>` is the name of a CSR from the list of current CSRs.
+
+** To approve all pending CSRs, run the following command:
++
+[source,terminal]
+----
+$ oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' | xargs oc adm certificate approve
+----
+
+. After all client and server CSRs have been approved, the machines have the `Ready` status. Verify this by running the following command:
++
+[source,terminal]
+----
+$ oc get nodes
+----
++
+.Example output
+[source,terminal]
+----
+NAME      STATUS    ROLES   AGE  VERSION
+master-0  Ready     master  73m  v1.27.3
+master-1  Ready     master  73m  v1.27.3
+master-2  Ready     master  74m  v1.27.3
+worker-0  Ready     worker  11m  v1.27.3
+worker-1  Ready     worker  11m  v1.27.3
+----
++
+[NOTE]
+====
+It can take a few minutes after approval of the server CSRs for the machines to transition to the `Ready` status.
+====
+
+.Additional information
+* For more information on CSRs, see link:https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/[Certificate Signing Requests].
+
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/machine-user-infra-machines-iso,modules/machine-user-infra-machines-pxe,modules/installation-approve-csrs

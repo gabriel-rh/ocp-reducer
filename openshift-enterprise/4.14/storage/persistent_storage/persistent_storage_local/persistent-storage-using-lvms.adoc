@@ -1,0 +1,2254 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="persistent-storage-using-lvms"]
+= Persistent storage using logical volume manager storage
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: logical-volume-manager-storage
+
+toc::[]
+
+{lvms-first} uses the TopoLVM CSI driver to dynamically provision local storage on {sno} clusters.
+
+{lvms} creates thin-provisioned volumes using Logical Volume Manager and provides dynamic provisioning of block storage on a limited resources {sno} cluster.
+
+//deploying/requirements with RHACM
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="lvms-preface-sno-ran_{context}"]
+= Deploying {lvms} on {sno} clusters
+
+You can deploy {lvms} on a {sno} bare-metal or user-provisioned infrastructure cluster and configure it to dynamically provision storage for your workloads.
+
+{lvms} creates a volume group using all the available unused disks and creates a single thin pool with a size of 90% of the volume group.
+The remaining 10% of the volume group is left free to enable data recovery by expanding the thin pool when required.
+You might need to manually perform such recovery.
+
+You can use persistent volume claims (PVCs) and volume snapshots provisioned by {lvms} to request storage and create volume snapshots.
+
+{lvms} configures a default overprovisioning limit of 10 to take advantage of the thin-provisioning feature.
+The total size of the volumes and volume snapshots that can be created on the {sno} clusters is 10 times the size of the thin pool.
+
+You can deploy {lvms} on {sno} clusters using one of the following:
+
+* {rh-rhacm-first}
+* {product-title} Web Console
+
+[id="lvms-deployment-requirements-for-sno-ran_{context}"]
+== Requirements
+
+Before you begin deploying {lvms} on {sno} clusters, ensure that the following requirements are met:
+
+* You have installed {rh-rhacm-first} on an {product-title} cluster.
+* Every managed {sno} cluster has dedicated disks that are used to provision storage.
+
+Before you deploy {lvms} on {sno} clusters, be aware of the following limitations:
+
+* You can only create a single instance of the `LVMCluster` custom resource (CR) on an {product-title} cluster.
+* When a device becomes part of the `LVMCluster` CR, it cannot be removed.
+
+[id="lvms-deployment-limitations-for-sno-ran_{context}"]
+== Limitations
+
+For deploying {sno}, LVM Storage has the following limitations:
+
+* The total storage size is limited by the size of the underlying Logical Volume Manager (LVM) thin pool and the overprovisioning factor.
+* The size of the logical volume depends on the size of the Physical Extent (PE) and the Logical Extent (LE).
+** It is possible to define the size of PE and LE during the physical and logical device creation.
+** The default PE and LE size is 4 MB.
+** If the size of the PE is increased, the maximum size of the LVM is determined by the kernel limits and your disk space.
+
+.Size limits for different architectures using the default PE and LE size
+[cols="1,1,1,1,1", width="100%", options="header"]
+|====
+|Architecture
+|RHEL 6
+|RHEL 7
+|RHEL 8
+|RHEL 9
+
+|32-bit
+|16 TB
+|-
+|-
+|-
+
+|64-bit
+
+|8 EB ^[1]^
+
+100 TB ^[2]^
+|8 EB ^[1]^
+
+500 TB ^[2]^
+|8 EB
+|8 EB
+
+|====
+[.small]
+--
+1. Theoretical size.
+2. Tested size.
+--
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/install/installing#installing-while-connected-online[Red Hat Advanced Cluster Management for Kubernetes: Installing while connected online]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="install-lvms-operator-cli_{context}"]
+= Installing {lvms} with the CLI
+
+As a cluster administrator, you can install {lvms-first} by using the CLI.
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create a namespace for the {lvms} Operator.
+
+.. Save the following YAML in the `lvms-namespace.yaml` file:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    openshift.io/cluster-monitoring: "true"
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/warn: privileged
+  name: openshift-storage
+----
+
+.. Create the `Namespace` CR:
++
+[source,terminal]
+----
+$ oc create -f lvms-namespace.yaml
+----
+
+. Create an Operator group for the {lvms} Operator.
+
+.. Save the following YAML in the `lvms-operatorgroup.yaml` file:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: openshift-storage-operatorgroup
+  namespace: openshift-storage
+spec:
+  targetNamespaces:
+  - openshift-storage
+----
+
+.. Create the `OperatorGroup` CR:
++
+[source,terminal]
+----
+$ oc create -f lvms-operatorgroup.yaml
+----
+
+. Subscribe to the {lvms} Operator.
+
+.. Save the following YAML in the `lvms-sub.yaml` file:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: lvms
+  namespace: openshift-storage
+spec:
+  installPlanApproval: Automatic
+  name: lvms-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+----
+
+.. Create the `Subscription` CR:
++
+[source,terminal]
+----
+$ oc create -f lvms-sub.yaml
+----
+
+. Create the `LVMCluster` resource:
+
+.. Save the following YAML in the `lvmcluster.yaml` file:
++
+[source,yaml]
+----
+apiVersion: lvm.topolvm.io/v1alpha1
+kind: LVMCluster
+metadata:
+ name: my-lvmcluster
+ namespace: openshift-storage
+spec:
+ storage:
+   deviceClasses:
+   - name: vg1
+     deviceSelector:
+       paths:
+       - /dev/disk/by-path/pci-0000:87:00.0-nvme-1
+       - /dev/disk/by-path/pci-0000:88:00.0-nvme-1
+       optionalPaths:
+       - /dev/disk/by-path/pci-0000:89:00.0-nvme-1
+       - /dev/disk/by-path/pci-0000:90:00.0-nvme-1
+     thinPoolConfig:
+       name: thin-pool-1
+       sizePercent: 90
+       overprovisionRatio: 10
+     nodeSelector:
+       nodeSelectorTerms:
+       - matchExpressions:
+         - key: app
+           operator: In
+           values:
+           - test1
+----
+
+.. Create the `LVMCluster` CR:
++
+[source,yaml]
+----
+$ oc create -f lvmcluster.yaml
+----
+
+
+. To verify that the Operator is installed, enter the following command:
++
+[source,terminal]
+----
+$ oc get csv -n openshift-storage -o custom-columns=Name:.metadata.name,Phase:.status.phase
+----
++
+.Example output
+[source,terminal]
+----
+Name                         Phase
+4.13.0-202301261535          Succeeded
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-installing-lvms-with-web-console_{context}"]
+= Installing {lvms} with the web console
+
+You can install {lvms-first} by using the Red Hat {product-title} OperatorHub.
+
+.Prerequisites
+
+* You have access to the {sno} cluster.
+* You are using an account with the `cluster-admin` and Operator installation permissions.
+
+.Procedure
+
+. Log in to the {product-title} Web Console.
+. Click *Operators -> OperatorHub*.
+. Scroll or type `LVM Storage` into the *Filter by keyword* box to find {lvms}.
+. Click *Install*.
+. Set the following options on the *Install Operator* page:
+.. *Update Channel* as *stable-{product-version}*.
+.. *Installation Mode* as *A specific namespace on the cluster*.
+.. *Installed Namespace* as *Operator recommended namespace openshift-storage*.
+   If the `openshift-storage` namespace does not exist, it is created during the operator installation.
+.. *Approval Strategy* as *Automatic* or *Manual*.
++
+If you select *Automatic* updates, then the Operator Lifecycle Manager (OLM) automatically upgrades the running instance of your Operator without any intervention.
++
+If you select *Manual* updates, then the OLM creates an update request.
+As a cluster administrator, you must then manually approve that update request to update the Operator to a newer version.
+
+. Click *Install*.
+
+.Verification steps
+
+* Verify that {lvms} shows a green tick, indicating successful installation.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-unstalling-lvms-with-web-console_{context}"]
+= Uninstalling {lvms} installed using the OpenShift Web Console
+
+You can unstall {lvms} using the Red Hat OpenShift Container Platform Web Console.
+
+.Prerequisites
+
+* You deleted all the applications on the clusters that are using the storage provisioned by {lvms}.
+* You deleted the persistent volume claims (PVCs) and persistent volumes (PVs) provisioned using {lvms}.
+* You deleted all volume snapshots provisioned by {lvms}.
+* You verified that no logical volume resources exist by using the `oc get logicalvolume` command.
+* You have access to the {sno} cluster using an account with `cluster-admin` permissions.
+
+.Procedure
+
+. From the *Operators* → *Installed Operators* page, scroll to *LVM Storage* or type `LVM Storage` into the *Filter by name* to find and click on it.
+. Click on the *LVMCluster* tab.
+. On the right-hand side of the *LVMCluster* page, select *Delete LVMCluster* from the *Actions* drop-down menu.
+. Click on the *Details* tab.
+. On the right-hand side of the *Operator Details* page, select *Uninstall Operator* from the *Actions* drop-down menu.
+. Select *Remove*. {lvms} stops running and is completely removed.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-installing-lvms-disconnected-env_{context}"]
+= Installing {lvms} in a disconnected environment
+
+You can install {lvms} on {product-title} {product-version} in a disconnected environment. All sections referenced in this procedure are linked in _Additional resources_.
+
+.Prerequisites
+
+* You read the _About disconnected installation mirroring_ section.
+* You have access to the {product-title} image repository.
+* You created a mirror registry.
+
+.Procedure
+
+. Follow the steps in the _Creating the image set configuration_ procedure. To create an `ImageSetConfiguration` resource for {lvms}, you can use the following example YAML file:
++
+:_mod-docs-content-type: SNIPPET
+.Example ImageSetConfiguration file for {lvms}
+[source,yaml,subs="attributes+"]
+----
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v1alpha2
+archiveSize: 4 <1>
+storageConfig: <2>
+  registry:
+    imageURL: example.com/mirror/oc-mirror-metadata <3>
+    skipTLS: false
+mirror:
+  platform:
+    channels:
+    - name: stable-{product-version} <4>
+      type: ocp
+    graph: true <5>
+  operators:
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v{product-version} <6>
+    packages:
+    - name: lvms-operator <7>
+      channels:
+      - name: stable <8>
+  additionalImages:
+  - name: registry.redhat.io/ubi9/ubi:latest <9>
+  helm: {}
+----
+<1> Add `archiveSize` to set the maximum size, in GiB, of each file within the image set.
+<2> Set the back-end location to save the image set metadata to. This location can be a registry or local directory. It is required to specify `storageConfig` values, unless you are using the Technology Preview OCI feature.
+<3> Set the registry URL for the storage backend.
+<4> Set the channel to retrieve the {product-title} images from.
+<5> Add `graph: true` to generate the OpenShift Update Service (OSUS) graph image to allow for an improved cluster update experience when using the web console. For more information, see _About the OpenShift Update Service_.
+<6> Set the Operator catalog to retrieve the {product-title} images from.
+<7> Specify only certain Operator packages to include in the image set. Remove this field to retrieve all packages in the catalog.
+<8> Specify only certain channels of the Operator packages to include in the image set. You must always include the default channel for the Operator package even if you do not use the bundles in that channel. You can find the default channel by running the following command: `oc mirror list operators --catalog=<catalog_name> --package=<package_name>`.
+<9> Specify any additional images to include in image set.
+
+. Follow the procedure in the _Mirroring an image set to a mirror registry_ section.
+
+. Follow the procedure in the _Configuring image registry repository mirroring_ section.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../../installing/disconnected_install/index.adoc#installing-mirroring-disconnected-about[About disconnected installation mirroring]
+
+* xref:../../../installing/disconnected_install/installing-mirroring-creating-registry.adoc#installing-mirroring-creating-registry[Creating a mirror registry with mirror registry for Red Hat OpenShift]
+
+* xref:../../../installing/disconnected_install/installing-mirroring-installation-images.adoc#installation-mirror-repository_installing-mirroring-installation-images[Mirroring the OpenShift Container Platform image repository]
+
+* xref:../../../installing/disconnected_install/installing-mirroring-disconnected.adoc#oc-mirror-creating-image-set-config_installing-mirroring-disconnected[Creating the image set configuration]
+
+* xref:../../../installing/disconnected_install/installing-mirroring-disconnected.adoc#mirroring-image-set[Mirroring an image set to a mirror registry]
+
+* xref:../../../openshift_images/image-configuration.adoc#images-configuration-registry-mirror_image-configuration[Configuring image registry repository mirroring]
+
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-installing-odf-logical-volume-manager-operator-using-rhacm_{context}"]
+= Installing {lvms} using {rh-rhacm}
+
+{lvms} is deployed on {sno} clusters using {rh-rhacm-first}.
+You create a `Policy` object on {rh-rhacm} that deploys and configures the Operator when it is applied to managed clusters which match the selector specified in the `PlacementRule` resource.
+The policy is also applied to clusters that are imported later and satisfy the placement rule.
+
+.Prerequisites
+* Access to the {rh-rhacm} cluster using an account with `cluster-admin` and Operator installation permissions.
+* Dedicated disks on each {sno} cluster to be used by {lvms}.
+* The {sno} cluster needs to be managed by {rh-rhacm}, either imported or created.
+
+.Procedure
+
+. Log in to the {rh-rhacm} CLI using your {product-title} credentials.
+
+. Create a namespace in which you will create policies.
++
+[source,terminal]
+----
+# oc create ns lvms-policy-ns
+----
+
+. To create a policy, save the following YAML to a file with a name such as `policy-lvms-operator.yaml`:
++
+[source,yaml]
+----
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-install-lvms
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector: <1>
+    matchExpressions:
+    - key: mykey
+      operator: In
+      values:
+      - myvalue
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-install-lvms
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-install-lvms
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: install-lvms
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  name: install-lvms
+spec:
+  disabled: false
+  remediationAction: enforce
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: install-lvms
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              labels:
+                openshift.io/cluster-monitoring: "true"
+                pod-security.kubernetes.io/enforce: privileged
+                pod-security.kubernetes.io/audit: privileged
+                pod-security.kubernetes.io/warn: privileged
+              name: openshift-storage
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1
+            kind: OperatorGroup
+            metadata:
+              name: openshift-storage-operatorgroup
+              namespace: openshift-storage
+            spec:
+              targetNamespaces:
+              - openshift-storage
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1alpha1
+            kind: Subscription
+            metadata:
+              name: lvms
+              namespace: openshift-storage
+            spec:
+              installPlanApproval: Automatic
+              name: lvms-operator
+              source: redhat-operators
+              sourceNamespace: openshift-marketplace
+        remediationAction: enforce
+        severity: low
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: lvms
+      spec:
+        object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: lvm.topolvm.io/v1alpha1
+               kind: LVMCluster
+               metadata:
+                 name: my-lvmcluster
+                 namespace: openshift-storage
+               spec:
+                 storage:
+                   deviceClasses:
+                   - name: vg1
+                     default: true
+                     deviceSelector: <2>
+                       paths:
+                       - /dev/disk/by-path/pci-0000:87:00.0-nvme-1
+                       - /dev/disk/by-path/pci-0000:88:00.0-nvme-1
+                       optionalPaths:
+                       - /dev/disk/by-path/pci-0000:89:00.0-nvme-1
+                       - /dev/disk/by-path/pci-0000:90:00.0-nvme-1
+                     thinPoolConfig:
+                       name: thin-pool-1
+                       sizePercent: 90
+                       overprovisionRatio: 10
+                     nodeSelector: <3>
+                       nodeSelectorTerms:
+                       - matchExpressions:
+                           - key: app
+                             operator: In
+                             values:
+                             - test1
+        remediationAction: enforce
+        severity: low
+----
+<1> Replace the key and value in `PlacementRule.spec.clusterSelector` to match the labels set on the {sno} clusters on which you want to install {lvms}.
+<2> Optional. To control or restrict the volume group to your preferred devices, you can manually specify the local paths of the devices in the `deviceSelector` section of the `LVMCluster` YAML. The `paths` section refers to devices the `LVMCluster` adds, which means those paths must exist. The `optionalPaths` section refers to devices the `LVMCluster` might add. You must specify at least one of `paths` or `optionalPaths` when specifying the `deviceSelector` section. If you specify `paths`, it is not mandatory to specify `optionalPaths`. If you specify `optionalPaths`, it is not mandatory to specify `paths` but at least one optional path must be present on the node. If you do not specify any paths, it will add all unused devices on the node.
+<3> To add a node filter, which is a subset of the additional worker nodes, specify the required filter in the `nodeSelector` section. {lvms} detects and uses the additional worker nodes when the new nodes show up.
++
+--
+[IMPORTANT]
+====
+This `nodeSelector` node filter matching is not the same as the pod label matching.
+====
+--
+
+. Create the policy in the namespace by running the following command:
++
+[source,terminal]
+----
+# oc create -f policy-lvms-operator.yaml -n lvms-policy-ns <1>
+----
+<1> The `policy-lvms-operator.yaml` is the name of the file to which the policy is saved.
+
++
+This creates a `Policy`, a `PlacementRule`, and a `PlacementBinding` object in the `lvms-policy-ns` namespace.
+The policy creates a `Namespace`, `OperatorGroup`, `Subscription`, and `LVMCluster` resource on the clusters that match the placement rule.
+This deploys the Operator on the {sno} clusters which match the selection criteria and configures it to set up the required resources to provision storage.
+The Operator uses all the disks specified in the `LVMCluster` CR.
+If no disks are specified, the Operator uses all the unused disks on the {sno} node.
++
+[IMPORTANT]
+====
+After a device is added to the `LVMCluster`, it cannot be removed.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/install/installing#installing-while-connected-online[Red Hat Advanced Cluster Management for Kubernetes: Installing while connected online]
+
+* xref:../../../storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc#lvms-reference-file_logical-volume-manager-storage[{lvms} reference YAML file]
+
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-uninstalling-lvms-rhacm_{context}"]
+= Uninstalling {lvms} installed using {rh-rhacm}
+
+To uninstall {lvms} that you installed using {rh-rhacm}, you need to delete the {rh-rhacm} policy that you created for deploying and configuring the Operator.
+
+When you delete the {rh-rhacm} policy, the resources that the policy has created are not removed.
+You need to create additional policies to remove the resources.
+
+As the created resources are not removed when you delete the policy, you need to perform the following steps:
+
+. Remove all the Persistent volume claims (PVCs) and volume snapshots provisioned by {lvms}.
+. Remove the `LVMCluster` resources to clean up Logical Volume Manager resources created on the disks.
+. Create an additional policy to uninstall the Operator.
+
+.Prerequisites
+
+* Ensure that the following are deleted before deleting the policy:
+** All the applications on the managed clusters that are using the storage provisioned by {lvms}.
+** PVCs and persistent volumes (PVs) provisioned using {lvms}.
+** All volume snapshots provisioned by {lvms}.
+* Ensure you have access to the {rh-rhacm} cluster using an account with a `cluster-admin` role.
+
+.Procedure
+
+. In the OpenShift CLI (`oc`), delete the {rh-rhacm} policy that you created for deploying and configuring {lvms} on the hub cluster by using the following command:
++
+[source,terminal]
+----
+# oc delete -f policy-lvms-operator.yaml -n lvms-policy-ns <1>
+----
+<1> The `policy-lvms-operator.yaml` is the name of the file to which the policy was saved.
+
+. To create a policy for removing the `LVMCluster` resource, save the following YAML to a file with a name such as `lvms-remove-policy.yaml`.
+This enables the Operator to clean up all Logical Volume Manager resources that it created on the cluster.
++
+[source,yaml]
+----
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-lvmcluster-delete
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-lvmcluster-removal
+        spec:
+          remediationAction: enforce <1>
+          severity: low
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                kind: LVMCluster
+                apiVersion: lvm.topolvm.io/v1alpha1
+                metadata:
+                  name: my-lvmcluster
+                  namespace: openshift-storage <2>
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-lvmcluster-delete
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-policy-lvmcluster-delete
+subjects:
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: policy-lvmcluster-delete
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-lvmcluster-delete
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: mykey
+        operator: In
+        values:
+          - myvalue
+----
+<1> The `policy-template` `spec.remediationAction` is overridden by the preceding parameter value for `spec.remediationAction`.
+<2> This `namespace` field must have the `openshift-storage` value.
+
+. Set the value of the `PlacementRule.spec.clusterSelector` field to select the clusters from which to uninstall {lvms}.
+
+. Create the policy by running the following command:
++
+[source,terminal]
+----
+# oc create -f lvms-remove-policy.yaml -n lvms-policy-ns
+----
+
+. To create a policy to check if the `LVMCluster` CR has been removed, save the following YAML to a file with a name such as `check-lvms-remove-policy.yaml`:
++
+[source,yaml]
+----
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-lvmcluster-inform
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-lvmcluster-removal-inform
+        spec:
+          remediationAction: inform <1>
+          severity: low
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                kind: LVMCluster
+                apiVersion: lvm.topolvm.io/v1alpha1
+                metadata:
+                  name: my-lvmcluster
+                  namespace: openshift-storage <2>
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-lvmcluster-check
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-policy-lvmcluster-check
+subjects:
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: policy-lvmcluster-inform
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-lvmcluster-check
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: mykey
+        operator: In
+        values:
+          - myvalue
+----
+<1> The `policy-template` `spec.remediationAction` is overridden by the preceding parameter value for `spec.remediationAction`.
+<2> The `namespace` field must have the `openshift-storage` value.
+
+. Create the policy by running the following command:
++
+[source,terminal]
+----
+# oc create -f check-lvms-remove-policy.yaml -n lvms-policy-ns
+----
+
+. Check the policy status by running the following command:
++
+[source,terminal]
+----
+# oc get policy -n lvms-policy-ns
+----
+
++
+.Example output
+[source,terminal]
+----
+NAME                       REMEDIATION ACTION   COMPLIANCE STATE   AGE
+policy-lvmcluster-delete   enforce              Compliant          15m
+policy-lvmcluster-inform   inform               Compliant          15m
+----
+
+. After both the policies are compliant, save the following YAML to a file with a name such as `lvms-uninstall-policy.yaml` to create a policy to uninstall {lvms}.
++
+[source,yaml]
+----
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-uninstall-lvms
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+    - key: mykey
+      operator: In
+      values:
+      - myvalue
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-uninstall-lvms
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-uninstall-lvms
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: uninstall-lvms
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  name: uninstall-lvms
+spec:
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: uninstall-lvms
+      spec:
+        object-templates:
+        - complianceType: mustnothave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: openshift-storage
+        - complianceType: mustnothave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1
+            kind: OperatorGroup
+            metadata:
+              name: openshift-storage-operatorgroup
+              namespace: openshift-storage
+            spec:
+              targetNamespaces:
+              - openshift-storage
+        - complianceType: mustnothave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1alpha1
+            kind: Subscription
+            metadata:
+              name: lvms-operator
+              namespace: openshift-storage
+        remediationAction: enforce
+        severity: low
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-remove-lvms-crds
+      spec:
+        object-templates:
+        - complianceType: mustnothave
+          objectDefinition:
+            apiVersion: apiextensions.k8s.io/v1
+            kind: CustomResourceDefinition
+            metadata:
+              name: logicalvolumes.topolvm.io
+        - complianceType: mustnothave
+          objectDefinition:
+            apiVersion: apiextensions.k8s.io/v1
+            kind: CustomResourceDefinition
+            metadata:
+              name: lvmclusters.lvm.topolvm.io
+        - complianceType: mustnothave
+          objectDefinition:
+            apiVersion: apiextensions.k8s.io/v1
+            kind: CustomResourceDefinition
+            metadata:
+              name: lvmvolumegroupnodestatuses.lvm.topolvm.io
+        - complianceType: mustnothave
+          objectDefinition:
+            apiVersion: apiextensions.k8s.io/v1
+            kind: CustomResourceDefinition
+            metadata:
+              name: lvmvolumegroups.lvm.topolvm.io
+        remediationAction: enforce
+        severity: high
+----
+
+. Create the policy by running the following command:
++
+[source,terminal]
+----
+# oc create -f lvms-uninstall-policy.yaml -ns lvms-policy-ns
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../../storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc#lvms-reference-file_logical-volume-manager-storage[{lvms} reference YAML file]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-creating-lvms-cluster_{context}"]
+= Creating a Logical Volume Manager cluster on a {sno} worker node
+
+You can configure a {sno} worker node as a Logical Volume Manager cluster.
+On the control-plane {sno} node, {lvms} detects and uses the additional worker nodes when the new nodes become active in the cluster.
+
+[NOTE]
+====
+When you create a Logical Volume Manager cluster, `StorageClass` and `LVMVolumeGroup` resources work together to provide dynamic provisioning of storage.
+`StorageClass` CRs define the properties of the storage that you can dynamically provision.
+`LVMVolumeGroup` is a specific type of persistent volume (PV) that is backed by an LVM Volume Group.
+`LVMVolumeGroup` CRs provide the back-end storage for the persistent volumes that you create.
+====
+
+Perform the following procedure to create a Logical Volume Manager cluster on a {sno} worker node.
+
+[NOTE]
+====
+You also can perform the same task by using the {product-title} web console.
+====
+
+.Prerequisites
+
+* You have installed the OpenShift CLI (`oc`).
+
+* You have logged in as a user with `cluster-admin` privileges.
+
+* You installed {lvms} in a {sno} cluster and have installed a worker node for use in the {sno} cluster.
+
+.Procedure
+
+. Create the `LVMCluster` custom resource (CR).
+
+.. Save the following YAML in the `lvmcluster.yaml` file:
++
+[source,yaml]
+----
+apiVersion: lvm.topolvm.io/v1alpha1
+kind: LVMCluster
+metadata:
+  name: lvmcluster
+spec:
+  storage:
+    deviceClasses:  <1>
+      - name: vg1
+        fstype: ext4 <2>
+        default: true <3>
+        deviceSelector: <4>
+          paths:
+          - /dev/disk/by-path/pci-0000:87:00.0-nvme-1
+          - /dev/disk/by-path/pci-0000:88:00.0-nvme-1
+          optionalPaths:
+          - /dev/disk/by-path/pci-0000:89:00.0-nvme-1
+          - /dev/disk/by-path/pci-0000:90:00.0-nvme-1
+        thinPoolConfig:
+          name: thin-pool-1
+          sizePercent: 90
+          overprovisionRatio: 10
+        nodeSelector: <5>
+          nodeSelectorTerms:
+            - matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - test1
+----
+<1> To create multiple device storage classes in the cluster, create a YAML array under `deviceClasses` for each required storage class.
+Configure the local device paths of the disks as an array of values in the `deviceSelector` field.
+When configuring multiple device classes, you must specify the device path for each device.
+<2> Set `fstype` to `ext4` or `xfs`. By default, it is set to `xfs` if the setting is not specified.
+<3> Mandatory: The `LVMCluster` resource must contain a single default storage class. Set `default: false` for secondary device storage classes.
+If you are upgrading the `LVMCluster` resource from a previous version, you must specify a single default device class.
+<4> Optional. To control or restrict the volume group to your preferred devices, you can manually specify the local paths of the devices in the `deviceSelector` section of the `LVMCluster` YAML. The `paths` section refers to devices the `LVMCluster` adds, which means those paths must exist. The `optionalPaths` section refers to devices the `LVMCluster` might add. You must specify at least one of `paths` or `optionalPaths` when specifying the `deviceSelector` section. If you specify `paths`, it is not mandatory to specify `optionalPaths`. If you specify `optionalPaths`, it is not mandatory to specify `paths` but at least one optional path must be present on the node. If you do not specify any paths, it will add all unused devices on the node.
+<5> Optional: To control what worker nodes the `LVMCluster` CR is applied to, specify a set of node selector labels.
+The specified labels must be present on the node in order for the `LVMCluster` to be scheduled on that node.
+
+.. Create the `LVMCluster` CR:
++
+[source,terminal]
+----
+$ oc create -f lvmcluster.yaml
+----
++
+.Example output
+[source,terminal]
+----
+lvmcluster/lvmcluster created
+----
++
+The `LVMCluster` resource creates the following system-managed CRs:
++
+`LVMVolumeGroup`:: Tracks individual volume groups across multiple nodes.
+`LVMVolumeGroupNodeStatus`:: Tracks the status of the volume groups on a node.
+
+.Verification
+
+Verify that the `LVMCluster` resource has created the `StorageClass`, `LVMVolumeGroup`, and `LVMVolumeGroupNodeStatus` CRs.
+
+[IMPORTANT]
+====
+`LVMVolumeGroup` and `LVMVolumeGroupNodeStatus` are managed by {lvms}. Do not edit these CRs directly.
+====
+
+. Check that the `LVMCluster` CR is in a `ready` state by running the following command:
++
+[source,terminal]
+----
+$ oc get lvmclusters.lvm.topolvm.io -o jsonpath='{.items[*].status.deviceClassStatuses[*]}'
+----
++
+.Example output
+[source,json]
+----
+{
+    "name": "vg1",
+    "nodeStatus": [
+        {
+            "devices": [
+                "/dev/nvme0n1",
+                "/dev/nvme1n1",
+                "/dev/nvme2n1"
+            ],
+            "node": "kube-node",
+            "status": "Ready"
+        }
+    ]
+}
+----
+
+. Check that the storage class is created:
++
+[source,terminal]
+----
+$ oc get storageclass
+----
++
+.Example output
+[source,terminal]
+----
+NAME          PROVISIONER          RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+lvms-vg1      topolvm.io           Delete          WaitForFirstConsumer   true                   31m
+----
+
+. Check that the volume snapshot class is created:
++
+[source,terminal]
+----
+$ oc get volumesnapshotclass
+----
++
+.Example output
+[source,terminal]
+----
+NAME          DRIVER               DELETIONPOLICY   AGE
+lvms-vg1      topolvm.io           Delete           24h
+----
+
+. Check that the `LVMVolumeGroup` resource is created:
++
+[source,terminal]
+----
+$ oc get lvmvolumegroup vg1 -o yaml
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: lvm.topolvm.io/v1alpha1
+kind: LVMVolumeGroup
+metadata:
+  creationTimestamp: "2022-02-02T05:16:42Z"
+  generation: 1
+  name: vg1
+  namespace: lvm-operator-system
+  resourceVersion: "17242461"
+  uid: 88e8ad7d-1544-41fb-9a8e-12b1a66ab157
+spec: {}
+----
+
+. Check that the `LVMVolumeGroupNodeStatus` resource is created:
++
+[source,terminal]
+----
+$ oc get lvmvolumegroupnodestatuses.lvm.topolvm.io kube-node -o yaml
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: lvm.topolvm.io/v1alpha1
+kind: LVMVolumeGroupNodeStatus
+metadata:
+  creationTimestamp: "2022-02-02T05:17:59Z"
+  generation: 1
+  name: kube-node
+  namespace: lvm-operator-system
+  resourceVersion: "17242882"
+  uid: 292de9bb-3a9b-4ee8-946a-9b587986dafd
+spec:
+  nodeStatus:
+    - devices:
+        - /dev/nvme0n1
+        - /dev/nvme1n1
+        - /dev/nvme2n1
+      name: vg1
+      status: Ready
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../../nodes/nodes/nodes-sno-worker-nodes.adoc[Adding worker nodes to {sno} clusters]
+
+* xref:../../../storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc#lvms-reference-file_logical-volume-manager-storage[{lvms} reference YAML file]
+
+//Adding a storage class
+:leveloffset: +1
+
+// This module is included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="adding-a-storage-class_{context}"]
+= Adding a storage class
+
+You can add a storage class to an {product-title} cluster. A storage class describes a class of storage in the cluster and how the cluster dynamically provisions the persistent volumes (PVs) when the user specifies the storage class. A storage class describes the type of device classes, the quality-of-service level, the filesystem type, and other details.
+
+.Procedure
+
+. Create a YAML file:
++
+[source,yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: lvm-storageclass
+parameters:
+  csi.storage.k8s.io/fstype: ext4
+  topolvm.io/device-class: vg1
+provisioner: topolvm.io
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer
+----
++
+Save the file by using a name similar to the storage class name. For example, `lvm-storageclass.yaml`.
+
+. Apply the YAML file by using the `oc` command:
++
+[source,terminal]
+----
+$ oc apply -f <file_name> <1>
+----
+<1> Replace `<file_name>` with the name of the YAML file. For example, `lvm-storageclass.yaml`.
++
+The cluster will create the storage class.
+
+. Verify that the cluster created the storage class by using the following command:
++
+[source,terminal]
+----
+$ oc get storageclass <name> <1>
+----
+<1> Replace `<name>` with the name of the storage class. For example, `lvm-storageclass`.
++
+.Example output
+[source,terminal,options="nowrap",role="white-space-pre"]
+----
+NAME              PROVISIONER  RECLAIMPOLICY  VOLUMEBINDINGMODE     ALLOWVOLUMEEXPANSION  AGE
+lvm-storageclass  topolvm.io   Delete         WaitForFirstConsumer  true                  1s
+----
+
+:leveloffset!:
+
+//Provisioning
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-provisioning-storage-using-lvms_{context}"]
+= Provisioning storage using {lvms}
+
+You can provision persistent volume claims (PVCs) using the storage class that is created during the Operator installation. You can provision block and file PVCs, however, the storage is allocated only when a pod that uses the PVC is created.
+
+[NOTE]
+====
+{lvms} provisions PVCs in units of 1 GiB. The requested storage is rounded up to the nearest GiB.
+====
+
+.Procedure
+
+. Identify the `StorageClass` that is created when {lvms} is deployed.
++
+The `StorageClass` name is in the format, `lvms-<device-class-name>`.
+The `device-class-name` is the name of the device class that you provided in the `LVMCluster` of the `Policy` YAML.
+For example, if the `deviceClass` is called `vg1`, then the `storageClass` name is `lvms-vg1`.
++
+The `volumeBindingMode` of the storage class is set to `WaitForFirstConsumer`.
+
+. To create a PVC where the application requires storage, save the following YAML to a file with a name such as `pvc.yaml`.
++
+.Example YAML to create a PVC
+[source,yaml]
+----
+# block pvc
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lvm-block-1
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Block
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: lvms-vg1
+---
+# file pvc
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lvm-file-1
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: lvms-vg1
+----
+
+. Create the PVC by running the following command:
++
+[source,terminal]
+----
+# oc create -f pvc.yaml -ns <application_namespace>
+----
+
++
+The created PVCs remain in `pending` state until you deploy the pods that use them.
+
+:leveloffset!:
+
+//Monitoring
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-monitoring-using-lvms_{context}"]
+= Monitoring {lvms}
+
+When {lvms} is installed using the {product-title} Web Console, you can monitor the cluster by using the *Block and File* dashboard in the console by default.
+However, when you use {rh-rhacm} to install {lvms}, you need to configure {rh-rhacm} Observability to monitor all the {sno} clusters from one place.
+
+[id="lvms-monitoring-using-lvms-metrics_{context}"]
+== Metrics
+
+You can monitor {lvms} by viewing the metrics exported by the Operator on the {rh-rhacm} dashboards and the alerts that are triggered.
+
+* Add the following `topolvm` metrics to the `allow` list:
++
+[source,terminal]
+----
+topolvm_thinpool_data_percent
+topolvm_thinpool_metadata_percent
+topolvm_thinpool_size_bytes
+----
+
+[NOTE]
+====
+Metrics are updated every 10 minutes or when there is a change in the thin pool, such as a new logical volume creation.
+====
+
+[id="lvms-monitoring-using-lvms-alerts_{context}"]
+== Alerts
+
+When the thin pool and volume group are filled up, further operations fail and might lead to data loss.
+{lvms} sends the following alerts about the usage of the thin pool and volume group when utilization crosses a certain value:
+
+.Alerts for Logical Volume Manager cluster in {rh-rhacm}
+[[alerts_for_LVMCluster_in_{rh-rhacm}]]
+[%autowidth,frame="topbot",options="header"]
+|===
+|Alert| Description
+|`VolumeGroupUsageAtThresholdNearFull`|This alert is triggered when both the volume group and thin pool utilization cross 75% on nodes. Data deletion or volume group expansion is required.
+|`VolumeGroupUsageAtThresholdCritical`|This alert is triggered when both the volume group and thin pool utilization cross 85% on nodes. `VolumeGroup` is critically full. Data deletion or volume group expansion is required.
+|`ThinPoolDataUsageAtThresholdNearFull`|This alert is triggered when the thin pool data utilization in the volume group crosses 75% on nodes. Data deletion or thin pool expansion is required.
+|`ThinPoolDataUsageAtThresholdCritical`|This alert is triggered when  the thin pool data utilization in the volume group crosses 85% on nodes. Data deletion or thin pool expansion is required.
+|`ThinPoolMetaDataUsageAtThresholdNearFull`|This alert is triggered when the thin pool metadata utilization in the volume group crosses 75% on nodes. Data deletion or thin pool expansion is required.
+|`ThinPoolMetaDataUsageAtThresholdCritical`|This alert is triggered when the thin pool metadata utilization in the volume group crosses 85% on nodes. Data deletion or thin pool expansion is required.
+|===
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html-single/observability/index[Observability]
+
+* link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html-single/observability/index#adding-custom-metrics[Adding custom metrics]
+
+//Scaling
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="lvms-scaling-storage-of-single-node-openshift-cluster-con_{context}"]
+= Scaling storage of {sno} clusters
+
+The {product-title} supports additional worker nodes for {sno} clusters on bare-metal user-provisioned infrastructure.
+{lvms} detects and uses the new additional worker nodes when the nodes show up.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../../nodes/nodes/nodes-sno-worker-nodes.adoc[Adding worker nodes to {sno} clusters]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-scaling-storage-of-single-node-openshift-cluster_{context}"]
+= Scaling up storage by adding capacity to your {sno} cluster
+
+To scale the storage capacity of your configured worker nodes on a {sno} cluster, you can increase the capacity by adding disks.
+
+.Prerequisites
+
+* You have additional unused disks on each {sno} cluster to be used by {lvms}.
+
+.Procedure
+
+. Log in to {product-title} console of the {sno} cluster.
+. From the *Operators* -> *Installed Operators* page, click on the *LVM Storage Operator* in the `openshift-storage` namespace.
+. Click on the *LVMCluster* tab to list the `LVMCluster` CR created on the cluster.
+. Select *Edit LVMCluster* from the *Actions* drop-down menu.
+. Click on the *YAML* tab.
+. Edit the `LVMCluster` CR YAML to add the new device path in the `deviceSelector` section:
+
++
+[NOTE]
+====
+In case the `deviceSelector` field is not included during the `LVMCluster` creation, it is not possible to add the `deviceSelector` section to the CR.
+You need to remove the `LVMCluster` and then create a new CR.
+====
+
++
+[source,yaml]
+----
+apiVersion: lvm.topolvm.io/v1alpha1
+kind: LVMCluster
+metadata:
+  name: my-lvmcluster
+spec:
+  storage:
+    deviceClasses:
+    - name: vg1
+      default: true
+      deviceSelector: <1>
+        paths:
+        - /dev/disk/by-path/pci-0000:87:00.0-nvme-1
+        - /dev/disk/by-path/pci-0000:88:00.0-nvme-1
+        optionalPaths:
+        - /dev/disk/by-path/pci-0000:89:00.0-nvme-1
+        - /dev/disk/by-path/pci-0000:90:00.0-nvme-1
+      thinPoolConfig:
+        name: thin-pool-1
+        sizePercent: 90
+        overprovisionRatio: 10
+----
+<1> Optional. To control or restrict the volume group to your preferred devices, you can manually specify the local paths of the devices in the `deviceSelector` section of the `LVMCluster` YAML. The `paths` section refers to devices the `LVMCluster` adds, which means those paths must exist. The `optionalPaths` section refers to devices the `LVMCluster` might add. You must specify at least one of `paths` or `optionalPaths` when specifying the `deviceSelector` section. If you specify `paths`, it is not mandatory to specify `optionalPaths`. If you specify `optionalPaths`, it is not mandatory to specify `paths` but at least one optional path must be present on the node. If you do not specify any paths, it will add all unused devices on the node.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../../storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc#lvms-reference-file_logical-volume-manager-storage[{lvms} reference YAML file]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-scaling-storage-of-single-node-openshift-cluster-using-rhacm_{context}"]
+= Scaling up storage by adding capacity to your {sno} cluster using {rh-rhacm}
+
+You can scale the storage capacity of your configured worker nodes on a {sno} cluster using {rh-rhacm}.
+
+.Prerequisites
+
+* You have access to the {rh-rhacm} cluster using an account with `cluster-admin` privileges.
+* You have additional unused devices on each {sno} cluster that {lvms} can use.
+
+.Procedure
+
+. Log in to the {rh-rhacm} CLI using your {product-title} credentials.
+. Find the device that you want to add. The device to be added needs to match with the device name and path of the existing devices.
+. To add capacity to the {sno} cluster, edit the `deviceSelector` section of the existing policy YAML, for example, `policy-lvms-operator.yaml`.
+
++
+[NOTE]
+====
+In case the `deviceSelector` field is not included during the `LVMCluster` creation, it is not possible to add the `deviceSelector` section to the CR. You need to remove the `LVMCluster` and then recreate it from the new CR.
+====
+
++
+[source,yaml]
+----
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-install-lvms
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+    - key: mykey
+      operator: In
+      values:
+      - myvalue
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-install-lvms
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: placement-install-lvms
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: install-lvms
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  name: install-lvms
+spec:
+  disabled: false
+  remediationAction: enforce
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: install-lvms
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              labels:
+                openshift.io/cluster-monitoring: "true"
+                pod-security.kubernetes.io/enforce: privileged
+                pod-security.kubernetes.io/audit: privileged
+                pod-security.kubernetes.io/warn: privileged
+              name: openshift-storage
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1
+            kind: OperatorGroup
+            metadata:
+              name: openshift-storage-operatorgroup
+              namespace: openshift-storage
+            spec:
+              targetNamespaces:
+              - openshift-storage
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1alpha1
+            kind: Subscription
+            metadata:
+              name: lvms
+              namespace: openshift-storage
+            spec:
+              installPlanApproval: Automatic
+              name: lvms-operator
+              source: redhat-operators
+              sourceNamespace: openshift-marketplace
+        remediationAction: enforce
+        severity: low
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: lvms
+      spec:
+        object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: lvm.topolvm.io/v1alpha1
+               kind: LVMCluster
+               metadata:
+                 name: my-lvmcluster
+                 namespace: openshift-storage
+               spec:
+                 storage:
+                   deviceClasses:
+                   - name: vg1
+                     default: true
+                     deviceSelector: <1>
+                       paths:
+                       - /dev/disk/by-path/pci-0000:87:00.0-nvme-1
+                       - /dev/disk/by-path/pci-0000:88:00.0-nvme-1
+                       optionalPaths:
+                       - /dev/disk/by-path/pci-0000:89:00.0-nvme-1
+                       - /dev/disk/by-path/pci-0000:90:00.0-nvme-1
+                     thinPoolConfig:
+                       name: thin-pool-1
+                       sizePercent: 90
+                       overprovisionRatio: 10
+                     nodeSelector:
+                       nodeSelectorTerms:
+                       - matchExpressions:
+                           - key: app
+                             operator: In
+                             values:
+                             - test1
+        remediationAction: enforce
+        severity: low
+----
+<1> Optional. To control or restrict the volume group to your preferred devices, you can manually specify the local paths of the devices in the `deviceSelector` section of the `LVMCluster` YAML. The `paths` section refers to devices the `LVMCluster` adds, which means those paths must exist. The `optionalPaths` section refers to devices the `LVMCluster` might add. You must specify at least one of `paths` or `optionalPaths` when specifying the `deviceSelector` section. If you specify `paths`, it is not mandatory to specify `optionalPaths`. If you specify `optionalPaths`, it is not mandatory to specify `paths` but at least one optional path must be present on the node. If you do not specify any paths, it will add all unused devices on the node.
+
+. Edit the policy by running the following command:
++
+[source,terminal]
+----
+# oc edit -f policy-lvms-operator.yaml -ns lvms-policy-ns <1>
+----
+<1> The `policy-lvms-operator.yaml` is the name of the existing policy.
++
+This uses the new disk specified in the `LVMCluster` CR to provision storage.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html/install/installing#installing-while-connected-online[Red Hat Advanced Cluster Management for Kubernetes: Installing while connected online]
+
+* xref:../../../storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc#lvms-reference-file_logical-volume-manager-storage[{lvms} reference YAML file]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-scaling-expand-pvc_{context}"]
+= Expanding PVCs
+
+To leverage the new storage after adding additional capacity, you can expand existing persistent volume claims (PVCs) with LVM Storage.
+
+.Prerequisites
+
+* Dynamic provisioning is used.
+* The controlling `StorageClass` object has `allowVolumeExpansion` set to `true`.
+
+.Procedure
+
+. Modify the `.spec.resources.requests.storage` field in the desired PVC resource to the new size by running the following command:
++
+[source,terminal]
+----
+oc patch <pvc_name> -n <application_namespace> -p '{ "spec": { "resources": { "requests": { "storage": "<desired_size>" }}}}'
+----
+
+. Watch the `status.conditions` field of the PVC to see if the resize has completed. {product-title} adds the `Resizing` condition to the PVC during expansion, which is removed after the expansion completes.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../../storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc#lvms-scaling-storage-of-single-node-openshift-cluster_logical-volume-manager-storage[Scaling up storage by adding capacity to your {sno} cluster]
+
+* xref:../../../storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc#lvms-scaling-storage-of-single-node-openshift-cluster-using-rhacm_logical-volume-manager-storage[Scaling up storage by adding capacity to your single-node OpenShift cluster using RHACM]
+
+* xref:../../../storage/expanding-persistent-volumes.adoc#add-volume-expansion_expanding-persistent-volumes[Enabling volume expansion support]
+
+//Upgrading
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-upgrading-lvms-on-sno_{context}"]
+= Upgrading {lvms} on {sno} clusters
+
+Currently, it is not possible to upgrade from {rh-storage} Logical Volume Manager Operator 4.11 to {lvms} 4.12 on {sno} clusters.
+
+[IMPORTANT]
+====
+The data will not be preserved during this process.
+====
+
+.Procedure
+
+. Back up any data that you want to preserve on the persistent volume claims (PVCs).
+. Delete all PVCs provisioned by the {rh-storage} Logical Volume Manager Operator and their pods.
+. Reinstall {lvms} on {product-title} 4.12.
+. Recreate the workloads.
+. Copy the backup data to the PVCs created after upgrading to 4.12.
+
+:leveloffset!:
+
+//Volume snapshots
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="lvms-volume-snapsot-for-sno_{context}"]
+= Volume snapshots for {sno}
+
+You can take volume snapshots of persistent volumes (PVs) that are provisioned by {lvms}.
+You can also create volume snapshots of the cloned volumes. Volume snapshots help you to do the following:
+
+* Back up your application data.
++
+[IMPORTANT]
+====
+Volume snapshots are located on the same devices as the original data. To use the volume snapshots as backups, you need to move the snapshots to a secure location. You can use OpenShift API for Data Protection backup and restore solutions.
+====
+
+* Revert to a state at which the volume snapshot was taken.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../../backup_and_restore/application_backup_and_restore/oadp-features-plugins.adoc#oadp-features_oadp-features-plugins[OADP features]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-creating-volume-snapshots-in-single-node-openshift_{context}"]
+= Creating volume snapshots in {sno}
+
+You can create volume snapshots based on the available capacity of the thin pool and the overprovisioning limits.
+{lvms} creates a `VolumeSnapshotClass` with the `lvms-<deviceclass-name>` name.
+
+.Prerequisites
+
+* You ensured that the persistent volume claim (PVC) is in `Bound` state. This is required for a consistent snapshot.
+* You stopped all the I/O to the PVC before taking the snapshot.
+
+.Procedure
+
+. Log in to the {sno} for which you need to run the `oc` command.
+. Save the following YAML to a file with a name such as `lvms-vol-snapshot.yaml`.
++
+.Example YAML to create a volume snapshot
+[source,yaml]
+----
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+    name: lvm-block-1-snap
+spec:
+    volumeSnapshotClassName: lvms-vg1
+    source:
+        persistentVolumeClaimName: lvm-block-1
+----
+
+. Create the snapshot by running the following command in the same namespace as the PVC:
++
+[source,terminal]
+----
+# oc create -f lvms-vol-snapshot.yaml
+----
+
+A read-only copy of the PVC is created as a volume snapshot.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-restoring-volume-snapshots-in-single-node-openshift_{context}"]
+= Restoring volume snapshots in {sno}
+
+When you restore a volume snapshot, a new persistent volume claim (PVC) is created.
+The restored PVC is independent of the volume snapshot and the source PVC.
+
+.Prerequisites
+
+* The storage class must be the same as that of the source PVC.
+* The size of the requested PVC must be the same as that of the source volume of the snapshot.
++
+[IMPORTANT]
+====
+A snapshot must be restored to a PVC of the same size as the source volume of the snapshot. If a larger PVC is required, you can resize the PVC after the snapshot is restored successfully.
+====
+
+.Procedure
+
+. Identify the storage class name of the source PVC and volume snapshot name.
+. Save the following YAML to a file with a name such as `lvms-vol-restore.yaml` to restore the snapshot.
++
+.Example YAML to restore a PVC.
+[source,yaml]
+----
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: lvm-block-1-restore
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Block
+  Resources:
+    Requests:
+      storage: 2Gi
+  storageClassName: lvms-vg1
+  dataSource:
+    name: lvm-block-1-snap
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
+----
+
+. Create the policy by running the following command in the same namespace as the snapshot:
++
+[source,terminal]
+----
+# oc create -f lvms-vol-restore.yaml
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-deleting-volume-snapshots-in-single-node-openshift_{context}"]
+= Deleting volume snapshots in {sno}
+
+You can delete volume snapshots resources and persistent volume claims (PVCs).
+
+.Procedure
+
+. Delete the volume snapshot resource by running the following command:
++
+[source,terminal]
+----
+# oc delete volumesnapshot <volume_snapshot_name> -n <namespace>
+----
++
+[NOTE]
+====
+When you delete a persistent volume claim (PVC), the snapshots of the PVC are not deleted.
+====
+
+. To delete the restored volume snapshot, delete the PVC that was created to restore the volume snapshot by running the following command:
++
+[source,terminal]
+----
+# oc delete pvc <pvc_name> -n <namespace>
+----
+
+:leveloffset!:
+
+//Volume cloning
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="lvms-volume-cloning-for-single-node-openshift-cluster_{context}"]
+= Volume cloning for {sno}
+
+A clone is a duplicate of an existing storage volume that can be used like any standard volume.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-creating-volume-clones-in-single-node-openshift_{context}"]
+= Creating volume clones in {sno}
+
+You create a clone of a volume to make a point-in-time copy of the data.
+A persistent volume claim (PVC) cannot be cloned with a different size.
+
+[IMPORTANT]
+====
+The cloned PVC has write access.
+====
+
+.Prerequisites
+
+* You ensured that the PVC is in `Bound` state. This is required for a consistent snapshot.
+* You ensured that the `StorageClass` is the same as that of the source PVC.
+
+.Procedure
+
+. Identify the storage class of the source PVC.
+. To create a volume clone, save the following YAML to a file with a name such as `lvms-vol-clone.yaml`:
++
+.Example YAML to clone a volume
+[source,yaml]
+----
+apiVersion: v1
+kind: PersistentVolumeClaim
+Metadata:
+  name: lvm-block-1-clone
+Spec:
+  storageClassName: lvms-vg1
+  dataSource:
+    name: lvm-block-1
+    kind: PersistentVolumeClaim
+  accessModes:
+   - ReadWriteOnce
+  volumeMode: Block
+  Resources:
+    Requests:
+      storage: 2Gi
+----
+
+. Create the policy in the same namespace as the source PVC by running the following command:
++
+[source,terminal]
+----
+# oc create -f lvms-vol-clone.yaml
+----
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-deleting-cloned-volumes-in-single-node-openshift_{context}"]
+= Deleting cloned volumes in {sno}
+
+You can delete cloned volumes.
+
+.Procedure
+
+* To delete the cloned volume, delete the cloned PVC by running the following command:
++
+[source,terminal]
+----
+# oc delete pvc <clone_pvc_name> -n <namespace>
+----
+
+:leveloffset!:
+
+//Must-gather
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="lvms-dowloading-log-files-and-diagnostics_{context}"]
+= Downloading log files and diagnostic information using must-gather
+
+When {lvms} is unable to automatically resolve a problem, use the must-gather tool to collect the log files and diagnostic information so that you or the Red Hat Support can review the problem and determine a solution.
+
+* Run the must-gather command from the client connected to {lvms} cluster by running the following command:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc adm must-gather --image=registry.redhat.io/lvms4/lvms-must-gather-rhel9:v{product-version} --dest-dir=<directory-name>
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../../support/gathering-cluster-data.adoc#about-must-gather_gathering-cluster-data[About the must-gather tool]
+
+//Reference
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// storage/persistent_storage/persistent_storage_local/persistent-storage-using-lvms.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="lvms-reference-file_{context}"]
+= {lvms} reference YAML file
+
+The sample `LVMCluster` custom resource (CR) describes all the fields in the YAML file.
+
+.Example LVMCluster CR
+[source,yaml]
+----
+apiVersion: lvm.topolvm.io/v1alpha1
+kind: LVMCluster
+metadata:
+  name: my-lvmcluster
+spec:
+  tolerations:
+  - effect: NoSchedule
+    key: xyz
+    operator: Equal
+    value: "true"
+  storage:
+    deviceClasses:    <1>
+    - name: vg1    <2>
+      default: true
+      nodeSelector: <3>
+        nodeSelectorTerms: <4>
+        - matchExpressions:
+          - key: mykey
+            operator: In
+            values:
+            - ssd
+      deviceSelector: <5>
+        paths:
+        - /dev/disk/by-path/pci-0000:87:00.0-nvme-1
+        - /dev/disk/by-path/pci-0000:88:00.0-nvme-1
+        optionalPaths:
+        - /dev/disk/by-path/pci-0000:89:00.0-nvme-1
+        - /dev/disk/by-path/pci-0000:90:00.0-nvme-1
+      thinPoolConfig: <6>
+        name: thin-pool-1 <7>
+        sizePercent: 90 <8>
+        overprovisionRatio: 10 <9>
+status:
+    deviceClassStatuses: <10>
+    - name: vg1
+      nodeStatus: <11>
+      - devices: <12>
+        - /dev/nvme0n1
+        - /dev/nvme1n1
+        - /dev/nvme2n1
+        node: my-node.example.com <13>
+        status: Ready <14>
+    ready: true <15>
+    state: Ready <16>
+----
+<1> The LVM volume groups to be created on the cluster. Currently, only a single `deviceClass` is supported.
+<2> The name of the LVM volume group to be created on the nodes.
+<3> The nodes on which to create the LVM volume group. If the field is empty, all nodes are considered.
+<4> A list of node selector requirements.
+<5> A list of device paths which is used to create the LVM volume group. If this field is empty, all unused disks on the node will be used.
+<6> The LVM thin pool configuration.
+<7> The name of the thin pool to be created in the LVM volume group.
+<8> The percentage of remaining space in the LVM volume group that should be used for creating the thin pool.
+<9> The factor by which additional storage can be provisioned compared to the available storage in the thin pool.
+<10> The status of the `deviceClass`.
+<11> The status of the LVM volume group on each node.
+<12> The list of devices used to create the LVM volume group.
+<13> The node on which the `deviceClass` was created.
+<14> The status of the LVM volume group on the node.
+<15> This field is deprecated.
+<16> The status of the `LVMCluster`.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/deploying-lvms-on-sno-cluster,modules/lvms-installing-logical-volume-manager-operator-using-cli,modules/lvms-installing-logical-volume-manager-operator-using-openshift-web-console,modules/lvms-uninstalling-logical-volume-manager-operator-using-openshift-web-console,modules/lvms-installing-logical-volume-manager-operator-disconnected-environment,modules/snippets/lvms-disconnected-ImageSetConfig,modules/lvms-installing-logical-volume-manager-operator-using-rhacm,modules/lvms-uninstalling-logical-volume-manager-operator-using-rhacm,modules/lvms-creating-logical-volume-manager-cluster,modules/lvms-adding-a-storage-class,modules/lvms-provisioning-storage-using-logical-volume-manager-operator,modules/lvms-monitoring-logical-volume-manager-operator,modules/lvms-scaling-storage-of-single-node-open-concept,modules/lvms-scaling-storage-of-single-node-openshift-cluster,modules/lvms-scaling-storage-of-single-node-openshift-cluster-using-rhacm,modules/lvms-scaling-storage-expand-pvc,modules/lvms-upgrading-lvms-on-sno,modules/lvms-volume-snapshots-in-single-node-openshift,modules/lvms-creating-volume-snapshots-in-single-node-openshift,modules/lvms-restoring-volume-snapshots-in-single-node-openshift,modules/lvms-deleting-volume-snapshots-in-single-node-openshift,modules/lvms-volume-clones-in-single-node-openshift,modules/lvms-creating-volume-clones-in-single-node-openshift,modules/lvms-deleting-cloned-volumes-in-single-node-openshift,modules/lvms-download-log-files-and-diagnostics,modules/lvms-reference-file

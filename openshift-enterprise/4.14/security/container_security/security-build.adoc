@@ -1,0 +1,420 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="security-build"]
+= Securing the build process
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: security-build
+
+toc::[]
+
+In a container environment, the software build process is the stage in the life
+cycle where application code is integrated with the required runtime libraries.
+Managing this build process is key to securing the software stack.
+
+// Build once, deploy everywhere
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-build.adoc
+
+[id="security-build-once_{context}"]
+= Building once, deploying everywhere
+
+Using {product-title} as the standard platform for container builds enables you
+to guarantee the security of the build environment. Adhering to a "build once,
+deploy everywhere" philosophy ensures that the product of the build process is
+exactly what is deployed in production.
+
+It is also important to maintain the immutability of your containers. You should
+not patch running containers, but rebuild and redeploy them.
+
+As your software moves through the stages of building, testing, and production, it is
+important that the tools making up your software supply chain be trusted. The
+following figure illustrates the process and tools that could be incorporated
+into a trusted software supply chain for containerized software:
+
+image::trustedsupplychain.png["", align="center"]
+
+{product-title} can be integrated with trusted code repositories (such as GitHub)
+and development platforms (such as Che) for creating and managing secure code.
+Unit testing could rely on
+link:https://cucumber.io/[Cucumber] and link:https://junit.org/[JUnit].
+You could inspect your containers for vulnerabilities and compliance issues
+with link:https://anchore.com[Anchore] or Twistlock,
+and use image scanning tools such as AtomicScan or Clair.
+Tools such as link:https://sysdig.com[Sysdig] could provide ongoing monitoring
+of your containerized applications.
+
+:leveloffset!:
+
+// Build management and security
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-build.adoc
+
+[id="security-build-management_{context}"]
+= Managing builds
+
+You can use Source-to-Image (S2I) to combine source code and base images.
+_Builder images_ make use of S2I to enable your development and operations teams
+to collaborate on a reproducible build environment.
+With Red Hat S2I images available as Universal Base Image (UBI) images,
+you can now freely redistribute your software with
+base images built from real {op-system-base} RPM packages.
+Red Hat has removed subscription restrictions to allow this.
+
+When developers commit code with Git for an application using build images,
+{product-title} can perform the following functions:
+
+* Trigger, either by using webhooks on the code repository or other automated
+continuous integration (CI) process, to automatically assemble a new image from
+available artifacts, the S2I builder image, and the newly committed code.
+* Automatically deploy the newly built image for testing.
+* Promote the tested image to production where it can be automatically deployed
+using a CI process.
+
+image::build_process1.png["Source-to-Image Builds", align="center"]
+
+You can use the integrated OpenShift Container Registry to manage access to final images.
+Both S2I and native build images are automatically pushed to your OpenShift Container
+Registry.
+
+In addition to the included Jenkins for CI, you can also integrate your own
+build and CI environment with {product-title} using RESTful APIs, as well as use
+any API-compliant image registry.
+
+:leveloffset!:
+
+// Securing inputs during builds
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-build.adoc
+
+[id="security-build-inputs_{context}"]
+=  Securing inputs during builds
+
+In some scenarios, build operations require credentials to access dependent
+resources, but it is undesirable for those credentials to be available in the
+final application image produced by the build. You can define input secrets for
+this purpose.
+
+For example, when building a Node.js application, you can set up your private
+mirror for Node.js modules. To download modules from that private
+mirror, you must supply a custom `.npmrc` file for the build that contains
+a URL, user name, and password. For security reasons, you do not want to expose
+your credentials in the application image.
+
+Using this example scenario, you can add an input secret to a new `BuildConfig` object:
+
+. Create the secret, if it does not exist:
++
+[source,terminal]
+----
+$ oc create secret generic secret-npmrc --from-file=.npmrc=~/.npmrc
+----
++
+This creates a new secret named `secret-npmrc`, which contains the base64
+encoded content of the `~/.npmrc` file.
+
+. Add the secret to the `source` section in the existing `BuildConfig` object:
++
+[source,yaml]
+----
+source:
+  git:
+    uri: https://github.com/sclorg/nodejs-ex.git
+  secrets:
+  - destinationDir: .
+    secret:
+      name: secret-npmrc
+----
+
+. To include the secret in a new `BuildConfig` object, run the following command:
++
+[source,terminal]
+----
+$ oc new-build \
+    openshift/nodejs-010-centos7~https://github.com/sclorg/nodejs-ex.git \
+    --build-secret secret-npmrc
+----
+
+:leveloffset!:
+
+// Designing your build process
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-build.adoc
+
+[id="security-build-designing_{context}"]
+= Designing your build process
+
+You can design your container image management and build process to use container layers so that you can separate control.
+
+image::build_process2.png["Designing Your Build Process", align="center"]
+
+For example, an operations team manages base images, while architects manage
+middleware, runtimes, databases, and other solutions. Developers can then focus
+on application layers and focus on writing code.
+
+Because new vulnerabilities are identified daily, you need to proactively check
+container content over time. To do this, you should integrate automated security
+testing into your build or CI process. For example:
+
+* SAST / DAST – Static and Dynamic security testing tools.
+* Scanners for real-time checking against known vulnerabilities. Tools like these
+catalog the open source packages in your container, notify you of any known
+vulnerabilities, and update you when new vulnerabilities are discovered in
+previously scanned packages.
+
+Your CI process should include policies that flag builds with issues discovered
+by security scans so that your team can take appropriate action to address those
+issues. You should sign your custom built containers to ensure that nothing is
+tampered with between build and deployment.
+
+Using GitOps methodology, you can use the same CI/CD mechanisms to
+manage not only your application configurations, but also your
+{product-title} infrastructure.
+
+:leveloffset!:
+
+// Knative builds
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * security/container_security/security-build.adoc
+
+[id="security-build-knative_{context}"]
+= Building Knative serverless applications
+
+Relying on Kubernetes and Kourier, you can build, deploy, and manage serverless applications by using OpenShift Serverless in {product-title}.
+
+As with other builds, you can use S2I images to build your containers, then serve them using Knative services. View Knative application builds through the
+*Topology* view of the {product-title} web console.
+
+:leveloffset!:
+
+[id="additional-resources_security-build"]
+[role="_additional-resources"]
+== Additional resources
+
+* xref:../../cicd/builds/understanding-image-builds.adoc#understanding-image-builds[Understanding image builds]
+* xref:../../cicd/builds/triggering-builds-build-hooks.adoc#triggering-builds-build-hooks[Triggering and modifying builds]
+* xref:../../cicd/builds/creating-build-inputs.adoc#creating-build-inputs[Creating build inputs]
+* xref:../../cicd/builds/creating-build-inputs.adoc#builds-input-secrets-configmaps_creating-build-inputs[Input secrets and config maps]
+// **This section is being moved, update the link once content is in.* add link here[The CI/CD methodology and practice]
+* link:https://docs.openshift.com/serverless/1.28/about/about-serverless.html[OpenShift Serverless overview]
+* xref:../../applications/odc-viewing-application-composition-using-topology-view.adoc#odc-viewing-application-composition-using-topology-view[Viewing application composition using the Topology view]
+
+//# includes=_attributes/common-attributes,modules/security-build-once,modules/security-build-management,modules/security-build-inputs,modules/security-build-designing,modules/security-build-knative

@@ -1,0 +1,498 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="recommended-control-plane-practices"]
+= Recommended control plane practices
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: recommended-control-plane-practices
+
+toc::[]
+
+This topic provides recommended performance and scalability practices for control planes in {product-title}.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/recommended-performance-scale-practices/recommended-control-plane-practices.adoc
+
+[id="recommended-scale-practices_{context}"]
+= Recommended practices for scaling the cluster
+
+The guidance in this section is only relevant for installations with cloud provider integration.
+
+Apply the following best practices to scale the number of worker machines in your {product-title} cluster. You scale the worker machines by increasing or decreasing the number of replicas that are defined in the worker machine set.
+
+When scaling up the cluster to higher node counts:
+
+* Spread nodes across all of the available zones for higher availability.
+* Scale up by no more than 25 to 50 machines at once.
+* Consider creating new compute machine sets in each available zone with alternative instance types of similar size to help mitigate any periodic provider capacity constraints. For example, on AWS, use m5.large and m5d.large.
+
+[NOTE]
+====
+Cloud providers might implement a quota for API services. Therefore, gradually scale the cluster.
+====
+
+The controller might not be able to create the machines if the replicas in the compute machine sets are set to higher numbers all at one time. The number of requests the cloud platform, which {product-title} is deployed on top of, is able to handle impacts the process. The controller will start to query more while trying to create, check, and update the machines with the status. The cloud platform on which {product-title} is deployed has API request limits;  excessive queries might lead to machine creation failures due to cloud platform limitations.
+
+Enable machine health checks when scaling to large node counts. In case of failures, the health checks monitor the condition and automatically repair unhealthy machines.
+
+[NOTE]
+====
+When scaling large and dense clusters to lower node counts, it might take large amounts of time because the process involves draining or evicting the objects running on the nodes being terminated in parallel. Also, the client might start to throttle the requests if there are too many objects to evict. The default client queries per second (QPS) and burst rates are currently set to `50` and `100` respectively. These values cannot be modified in {product-title}.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/recommended-performance-scale-practices/recommended-control-plane-practices.adoc
+// * post_installation_configuration/node-tasks.adoc
+
+[id="master-node-sizing_{context}"]
+=  Control plane node sizing
+
+The control plane node resource requirements depend on the number and type of nodes and objects in the cluster. The following control plane node size recommendations are based on the results of a control plane density focused testing, or _Cluster-density_. This test creates the following objects across a given number of namespaces:
+
+- 1 image stream
+- 1 build
+- 5 deployments, with 2 pod replicas in a `sleep` state, mounting 4 secrets, 4 config maps, and 1 downward API volume each
+- 5 services, each one pointing to the TCP/8080 and TCP/8443 ports of one of the previous deployments
+- 1 route pointing to the first of the previous services
+- 10 secrets containing 2048 random string characters
+- 10 config maps containing 2048 random string characters
+
+
+[options="header",cols="4*"]
+|===
+| Number of worker nodes |Cluster-density (namespaces) | CPU cores |Memory (GB)
+
+| 24
+| 500
+| 4
+| 16
+
+| 120
+| 1000
+| 8
+| 32
+
+| 252
+| 4000
+| 16, but 24 if using the OVN-Kubernetes network plug-in
+| 64, but 128 if using the OVN-Kubernetes network plug-in
+
+| 501, but untested with the OVN-Kubernetes network plug-in
+| 4000
+| 16
+| 96
+
+|===
+
+The data from the table above is based on an {product-title} running on top of AWS, using r5.4xlarge instances as control-plane nodes and m5.2xlarge instances as worker nodes.
+
+On a large and dense cluster with three control plane nodes, the CPU and memory usage will spike up when one of the nodes is stopped, rebooted, or fails. The failures can be due to unexpected issues with power, network, underlying infrastructure, or intentional cases where the cluster is restarted after shutting it down to save costs. The remaining two control plane nodes must handle the load in order to be highly available, which leads to increase in the resource usage. This is also expected during upgrades because the control plane nodes are cordoned, drained, and rebooted serially to apply the operating system updates, as well as the control plane Operators update. To avoid cascading failures, keep the overall CPU and memory resource usage on the control plane nodes to at most 60% of all available capacity to handle the resource usage spikes. Increase the CPU and memory on the control plane nodes accordingly to avoid potential downtime due to lack of resources.
+
+[IMPORTANT]
+====
+The node sizing varies depending on the number of nodes and object counts in the cluster. It also depends on whether the objects are actively being created on the cluster. During object creation, the control plane is more active in terms of resource usage compared to when the objects are in the `running` phase.
+====
+
+Operator Lifecycle Manager (OLM ) runs on the control plane nodes and its memory footprint depends on the number of namespaces and user installed operators that OLM needs to manage on the cluster. Control plane nodes need to be sized accordingly to avoid OOM kills. Following data points are based on the results from cluster maximums testing.
+
+[options="header",cols="3*"]
+|===
+| Number of namespaces |OLM memory at idle state (GB) |OLM memory with 5 user operators installed (GB)
+
+| 500
+| 0.823
+| 1.7
+
+| 1000
+| 1.2
+| 2.5
+
+| 1500
+| 1.7
+| 3.2
+
+| 2000
+| 2
+| 4.4
+
+| 3000
+| 2.7
+| 5.6
+
+| 4000
+| 3.8
+| 7.6
+
+| 5000
+| 4.2
+| 9.02
+
+| 6000
+| 5.8
+| 11.3
+
+| 7000
+| 6.6
+| 12.9
+
+| 8000
+| 6.9
+| 14.8
+
+| 9000
+| 8
+| 17.7
+
+| 10,000
+| 9.9
+| 21.6
+
+|===
+
+
+[IMPORTANT]
+====
+You can modify the control plane node size in a running {product-title} {product-version} cluster for the following configurations only:
+
+* Clusters installed with a user-provisioned installation method.
+* AWS clusters installed with an installer-provisioned infrastructure installation method.
+* Clusters that use a control plane machine set to manage control plane machines.
+
+For all other configurations, you must estimate your total node count and use the suggested control plane node size during installation.
+====
+
+[IMPORTANT]
+====
+The recommendations are based on the data points captured on {product-title} clusters with OpenShift SDN as the network plugin.
+====
+
+[NOTE]
+====
+In {product-title} {product-version}, half of a CPU core (500 millicore) is now reserved by the system by default compared to {product-title} 3.11 and previous versions. The sizes are determined taking that into consideration.
+====
+
+:leveloffset!:
+
+[id="increasing-aws-flavor-size_{context}"]
+=== Selecting a larger Amazon Web Services instance type for control plane machines
+
+If the control plane machines in an Amazon Web Services (AWS) cluster require more resources, you can select a larger AWS instance type for the control plane machines to use.
+
+[NOTE]
+====
+The procedure for clusters that use a control plane machine set is different from the procedure for clusters that do not use a control plane machine set.
+
+If you are uncertain about the state of the `ControlPlaneMachineSet` CR in your cluster, you can xref:../../machine_management/control_plane_machine_management/cpmso-getting-started.adoc#cpmso-checking-status_cpmso-getting-started[verify the CR status].
+====
+
+//Changing the Amazon Web Services instance type by using a control plane machine set
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/recommended-performance-scale-practices/recommended-control-plane-practices.adoc
+// * machine_management/control_plane_machine_management/cpmso-using.adoc
+
+:scale-host:
+
+:_mod-docs-content-type: PROCEDURE
+[id="cpms-changing-aws-instance-type_{context}"]
+= Changing the Amazon Web Services instance type by using a control plane machine set
+
+You can change the Amazon Web Services (AWS) instance type that your control plane machines use by updating the specification in the control plane machine set custom resource (CR).
+
+.Prerequisites
+
+* Your AWS cluster uses a control plane machine set.
+
+.Procedure
+
+. Edit your control plane machine set CR by running the following command:
++
+[source,terminal]
+----
+$ oc --namespace openshift-machine-api edit controlplanemachineset.machine.openshift.io cluster
+----
+
+. Edit the following line under the `providerSpec` field:
++
+[source,yaml]
+----
+providerSpec:
+  value:
+    ...
+    instanceType: <compatible_aws_instance_type> <1>
+----
+<1> Specify a larger AWS instance type with the same base as the previous selection. For example, you can change `m6i.xlarge` to `m6i.2xlarge` or `m6i.4xlarge`.
+
+. Save your changes.
+
+** For clusters that use the default `RollingUpdate` update strategy, the Operator automatically propagates the changes to your control plane configuration.
+
+** For clusters that are configured to use the `OnDelete` update strategy, you must replace your control plane machines manually.
+
+:!scale-host:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../machine_management/control_plane_machine_management/cpmso-using.adoc#cpmso-using[Managing control plane machines with control plane machine sets]
+
+//Changing the Amazon Web Services instance type by using the AWS console
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/recommended-performance-scale-practices/recommended-control-plane-practices.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="aws-console-changing-aws-instance-type_{context}"]
+= Changing the Amazon Web Services instance type by using the AWS console
+
+You can change the Amazon Web Services (AWS) instance type that your control plane machines use by updating the instance type in the AWS console.
+
+.Prerequisites
+
+* You have access to the AWS console with the permissions required to modify the EC2 Instance for your cluster.
+* You have access to the {product-title} cluster as a user with the `cluster-admin` role.
+
+.Procedure
+
+. Open the AWS console and fetch the instances for the control plane machines.
+
+. Choose one control plane machine instance.
+
+.. For the selected control plane machine, back up the etcd data by creating an etcd snapshot. For more information, see "Backing up etcd".
+
+.. In the AWS console, stop the control plane machine instance.
+
+.. Select the stopped instance, and click *Actions* -> *Instance Settings* -> *Change instance type*.
+
+.. Change the instance to a larger type, ensuring that the type is the same base as the previous selection, and apply changes. For example, you can change `m6i.xlarge` to `m6i.2xlarge` or `m6i.4xlarge`.
+
+.. Start the instance.
+
+.. If your {product-title} cluster has a corresponding `Machine` object for the instance, update the instance type of the object to match the instance type set in the AWS console.
+
+. Repeat this process for each control plane machine.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../backup_and_restore/control_plane_backup_and_restore/backing-up-etcd.adoc#backing-up-etcd[Backing up etcd]
+* link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-resize.html[AWS documentation about changing the instance type]
+
+//# includes=_attributes/common-attributes,modules/recommended-scale-practices,modules/master-node-sizing,modules/cpms-changing-aws-instance-type,modules/aws-console-changing-aws-instance-type

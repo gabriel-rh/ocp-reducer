@@ -1,0 +1,939 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="cpmso-configuration"]
+= Control plane machine set configuration
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: cpmso-configuration
+
+toc::[]
+
+These example YAML snippets show the base structure for a control plane machine set custom resource (CR) and platform-specific samples for provider specification and failure domain configurations.
+
+//Sample YAML for a control plane machine set custom resource
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/cpmso-configuration.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cpmso-yaml-sample-cr_{context}"]
+= Sample YAML for a control plane machine set custom resource
+
+The base of the `ControlPlaneMachineSet` CR is structured the same way for all platforms.
+
+.Sample `ControlPlaneMachineSet` CR YAML file
+[source,yaml]
+----
+apiVersion: machine.openshift.io/v1
+kind: ControlPlaneMachineSet
+metadata:
+  name: cluster <1>
+  namespace: openshift-machine-api
+spec:
+  replicas: 3 <2>
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: <cluster_id> <3>
+      machine.openshift.io/cluster-api-machine-role: master
+      machine.openshift.io/cluster-api-machine-type: master
+  state: Active <4>
+  strategy:
+    type: RollingUpdate <5>
+  template:
+    machineType: machines_v1beta1_machine_openshift_io
+    machines_v1beta1_machine_openshift_io:
+      failureDomains:
+        platform: <platform> <6>
+        <platform_failure_domains> <7>
+      metadata:
+        labels:
+          machine.openshift.io/cluster-api-cluster: <cluster_id>
+          machine.openshift.io/cluster-api-machine-role: master
+          machine.openshift.io/cluster-api-machine-type: master
+      spec:
+        providerSpec:
+          value:
+            <platform_provider_spec> <8>
+----
+<1> Specifies the name of the `ControlPlaneMachineSet` CR, which is `cluster`. Do not change this value.
+<2> Specifies the number of control plane machines. Only clusters with three control plane machines are supported, so the `replicas` value is `3`. Horizontal scaling is not supported. Do not change this value.
+<3> Specifies the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. You must specify this value when you create a `ControlPlaneMachineSet` CR. If you have the OpenShift CLI (`oc`) installed, you can obtain the infrastructure ID by running the following command:
++
+[source,terminal]
+----
+$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster
+----
+<4> Specifies the state of the Operator. When the state is `Inactive`, the Operator is not operational. You can activate the Operator by setting the value to `Active`.
++
+[IMPORTANT]
+====
+Before you activate the Operator, you must ensure that the `ControlPlaneMachineSet` CR configuration is correct for your cluster requirements. For more information about activating the Control Plane Machine Set Operator, see "Getting started with control plane machine sets".
+====
+<5> Specifies the update strategy for the cluster. The allowed values are `OnDelete` and `RollingUpdate`. The default value is `RollingUpdate`. For more information about update strategies, see "Updating the control plane configuration".
+<6> Specifies the cloud provider platform name. Do not change this value.
+<7> Specifies the `<platform_failure_domains>` configuration for the cluster. The format and values of this section are provider-specific. For more information, see the sample failure domain configuration for your cloud provider.
++
+[NOTE]
+====
+VMware vSphere does not support failure domains.
+====
+<8> Specifies the `<platform_provider_spec>` configuration for the cluster. The format and values of this section are provider-specific. For more information, see the sample provider specification for your cloud provider.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../machine_management/control_plane_machine_management/cpmso-getting-started.adoc#cpmso-getting-started[Getting started with control plane machine sets]
+
+* xref:../../machine_management/control_plane_machine_management/cpmso-using.adoc#cpmso-feat-config-update_cpmso-using[Updating the control plane configuration]
+
+[discrete]
+[id="cpmso-sample-yaml-provider-specific_{context}"]
+=== Provider-specific configuration
+
+The `<platform_provider_spec>` and `<platform_failure_domains>` sections of the control plane machine set resources are provider-specific. Refer to the example YAML for your cluster:
+
+* xref:../../machine_management/control_plane_machine_management/cpmso-configuration.adoc#cpmso-sample-yaml-aws_cpmso-configuration[Sample YAML snippets for configuring Amazon Web Services clusters]
+
+* xref:../../machine_management/control_plane_machine_management/cpmso-configuration.adoc#cpmso-sample-yaml-gcp_cpmso-configuration[Sample YAML snippets for configuring Google Cloud Platform clusters]
+
+* xref:../../machine_management/control_plane_machine_management/cpmso-configuration.adoc#cpmso-sample-yaml-azure_cpmso-configuration[Sample YAML snippets for configuring Microsoft Azure clusters]
+
+* xref:../../machine_management/control_plane_machine_management/cpmso-configuration.adoc#cpmso-sample-yaml-nutanix_cpmso-configuration[Sample YAML snippets for configuring Nutanix clusters]
+
+* xref:../../machine_management/control_plane_machine_management/cpmso-configuration.adoc#cpmso-sample-yaml-vsphere_cpmso-configuration[Sample YAML snippets for configuring VMware vSphere clusters]
+
+* xref:../../machine_management/control_plane_machine_management/cpmso-configuration.adoc#cpmso-sample-yaml-openstack_cpmso-configuration[Sample YAML snippets for configuring {rh-openstack-first} clusters]
+
+[id="cpmso-sample-yaml-aws_{context}"]
+== Sample YAML for configuring Amazon Web Services clusters
+
+Some sections of the control plane machine set CR are provider-specific. The following example YAML snippets show provider specification and failure domain configurations for an Amazon Web Services (AWS) cluster.
+
+//Sample AWS provider specification
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/cpmso-configuration.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cpmso-yaml-provider-spec-aws_{context}"]
+= Sample AWS provider specification
+
+When you create a control plane machine set for an existing cluster, the provider specification must match the `providerSpec` configuration in the control plane machine custom resource (CR) that is created by the installation program. You can omit any field that is set in the failure domain section of the CR.
+
+In the following example, `<cluster_id>` is the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. If you have the OpenShift CLI installed, you can obtain the infrastructure ID by running the following command:
+
+[source,terminal]
+----
+$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster
+----
+
+.Sample AWS `providerSpec` values
+[source,yaml]
+----
+providerSpec:
+  value:
+    ami:
+      id: ami-<ami_id_string> <1>
+    apiVersion: machine.openshift.io/v1beta1
+    blockDevices:
+    - ebs: <2>
+        encrypted: true
+        iops: 0
+        kmsKey:
+          arn: ""
+        volumeSize: 120
+        volumeType: gp3
+    credentialsSecret:
+      name: aws-cloud-credentials <3>
+    deviceIndex: 0
+    iamInstanceProfile:
+      id: <cluster_id>-master-profile <4>
+    instanceType: m6i.xlarge <5>
+    kind: AWSMachineProviderConfig <6>
+    loadBalancers: <7>
+    - name: <cluster_id>-int
+      type: network
+    - name: <cluster_id>-ext
+      type: network
+    metadata:
+      creationTimestamp: null
+    metadataServiceOptions: {}
+    placement: <8>
+      region: <region> <9>
+    securityGroups:
+    - filters:
+      - name: tag:Name
+        values:
+        - <cluster_id>-master-sg <10>
+    subnet: {} <11>
+    userDataSecret:
+      name: master-user-data <12>
+----
+<1> Specifies the {op-system-first} Amazon Machine Images (AMI) ID for the cluster. The AMI must belong to the same region as the cluster. If you want to use an AWS Marketplace image, you must complete the {product-title} subscription from the link:https://aws.amazon.com/marketplace/fulfillment?productId=59ead7de-2540-4653-a8b0-fa7926d5c845[AWS Marketplace] to obtain an AMI ID for your region.
+<2> Specifies the configuration of an encrypted EBS volume.
+<3> Specifies the secret name for the cluster. Do not change this value.
+<4> Specifies the AWS Identity and Access Management (IAM) instance profile. Do not change this value.
+<5> Specifies the AWS instance type for the control plane.
+<6> Specifies the cloud provider platform type. Do not change this value.
+<7> Specifies the internal (`int`) and external (`ext`) load balancers for the cluster.
+<8> This parameter is configured in the failure domain, and is shown with an empty value here. If a value specified for this parameter differs from the value in the failure domain, the Operator overwrites it with the value in the failure domain.
+<9> Specifies the AWS region for the cluster.
+<10> Specifies the control plane machines security group.
+<11> This parameter is configured in the failure domain, and is shown with an empty value here. If a value specified for this parameter differs from the value in the failure domain, the Operator overwrites it with the value in the failure domain.
+<12> Specifies the control plane user data secret. Do not change this value.
+
+:leveloffset!:
+
+//Sample AWS failure domain configuration
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/cpmso-configuration.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cpmso-yaml-failure-domain-aws_{context}"]
+= Sample AWS failure domain configuration
+
+The control plane machine set concept of a failure domain is analogous to existing AWS concept of an link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-availability-zones[_Availability Zone (AZ)_]. The `ControlPlaneMachineSet` CR spreads control plane machines across multiple failure domains when possible.
+
+When configuring AWS failure domains in the control plane machine set, you must specify the availability zone name and the subnet to use.
+
+.Sample AWS failure domain values
+[source,yaml]
+----
+failureDomains:
+  aws:
+  - placement:
+      availabilityZone: <aws_zone_a> <1>
+    subnet: <2>
+      filters:
+      - name: tag:Name
+        values:
+        - <cluster_id>-private-<aws_zone_a> <3>
+      type: Filters <4>
+  - placement:
+      availabilityZone: <aws_zone_b> <5>
+    subnet:
+      filters:
+      - name: tag:Name
+        values:
+        - <cluster_id>-private-<aws_zone_b> <6>
+      type: Filters
+  platform: AWS <7>
+----
+<1> Specifies an AWS availability zone for the first failure domain.
+<2> Specifies a subnet configuration. In this example, the subnet type is `Filters`, so there is a `filters` stanza.
+<3> Specifies the subnet name for the first failure domain, using the infrastructure ID and the AWS availability zone.
+<4> Specifies the subnet type. The allowed values are: `ARN`, `Filters` and `ID`. The default value is `Filters`.
+<5> Specifies the subnet name for an additional failure domain, using the infrastructure ID and the AWS availability zone.
+<6> Specifies the cluster's infrastructure ID and the AWS availability zone for the additional failure domain.
+<7> Specifies the cloud provider platform name. Do not change this value.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../machine_management/control_plane_machine_management/cpmso-using.adoc#cpmso-supported-features-aws_cpmso-using[Enabling Amazon Web Services features for control plane machines]
+
+[id="cpmso-sample-yaml-gcp_{context}"]
+== Sample YAML for configuring Google Cloud Platform clusters
+
+Some sections of the control plane machine set CR are provider-specific. The following example YAML snippets show provider specification and failure domain configurations for a Google Cloud Platform (GCP) cluster.
+
+//Sample GCP provider specification
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/cpmso-configuration.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cpmso-yaml-provider-spec-gcp_{context}"]
+= Sample GCP provider specification
+
+When you create a control plane machine set for an existing cluster, the provider specification must match the `providerSpec` configuration in the control plane machine custom resource (CR) that is created by the installation program. You can omit any field that is set in the failure domain section of the CR.
+
+[discrete]
+[id="cpmso-yaml-provider-spec-gcp-oc_{context}"]
+== Values obtained by using the OpenShift CLI
+
+In the following example, you can obtain some of the values for your cluster by using the OpenShift CLI.
+
+Infrastructure ID:: The `<cluster_id>` string is the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. If you have the OpenShift CLI installed, you can obtain the infrastructure ID by running the following command:
++
+[source,terminal]
+----
+$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster
+----
+
+Image path:: The `<path_to_image>` string is the path to the image that was used to create the disk. If you have the OpenShift CLI installed, you can obtain the path to the image by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-machine-api \
+  -o jsonpath='{.spec.template.machines_v1beta1_machine_openshift_io.spec.providerSpec.value.disks[0].image}{"\n"}' \
+  get ControlPlaneMachineSet/cluster
+----
+
+.Sample GCP `providerSpec` values
+[source,yaml]
+----
+providerSpec:
+  value:
+    apiVersion: machine.openshift.io/v1beta1
+    canIPForward: false
+    credentialsSecret:
+      name: gcp-cloud-credentials <1>
+    deletionProtection: false
+    disks:
+    - autoDelete: true
+      boot: true
+      image: <path_to_image> <2>
+      labels: null
+      sizeGb: 200
+      type: pd-ssd
+    kind: GCPMachineProviderSpec <3>
+    machineType: e2-standard-4
+    metadata:
+      creationTimestamp: null
+    metadataServiceOptions: {}
+    networkInterfaces:
+    - network: <cluster_id>-network
+      subnetwork: <cluster_id>-master-subnet
+    projectID: <project_name> <4>
+    region: <region> <5>
+    serviceAccounts:
+    - email: <cluster_id>-m@<project_name>.iam.gserviceaccount.com
+      scopes:
+      - https://www.googleapis.com/auth/cloud-platform
+    shieldedInstanceConfig: {}
+    tags:
+    - <cluster_id>-master
+    targetPools:
+    - <cluster_id>-api
+    userDataSecret:
+      name: master-user-data <6>
+    zone: "" <7>
+----
+<1> Specifies the secret name for the cluster. Do not change this value.
+<2> Specifies the path to the image that was used to create the disk.
++
+To use a GCP Marketplace image, specify the offer to use:
++
+--
+* {product-title}: `\https://www.googleapis.com/compute/v1/projects/redhat-marketplace-public/global/images/redhat-coreos-ocp-48-x86-64-202210040145`
+* {opp}: `\https://www.googleapis.com/compute/v1/projects/redhat-marketplace-public/global/images/redhat-coreos-opp-48-x86-64-202206140145`
+* {oke}: `\https://www.googleapis.com/compute/v1/projects/redhat-marketplace-public/global/images/redhat-coreos-oke-48-x86-64-202206140145`
+--
+<3> Specifies the cloud provider platform type. Do not change this value.
+<4> Specifies the name of the GCP project that you use for your cluster.
+<5> Specifies the GCP region for the cluster.
+<6> Specifies the control plane user data secret. Do not change this value.
+<7> This parameter is configured in the failure domain, and is shown with an empty value here. If a value specified for this parameter differs from the value in the failure domain, the Operator overwrites it with the value in the failure domain.
+
+:leveloffset!:
+
+//Sample GCP failure domain configuration
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/cpmso-configuration.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cpmso-yaml-failure-domain-gcp_{context}"]
+= Sample GCP failure domain configuration
+
+The control plane machine set concept of a failure domain is analogous to the existing GCP concept of a link:https://cloud.google.com/compute/docs/regions-zones[_zone_]. The `ControlPlaneMachineSet` CR spreads control plane machines across multiple failure domains when possible.
+
+When configuring GCP failure domains in the control plane machine set, you must specify the zone name to use.
+
+.Sample GCP failure domain values
+[source,yaml]
+----
+failureDomains:
+  gcp:
+  - zone: <gcp_zone_a> <1>
+  - zone: <gcp_zone_b> <2>
+  - zone: <gcp_zone_c>
+  - zone: <gcp_zone_d>
+  platform: GCP <3>
+----
+<1> Specifies a GCP zone for the first failure domain.
+<2> Specifies an additional failure domain. Further failure domains are added the same way.
+<3> Specifies the cloud provider platform name. Do not change this value.
+
+:leveloffset!:
+////
+//To be added in a later PR
+[role="_additional-resources"]
+.Additional resources
+* xref:../../machine_management/control_plane_machine_management/cpmso-using.adoc#cpmso-supported-features-gcp_cpmso-using[Enabling Google Cloud Platform features for control plane machines]
+////
+[id="cpmso-sample-yaml-azure_{context}"]
+== Sample YAML for configuring Microsoft Azure clusters
+
+Some sections of the control plane machine set CR are provider-specific. The following example YAML snippets show provider specification and failure domain configurations for an Azure cluster.
+
+//Sample Azure provider specification
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/cpmso-configuration.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cpmso-yaml-provider-spec-azure_{context}"]
+= Sample Azure provider specification
+
+When you create a control plane machine set for an existing cluster, the provider specification must match the `providerSpec` configuration in the control plane `Machine` CR that is created by the installation program. You can omit any field that is set in the failure domain section of the CR.
+
+In the following example, `<cluster_id>` is the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. If you have the OpenShift CLI installed, you can obtain the infrastructure ID by running the following command:
+
+[source,terminal]
+----
+$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster
+----
+
+.Sample Azure `providerSpec` values
+[source,yaml]
+----
+providerSpec:
+  value:
+    acceleratedNetworking: true
+    apiVersion: machine.openshift.io/v1beta1
+    credentialsSecret:
+      name: azure-cloud-credentials <1>
+      namespace: openshift-machine-api
+    diagnostics: {}
+    image: <2>
+      offer: ""
+      publisher: ""
+      resourceID: /resourceGroups/<cluster_id>-rg/providers/Microsoft.Compute/galleries/gallery_<cluster_id>/images/<cluster_id>-gen2/versions/412.86.20220930 <3>
+      sku: ""
+      version: ""
+    internalLoadBalancer: <cluster_id>-internal <4>
+    kind: AzureMachineProviderSpec <5>
+    location: <region> <6>
+    managedIdentity: <cluster_id>-identity
+    metadata:
+      creationTimestamp: null
+      name: <cluster_id>
+    networkResourceGroup: <cluster_id>-rg
+    osDisk: <7>
+      diskSettings: {}
+      diskSizeGB: 1024
+      managedDisk:
+        storageAccountType: Premium_LRS
+      osType: Linux
+    publicIP: false
+    publicLoadBalancer: <cluster_id> <8>
+    resourceGroup: <cluster_id>-rg
+    subnet: <cluster_id>-master-subnet <9>
+    userDataSecret:
+      name: master-user-data <10>
+    vmSize: Standard_D8s_v3
+    vnet: <cluster_id>-vnet
+    zone: "" <11>
+----
+<1> Specifies the secret name for the cluster. Do not change this value.
+<2> Specifies the image details for your control plane machine set.
+<3> Specifies an image that is compatible with your instance type. The Hyper-V generation V2 images created by the installation program have a `-gen2` suffix, while V1 images have the same name without the suffix.
+<4> Specifies the internal load balancer for the control plane. This field might not be preconfigured but is required in both the `ControlPlaneMachineSet` and control plane `Machine` CRs.
+<5> Specifies the cloud provider platform type. Do not change this value.
+<6> Specifies the region to place control plane machines on.
+<7> Specifies the disk configuration for the control plane.
+<8> Specifies the public load balancer for the control plane.
+<9> Specifies the subnet for the control plane.
+<10> Specifies the control plane user data secret. Do not change this value.
+<11> This parameter is configured in the failure domain, and is shown with an empty value here. If a value specified for this parameter differs from the value in the failure domain, the Operator overwrites it with the value in the failure domain.
+
+:leveloffset!:
+
+//Sample Azure failure domain configuration
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/cpmso-configuration.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cpmso-yaml-failure-domain-azure_{context}"]
+= Sample Azure failure domain configuration
+
+The control plane machine set concept of a failure domain is analogous to existing Azure concept of an link:https://learn.microsoft.com/en-us/azure/azure-web-pubsub/concept-availability-zones[_Azure availability zone_]. The `ControlPlaneMachineSet` CR spreads control plane machines across multiple failure domains when possible.
+
+When configuring Azure failure domains in the control plane machine set, you must specify the availability zone name.
+
+.Sample Azure failure domain values
+[source,yaml]
+----
+failureDomains:
+  azure: <1>
+  - zone: "1"
+  - zone: "2"
+  - zone: "3"
+  platform: Azure <2>
+----
+<1> Each instance of `zone` specifies an Azure availability zone for a failure domain.
+<2> Specifies the cloud provider platform name. Do not change this value.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../../machine_management/control_plane_machine_management/cpmso-using.adoc#cpmso-supported-features-azure_cpmso-using[Enabling Microsoft Azure features for control plane machines]
+
+[id="cpmso-sample-yaml-nutanix_{context}"]
+== Sample YAML for configuring Nutanix clusters
+
+Some sections of the control plane machine set CR are provider-specific. The following example YAML snippet shows a provider specification configuration for a Nutanix cluster.
+
+//Sample Nutanix provider specification
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/cpmso-configuration.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cpmso-yaml-provider-spec-nutanix_{context}"]
+= Sample Nutanix provider specification
+
+When you create a control plane machine set for an existing cluster, the provider specification must match the `providerSpec` configuration in the control plane machine custom resource (CR) that is created by the installation program.
+
+[discrete]
+[id="cpmso-yaml-provider-spec-nutanix-oc_{context}"]
+== Values obtained by using the OpenShift CLI
+
+In the following example, you can obtain some of the values for your cluster by using the OpenShift CLI.
+
+Infrastructure ID:: The `<cluster_id>` string is the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. If you have the OpenShift CLI installed, you can obtain the infrastructure ID by running the following command:
++
+[source,terminal]
+----
+$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster
+----
+
+.Sample Nutanix `providerSpec` values
+[source,yaml]
+----
+providerSpec:
+  value:
+    apiVersion: machine.openshift.io/v1
+    bootType: "" <1>
+    categories: <2>
+    - key: <category_name>
+      value: <category_value>
+    cluster: <3>
+      type: uuid
+      uuid: <cluster_uuid>
+    credentialsSecret:
+      name: nutanix-credentials <4>
+    image: <5>
+      name: <cluster_id>-rhcos
+      type: name
+    kind: NutanixMachineProviderConfig <6>
+    memorySize: 16Gi <7>
+    metadata:
+      creationTimestamp: null
+    project: <8>
+      type: name
+      name: <project_name>
+    subnets: <9>
+    - type: uuid
+      uuid: <subnet_uuid>
+    systemDiskSize: 120Gi <10>
+    userDataSecret:
+      name: master-user-data <11>
+    vcpuSockets: 8 <12>
+    vcpusPerSocket: 1 <13>
+----
+<1> Specifies the boot type that the control plane machines use. For more information about boot types, see link:https://portal.nutanix.com/page/documents/kbs/details?targetId=kA07V000000H3K9SAK[Understanding UEFI, Secure Boot, and TPM in the Virtualized Environment]. Valid values are `Legacy`, `SecureBoot`, or `UEFI`. The default is `Legacy`.
++
+[NOTE]
+====
+You must use the `Legacy` boot type in {product-title} {product-version}.
+====
+<2> Specifies one or more Nutanix Prism categories to apply to control plane machines. This stanza requires `key` and `value` parameters for a category key-value pair that exists in Prism Central. For more information about categories, see link:https://portal.nutanix.com/page/documents/details?targetId=Prism-Central-Guide-vpc_2022_6:ssp-ssp-categories-manage-pc-c.html[Category management].
+<3> Specifies a Nutanix Prism Element cluster configuration. In this example, the cluster type is `uuid`, so there is a `uuid` stanza.
+<4> Specifies the secret name for the cluster. Do not change this value.
+<5> Specifies the image that was used to create the disk.
+<6> Specifies the cloud provider platform type. Do not change this value.
+<7> Specifies the memory allocated for the control plane machines.
+<8> Specifies the Nutanix project that you use for your cluster. In this example, the project type is `name`, so there is a `name` stanza.
+<9> Specifies a subnet configuration. In this example, the subnet type is `uuid`, so there is a `uuid` stanza.
+<10> Specifies the VM disk size for the control plane machines.
+<11> Specifies the control plane user data secret. Do not change this value.
+<12> Specifies the number of vCPU sockets allocated for the control plane machines.
+<13> Specifies the number of vCPUs for each control plane vCPU socket.
+
+:leveloffset!:
+
+[id="cpmso-sample-yaml-vsphere_{context}"]
+== Sample YAML for configuring VMware vSphere clusters
+
+Some sections of the control plane machine set CR are provider-specific. The following example YAML snippet shows a provider specification configuration for a VMware vSphere cluster.
+
+//Sample VMware vSphere provider specification
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/cpmso-configuration.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cpmso-yaml-provider-spec-vsphere_{context}"]
+= Sample vSphere provider specification
+
+When you create a control plane machine set for an existing cluster, the provider specification must match the `providerSpec` configuration in the control plane machine custom resource (CR) that is created by the installation program.
+
+.Sample vSphere `providerSpec` values
+[source,yaml]
+----
+providerSpec:
+  value:
+    apiVersion: machine.openshift.io/v1beta1
+    credentialsSecret:
+      name: vsphere-cloud-credentials <1>
+    diskGiB: 120 <2>
+    kind: VSphereMachineProviderSpec <3>
+    memoryMiB: 16384 <4>
+    metadata:
+      creationTimestamp: null
+    network: <5>
+      devices:
+      - networkName: <vm_network_name>
+    numCPUs: 4 <6>
+    numCoresPerSocket: 4 <7>
+    snapshot: ""
+    template: <vm_template_name> <8>
+    userDataSecret:
+      name: master-user-data <9>
+    workspace:
+      datacenter: <vcenter_datacenter_name> <10>
+      datastore: <vcenter_datastore_name> <11>
+      folder: <path_to_vcenter_vm_folder> <12>
+      resourcePool: <vsphere_resource_pool> <13>
+      server: <vcenter_server_ip> <14>
+----
+<1> Specifies the secret name for the cluster. Do not change this value.
+<2> Specifies the VM disk size for the control plane machines.
+<3> Specifies the cloud provider platform type. Do not change this value.
+<4> Specifies the memory allocated for the control plane machines.
+<5> Specifies the network on which the control plane is deployed.
+<6> Specifies the number of CPUs allocated for the control plane machines.
+<7> Specifies the number of cores for each control plane CPU.
+<8> Specifies the vSphere VM template to use, such as `user-5ddjd-rhcos`.
+<9> Specifies the control plane user data secret. Do not change this value.
+<10> Specifies the vCenter Datacenter for the control plane.
+<11> Specifies the vCenter Datastore for the control plane.
+<12> Specifies the path to the vSphere VM folder in vCenter, such as `/dc1/vm/user-inst-5ddjd`.
+<13> Specifies the vSphere resource pool for your VMs.
+<14> Specifies the vCenter server IP or fully qualified domain name.
+
+:leveloffset!:
+
+[id="cpmso-sample-yaml-openstack_{context}"]
+== Sample YAML for configuring {rh-openstack-first} clusters
+
+Some sections of the control plane machine set CR are provider-specific. The following example YAML snippets show provider specification and failure domain configurations for an {rh-openstack} cluster.
+
+//Sample OpenStack provider specification
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/cpmso-configuration.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cpmso-yaml-provider-spec-openstack_{context}"]
+= Sample {rh-openstack} provider specification
+
+When you create a control plane machine set for an existing cluster, the provider specification must match the `providerSpec` configuration in the control plane machine custom resource (CR) that is created by the installation program.
+
+.Sample OpenStack `providerSpec` values
+[source,yaml]
+----
+providerSpec:
+  value:
+    apiVersion: machine.openshift.io/v1alpha1
+    cloudName: openstack
+    cloudsSecret:
+      name: openstack-cloud-credentials <1>
+      namespace: openshift-machine-api
+    flavor: m1.xlarge <2>
+    image: ocp1-2g2xs-rhcos
+    kind: OpenstackProviderSpec <3>
+    metadata:
+      creationTimestamp: null
+    networks:
+    - filter: {}
+      subnets:
+      - filter:
+          name: ocp1-2g2xs-nodes
+          tags: openshiftClusterID=ocp1-2g2xs
+    securityGroups:
+    - filter: {}
+      name: ocp1-2g2xs-master <4>
+    serverGroupName: ocp1-2g2xs-master
+    serverMetadata:
+      Name: ocp1-2g2xs-master
+      openshiftClusterID: ocp1-2g2xs
+    tags:
+    - openshiftClusterID=ocp1-2g2xs
+    trunk: true
+    userDataSecret:
+      name: master-user-data
+----
+<1> The secret name for the cluster. Do not change this value.
+<2> The {rh-openstack} flavor type for the control plane.
+<3> The {rh-openstack} cloud provider platform type. Do not change this value.
+<4> The control plane machines security group.
+
+:leveloffset!:
+
+//Sample OpenStack failure domain configuration
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/cpmso-configuration.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="cpmso-yaml-failure-domain-openstack_{context}"]
+= Sample {rh-openstack} failure domain configuration
+// TODO: Replace that link.
+The control plane machine set concept of a failure domain is analogous to existing {rh-openstack-first} concept of an link:https://docs.openstack.org/nova/latest/admin/availability-zones.html[availability zone]. The `ControlPlaneMachineSet` CR spreads control plane machines across multiple failure domains when possible.
+
+The following example demonstrates the use of multiple Nova availability zones as well as Cinder availability zones.
+
+.Sample OpenStack failure domain values
+[source,yaml]
+----
+failureDomains:
+  platform: OpenStack
+  openstack:
+  - availabilityZone: nova-az0
+    rootVolume:
+      availabilityZone: cinder-az0
+  - availabilityZone: nova-az1
+    rootVolume:
+      availabilityZone: cinder-az1
+  - availabilityZone: nova-az2
+    rootVolume:
+      availabilityZone: cinder-az2
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/cpmso-yaml-sample-cr,modules/cpmso-yaml-provider-spec-aws,modules/cpmso-yaml-failure-domain-aws,modules/cpmso-yaml-provider-spec-gcp,modules/cpmso-yaml-failure-domain-gcp,modules/cpmso-yaml-provider-spec-azure,modules/cpmso-yaml-failure-domain-azure,modules/cpmso-yaml-provider-spec-nutanix,modules/cpmso-yaml-provider-spec-vsphere,modules/cpmso-yaml-provider-spec-openstack,modules/cpmso-yaml-failure-domain-openstack

@@ -1,0 +1,695 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="configuring-ingress-cluster-traffic-aws"]
+= Configuring ingress cluster traffic on AWS
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: configuring-ingress-cluster-traffic-aws
+
+toc::[]
+
+{product-title} provides methods for communicating from outside the cluster with services running in the cluster. This method uses load balancers on AWS, specifically a Network Load Balancer (NLB) or a Classic Load Balancer (CLB). Both types of load balancers can forward the client's IP address to the node, but a CLB requires proxy protocol support, which {product-title} automatically enables.
+
+There are two ways to configure an Ingress Controller to use an NLB:
+
+. By force replacing the Ingress Controller that is currently using a CLB. This deletes the `IngressController` object and an outage will occur while the new DNS records propagate and the NLB is being provisioned.
+. By editing an existing Ingress Controller that uses a CLB to use an NLB. This changes the load balancer without having to delete and recreate the `IngressController` object.
+
+Both methods can be used to switch from an NLB to a CLB.
+
+You can configure these load balancers on a new or existing AWS cluster.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-aws.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-configuring-elb-timeouts-aws-classic_{context}"]
+= Configuring Classic Load Balancer timeouts on AWS
+
+{product-title} provides a method for setting a custom timeout period for a specific route or Ingress Controller. Additionally, an AWS Classic Load Balancer (CLB) has its own timeout period with a default time of 60 seconds.
+
+If the timeout period of the CLB is shorter than the route timeout or Ingress Controller timeout, the load balancer can prematurely terminate the connection. You can prevent this problem by increasing both the timeout period of the route and CLB.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module filename: nw-configuring-route-timeouts.adoc
+// Module included in the following assemblies:
+// * networking/configuring-routing.adoc
+// * networking/configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-aws.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-configuring-route-timeouts_{context}"]
+= Configuring route timeouts
+
+You can configure the default timeouts for an existing route when you
+have services in need of a low timeout, which is required for Service Level
+Availability (SLA) purposes, or a high timeout, for cases with a slow
+back end.
+
+.Prerequisites
+* You need a deployed Ingress Controller on a running cluster.
+
+.Procedure
+. Using the `oc annotate` command, add the timeout to the route:
++
+[source,terminal]
+----
+$ oc annotate route <route_name> \
+    --overwrite haproxy.router.openshift.io/timeout=<timeout><time_unit> <1>
+----
+<1> Supported time units are microseconds (us), milliseconds (ms), seconds (s),
+minutes (m), hours (h), or days (d).
++
+The following example sets  a timeout of two seconds on a route named `myroute`:
++
+[source,terminal]
+----
+$ oc annotate route myroute --overwrite haproxy.router.openshift.io/timeout=2s
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Modules included in the following assemblies:
+//
+// * networking/configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-aws.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-configuring-clb-timeouts_{context}"]
+= Configuring Classic Load Balancer timeouts
+
+You can configure the default timeouts for a Classic Load Balancer (CLB) to extend idle connections.
+
+.Prerequisites
+
+* You must have a deployed Ingress Controller on a running cluster.
+
+.Procedure
+
+. Set an AWS connection idle timeout of five minutes for the default `ingresscontroller` by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-ingress-operator patch ingresscontroller/default \
+    --type=merge --patch='{"spec":{"endpointPublishingStrategy": \
+    {"type":"LoadBalancerService", "loadBalancer": \
+    {"scope":"External", "providerParameters":{"type":"AWS", "aws": \
+    {"type":"Classic", "classicLoadBalancer": \
+    {"connectionIdleTimeout":"5m"}}}}}}}'
+----
+
+. Optional: Restore the default value of the timeout by running the following command:
++
+[source,terminal]
+----
+$ oc -n openshift-ingress-operator patch ingresscontroller/default \
+    --type=merge --patch='{"spec":{"endpointPublishingStrategy": \
+    {"loadBalancer":{"providerParameters":{"aws":{"classicLoadBalancer": \
+    {"connectionIdleTimeout":null}}}}}}}'
+----
+
+[NOTE]
+====
+You must specify the `scope` field when you change the connection timeout value unless the current scope is already set. When you set the `scope` field, you do not need to do so again if you restore the default timeout value.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-aws.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nw-configuring-ingress-cluster-traffic-aws-network-load-balancer_{context}"]
+= Configuring ingress cluster traffic on AWS using a Network Load Balancer
+
+{product-title} provides methods for communicating from outside the cluster with services that run in the cluster. One such method uses a Network Load Balancer (NLB). You can configure an NLB on a new or existing AWS cluster.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-aws.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-aws-switching-clb-with-nlb_{context}"]
+= Switching the Ingress Controller from using a Classic Load Balancer to a Network Load Balancer
+
+You can switch the Ingress Controller that is using a Classic Load Balancer (CLB) to one that uses a Network Load Balancer (NLB) on AWS.
+
+Switching between these load balancers will not delete the `IngressController` object.
+
+[WARNING]
+====
+This procedure might cause the following issues:
+
+* An outage that can last several minutes due to new DNS records propagation, new load balancers provisioning, and other factors. IP addresses and canonical names of the Ingress Controller load balancer might change after applying this procedure.
+
+* Leaked load balancer resources due to a change in the annotation of the service.
+====
+
+.Procedure
+
+. Modify the existing Ingress Controller that you want to switch to using an NLB. This example assumes that your default Ingress Controller has an `External` scope and no other customizations:
++
+.Example `ingresscontroller.yaml` file
+[source,yaml]
+----
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+  creationTimestamp: null
+  name: default
+  namespace: openshift-ingress-operator
+spec:
+  endpointPublishingStrategy:
+    loadBalancer:
+      scope: External
+      providerParameters:
+        type: AWS
+        aws:
+          type: NLB
+    type: LoadBalancerService
+----
++
+[NOTE]
+====
+If you do not specify a value for the `spec.endpointPublishingStrategy.loadBalancer.providerParameters.aws.type` field, the Ingress Controller uses the `spec.loadBalancer.platform.aws.type` value from the cluster `Ingress` configuration that was set during installation.
+====
++
+[TIP]
+====
+If your Ingress Controller has other customizations that you want to update, such as changing the domain, consider force replacing the Ingress Controller definition file instead.
+====
+
+. Apply the changes to the Ingress Controller YAML file by running the command:
++
+[source,terminal]
+----
+$ oc apply -f ingresscontroller.yaml
+----
++
+Expect several minutes of outages while the Ingress Controller updates.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-aws.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-aws-switching-nlb-with-clb_{context}"]
+= Switching the Ingress Controller from using a Network Load Balancer to a Classic Load Balancer
+
+You can switch the Ingress Controller that is using a Network Load Balancer (NLB) to one that uses a Classic Load Balancer (CLB) on AWS.
+
+Switching between these load balancers will not delete the `IngressController` object.
+
+[WARNING]
+====
+This procedure might cause an outage that can last several minutes due to new DNS records propagation, new load balancers provisioning, and other factors. IP addresses and canonical names of the Ingress Controller load balancer might change after applying this procedure.
+====
+
+.Procedure
+
+. Modify the existing Ingress Controller that you want to switch to using a CLB. This example assumes that your default Ingress Controller has an `External` scope and no other customizations:
++
+.Example `ingresscontroller.yaml` file
+[source,yaml]
+----
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+  creationTimestamp: null
+  name: default
+  namespace: openshift-ingress-operator
+spec:
+  endpointPublishingStrategy:
+    loadBalancer:
+      scope: External
+      providerParameters:
+        type: AWS
+        aws:
+          type: Classic
+    type: LoadBalancerService
+----
++
+[NOTE]
+====
+If you do not specify a value for the `spec.endpointPublishingStrategy.loadBalancer.providerParameters.aws.type` field, the Ingress Controller uses the `spec.loadBalancer.platform.aws.type` value from the cluster `Ingress` configuration that was set during installation.
+====
++
+[TIP]
+====
+If your Ingress Controller has other customizations that you want to update, such as changing the domain, consider force replacing the Ingress Controller definition file instead.
+====
+
+. Apply the changes to the Ingress Controller YAML file by running the command:
++
+[source,terminal]
+----
+$ oc apply -f ingresscontroller.yaml
+----
++
+Expect several minutes of outages while the Ingress Controller updates.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-aws.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-aws-replacing-clb-with-nlb_{context}"]
+= Replacing Ingress Controller Classic Load Balancer with Network Load Balancer
+
+You can replace an Ingress Controller that is using a Classic Load Balancer (CLB) with one that uses a Network Load Balancer (NLB) on AWS.
+
+[WARNING]
+====
+This procedure might cause the following issues:
+
+* An outage that can last several minutes due to new DNS records propagation, new load balancers provisioning, and other factors. IP addresses and canonical names of the Ingress Controller load balancer might change after applying this procedure.
+
+* Leaked load balancer resources due to a change in the annotation of the service.
+====
+
+.Procedure
+
+. Create a file with a new default Ingress Controller. The following example assumes that your default Ingress Controller has an `External` scope and no other customizations:
++
+.Example `ingresscontroller.yml` file
+[source,yaml]
+----
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+  creationTimestamp: null
+  name: default
+  namespace: openshift-ingress-operator
+spec:
+  endpointPublishingStrategy:
+    loadBalancer:
+      scope: External
+      providerParameters:
+        type: AWS
+        aws:
+          type: NLB
+    type: LoadBalancerService
+----
++
+If your default Ingress Controller has other customizations, ensure that you modify the file accordingly.
++
+[TIP]
+====
+If your Ingress Controller has no other customizations and you are only updating the load balancer type, consider following the procedure detailed in "Switching the Ingress Controller from using a Classic Load Balancer to a Network Load Balancer".
+====
+
+. Force replace the Ingress Controller YAML file:
++
+[source,terminal]
+----
+$ oc replace --force --wait -f ingresscontroller.yml
+----
++
+Wait until the Ingress Controller is replaced. Expect several of minutes of outages.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * networking/configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-aws.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-aws-nlb-existing-cluster_{context}"]
+= Configuring an Ingress Controller Network Load Balancer on an existing AWS cluster
+
+You can create an Ingress Controller backed by an AWS Network Load Balancer (NLB) on an existing cluster.
+
+.Prerequisites
+
+* You must have an installed AWS cluster.
+* `PlatformStatus` of the infrastructure resource must be AWS.
+** To verify that the `PlatformStatus` is AWS, run:
++
+[source,terminal]
+----
+$ oc get infrastructure/cluster -o jsonpath='{.status.platformStatus.type}'
+AWS
+----
+
+.Procedure
+
+Create an Ingress Controller backed by an AWS NLB on an existing cluster.
+
+. Create the Ingress Controller manifest:
++
+[source,terminal]
+----
+ $ cat ingresscontroller-aws-nlb.yaml
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+  name: $my_ingress_controller<1>
+  namespace: openshift-ingress-operator
+spec:
+  domain: $my_unique_ingress_domain<2>
+  endpointPublishingStrategy:
+    type: LoadBalancerService
+    loadBalancer:
+      scope: External<3>
+      providerParameters:
+        type: AWS
+        aws:
+          type: NLB
+----
+<1> Replace `$my_ingress_controller` with a unique name for the Ingress Controller.
+<2> Replace `$my_unique_ingress_domain` with a domain name that is unique among all Ingress Controllers in the cluster. This variable must be a subdomain of the DNS name `<clustername>.<domain>`.
+<3> You can replace `External` with `Internal` to use an internal NLB.
+
+. Create the resource in the cluster:
++
+[source,terminal]
+----
+$ oc create -f ingresscontroller-aws-nlb.yaml
+----
+
+:leveloffset!:
+
+[IMPORTANT]
+====
+Before you can configure an Ingress Controller NLB on a new AWS cluster, you must complete the xref:../../installing/installing_aws/installing-aws-network-customizations.adoc#installation-initializing_installing-aws-network-customizations[Creating the installation configuration file] procedure.
+====
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * networking/configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-aws.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-aws-nlb-new-cluster_{context}"]
+= Configuring an Ingress Controller Network Load Balancer on a new AWS cluster
+
+You can create an Ingress Controller backed by an AWS Network Load Balancer (NLB) on a new cluster.
+
+.Prerequisites
+
+* Create the `install-config.yaml` file and complete any modifications to it.
+
+.Procedure
+
+Create an Ingress Controller backed by an AWS NLB on a new cluster.
+
+. Change to the directory that contains the installation program and create the manifests:
++
+[source,terminal]
+----
+$ ./openshift-install create manifests --dir <installation_directory> <1>
+----
+<1> For `<installation_directory>`, specify the name of the directory that
+contains the `install-config.yaml` file for your cluster.
+
+. Create a file that is named `cluster-ingress-default-ingresscontroller.yaml` in the `<installation_directory>/manifests/` directory:
++
+[source,terminal]
+----
+$ touch <installation_directory>/manifests/cluster-ingress-default-ingresscontroller.yaml <1>
+----
+<1> For `<installation_directory>`, specify the directory name that contains the
+`manifests/` directory for your cluster.
++
+After creating the file, several network configuration files are in the
+`manifests/` directory, as shown:
++
+[source,terminal]
+----
+$ ls <installation_directory>/manifests/cluster-ingress-default-ingresscontroller.yaml
+----
++
+.Example output
+[source,terminal]
+----
+cluster-ingress-default-ingresscontroller.yaml
+----
+
+. Open the `cluster-ingress-default-ingresscontroller.yaml` file in an editor and enter a custom resource (CR) that describes the Operator configuration you want:
++
+[source,yaml]
+----
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+  creationTimestamp: null
+  name: default
+  namespace: openshift-ingress-operator
+spec:
+  endpointPublishingStrategy:
+    loadBalancer:
+      scope: External
+      providerParameters:
+        type: AWS
+        aws:
+          type: NLB
+    type: LoadBalancerService
+----
+
+. Save the `cluster-ingress-default-ingresscontroller.yaml` file and quit the text editor.
+. Optional: Back up the `manifests/cluster-ingress-default-ingresscontroller.yaml` file. The installation program deletes the `manifests/` directory when creating the cluster.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_configuring-ingress-cluster-traffic-aws"]
+== Additional resources
+
+* xref:../../installing/installing_aws/installing-aws-network-customizations.adoc#installing-aws-network-customizations[Installing a cluster on AWS with network customizations].
+* For more information on support for NLBs, see link:https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support[Network Load Balancer support on AWS].
+* For more information on proxy protocol support for CLBs, see link:https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-proxy-protocol.html[Configure proxy protocol support for your Classic Load Balancer]
+
+//# includes=_attributes/common-attributes,modules/nw-configuring-elb-timeouts-aws-classic,modules/nw-configuring-route-timeouts,modules/nw-configuring-clb-timeouts,modules/nw-configuring-ingress-cluster-traffic-aws-networking-load-balancer,modules/nw-aws-switching-clb-with-nlb,modules/nw-aws-switching-nlb-with-clb,modules/nw-aws-replacing-clb-with-nlb,modules/nw-aws-nlb-existing-cluster,modules/nw-aws-nlb-new-cluster

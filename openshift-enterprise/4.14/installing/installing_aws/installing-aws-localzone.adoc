@@ -1,0 +1,2686 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="installing-aws-localzone"]
+= Installing a cluster on AWS with worker nodes on AWS Local Zones
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: installing-aws-localzone
+
+toc::[]
+
+You can quickly install an {product-title} cluster in Amazon Web Services (AWS) Local Zones by setting the zone names in the edge compute pool of the `install-config.yaml` file, or install a cluster in an existing VPC that lists Local Zone subnets.
+
+AWS Local Zones are a type of infrastructure that place Cloud Resources close to metropolitan regions. For more information, see the link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-local-zones[AWS Local Zones Documentation].
+
+[IMPORTANT]
+====
+The steps for performing an installer-provisioned infrastructure installation are provided for example purposes only. Installing a cluster in an existing VPC requires that you have knowledge of the cloud provider and the installation process of {product-title}. You can use a CloudFormation template to assist you with completing these steps or to help model your own cluster installation. Instead of using the CloudFormation template to create resources, you can decide to use other methods for generating these resources.
+====
+
+== Prerequisites
+
+* You reviewed details about the xref:../../architecture/architecture-installation.adoc#architecture-installation[{product-title} installation and update] processes.
+* You read the documentation on xref:../../installing/installing-preparing.adoc#installing-preparing[selecting a cluster installation method and preparing it for users].
+* You xref:../../installing/installing_aws/installing-aws-account.adoc#installing-aws-account[configured an AWS account] to host the cluster.
++
+[IMPORTANT]
+====
+If you have an AWS profile stored on your computer, it must not use a temporary session token that you generated while using a multi-factor authentication device. The cluster continues to use your current AWS credentials to create AWS resources for the entire life of the cluster, so you must use key-based, long-term credentials. To generate appropriate keys, see link:https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html[Managing Access Keys for IAM Users] in the AWS documentation. You can supply the keys when you run the installation program.
+====
+* You noted the region and supported link:https://aws.amazon.com/about-aws/global-infrastructure/localzones/locations[AWS Local Zones locations] to create the network resources in.
+* You read the link:https://aws.amazon.com/about-aws/global-infrastructure/localzones/features/[Features] for each AWS Local Zones location.
+* You downloaded the AWS CLI and installed it on your computer. See link:https://docs.aws.amazon.com/cli/latest/userguide/install-bundle.html[Install the AWS CLI Using the Bundled Installer (Linux, macOS, or UNIX)] in the AWS documentation.
+* If you use a firewall, you xref:../../installing/install_config/configuring-firewall.adoc#configuring-firewall[configured it to allow the sites] that your cluster requires access to.
++
+[NOTE]
+====
+Be sure to also review this site list if you are configuring a proxy.
+====
+* Add permission for the user who creates the cluster to modify the Local Zone group with `ec2:ModifyAvailabilityZoneGroup`. For example:
++
+.An example of a permissive IAM policy to attach to a user or role
+[source,yaml]
+----
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ec2:ModifyAvailabilityZoneGroup"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+----
+
+// Cluster limitations in AWS Local Zones
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing-aws-localzone.adoc
+
+:_mod-docs-content-type: CONCEPT
+
+[id="cluster-limitations-local-zone_{context}"]
+= Cluster limitations in AWS Local Zones
+
+Some limitations exist when you attempt to deploy a cluster with a default installation configuration in Amazon Web Services (AWS) Local Zones.
+
+[IMPORTANT]
+====
+The following list details limitations when deploying a cluster in AWS Local Zones:
+
+- The Maximum Transmission Unit (MTU) between an Amazon EC2 instance in a Local Zone and an Amazon EC2 instance in the Region is `1300`. This causes the cluster-wide network MTU to change according to the network plugin that is used on the deployment.
+- Network resources such as Network Load Balancer (NLB), Classic Load Balancer, and Network Address Translation (NAT) Gateways are not globally supported in AWS Local Zones.
+- For an {product-title} cluster on AWS, the AWS Elastic Block Storage (EBS) `gp3` type volume is the default for node volumes and the default for the storage class. This volume type is not globally available on Local Zone locations. By default, the nodes running in Local Zones are deployed with the `gp2` EBS volume. The `gp2-csi` `StorageClass` must be set when creating workloads on Local Zone nodes.
+====
+
+If you want the installation program to automatically create Local Zone subnets for your {product-title} cluster, specific configuration limitations apply with this method.
+
+[IMPORTANT]
+====
+The following configuration limitation applies when you set the installation program to automatically create subnets for your {product-title} cluster:
+
+- The private subnets for an AWS Local Zone associate with the route table of the parent zone, so that each private subnet can route egress traffic to the internet. If this route table does not exist during cluster installation, the private subnet associates with the first available private route table in the Virtual Private Cloud (VPC). This approach is valid only for AWS Local Zones subnets in an {product-title} cluster.
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../storage/understanding-persistent-storage.adoc#pvc-storage-class_understanding-persistent-storage[Storage classes]
+
+* xref:../../networking/ingress-sharding.html#nw-ingress-sharding_ingress-sharding[Ingress Controller sharding]
+
+// Internet access for OpenShift Container Platform
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-china-region.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-user-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_openstack/installing-openstack-installer-sr-iov.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-network-customizations.adoc
+// * architecture/architecture.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-installer-provisioned.adoc
+
+
+
+:_mod-docs-content-type: CONCEPT
+[id="cluster-entitlements_{context}"]
+= Internet access for {product-title}
+
+In {product-title} {product-version}, you require access to the internet to
+install
+your cluster.
+
+You must have internet access to:
+
+* Access {cluster-manager-url} to download the installation program and perform subscription management. If the cluster has internet access and you do not disable Telemetry, that service automatically entitles your cluster.
+* Access link:http://quay.io[Quay.io] to obtain the packages that are required to install your cluster.
+* Obtain the packages that are required to perform cluster updates.
+
+
+:leveloffset!:
+
+// Obtaining an AWS Marketplace image
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+
+:ipi:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-aws-marketplace-subscribe_{context}"]
+= Obtaining an AWS Marketplace image
+If you are deploying an {product-title} cluster using an AWS Marketplace image, you must first subscribe through AWS. Subscribing to the offer provides you with the AMI ID that the installation program uses to deploy worker nodes.
+
+.Prerequisites
+
+* You have an AWS account to purchase the offer. This account does not have to be the same account that is used to install the cluster.
+
+.Procedure
+
+. Complete the {product-title} subscription from the link:https://aws.amazon.com/marketplace/fulfillment?productId=59ead7de-2540-4653-a8b0-fa7926d5c845[AWS Marketplace].
+. Record the AMI ID for your specific region. As part of the installation process, you must update the `install-config.yaml` file with this value before deploying the cluster.
+
+.Sample `install-config.yaml` file with AWS Marketplace worker nodes
+
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: example.com
+compute:
+- hyperthreading: Enabled
+  name: worker
+  platform:
+    aws:
+      amiID: ami-06c4d345f7c207239 <1>
+      type: m5.4xlarge
+  replicas: 3
+metadata:
+  name: test-cluster
+platform:
+  aws:
+    region: us-east-2 <2>
+sshKey: ssh-ed25519 AAAA...
+pullSecret: '{"auths": ...}'
+----
+<1> The AMI ID from your AWS Marketplace subscription.
+<2> Your AMI ID is associated with a specific AWS region. When creating the installation configuration file, ensure that you select the same AWS region that you specified when configuring your subscription.
+
+:!ipi:
+
+:leveloffset!:
+
+//Installing the OpenShift CLI by downloading the binary: Moved up to precede `ccoctl` steps, which require the use of `oc`
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * cli_reference/openshift_cli/getting-started.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adocs
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/install_config/installing-restricted-networks-preparations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * openshift_images/samples-operator-alt-registry.adoc
+// * updating/updating-restricted-network-cluster/mirroring-image-repository.adoc
+// * microshift_cli_ref/microshift-oc-cli-install.adoc
+// * updating/updating_a_cluster/updating_disconnected_cluster/mirroring-image-repository.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+// AMQ docs link to this; do not change anchor
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="cli-installing-cli_{context}"]
+= Installing the OpenShift CLI by downloading the binary
+
+You can install the {oc-first} to interact with
+{product-title}
+from a command-line interface. You can install `oc` on Linux, Windows, or macOS.
+
+[IMPORTANT]
+====
+If you installed an earlier version of `oc`, you cannot use it to complete all of the commands in
+{product-title} {product-version}.
+Download and install the new version of `oc`.
+====
+
+[discrete]
+== Installing the OpenShift CLI on Linux
+
+You can install the OpenShift CLI (`oc`) binary on Linux by using the following procedure.
+
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the architecture from the *Product Variant* drop-down list.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} Linux Client* entry and save the file.
+. Unpack the archive:
++
+[source,terminal]
+----
+$ tar xvf <file>
+----
+. Place the `oc` binary in a directory that is on your `PATH`.
++
+To check your `PATH`, execute the following command:
++
+[source,terminal]
+----
+$ echo $PATH
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+$ oc <command>
+----
+
+[discrete]
+== Installing the OpenShift CLI on Windows
+
+You can install the OpenShift CLI (`oc`) binary on Windows by using the following procedure.
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} Windows Client* entry and save the file.
+. Unzip the archive with a ZIP program.
+. Move the `oc` binary to a directory that is on your `PATH`.
++
+To check your `PATH`, open the command prompt and execute the following command:
++
+[source,terminal]
+----
+C:\> path
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+C:\> oc <command>
+----
+
+[discrete]
+== Installing the OpenShift CLI on macOS
+
+You can install the OpenShift CLI (`oc`) binary on macOS by using the following procedure.
+.Procedure
+
+. Navigate to the link:https://access.redhat.com/downloads/content/290[{product-title} downloads page] on the Red Hat Customer Portal.
+. Select the appropriate version from the *Version* drop-down list.
+. Click *Download Now* next to the *OpenShift v{product-version} macOS Client* entry and save the file.
++
+[NOTE]
+====
+For macOS arm64, choose the *OpenShift v{product-version} macOS arm64 Client* entry.
+====
+. Unpack and unzip the archive.
+. Move the `oc` binary to a directory on your PATH.
++
+To check your `PATH`, open a terminal and execute the following command:
++
+[source,terminal]
+----
+$ echo $PATH
+----
+
+.Verification
+
+* After you install the OpenShift CLI, it is available using the `oc` command:
++
+[source,terminal]
+----
+$ oc <command>
+----
+
+
+:leveloffset!:
+
+== Preparing for the installation
+
+Before you extend nodes to local zones, you must prepare certain resources for the cluster installation environment.
+
+// Obtaining the installation program
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-obtaining-installer_{context}"]
+= Obtaining the installation program
+
+Before you install {product-title}, download the installation file on
+ your provisioning machine.
+ the host you are using for installation.
+//mpytlak: Added "private" in the context of a review for the IBM Cloud VPC private work. In an effort to keep updates to other platforms separate, I will open a doc story for each platform that supports a private install.
+
+.Prerequisites
+
+* You have a computer that runs Linux or macOS, with 500 MB of local disk space.
+
+.Procedure
+
+. Access the link:https://console.redhat.com/openshift/install[Infrastructure Provider] page on the {cluster-manager} site. If you have a Red Hat account, log in with your credentials. If you do not, create an account.
+. Select your infrastructure provider.
+. Navigate to the page for your installation type, download the installation program that corresponds with your host operating system and architecture, and place the file in the directory where you will store the installation configuration files.
+
++
+[IMPORTANT]
+====
+The installation program creates several files on the computer that you use to install your cluster. You must keep the installation program and the files that the installation program creates after you finish installing the cluster. Both files are required to delete the cluster.
+====
++
+[IMPORTANT]
+====
+Deleting the files created by the installation program does not remove your cluster, even if the cluster failed during installation. To remove your cluster, complete the {product-title} uninstallation procedures for your specific cloud provider.
+====
+
+. Extract the installation program. For example, on a computer that uses a Linux
+operating system, run the following command:
++
+[source,terminal]
+----
+$ tar -xvf openshift-install-linux.tar.gz
+----
+
+. Download your installation {cluster-manager-url-pull}. This pull secret allows you to authenticate with the services that are provided by the included authorities, including Quay.io, which serves the container images for {product-title} components.
+
+
+:leveloffset!:
+
+// Generating a key pair for cluster node SSH access
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-customizations.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-power.adoc
+// * installing/installing_nutanix/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="ssh-agent-using_{context}"]
+= Generating a key pair for cluster node SSH access
+
+During an {product-title} installation, you can provide an SSH public key to the installation program. The key is passed to the {op-system-first} nodes through their Ignition config files and is used to authenticate SSH access to the nodes. The key is added to the `~/.ssh/authorized_keys` list for the `core` user on each node, which enables password-less authentication.
+
+After the key is passed to the nodes, you can use the key pair to SSH in to the {op-system} nodes as the user `core`. To access the nodes through SSH, the private key identity must be managed by SSH for your local user.
+
+If you want to SSH in to your cluster nodes to perform installation debugging or disaster recovery, you must provide the SSH public key during the installation process. The `./openshift-install gather` command also requires the SSH public key to be in place on the cluster nodes.
+
+[IMPORTANT]
+====
+Do not skip this procedure in production environments, where disaster recovery and debugging is required.
+====
+
+[NOTE]
+====
+You must use a local key, not one that you configured with platform-specific
+approaches such as
+link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html[AWS key pairs].
+====
+
+
+.Procedure
+
+. If you do not have an existing SSH key pair on your local machine to use for authentication onto your cluster nodes, create one. For example, on a computer that uses a Linux operating system, run the following command:
++
+[source,terminal]
+----
+$ ssh-keygen -t ed25519 -N '' -f <path>/<file_name> <1>
+----
+<1> Specify the path and file name, such as `~/.ssh/id_ed25519`, of the new SSH key. If you have an existing key pair, ensure your public key is in the your `~/.ssh` directory.
++
+[NOTE]
+====
+If you plan to install an {product-title} cluster that uses the {op-system-base} cryptographic libraries that have been submitted to NIST for FIPS 140-2/140-3 Validation on only the `x86_64`, `ppc64le`, and `s390x` architectures, do not create a key that uses the `ed25519` algorithm. Instead, create a key that uses the `rsa` or `ecdsa` algorithm.
+====
+
+. View the public SSH key:
++
+[source,terminal]
+----
+$ cat <path>/<file_name>.pub
+----
++
+For example, run the following to view the `~/.ssh/id_ed25519.pub` public key:
++
+[source,termanal]
+----
+$ cat ~/.ssh/id_ed25519.pub
+----
+
+. Add the SSH private key identity to the SSH agent for your local user, if it has not already been added. SSH agent management of the key is required for password-less SSH authentication onto your cluster nodes, or if you want to use the `./openshift-install gather` command.
++
+[NOTE]
+====
+On some distributions, default SSH private key identities such as `~/.ssh/id_rsa` and `~/.ssh/id_dsa` are managed automatically.
+====
++
+.. If the `ssh-agent` process is not already running for your local user, start it as a background task:
++
+[source,terminal]
+----
+$ eval "$(ssh-agent -s)"
+----
++
+.Example output
+[source,terminal]
+----
+Agent pid 31874
+----
++
+[NOTE]
+====
+If your cluster is in FIPS mode, only use FIPS-compliant algorithms to generate the SSH key. The key must be either RSA or ECDSA.
+====
+
+. Add your SSH private key to the `ssh-agent`:
++
+[source,terminal]
+----
+$ ssh-add <path>/<file_name> <1>
+----
+<1> Specify the path and file name for your SSH private key, such as `~/.ssh/id_ed25519`
++
+.Example output
+[source,terminal]
+----
+Identity added: /home/<you>/<path>/<file_name> (<computer_name>)
+----
+
+.Next steps
+
+* When you install {product-title}, provide the SSH public key to the installation program.
+
+
+:leveloffset!:
+
+// Creating the installation files for AWS
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-shared-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing-aws-localzone.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:cp-first: Amazon Web Services
+:cp: AWS
+:aws:
+
+[id="installation-user-infra-generate_{context}"]
+= Creating the installation files for {cp}
+
+To install {product-title} on {cp-first} ({cp}) using user-provisioned infrastructure, you must generate the files that the installation program needs to deploy your cluster and modify them so that the cluster creates only the machines that it will use. You generate and customize the `install-config.yaml` file, Kubernetes manifests, and Ignition config files. You also have the option to first set up a separate `var` partition during the preparation phases of installation.
+
+
+:leveloffset!:
+
+// Minimum resource requirements for cluster installation
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-minimum-resource-requirements_{context}"]
+= Minimum resource requirements for cluster installation
+
+Each cluster machine must meet the following minimum requirements:
+
+.Minimum resource requirements
+[cols="2,2,2,2,2,2",options="header"]
+|===
+
+|Machine
+|Operating System
+|vCPU ^[1]^
+|Virtual RAM
+|Storage
+|Input/Output Per Second (IOPS)^[2]^
+
+|Bootstrap
+|{op-system}
+|2
+|4
+|16 GB
+|100 GB
+|300
+
+
+|Control plane
+|{op-system}
+|2
+|4
+|16 GB
+|100 GB
+|300
+
+|Compute
+|{op-system}
+|{op-system}, {op-system-base} 8.6, {op-system-base} 8.7, or {op-system-base} 8.8 ^[3]^
+|2
+|8 GB
+|100 GB
+|300
+
+|===
+[.small]
+--
+1. One vCPU is equivalent to one physical core when simultaneous multithreading (SMT), or hyperthreading, is not enabled. When enabled, use the following formula to calculate the corresponding ratio: (threads per core × cores) × sockets = vCPUs.
+2. {product-title} and Kubernetes are sensitive to disk performance, and faster storage is recommended, particularly for etcd on the control plane nodes which require a 10 ms p99 fsync duration. Note that on many cloud platforms, storage size and IOPS scale together, so you might need to over-allocate storage volume to obtain sufficient performance.
+3. As with all user-provisioned installations, if you choose to use {op-system-base} compute machines in your cluster, you take responsibility for all operating system life cycle management and maintenance, including performing system updates, applying patches, and completing all other required tasks. Use of {op-system-base} 7 compute machines is deprecated and has been removed in {product-title} 4.10 and later.
+--
+
+
+If an instance type for your platform meets the minimum requirements for cluster machines, it is supported to use in {product-title}.
+
+
+:leveloffset!:
+
+// Tested instance types for AWS
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// installing/installing_aws/installing-aws-china.adoc
+// installing/installing_aws/installing-aws-customizations.adoc
+// installing/installing_aws/installing-aws-government-region.adoc
+// installing/installing_aws/installing-aws-network-customizations.adoc
+// installing/installing_aws/installing-aws-private.adoc
+// installing/installing_aws/installing-aws-secret-region.adoc
+// installing/installing_aws/installing-aws-user-infra.adoc
+// installing/installing_aws/installing-aws-vpc.adoc
+// installing/installing_aws/installing-restricted-networks-aws.adoc
+// installing-aws-localzone
+
+:localzone:
+
+[id="installation-aws-tested-machine-types_{context}"]
+= Tested instance types for AWS
+
+The following Amazon Web Services (AWS) instance types have been tested with
+{product-title} for use with AWS Local Zones.
+
+[NOTE]
+====
+Use the machine types included in the following charts for your AWS instances. If you use an instance type that is not listed in the chart, ensure that the instance size you use matches the minimum resource requirements that are listed in "Minimum resource requirements for cluster installation".
+====
+
+.Machine types based on 64-bit x86 architecture for AWS Local Zones
+[%collapsible]
+====
+* `c5.*`
+* `c5d.*`
+* `m6i.*`
+* `m5.*`
+* `r5.*`
+* `t3.*`
+====
+
+:!localzone:
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See link:https://aws.amazon.com/about-aws/global-infrastructure/localzones/features/[AWS Local Zones features] in the AWS documentation for more information about AWS Local Zones and the supported instances types and services.
+
+// Creating the installation configuration file
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-localzone.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+
+:localzone:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-generate-aws-user-infra-install-config_{context}"]
+= Creating the installation configuration file
+
+Generate and customize the installation configuration file that the
+installation program needs to deploy your cluster.
+
+.Prerequisites
+
+* You obtained the {product-title} installation program
+and the pull secret for your cluster.
+* You checked that you are deploying your cluster to a region with an accompanying {op-system-first} AMI published by Red Hat. If you are deploying to a region that requires a custom AMI, such as an AWS GovCloud region, you must create the `install-config.yaml` file manually.
+
+.Procedure
+
+. Create the `install-config.yaml` file.
+.. Change to the directory that contains the installation program and run the following command:
++
+[source,terminal]
+----
+$ ./openshift-install create install-config --dir <installation_directory> <1>
+----
+<1> For `<installation_directory>`, specify the directory name to store the
+files that the installation program creates.
++
+[IMPORTANT]
+====
+Specify an empty directory. Some installation assets, like bootstrap X.509
+certificates have short expiration intervals, so you must not reuse an
+installation directory. If you want to reuse individual files from another
+cluster installation, you can copy them into your directory. However, the file
+names for the installation assets might change between releases. Use caution
+when copying installation files from an earlier {product-title} version.
+====
+.. At the prompts, provide the configuration details for your cloud:
+... Optional: Select an SSH key to use to access your cluster machines.
++
+[NOTE]
+====
+For production {product-title} clusters on which you want to perform installation debugging or disaster recovery, specify an SSH key that your `ssh-agent` process uses.
+====
+... Select *aws* as the platform to target.
+... If you do not have an AWS profile stored on your computer, enter the AWS
+access key ID and secret access key for the user that you configured to run the
+installation program.
++
+[NOTE]
+====
+The AWS access key ID and secret access key are stored in `~/.aws/credentials` in the home directory of the current user on the installation host. You are prompted for the credentials by the installation program if the credentials for the exported profile are not present in the file. Any credentials that you provide to the installation program are stored in the file.
+====
+... Select the AWS region to deploy the cluster to.
+The region that you specify must be the same region that contains the Local Zone that you opted in to for your AWS account.
+... Select the base domain for the Route 53 service that you configured for your cluster.
+... Enter a descriptive name for your cluster.
+... Paste the {cluster-manager-url-pull}.
+
+
+
+. Optional: Back up the `install-config.yaml` file.
++
+[IMPORTANT]
+====
+The `install-config.yaml` file is consumed during the installation process. If
+you want to reuse the file, you must back it up now.
+====
+
+:!localzone:
+
+:leveloffset!:
+// Suggest to standarize edge-pool's specific files with same prefixes, like: machine-edge-pool-[...] or compute-edge-pool-[...] (which is more compatible with install-config.yaml/compute)
+
+// Edge compute pools and AWS Local Zones
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * installing/installing_aws/installing-aws-localzone.adoc
+// * post_installation_configuration/aws-compute-edge-tasks.adoc
+
+
+:_mod-docs-content-type: CONCEPT
+[id="edge-machine-pools-aws-local-zones_{context}"]
+= Edge compute pools and AWS Local Zones
+
+Edge worker nodes are tainted worker nodes that run in AWS Local Zones locations.
+
+When deploying a cluster that uses Local Zones, consider the following points:
+
+* Amazon EC2 instances in the Local Zones are more expensive than Amazon EC2 instances in the Availability Zones.
+* Latency between applications and end users is lower in Local Zones, and latency might vary by location. A latency impact exists for some workloads if, for example, ingress traffic is mixed between Local Zones and Availability Zones.
+
+[IMPORTANT]
+====
+Generally, the maximum transmission unit (MTU) between an Amazon EC2 instance in a Local Zone and an Amazon EC2 instance in the Region is 1300. For more information, see link:https://docs.aws.amazon.com/local-zones/latest/ug/how-local-zones-work.html[How Local Zones work] in the AWS documentation.
+The cluster network MTU must be always less than the EC2 MTU to account for the overhead. The specific overhead is determined by the network plugin, for example:
+
+- OVN-Kubernetes: `100 bytes`
+- OpenShift SDN: `50 bytes`
+
+The network plugin can provide additional features, like IPsec, that also must be decreased the MTU. For additional information, see the documentation.
+====
+
+{product-title} 4.12 introduced a new compute pool, _edge_, that is designed for use in remote zones. The edge compute pool configuration is common between AWS Local Zones locations. Because of the type and size limitations of resources like EC2 and EBS on Local Zone resources, the default instance type can vary from the traditional worker pool.
+
+The default Elastic Block Store (EBS) for Local Zone locations is `gp2`, which differs from the regular worker pool. The instance type used for each Local Zone on edge compute pool also might differ from worker pools, depending on the instance offerings on the zone.
+
+The edge compute pool creates new labels that developers can use to deploy applications onto AWS Local Zones nodes. The new labels are:
+
+* `node-role.kubernetes.io/edge=''`
+* `machine.openshift.io/zone-type=local-zone`
+* `machine.openshift.io/zone-group=$ZONE_GROUP_NAME`
+
+////
+By default, the system creates the edge compute pool manifests only if users add AWS Local Zones subnet IDs to the list `platform.aws.subnets`.
+////
+
+By default, the machine sets for the edge compute pool defines the taint of `NoSchedule` to prevent regular workloads from spreading on Local Zone instances. Users can only run user workloads if they define tolerations in the pod specification.
+
+The following examples show `install-config.yaml` files that use the edge machine pool.
+
+.Configuration that uses an edge pool with a custom instance type
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: devcluster.openshift.com
+metadata:
+  name: ipi-localzone
+compute:
+- name: edge
+  platform:
+    aws:
+      type: m5.4xlarge
+platform:
+  aws:
+    region: us-west-2
+pullSecret: '{"auths": ...}'
+sshKey: ssh-ed25519 AAAA...
+----
+
+Instance types differ between locations. To verify availability in the Local Zone in which the cluster runs, see the AWS documentation.
+
+.Configuration that uses an edge pool with a custom EBS type
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: devcluster.openshift.com
+metadata:
+  name: ipi-localzone
+compute:
+- name: edge
+  platform:
+    aws:
+      rootVolume:
+        type: gp3
+        size: 120
+platform:
+  aws:
+    region: us-west-2
+pullSecret: '{"auths": ...}'
+sshKey: ssh-ed25519 AAAA...
+----
+
+EBS types differ between locations. Check the AWS documentation to verify availability in the Local Zone in which the cluster runs.
+
+.Configuration that uses an edge pool with custom security groups
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: devcluster.openshift.com
+metadata:
+  name: ipi-localzone
+compute:
+- name: edge
+  platform:
+    aws:
+      additionalSecurityGroupIDs:
+        - sg-1 <1>
+        - sg-2
+platform:
+  aws:
+    region: us-west-2
+pullSecret: '{"auths": ...}'
+sshKey: ssh-ed25519 AAAA...
+----
+<1> Specify the name of the security group as it appears in the Amazon EC2 console, including the `sg` prefix.
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../networking/changing-cluster-network-mtu.adoc#mtu-value-selection_changing-cluster-network-mtu[Changing the MTU for the cluster network]
+* xref:../../networking/changing-cluster-network-mtu.adoc#nw-ovn-ipsec-enable_configuring-ipsec-ovn[Enabling IPsec encryption]
+* xref:../../nodes/scheduling/nodes-scheduler-taints-tolerations.adoc#nodes-scheduler-taints-tolerations-about_nodes-scheduler-taints-tolerations[Understanding taints and tolerations]
+
+////
+// Revisit the need for the link to this section based on testing outcome of 4.15 Wavelenght Zone testing work that also assesses Manual STS, Manual long-term, and Mint routes.
+//Supertask: Configuring an AWS cluster to use short-term credentials
+[id="installing-aws-with-short-term-creds_{context}"]
+== Optional: Configuring an AWS cluster to use short-term credentials
+
+To install a cluster that is configured to use the AWS Security Token Service (STS), you must configure the CCO utility and create the required AWS resources for your cluster.
+
+[NOTE]
+====
+To use the AWS STS, you must configure the Cloud Credential Operator (CCO) to run in manual mode. As part of the installation process, you set `credentialsMode` parameter to `Manual` after creating the `install-config.yaml` installation configuration file.
+====
+
+//Task part 1: Configuring the Cloud Credential Operator utility
+include::modules/cco-ccoctl-configuring.adoc[leveloffset=+2]
+
+//Task part 2: Creating the required AWS resources
+[id="sts-mode-create-aws-resources-ccoctl_{context}"]
+=== Creating AWS resources with the Cloud Credential Operator utility
+
+You have the following options when creating AWS resources:
+
+* You can use the `ccoctl aws create-all` command to create the AWS resources automatically. This is the quickest way to create the resources. See xref:../../installing/installing_aws/installing-aws-localzone.adoc#cco-ccoctl-creating-at-once_installing-aws-localzone[Creating AWS resources with a single command].
+
+* If you need to review the JSON files that the `ccoctl` tool creates before modifying AWS resources, or if the process the `ccoctl` tool uses to create AWS resources automatically does not meet the requirements of your organization, you can create the AWS resources individually. See xref:../../installing/installing_aws/installing-aws-localzone.adoc#cco-ccoctl-creating-individually_installing-aws-localzone[Creating AWS resources individually].
+
+//Task part 2a: Creating the required AWS resources all at once
+include::modules/cco-ccoctl-creating-at-once.adoc[leveloffset=+3]
+
+//Task part 2b: Creating the required AWS resources individually
+include::modules/cco-ccoctl-creating-individually.adoc[leveloffset=+3]
+////
+
+// Opting in to AWS Local Zones
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-localzone.adoc
+// * post_installation_configuration/aws-compute-edge-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-aws-add-local-zone-locations_{context}"]
+= Opting in to AWS Local Zones
+
+If you plan to create the subnets in AWS Local Zones, you must opt in to each zone group separately.
+
+.Prerequisites
+
+* You have installed the AWS CLI.
+* You have determined an AWS Region for where you want to deploy your {product-title} cluster.
+* You have attached a permissive IAM policy to a user or role account that opts in to the zone group. Consider the following configuration as an example IAM policy:
++
+[source,yaml]
+----
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ec2:ModifyAvailabilityZoneGroup"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+----
+
+.Procedure
+
+. List the zones that are available in your AWS Region by running the following command:
++
+[source,terminal]
+----
+$ aws --region "<value_of_AWS_Region>" ec2 describe-availability-zones \
+    --query 'AvailabilityZones[].[{ZoneName: ZoneName, GroupName: GroupName, Status: OptInStatus}]' \
+    --filters Name=zone-type,Values=local-zone \
+    --all-availability-zones
+----
++
+Depending on the AWS Region, the list of available zones can be long. The command returns the following fields:
++
+`ZoneName`:: The name of the Local Zone.
+`GroupName`:: The group that comprises the zone. To opt in to the region, save the name.
+`Status`:: The status of the Local Zone group. If the status is `not-opted-in`, you must opt in the `GroupName` by running the commands that follow.
+
+. Opt in to the zone group on your AWS account by running the following command:
++
+[source,terminal]
+----
+$ aws ec2 modify-availability-zone-group \
+    --group-name "<value_of_GroupName>" \// <1>
+    --opt-in-status opted-in
+----
+<1> For `<value_of_GroupName>`, specify the name of the group of the Local Zone where you want to create subnets. For example, specify `us-east-1-nyc-1` to use the zone `us-east-1-nyc-1a` (US East New York).
+
+:leveloffset!:
+
+// Cluster installation options for an AWS Local Zone environment
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-localzone.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="aws-cluster-installation-options-aws-lzs_{context}"]
+= Cluster installation options for an AWS Local Zones environment
+
+To install an {product-title} cluster in an AWS Local Zones environment on AWS infrastructure, choose one of the following installation options:
+
+* Installing a cluster to quickly extend workers to edge compute pools, where the installation program automatically creates resources for the {product-title} cluster.
+
+* Installing a cluster on AWS into an existing VPC, where you must add Local Zone subnets to the `install-config.yaml` file.
+
+:leveloffset!:
+
+.Next steps
+
+Choose one of the following options to install an {product-title} cluster in an AWS Local Zones environment:
+
+* xref:../../installing/installing_aws/installing-aws-localzone.adoc#installation-cluster-quickly-extend-workers_installing-aws-localzone[Installing a cluster quickly in AWS Local Zones]
+* xref:../../installing/installing_aws/installing-aws-localzone.adoc#creating-aws-local-zone-environment-existing_installing-aws-localzone[Installing a cluster in an existing VPC with defined Local Zone subnets]
+
+// Installing a cluster quickly in AWS Local Zones
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing-aws-localzone.adoc
+
+:_mod-docs-content-type: CONCEPT
+
+[id="installation-cluster-quickly-extend-workers_{context}"]
+= Install a cluster quickly in AWS Local Zones
+
+For {product-title} {product-version}, you can quickly install a cluster on Amazon Web Services (AWS) to extend compute nodes to Local Zone locations. By using this installation route, the installation program automatically creates network resources and Local Zone subnets for each Local Zone that you defined in your configuration file. To customize the installation, you must modify parameters in the `install-config.yaml` file before you deploy the cluster.
+
+:leveloffset!:
+
+// Modifying an installation configuration to use AWS Local Zones
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * installing/installing_aws/installing-aws-localzone.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="install-creating-install-config-aws-local-zones_{context}"]
+= Modifying an installation configuration file to use AWS Local Zones
+
+Modify an `install-config.yaml` file to include AWS Local Zones.
+
+.Prerequisites
+
+* You have configured an AWS account.
+* You added your AWS keys and region to your local AWS profile by running `aws configure`.
+* You have read the configuration limitations that apply when you specify the installation program to automatically create subnets for your {product-title} cluster. See the section named "Cluster limitations in AWS Local Zones".
+* You opted in to the Local Zone group for each zone.
+* You created an `install-config.yaml` file by using the procedure "Creating the installation configuration file".
+
+.Procedure
+
+. Modify the `install-config.yaml` file by specifying Local Zone names in the `platform.aws.zones` property of the edge compute pool. For example:
++
+[source,yaml]
+----
+...
+platform:
+  aws:
+    region: <region_name> <1>
+compute:
+- name: edge
+  platform:
+    aws:
+      zones: <2>
+      - <local_zone_name>
+#...
+----
+<1> The AWS Region name.
+<2> The list of Local Zone names that must belong in the same AWS Region.
++
+.Example of a configuration to install a cluster in the `us-west-2` AWS Region that extends edge nodes to Local Zones in `Los Angeles` and `Las Vegas` locations.
++
+[source,yaml]
+----
+apiVersion: v1
+baseDomain: example.com
+metadata:
+  name: cluster-name
+platform:
+  aws:
+    region: us-west-2
+compute:
+- name: edge
+  platform:
+    aws:
+      zones:
+      - us-west-2-lax-1a
+      - us-west-2-lax-1b
+      - us-west-2-las-1a
+pullSecret: '{"auths": ...}'
+sshKey: 'ssh-ed25519 AAAA...'
+#...
+----
+
+. Deploy your cluster.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../../installing/installing_aws/installing-aws-localzone.adoc#cluster-limitations-local-zone_installing-aws-localzone[Creating the installation configuration file]
+
+* xref:../../installing/installing_aws/installing-aws-localzone.adoc#cluster-limitations-local-zone_installing-aws-localzone[Cluster limitations in AWS Local Zones]
+
+.Next steps
+* xref:../../installing/installing_aws/installing-aws-localzone.adoc#installation-launching-installer_installing-aws-localzone[Deploying the cluster]
+
+[id="creating-aws-local-zone-environment-existing_{context}"]
+== Installing a cluster in an existing VPC that has Local Zone subnets
+
+You can install a cluster into an existing Amazon Virtual Private Cloud (VPC) on Amazon Web Services (AWS). The installation program provisions the rest of the required infrastructure, which you can further customize. To customize the installation, modify parameters in the `install-config.yaml` file before you install the cluster.
+
+Installing a cluster on AWS into an existing VPC requires extending workers to the edge of the Cloud Infrastructure by using AWS Local Zones.
+
+Local Zone subnets extend regular workers' nodes to edge networks. Each edge worker nodes runs a user workload. After you create an Amazon Web Service (AWS) Local Zone environment, and you deploy your cluster, you can use edge worker nodes to create user workloads in Local Zone subnets.
+
+You can use a provided CloudFormation template to create the VPC and public subnets. Additionally, you can modify a template to customize your infrastructure or use the information that they contain to create AWS objects according to your company's policies.
+
+[NOTE]
+====
+If you want to create private subnets, you must either modify the provided CloudFormation template or create your own template.
+====
+
+// Creating a VPC in AWS
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-localzone.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-creating-aws-vpc-localzone_{context}"]
+= Creating a VPC in AWS
+
+You can create a Virtual Private Cloud (VPC), and subnets for each Local Zone location, in Amazon Web Services (AWS) for your {product-title}
+cluster to extend worker nodes to the edge locations. You can further customize the VPC to meet your requirements, including
+VPN, route tables, and add new Local Zone subnets that are not included at initial deployment.
+
+You can use the provided CloudFormation template and a custom parameter file to create a stack of AWS resources that represent the VPC.
+
+[NOTE]
+====
+If you do not use the provided CloudFormation template to create your AWS
+infrastructure, you must review the provided information and manually create
+the infrastructure. If your cluster does not initialize correctly, you might
+have to contact Red Hat support with your installation logs.
+====
+
+.Prerequisites
+
+* You configured an AWS account.
+* You added your AWS keys and region to your local AWS profile by running `aws configure`.
+* You opted in to the AWS Local Zones on your AWS account.
+
+.Procedure
+
+. Create a JSON file that contains the parameter values that the template
+requires:
++
+[source,json]
+----
+[
+  {
+    "ParameterKey": "VpcCidr", <1>
+    "ParameterValue": "10.0.0.0/16" <2>
+  },
+  {
+    "ParameterKey": "AvailabilityZoneCount", <3>
+    "ParameterValue": "3" <4>
+  },
+  {
+    "ParameterKey": "SubnetBits", <5>
+    "ParameterValue": "12" <6>
+  }
+]
+----
+<1> The CIDR block for the VPC.
+<2> Specify a CIDR block in the format `x.x.x.x/16-24`.
+<3> The number of availability zones to deploy the VPC in.
+<4> Specify an integer between `1` and `3`.
+<5> The size of each subnet in each availability zone.
+<6> Specify an integer between  `5` and `13`, where `5` is `/27` and `13` is `/19`.
+
+. Copy the template from the *CloudFormation template for the VPC*
+section of this topic and save it as a YAML file on your computer. This template
+describes the VPC that your cluster requires.
+
+. Launch the CloudFormation template to create a stack of AWS resources that represent the VPC by running the following command:
++
+[IMPORTANT]
+====
+You must enter the command on a single line.
+====
++
+[source,terminal]
+----
+$ aws cloudformation create-stack --stack-name <name> \  <1>
+     --template-body file://<template>.yaml \  <2>
+     --parameters file://<parameters>.json  <3>
+----
+<1> `<name>` is the name for the CloudFormation stack, such as `cluster-vpc`.
+You need the name of this stack if you remove the cluster.
+<2> `<template>` is the relative path to and name of the CloudFormation template
+YAML file that you saved.
+<3> `<parameters>` is the relative path to and name of the CloudFormation
+parameters JSON file.
++
+.Example output
+[source,terminal]
+----
+arn:aws:cloudformation:us-east-1:123456789012:stack/cluster-vpc/dbedae40-2fd3-11eb-820e-12a48460849f
+----
+
+. Confirm that the template components exist by running the following command:
++
+[source,terminal]
+----
+$ aws cloudformation describe-stacks --stack-name <name>
+----
++
+After the `StackStatus` displays `CREATE_COMPLETE`, the output displays values
+for the following parameters. You must provide these parameter values to
+the other CloudFormation templates that you run to create your cluster:
+[horizontal]
+`VpcId`:: The ID of your VPC.
+`PublicSubnetIds`:: The IDs of the new public subnets.
+`PrivateSubnetIds`:: The IDs of the new private subnets.
+`PublicRouteTableId`:: The ID of the new public route table ID.
+
+
+:leveloffset!:
+// Creating a subnet in AWS Local Zones
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-localzone.adoc
+// * post_installation_configuration/aws-compute-edge-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-creating-aws-subnet-localzone_{context}"]
+= Creating a subnet in AWS Local Zones
+
+You must create a subnet in AWS Local Zones before you configure a worker machineset for your {product-title} cluster.
+
+You must repeat the following process for each Local Zone you want to deploy worker nodes to.
+
+You can use the provided CloudFormation template and a custom parameter file to create a stack of AWS resources that represent the subnet.
+
+[NOTE]
+====
+If you do not use the provided CloudFormation template to create your AWS
+infrastructure, you must review the provided information and manually create
+the infrastructure. If your cluster does not initialize correctly, you might
+have to contact Red Hat support with your installation logs.
+====
+
+.Prerequisites
+
+* You configured an AWS account.
+* You added your AWS keys and region to your local AWS profile by running `aws configure`.
+* You opted in to the Local Zone group.
+
+.Procedure
+
+. Create a JSON file that contains the parameter values that the template
+requires:
++
+[source,json]
+----
+[
+  {
+    "ParameterKey": "VpcId",
+    "ParameterValue": "<value_of_VpcId>" <1>
+  },
+  {
+    "ParameterKey": "PublicRouteTableId",
+    "ParameterValue": "<value_of_PublicRouteTableId>" <2>
+  },
+  {
+    "ParameterKey": "ZoneName",
+    "ParameterValue": "<value_of_ZoneName>" <3>
+  },
+  {
+    "ParameterKey": "SubnetName",
+    "ParameterValue": "<value_of_SubnetName>"
+  },
+  {
+    "ParameterKey": "PublicSubnetCidr",
+    "ParameterValue": "10.0.192.0/20" <4>
+  }
+]
+----
+<1> Specify the VPC ID, which is the value `VpcID` in the output of the CloudFormation template.
+for the VPC.
+<2> Specify the Route Table ID, which is the value of the `PublicRouteTableId` in the CloudFormation stack
+for the VPC.
+<3> Specify the AWS Local Zone name, which is the value of the `ZoneName` field in the `AvailabilityZones` object that you retrieve in the section "Opting in to AWS Local Zones".
+<4> Specify a CIDR block that is used to create the Local Zone subnet. This block must be part of the VPC CIDR block `VpcCidr`.
+
+. Copy the template from the *CloudFormation template for the subnet*
+section of this topic and save it as a YAML file on your computer. This template
+describes the VPC that your cluster requires.
+
+. Launch the CloudFormation template to create a stack of AWS resources that represent the VPC by running the following command:
++
+[IMPORTANT]
+====
+You must enter the command on a single line.
+====
++
+[source,terminal]
+----
+$ aws cloudformation create-stack --stack-name <subnet_stack_name> \ <1>
+     --template-body file://<template>.yaml \ <2>
+     --parameters file://<parameters>.json <3>
+----
+<1> `<subnet_stack_name>` is the name for the CloudFormation stack, such as `cluster-lz-<local_zone_shortname>`.
+You need the name of this stack if you remove the cluster.
+<2> `<template>` is the relative path to and name of the CloudFormation template
+YAML file that you saved.
+<3> `<parameters>` is the relative path to and name of the CloudFormation
+parameters JSON file.
++
+.Example output
+[source,terminal]
+----
+arn:aws:cloudformation:us-east-1:123456789012:stack/<subnet_stack_name>/dbedae40-2fd3-11eb-820e-12a48460849f
+----
+
+. Confirm that the template components exist by running the following command:
++
+[source,terminal]
+----
+$ aws cloudformation describe-stacks --stack-name <subnet_stack_name>
+----
++
+After the `StackStatus` displays `CREATE_COMPLETE`, the output displays values
+for the following parameters. You must provide these parameter values to
+the other CloudFormation templates that you run to create your cluster:
+[horizontal]
+`PublicSubnetIds`:: The IDs of the new public subnets.
+
+:leveloffset!:
+// CloudFormation template for the VPC
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-localzone.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="installation-cloudformation-vpc-localzone_{context}"]
+= CloudFormation template for the VPC
+
+You can use the following CloudFormation template to deploy the VPC that
+you need for your {product-title} cluster.
+
+.CloudFormation template for the VPC
+[%collapsible]
+====
+[source,yaml]
+----
+AWSTemplateFormatVersion: 2010-09-09
+Description: Template for Best Practice VPC with 1-3 AZs
+
+Parameters:
+  VpcCidr:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-4]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-24.
+    Default: 10.0.0.0/16
+    Description: CIDR block for VPC.
+    Type: String
+  AvailabilityZoneCount:
+    ConstraintDescription: "The number of availability zones. (Min: 1, Max: 3)"
+    MinValue: 1
+    MaxValue: 3
+    Default: 1
+    Description: "How many AZs to create VPC subnets for. (Min: 1, Max: 3)"
+    Type: Number
+  SubnetBits:
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/19-27.
+    MinValue: 5
+    MaxValue: 13
+    Default: 12
+    Description: "Size of each subnet to create within the availability zones. (Min: 5 = /27, Max: 13 = /19)"
+    Type: Number
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: "Network Configuration"
+      Parameters:
+      - VpcCidr
+      - SubnetBits
+    - Label:
+        default: "Availability Zones"
+      Parameters:
+      - AvailabilityZoneCount
+    ParameterLabels:
+      AvailabilityZoneCount:
+        default: "Availability Zone Count"
+      VpcCidr:
+        default: "VPC CIDR"
+      SubnetBits:
+        default: "Bits Per Subnet"
+
+Conditions:
+  DoAz3: !Equals [3, !Ref AvailabilityZoneCount]
+  DoAz2: !Or [!Equals [2, !Ref AvailabilityZoneCount], Condition: DoAz3]
+
+Resources:
+  VPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      CidrBlock: !Ref VpcCidr
+  PublicSubnet:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [0, !Cidr [!Ref VpcCidr, 6, !Ref SubnetBits]]
+      AvailabilityZone: !Select
+      - 0
+      - Fn::GetAZs: !Ref "AWS::Region"
+  PublicSubnet2:
+    Type: "AWS::EC2::Subnet"
+    Condition: DoAz2
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [1, !Cidr [!Ref VpcCidr, 6, !Ref SubnetBits]]
+      AvailabilityZone: !Select
+      - 1
+      - Fn::GetAZs: !Ref "AWS::Region"
+  PublicSubnet3:
+    Type: "AWS::EC2::Subnet"
+    Condition: DoAz3
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [2, !Cidr [!Ref VpcCidr, 6, !Ref SubnetBits]]
+      AvailabilityZone: !Select
+      - 2
+      - Fn::GetAZs: !Ref "AWS::Region"
+  InternetGateway:
+    Type: "AWS::EC2::InternetGateway"
+  GatewayToInternet:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  PublicRouteTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref VPC
+  PublicRoute:
+    Type: "AWS::EC2::Route"
+    DependsOn: GatewayToInternet
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PublicSubnetRouteTableAssociation:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnetRouteTableAssociation2:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Condition: DoAz2
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnetRouteTableAssociation3:
+    Condition: DoAz3
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref PublicSubnet3
+      RouteTableId: !Ref PublicRouteTable
+  PrivateSubnet:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [3, !Cidr [!Ref VpcCidr, 6, !Ref SubnetBits]]
+      AvailabilityZone: !Select
+      - 0
+      - Fn::GetAZs: !Ref "AWS::Region"
+  PrivateRouteTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref VPC
+  PrivateSubnetRouteTableAssociation:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref PrivateSubnet
+      RouteTableId: !Ref PrivateRouteTable
+  NAT:
+    DependsOn:
+    - GatewayToInternet
+    Type: "AWS::EC2::NatGateway"
+    Properties:
+      AllocationId:
+        "Fn::GetAtt":
+        - EIP
+        - AllocationId
+      SubnetId: !Ref PublicSubnet
+  EIP:
+    Type: "AWS::EC2::EIP"
+    Properties:
+      Domain: vpc
+  Route:
+    Type: "AWS::EC2::Route"
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NAT
+  PrivateSubnet2:
+    Type: "AWS::EC2::Subnet"
+    Condition: DoAz2
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [4, !Cidr [!Ref VpcCidr, 6, !Ref SubnetBits]]
+      AvailabilityZone: !Select
+      - 1
+      - Fn::GetAZs: !Ref "AWS::Region"
+  PrivateRouteTable2:
+    Type: "AWS::EC2::RouteTable"
+    Condition: DoAz2
+    Properties:
+      VpcId: !Ref VPC
+  PrivateSubnetRouteTableAssociation2:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Condition: DoAz2
+    Properties:
+      SubnetId: !Ref PrivateSubnet2
+      RouteTableId: !Ref PrivateRouteTable2
+  NAT2:
+    DependsOn:
+    - GatewayToInternet
+    Type: "AWS::EC2::NatGateway"
+    Condition: DoAz2
+    Properties:
+      AllocationId:
+        "Fn::GetAtt":
+        - EIP2
+        - AllocationId
+      SubnetId: !Ref PublicSubnet2
+  EIP2:
+    Type: "AWS::EC2::EIP"
+    Condition: DoAz2
+    Properties:
+      Domain: vpc
+  Route2:
+    Type: "AWS::EC2::Route"
+    Condition: DoAz2
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable2
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NAT2
+  PrivateSubnet3:
+    Type: "AWS::EC2::Subnet"
+    Condition: DoAz3
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [5, !Cidr [!Ref VpcCidr, 6, !Ref SubnetBits]]
+      AvailabilityZone: !Select
+      - 2
+      - Fn::GetAZs: !Ref "AWS::Region"
+  PrivateRouteTable3:
+    Type: "AWS::EC2::RouteTable"
+    Condition: DoAz3
+    Properties:
+      VpcId: !Ref VPC
+  PrivateSubnetRouteTableAssociation3:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Condition: DoAz3
+    Properties:
+      SubnetId: !Ref PrivateSubnet3
+      RouteTableId: !Ref PrivateRouteTable3
+  NAT3:
+    DependsOn:
+    - GatewayToInternet
+    Type: "AWS::EC2::NatGateway"
+    Condition: DoAz3
+    Properties:
+      AllocationId:
+        "Fn::GetAtt":
+        - EIP3
+        - AllocationId
+      SubnetId: !Ref PublicSubnet3
+  EIP3:
+    Type: "AWS::EC2::EIP"
+    Condition: DoAz3
+    Properties:
+      Domain: vpc
+  Route3:
+    Type: "AWS::EC2::Route"
+    Condition: DoAz3
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable3
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NAT3
+  S3Endpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal: '*'
+          Action:
+          - '*'
+          Resource:
+          - '*'
+      RouteTableIds:
+      - !Ref PublicRouteTable
+      - !Ref PrivateRouteTable
+      - !If [DoAz2, !Ref PrivateRouteTable2, !Ref "AWS::NoValue"]
+      - !If [DoAz3, !Ref PrivateRouteTable3, !Ref "AWS::NoValue"]
+      ServiceName: !Join
+      - ''
+      - - com.amazonaws.
+        - !Ref 'AWS::Region'
+        - .s3
+      VpcId: !Ref VPC
+
+Outputs:
+  VpcId:
+    Description: ID of the new VPC.
+    Value: !Ref VPC
+  PublicSubnetIds:
+    Description: Subnet IDs of the public subnets.
+    Value:
+      !Join [
+        ",",
+        [!Ref PublicSubnet, !If [DoAz2, !Ref PublicSubnet2, !Ref "AWS::NoValue"], !If [DoAz3, !Ref PublicSubnet3, !Ref "AWS::NoValue"]]
+      ]
+  PrivateSubnetIds:
+    Description: Subnet IDs of the private subnets.
+    Value:
+      !Join [
+        ",",
+        [!Ref PrivateSubnet, !If [DoAz2, !Ref PrivateSubnet2, !Ref "AWS::NoValue"], !If [DoAz3, !Ref PrivateSubnet3, !Ref "AWS::NoValue"]]
+      ]
+  PublicRouteTableId:
+    Description: Public Route table ID
+    Value: !Ref PublicRouteTable
+----
+====
+
+:leveloffset!:
+// AWS security groups
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-localzone.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+
+:localzone:
+
+:_mod-docs-content-type: CONCEPT
+[id="installation-aws-security-groups_{context}"]
+= AWS security groups
+
+By default, the installation program creates and attaches security groups to control plane and compute machines. The rules associated with the default security groups cannot be modified.
+
+However, you can apply additional existing AWS security groups, which are associated with your existing VPC, to control plane and compute machines. Applying custom security groups can help you meet the security needs of your organization, in such cases where you need to control the incoming or outgoing traffic of these machines.
+
+As part of the installation process, you apply custom security groups by modifying the `install-config.yaml` file before deploying the cluster.
+
+For more information, see "Edge compute pools and AWS Local Zones".
+
+:!localzone:
+
+:leveloffset!:
+// CloududFormation template for the subnet that uses AWS Local Zones
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_aws/installing-aws-localzone.adoc
+// * post_installation_configuration/aws-compute-edge-tasks.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="installation-cloudformation-subnet-localzone_{context}"]
+= CloudFormation template for the subnet that uses AWS Local Zones
+
+You can use the following CloudFormation template to deploy the subnet that
+you need for your {product-title} cluster that uses AWS Local Zones.
+
+.CloudFormation template for the subnet
+[%collapsible]
+====
+[source,yaml]
+----
+# CloudFormation template used to create Local Zone subnets and dependencies
+AWSTemplateFormatVersion: 2010-09-09
+Description: Template for create Public Local Zone subnets
+
+Parameters:
+  VpcId:
+    Description: VPC Id
+    Type: String
+  ZoneName:
+    Description: Local Zone Name (Example us-east-1-nyc-1a)
+    Type: String
+  SubnetName:
+    Description: Local Zone Name (Example cluster-public-us-east-1-nyc-1a)
+    Type: String
+  PublicRouteTableId:
+    Description: Public Route Table ID to associate the Local Zone subnet
+    Type: String
+  PublicSubnetCidr:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-4]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-24.
+    Default: 10.0.128.0/20
+    Description: CIDR block for Public Subnet
+    Type: String
+
+Resources:
+  PublicSubnet:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VpcId
+      CidrBlock: !Ref PublicSubnetCidr
+      AvailabilityZone: !Ref ZoneName
+      Tags:
+      - Key: Name
+        Value: !Ref SubnetName
+      - Key: kubernetes.io/cluster/unmanaged
+        Value: "true"
+
+  PublicSubnetRouteTableAssociation:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTableId
+
+Outputs:
+  PublicSubnetIds:
+    Description: Subnet IDs of the public subnets.
+    Value:
+      !Join ["", [!Ref PublicSubnet]]
+----
+====
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* You can view details about the CloudFormation stacks that you create by navigating to the link:https://console.aws.amazon.com/cloudformation/[AWS CloudFormation console].
+
+// Modifying an installation configuration file to use AWS Local Zones subnets
+:leveloffset: +2
+
+// Module included in the following assemblies:
+// * installing/installing_aws/installing-aws-localzone.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="install-creating-install-config-aws-local-zones-subnets_{context}"]
+= Modifying an installation configuration file to use AWS Local Zones subnets
+
+Modify an `install-config.yaml` file to include AWS Local Zones subnets.
+
+.Prerequisites
+
+* You created subnets by using the procedure "Creating a subnet in AWS Local Zones".
+* You created an `install-config.yaml` file by using the procedure "Creating the installation configuration file".
+
+.Procedure
+
+* Modify the `install-config.yaml` configuration file by specifying Local Zone subnets in the `platform.aws.subnets` property, as demonstrated in the following example:
++
+[source,yaml]
+----
+...
+platform:
+  aws:
+    region: us-west-2
+    subnets: <1>
+    - publicSubnetId-1
+    - publicSubnetId-2
+    - publicSubnetId-3
+    - privateSubnetId-1
+    - privateSubnetId-2
+    - privateSubnetId-3
+    - publicSubnetId-LocalZone-1
+...
+----
+<1> List of subnets created in the Availability and Local Zones.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See link:https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html[Configuration and credential file settings] in the AWS documentation for more information about AWS profile and credential configuration.
+
+//include::modules/installation-configure-proxy.adoc[leveloffset=+2]
+//Put this back if QE validates it.
+
+// Verify removal due to automation.
+// include::modules/installation-localzone-generate-k8s-manifest.adoc[leveloffset=+2]
+
+////
+// Revisit the need for the link to this section based on testing outcome of 4.15 Wavelenght Zone testing work that also assesses Manual STS, Manual long-term, and Mint routes.
+[id="installing-aws-manual-modes_{context}"]
+== Alternatives to storing administrator-level secrets in the kube-system project
+
+By default, administrator secrets are stored in the `kube-system` project. If you configured the `credentialsMode` parameter in the `install-config.yaml` file to `Manual`, you must use one of the following alternatives:
+
+* If you configured the CCO utility (`ccoctl`) to implement short-term credentials for individual components, follow the procedure in xref:../../installing/installing_aws/installing-aws-localzone.adoc#cco-ccoctl-install-creating-manifests_installing-aws-localzone[Incorporating the Cloud Credential Operator utility manifests].
+
+* If you will manage cloud credentials manually, follow the procedure in xref:../../installing/installing_aws/installing-aws-localzone.adoc#manually-create-iam_installing-aws-localzone[Manually creating long-term credentials].
+
+// Additional steps for the Cloud Credential Operator utility (`ccoctl`)
+include::modules/cco-ccoctl-install-creating-manifests.adoc[leveloffset=+2]
+
+//Manually creating IAM
+include::modules/manually-create-identity-access-management.adoc[leveloffset=+2]
+////
+
+// Deploying the cluster
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-default.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-shared-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-ibm-cloud-customizations.adoc
+// * installing/installing_gcp/installing-ibm-cloud-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-customizations.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// If you use this module in any other assembly, you must update the ifeval
+// statements.
+
+:custom-config:
+:aws:
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-launching-installer_{context}"]
+= Deploying the cluster
+
+You can install {product-title} on a compatible cloud platform.
+
+[IMPORTANT]
+====
+You can run the `create cluster` command of the installation program only once, during initial installation.
+====
+
+.Prerequisites
+
+* You have configured an account with the cloud platform that hosts your cluster.
+
+* You have the {product-title} installation program and the pull secret for your cluster.
+* You have verified that the cloud provider account on your host has the correct permissions to deploy the cluster. An account with incorrect permissions causes the installation process to fail with an error message that displays the missing permissions.
+
+.Procedure
+
+. Change to the directory that contains the installation program and initialize the cluster deployment:
++
+[source,terminal]
+----
+$ ./openshift-install create cluster --dir <installation_directory> \ <1>
+    --log-level=info <2>
+----
+<1> For `<installation_directory>`, specify the
+location of your customized `./install-config.yaml` file.
+<2> To view different installation details, specify `warn`, `debug`, or
+`error` instead of `info`.
+
+
+
+. Optional: Remove or disable the `AdministratorAccess` policy from the IAM
+account that you used to install the cluster.
++
+[NOTE]
+====
+The elevated permissions provided by the `AdministratorAccess` policy are required only during installation.
+====
+
+
+.Verification
+When the cluster deployment completes successfully:
+
+* The terminal displays directions for accessing your cluster, including a link to the web console and credentials for the `kubeadmin` user.
+* Credential information also outputs to `<installation_directory>/.openshift_install.log`.
+
+[IMPORTANT]
+====
+Do not delete the installation program or the files that the installation program creates. Both are required to delete the cluster.
+====
+
+.Example output
+[source,terminal]
+----
+...
+INFO Install complete!
+INFO To access the cluster as the system:admin user when using 'oc', run 'export KUBECONFIG=/home/myuser/install_dir/auth/kubeconfig'
+INFO Access the OpenShift web-console here: https://console-openshift-console.apps.mycluster.example.com
+INFO Login to the console with user: "kubeadmin", and password: "password"
+INFO Time elapsed: 36m22s
+----
+
+[IMPORTANT]
+====
+* The Ignition config files that the installation program generates contain certificates that expire after 24 hours, which are then renewed at that time. If the cluster is shut down before renewing the certificates and the cluster is later restarted after the 24 hours have elapsed, the cluster automatically recovers the expired certificates. The exception is that you must manually approve the pending `node-bootstrapper` certificate signing requests (CSRs) to recover kubelet certificates. See the documentation for _Recovering from expired control plane certificates_ for more information.
+
+* It is recommended that you use Ignition config files within 12 hours after they are generated because the 24-hour certificate rotates from 16 to 22 hours after the cluster is installed. By using the Ignition config files within 12 hours, you can avoid installation failure if the certificate update runs during installation.
+====
+
+:!custom-config:
+:!aws:
+
+:leveloffset!:
+
+.Next steps
+* xref:../../post_installation_configuration/cluster-tasks.adoc#installation-extend-edge-nodes-aws-local-zones_post-install-cluster-tasks[Creating user workloads in AWS Local Zones]
+
+// Logging in to the cluster by using the CLI
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp_user_infra/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="cli-logging-in-kubeadmin_{context}"]
+= Logging in to the cluster by using the CLI
+
+You can log in to your cluster as a default system user by exporting the cluster `kubeconfig` file.
+The `kubeconfig` file contains information about the cluster that is used by the CLI to connect a client to the correct cluster and API server.
+The file is specific to a cluster and is created during {product-title} installation.
+
+.Prerequisites
+
+* You deployed an {product-title} cluster.
+* You installed the `oc` CLI.
+
+.Procedure
+
+. Export the `kubeadmin` credentials:
++
+[source,terminal]
+----
+$ export KUBECONFIG=<installation_directory>/auth/kubeconfig <1>
+----
+<1> For `<installation_directory>`, specify the path to the directory that you stored
+the installation files in.
+
+. Verify you can run `oc` commands successfully using the exported configuration:
++
+[source,terminal]
+----
+$ oc whoami
+----
++
+.Example output
+[source,terminal]
+----
+system:admin
+----
+
+:leveloffset!:
+
+// Logging in to the cluster by using the web console
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_aws/installing-aws-china.adoc.
+// * installing/installing_aws/installing-aws-secret-region.adoc
+// *installing/validating-an-installation.adoc
+// *installing/installing_aws/installing-aws-user-infra.adoc
+// *installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// *installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="logging-in-by-using-the-web-console_{context}"]
+= Logging in to the cluster by using the web console
+
+The `kubeadmin` user exists by default after an {product-title} installation. You can log in to your cluster as the `kubeadmin` user by using the {product-title} web console.
+
+.Prerequisites
+
+* You have access to the installation host.
+* You completed a cluster installation and all cluster Operators are available.
+
+.Procedure
+
+. Obtain the password for the `kubeadmin` user from the `kubeadmin-password` file on the installation host:
++
+[source,terminal]
+----
+$ cat <installation_directory>/auth/kubeadmin-password
+----
++
+[NOTE]
+====
+Alternatively, you can obtain the `kubeadmin` password from the `<installation_directory>/.openshift_install.log` log file on the installation host.
+====
+
+. List the {product-title} web console route:
++
+[source,terminal]
+----
+$ oc get routes -n openshift-console | grep 'console-openshift'
+----
++
+[NOTE]
+====
+Alternatively, you can obtain the {product-title} route from the `<installation_directory>/.openshift_install.log` log file on the installation host.
+====
++
+.Example output
+[source,terminal]
+----
+console     console-openshift-console.apps.<cluster_name>.<base_domain>            console     https   reencrypt/Redirect   None
+----
+
+. Navigate to the route detailed in the output of the preceding command in a web browser and log in as the `kubeadmin` user.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See xref:../../web_console/web-console.adoc#web-console[Accessing the web console] for more details about accessing and understanding the {product-title} web console.
+
+// Verifying nodes that were created with edge compute pool
+:leveloffset: +1
+
+// Module included in the following assemblies
+// * installing/installing_aws/installing-aws-localzone.adoc
+// * post_installation_configuration/aws-compute-edge-tasks.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="machine-edge-pool-review-nodes_{context}"]
+= Verifying nodes that were created with edge compute pool
+
+After you install a cluster that uses AWS Local Zones, check the status of the machine that was created by the machine set manifests created at install time.
+
+. To check the machine sets created from the subnet you added to the `install-config.yaml` file, run the following command:
++
+[source,terminal]
+----
+$ oc get machineset -n openshift-machine-api
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                  DESIRED   CURRENT   READY   AVAILABLE   AGE
+cluster-7xw5g-edge-us-east-1-nyc-1a   1         1         1       1           3h4m
+cluster-7xw5g-worker-us-east-1a       1         1         1       1           3h4m
+cluster-7xw5g-worker-us-east-1b       1         1         1       1           3h4m
+cluster-7xw5g-worker-us-east-1c       1         1         1       1           3h4m
+----
+
+. To check the machines that were created from the machine sets, run the following command:
++
+[source,terminal]
+----
+$ oc get machines -n openshift-machine-api
+----
++
+.Example output
+----
+NAME                                        PHASE     TYPE          REGION      ZONE               AGE
+cluster-7xw5g-edge-us-east-1-nyc-1a-wbclh   Running   c5d.2xlarge   us-east-1   us-east-1-nyc-1a   3h
+cluster-7xw5g-master-0                      Running   m6i.xlarge    us-east-1   us-east-1a         3h4m
+cluster-7xw5g-master-1                      Running   m6i.xlarge    us-east-1   us-east-1b         3h4m
+cluster-7xw5g-master-2                      Running   m6i.xlarge    us-east-1   us-east-1c         3h4m
+cluster-7xw5g-worker-us-east-1a-rtp45       Running   m6i.xlarge    us-east-1   us-east-1a         3h
+cluster-7xw5g-worker-us-east-1b-glm7c       Running   m6i.xlarge    us-east-1   us-east-1b         3h
+cluster-7xw5g-worker-us-east-1c-qfvz4       Running   m6i.xlarge    us-east-1   us-east-1c         3h
+----
+
+. To check nodes with edge roles, run the following command:
++
+[source,terminal]
+----
+$ oc get nodes -l node-role.kubernetes.io/edge
+----
++
+.Example output
+[source,terminal]
+----
+NAME                           STATUS   ROLES         AGE    VERSION
+ip-10-0-207-188.ec2.internal   Ready    edge,worker   172m   v1.25.2+d2e245f
+----
+
+:leveloffset!:
+
+// Telemetry access for OpenShift Container Platform
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_alibaba/installing-alibaba-network-customizations.adoc
+// * installing/installing_alibaba/installing-alibaba-vpc.adoc
+// * installing/installing_bare_metal/installing-bare-metal-network-customizations.adoc
+// * installing/installing_bare_metal/installing-bare-metal.adoc
+// * installing/installing_bare_metal/installing-restricted-networks-bare-metal.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-installer-provisioned-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-installer-provisioned.adoc
+// * installing/installing_vsphere/installing-vsphere.adoc
+// * installing/installing_vsphere/installing-vsphere-network-customizations.adoc
+// * installing/installing_vsphere/installing-restricted-networks-vsphere.adoc
+// * installing/installing_platform_agnostic/installing-platform-agnostic.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-ibm-z-kvm.adoc
+// * installing/installing_ibm_z/installing-restricted-networks-ibm-z.adoc
+// * installing/installing_ibm_z/installing-ibm-z.adoc
+// * installing/installing_azure/installing-azure-vnet.adoc
+// * installing/installing_azure/installing-azure-user-infra.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-default.adoc
+// * installing/installing_azure_stack_hub/installing-azure-stack-hub-user-infra.adoc
+// * installing/installing_azure/installing-azure-default.adoc
+// * installing/installing_azure/installing-azure-network-customizations.adoc
+// * installing/installing_azure/installing-azure-government-region.adoc
+// * installing/installing_azure/installing-azure-customizations.adoc
+// * installing/installing_azure/installing-azure-private.adoc
+// * installing/installing_aws/installing-aws-network-customizations.adoc
+// * installing/installing_aws/installing-aws-user-infra.adoc
+// * installing/installing_aws/installing-restricted-networks-aws.adoc
+// * installing/installing_aws/installing-aws-customizations.adoc
+// * installing/installing_aws/installing-aws-private.adoc
+// * installing/installing_aws/installing-restricted-networks-aws-installer-provisioned.adoc
+// * installing/installing_aws/installing-aws-default.adoc
+// * installing/installing_aws/installing-aws-vpc.adoc
+// * installing/installing_aws/installing-aws-government-region.adoc
+// * installing/installing_aws/installing-aws-china.adoc
+// * installing/installing_aws/installing-aws-outposts-remote-workers.adoc
+// * installing/installing_openstack/installing-openstack-installer-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer-restricted.adoc
+// * installing/installing_openstack/installing-openstack-user.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-user-sr-iov.adoc
+// * installing/installing_openstack/installing-openstack-installer-custom.adoc
+// * installing/installing_openstack/installing-openstack-user-kuryr.adoc
+// * installing/installing_openstack/installing-openstack-installer.adoc
+// * installing/installing_openstack/installing-openstack-installer-sr-iov.adoc
+// * installing/installing_gcp/installing-gcp-customizations.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+// * installing/installing_gcp/installing-gcp-private.adoc
+// * installing/installing_gcp/installing-gcp-user-infra-vpc.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp-installer-provisioned.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-gcp-default.adoc
+// * installing/installing_gcp/installing-gcp-vpc.adoc
+// * installing/installing_gcp/installing-gcp-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-network-customizations.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-vpc.adoc
+// * installing/installing_ibm_cloud_public/installing-ibm-cloud-private.adoc
+// * installing/installing_ibm_power/installing-ibm-power.adoc
+// * installing/installing_ibm_power/installing-restricted-networks-ibm-power.adoc
+// * installing/installing_ibm_powervs/installing-ibm-power-vs-private-cluster.adoc
+// * installing/installing_ibm_powervs/installing-restricted-networks-ibm-power-vs.adoc
+// * installing/installing_ibm_powervs/installing-ibm-powervs-vpc.adoc
+// * installing/installing-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-nutanix-installer-provisioned.adoc
+// * installing/installing-restricted-networks-azure-installer-provisioned.adoc
+// * installing/installing_azure/installing-restricted-networks-azure-user-provisioned.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cluster-telemetry_{context}"]
+= Telemetry access for {product-title}
+
+In {product-title} {product-version}, the Telemetry service, which runs by default to provide metrics about cluster health and the success of updates, requires internet access. If your cluster is connected to the internet, Telemetry runs automatically, and your cluster is registered to {cluster-manager-url}.
+
+After you confirm that your {cluster-manager-url} inventory is correct, either maintained automatically by Telemetry or manually by using {cluster-manager}, link:https://access.redhat.com/documentation/en-us/subscription_central/2020-04/html/getting_started_with_subscription_watch/con-how-to-select-datacollection-tool_assembly-requirements-and-your-responsibilities-ctxt#red_hat_openshift[use subscription watch] to track your {product-title} subscriptions at the account or multi-cluster level.
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See xref:../../support/remote_health_monitoring/about-remote-health-monitoring.adoc#about-remote-health-monitoring[About remote health monitoring] for more information about the Telemetry service.
+
+[id="installing-aws-localzone-next-steps"]
+== Next steps
+
+* xref:../../post_installation_configuration/cluster-tasks.adoc#installation-extend-edge-nodes-aws-local-zones_post-install-cluster-tasks[Creating user workloads in AWS Local Zones].
+* xref:../../installing/validating-an-installation.adoc#validating-an-installation[Validating an installation].
+* xref:../../post_installation_configuration/cluster-tasks.adoc#available_cluster_customizations[Customize your cluster].
+* If necessary, you can xref:../../support/remote_health_monitoring/opting-out-of-remote-health-reporting.adoc#opting-out-remote-health-reporting_opting-out-remote-health-reporting[opt out of remote health reporting].
+////
+// Revisit the need for the link to this section based on testing outcome of 4.15 Wavelenght Zone testing work that also assesses Manual STS, Manual long-term, and Mint routes.
+* If necessary, you can xref:../../post_installation_configuration/cluster-tasks.adoc#manually-removing-cloud-creds_post-install-cluster-tasks[remove cloud provider credentials].
+////
+
+//# includes=_attributes/common-attributes,modules/cluster-limitations-local-zone,modules/cluster-entitlements,modules/installation-aws-marketplace-subscribe,modules/cli-installing-cli,modules/installation-obtaining-installer,modules/ssh-agent-using,modules/installation-user-infra-generate,modules/installation-minimum-resource-requirements,modules/installation-aws-tested-machine-types,modules/installation-generate-aws-user-infra-install-config,modules/edge-machine-pools-aws-local-zones,modules/installation-aws-add-local-zone-locations,modules/aws-cluster-installation-options-aws-lzs,modules/installation-cluster-quickly-extend-workers,modules/install-creating-install-config-aws-local-zones,modules/installation-creating-aws-vpc-localzone,modules/installation-creating-aws-subnet-localzone,modules/installation-cloudformation-vpc-localzone,modules/installation-aws-security-groups,modules/installation-cloudformation-subnet-localzone,modules/install-creating-install-config-aws-local-zones-subnets,modules/installation-launching-installer,modules/cli-logging-in-kubeadmin,modules/logging-in-by-using-the-web-console,modules/machine-edge-pool-review-nodes,modules/cluster-telemetry

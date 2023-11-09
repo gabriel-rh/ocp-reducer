@@ -1,0 +1,450 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="metallb-configure-services"]
+= Configuring services to use MetalLB
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: configure-services-metallb
+
+toc::[]
+
+As a cluster administrator, when you add a service of type `LoadBalancer`, you can control how MetalLB assigns an IP address.
+
+// Request a specific IP address
+[id="request-specific-ip-address_{context}"]
+== Request a specific IP address
+
+Like some other load-balancer implementations, MetalLB accepts the `spec.loadBalancerIP` field in the service specification.
+
+If the requested IP address is within a range from any address pool, MetalLB assigns the requested IP address.
+If the requested IP address is not within any range, MetalLB reports a warning.
+
+.Example service YAML for a specific IP address
+[source,yaml]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: <service_name>
+  annotations:
+    metallb.universe.tf/address-pool: <address_pool_name>
+spec:
+  selector:
+    <label_key>: <label_value>
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  type: LoadBalancer
+  loadBalancerIP: <ip_address>
+----
+
+If MetalLB cannot assign the requested IP address, the `EXTERNAL-IP` for the service reports `<pending>` and running `oc describe service <service_name>` includes an event like the following example.
+
+.Example event when MetalLB cannot assign a requested IP address
+[source,terminal]
+----
+  ...
+Events:
+  Type     Reason            Age    From                Message
+  ----     ------            ----   ----                -------
+  Warning  AllocationFailed  3m16s  metallb-controller  Failed to allocate IP for "default/invalid-request": "4.3.2.1" is not allowed in config
+----
+
+[id="request-ip-address-from-pool_{context}"]
+== Request an IP address from a specific pool
+
+To assign an IP address from a specific range, but you are not concerned with the specific IP address, then you can use the `metallb.universe.tf/address-pool` annotation to request an IP address from the specified address pool.
+
+.Example service YAML for an IP address from a specific pool
+[source,yaml]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: <service_name>
+  annotations:
+    metallb.universe.tf/address-pool: <address_pool_name>
+spec:
+  selector:
+    <label_key>: <label_value>
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  type: LoadBalancer
+----
+
+If the address pool that you specify for `<address_pool_name>` does not exist, MetalLB attempts to assign an IP address from any pool that permits automatic assignment.
+
+[id="accept-any-ip-address_{context}"]
+== Accept any IP address
+
+By default, address pools are configured to permit automatic assignment.
+MetalLB assigns an IP address from these address pools.
+
+To accept any IP address from any pool that is configured for automatic assignment, no special annotation or configuration is required.
+
+.Example service YAML for accepting any IP address
+[source,yaml]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: <service_name>
+spec:
+  selector:
+    <label_key>: <label_value>
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  type: LoadBalancer
+----
+
+[id="share-specific-ip-address_{context}"]
+== Share a specific IP address
+
+By default, services do not share IP addresses.
+However, if you need to colocate services on a single IP address, you can enable selective IP sharing by adding the `metallb.universe.tf/allow-shared-ip` annotation to the services.
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-http
+  annotations:
+    metallb.universe.tf/address-pool: doc-example
+    metallb.universe.tf/allow-shared-ip: "web-server-svc"  <1>
+spec:
+  ports:
+    - name: http
+      port: 80  <2>
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    <label_key>: <label_value>  <3>
+  type: LoadBalancer
+  loadBalancerIP: 172.31.249.7  <4>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-https
+  annotations:
+    metallb.universe.tf/address-pool: doc-example
+    metallb.universe.tf/allow-shared-ip: "web-server-svc"  <1>
+spec:
+  ports:
+    - name: https
+      port: 443  <2>
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    <label_key>: <label_value>  <3>
+  type: LoadBalancer
+  loadBalancerIP: 172.31.249.7  <4>
+----
+<1> Specify the same value for the `metallb.universe.tf/allow-shared-ip` annotation. This value is referred to as the _sharing key_.
+<2> Specify different port numbers for the services.
+<3> Specify identical pod selectors if you must specify `externalTrafficPolicy: local` so the services send traffic to the same set of pods. If you use the `cluster` external traffic policy, then the pod selectors do not need to be identical.
+<4> Optional: If you specify the three preceding items, MetalLB might colocate the services on the same IP address. To ensure that services share an IP address, specify the IP address to share.
+
+By default, Kubernetes does not allow multiprotocol load balancer services.
+This limitation would normally make it impossible to run a service like DNS that needs to listen on both TCP and UDP.
+To work around this limitation of Kubernetes with MetalLB, create two services:
+
+* For one service, specify TCP and for the second service, specify UDP.
+
+* In both services, specify the same pod selector.
+
+* Specify the same sharing key and `spec.loadBalancerIP` value to colocate the TCP and UDP services on the same IP address.
+
+// Configuring a service with MetalLB
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/metallb/nw-metalb-configure-svc.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nw-metallb-configure-svc_{context}"]
+= Configuring a service with MetalLB
+
+You can configure a load-balancing service to use an external IP address from an address pool.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+* Install the MetalLB Operator and start MetalLB.
+
+* Configure at least one address pool.
+
+* Configure your network to route traffic from the clients to the host network for the cluster.
+
+.Procedure
+
+. Create a `<service_name>.yaml` file. In the file, ensure that the `spec.type` field is set to `LoadBalancer`.
++
+Refer to the examples for information about how to request the external IP address that MetalLB assigns to the service.
+
+. Create the service:
++
+[source,terminal]
+----
+$ oc apply -f <service_name>.yaml
+----
++
+.Example output
+[source,terminal]
+----
+service/<service_name> created
+----
+
+.Verification
+
+* Describe the service:
++
+[source,terminal]
+----
+$ oc describe service <service_name>
+----
++
+.Example output
+----
+Name:                     <service_name>
+Namespace:                default
+Labels:                   <none>
+Annotations:              metallb.universe.tf/address-pool: doc-example  <.>
+Selector:                 app=service_name
+Type:                     LoadBalancer  <.>
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.105.237.254
+IPs:                      10.105.237.254
+LoadBalancer Ingress:     192.168.100.5  <.>
+Port:                     <unset>  80/TCP
+TargetPort:               8080/TCP
+NodePort:                 <unset>  30550/TCP
+Endpoints:                10.244.0.50:8080
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:  <.>
+  Type    Reason        Age                From             Message
+  ----    ------        ----               ----             -------
+  Normal  nodeAssigned  32m (x2 over 32m)  metallb-speaker  announcing from node "<node_name>"
+----
+<.> The annotation is present if you request an IP address from a specific pool.
+<.> The service type must indicate `LoadBalancer`.
+<.> The load-balancer ingress field indicates the external IP address if the service is assigned correctly.
+<.> The events field indicates the node name that is assigned to announce the external IP address.
+If you experience an error, the events field indicates the reason for the error.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/nw-metallb-configure-svc

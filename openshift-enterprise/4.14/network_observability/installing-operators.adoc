@@ -1,0 +1,714 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="installing-network-observability-operators"]
+= Installing the Network Observability Operator
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: network_observability
+
+toc::[]
+Installing Loki is a recommended prerequisite for using the Network Observability Operator. You can choose to use xref:../network_observability/installing-operators.adoc#network-observability-without-loki_network_observability[Network Observability without Loki], but there are some considerations for doing this, described in the previously linked section.
+
+The Loki Operator integrates a gateway that implements multi-tenancy and authentication with Loki for data flow storage. The `LokiStack` resource manages Loki, which is a scalable, highly-available, multi-tenant log aggregation system, and a web proxy with {product-title} authentication. The `LokiStack` proxy uses {product-title} authentication to enforce multi-tenancy and facilitate the saving and indexing of data in Loki log stores.
+
+[NOTE]
+====
+The Loki Operator can also be used for xref:../logging/cluster-logging-loki.adoc#cluster-logging-loki[Logging with the LokiStack]. The Network Observability Operator requires a dedicated LokiStack separate from Logging.
+====
+
+:leveloffset: +1
+
+// module included in the following assemblies:
+// networking/network_observability/installing-operators.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="network-observability-without-loki_{context}"]
+= Network Observability without Loki
+You can use Network Observability without Loki by not performing the Loki installation steps and skipping directly to "Installing the Network Observability Operator". If you only want to export flows to a Kafka consumer or IPFIX collector, or you only need dashboard metrics, then you do not need to install Loki or provide storage for Loki.  Without Loki, there won't be a Network Traffic panel under Observe, which means there is no overview charts, flow table, or topology. The following table compares available features with and without Loki:
+
+.Comparison of feature availability with and without Loki
+[options="header"]
+|===
+|                                     | *With Loki* | *Without Loki*
+| *Exporters*                         | image:check-solid.png[,10]  | image:check-solid.png[,10]
+| *Flow-based metrics and dashboards*             | image:check-solid.png[,10] | image:check-solid.png[,10]
+| *Traffic Flow Overview, Table and Topology views* | image:check-solid.png[,10] | image:x-solid.png[,10]
+| *Quick Filters*                     | image:check-solid.png[,10] | image:x-solid.png[,10]
+| *{product-title} console Network Traffic tab integration* | image:check-solid.png[,10] | image:x-solid.png[,10]
+|===
+
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../network_observability/configuring-operator.adoc#network-observability-enriched-flows_network_observability[Export enriched network flow data].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+
+// * networking/network_observability/installing-operators.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-loki-installation_{context}"]
+= Installing the Loki Operator
+The link:https://catalog.redhat.com/software/containers/openshift-logging/loki-rhel8-operator/622b46bcae289285d6fcda39[Loki Operator versions 5.7+] are the supported Loki Operator versions for Network Observabilty; these versions provide the ability to create a `LokiStack` instance using the `openshift-network` tenant configuration mode and provide fully-automatic, in-cluster authentication and authorization support for Network Observability. There are several ways you can install Loki. One way is by using the {product-title} web console Operator Hub.
+
+.Prerequisites
+
+* Supported Log Store (AWS S3, Google Cloud Storage, Azure, Swift, Minio, OpenShift Data Foundation)
+* {product-title} 4.10+
+* Linux Kernel 4.18+
+
+.Procedure
+. In the {product-title} web console, click *Operators* -> *OperatorHub*.
+. Choose  *Loki Operator* from the list of available Operators, and click *Install*.
+. Under *Installation Mode*, select *All namespaces on the cluster*.
+
+.Verification
+. Verify that you installed the Loki Operator. Visit the *Operators* → *Installed Operators* page and look for *Loki Operator*.
+. Verify that *Loki Operator* is listed with *Status* as *Succeeded* in all the projects.
+
+[IMPORTANT]
+====
+To uninstall Loki, refer to the uninstallation process that corresponds with the method you used to install Loki. You might have remaining `ClusterRoles` and `ClusterRoleBindings`, data stored in object store, and persistent volume that must be removed.
+====
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+
+// * networking/network_observability/installing-operators.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-loki-secret_{context}"]
+= Creating a secret for Loki storage
+The Loki Operator supports a few log storage options, such as AWS S3, Google Cloud Storage, Azure, Swift, Minio, OpenShift Data Foundation. The following example shows how to create a secret for AWS S3 storage. The secret created in this example, `loki-s3`, is referenced in "Creating a LokiStack resource". You can create this secret in the web console or CLI.
+
+. Using the web console, navigate to the *Project* -> *All Projects* dropdown and select *Create Project*. Name the project `netobserv` and click *Create*.
+. Navigate to the Import icon, *+*, in the top right corner. Paste your YAML file into the editor.
++
+The following shows an example secret YAML file for S3 storage:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: loki-s3
+  namespace: netobserv   <1>
+stringData:
+  access_key_id: QUtJQUlPU0ZPRE5ON0VYQU1QTEUK
+  access_key_secret: d0phbHJYVXRuRkVNSS9LN01ERU5HL2JQeFJmaUNZRVhBTVBMRUtFWQo=
+  bucketnames: s3-bucket-name
+  endpoint: https://s3.eu-central-1.amazonaws.com
+  region: eu-central-1
+----
+<1> The installation examples in this documentation use the same namespace, `netobserv`, across all components. You can optionally use a different namespace for the different components
+
+.Verification
+* Once you create the secret, you should see it listed under *Workloads* -> *Secrets* in the web console.
+
+:leveloffset!:
+[role="_additional-resources"]
+.Additional resources
+* For more information about the option to use different namespaces for the separate components, see the `spec.loki.tls.caCert.namespace` specification in the xref:../network_observability/flowcollector-api.adoc#network-observability-flowcollector-api-specifications_network_observability[Flow Collector API Reference] and callout number 5 in the xref:../network_observability/configuring-operator.adoc#network-observability-flowcollector-view_network_observability[Flow Collector sample resource].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+
+// * networking/network_observability/installing-operators.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-lokistack-create_{context}"]
+= Creating a LokiStack custom resource
+You can deploy a LokiStack using the web console or CLI to create a namespace, or new project.
+
+// Text snippet included in the following assemblies:
+//
+//
+// Text snippet included in the following modules:
+//
+// * modules/logging-creating-new-group-cluster-admin-user-role.adoc
+// * modules/network-observability-lokistack-create.adoc
+//
+:_mod-docs-content-type: SNIPPET
+
+[IMPORTANT]
+====
+Querying application logs for multiple namespaces as a `cluster-admin` user, where the sum total of characters of all of the namespaces in the cluster is greater than 5120, results in the error `Parse error: input size too long (XXXX > 5120)`. For better control over access to logs in LokiStack, make the `cluster-admin` user a member of the `cluster-admin` group. If the `cluster-admin` group does not exist, create it and add the desired users to it.
+====
+For more information about creating a `cluster-admin` group, see the "Additional resources" section.
+
+.Procedure
+
+. Navigate to *Operators* -> *Installed Operators*, viewing *All projects* from the *Project* dropdown.
+. Look for *Loki Operator*. In the details, under *Provided APIs*, select *LokiStack*.
+. Click *Create LokiStack*.
+. Ensure the following fields are specified in either *Form View* or *YAML view*:
++
+[source,yaml]
+----
+  apiVersion: loki.grafana.com/v1
+  kind: LokiStack
+  metadata:
+    name: loki
+    namespace: netobserv   <1>
+  spec:
+    size: 1x.small
+    storage:
+      schemas:
+      - version: v12
+        effectiveDate: '2022-06-01'
+      secret:
+        name: loki-s3
+        type: s3
+    storageClassName: gp3  <2>
+    tenants:
+      mode: openshift-network
+----
+<1> The installation examples in this documentation use the same namespace, `netobserv`, across all components. You can optionally use a different namespace.
+<2> Use a storage class name that is available on the cluster for `ReadWriteOnce` access mode. You can use `oc get storageclasses` to see what is available on your cluster.
++
+[IMPORTANT]
+====
+You must not reuse the same `LokiStack` that is used for cluster logging.
+====
+. Click *Create*.
+
+[id="deployment-sizing_{context}"]
+== Deployment Sizing
+Sizing for Loki follows the format of `N<x>._<size>_` where the value `<N>` is the number of instances and `<size>` specifies performance capabilities.
+
+[NOTE]
+====
+1x.extra-small is for demo purposes only, and is not supported.
+====
+
+.Loki Sizing
+[options="header"]
+|========================================================================================
+|                              | 1x.extra-small  | 1x.small            | 1x.medium
+| *Data transfer*              | Demo use only.  | 500GB/day           | 2TB/day
+| *Queries per second (QPS)*   | Demo use only.  | 25-50 QPS at 200ms  | 25-75 QPS at 200ms
+| *Replication factor*         | None            | 2                   | 3
+| *Total CPU requests*         | 5 vCPUs         | 36 vCPUs            | 54 vCPUs
+| *Total Memory requests*      | 7.5Gi           | 63Gi                | 139Gi
+| *Total Disk requests*        | 150Gi           | 300Gi               | 450Gi
+|========================================================================================
+
+:leveloffset!:
+[role="_additional-resources"]
+.Additional resources
+* xref:../logging/cluster-logging-loki.adoc#logging-creating-new-group-cluster-admin-user-role_cluster-logging-loki[Creating a new group for the cluster-admin user role]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+
+// * networking/network_observability/installing-operators.adoc
+:_mod-docs-content-type: CONCEPT
+[id="network-observability-lokistack-configuring-ingestion{context}"]
+
+= LokiStack ingestion limits and health alerts
+The LokiStack instance comes with default settings according to the configured size. It is possible to override some of these settings, such as the ingestion and query limits. You might want to update them if you get Loki errors showing up in the Console plugin, or in `flowlogs-pipeline` logs. An automatic alert in the web console notifies you when these limits are reached.
+
+Here is an example of configured limits:
+
+[source,yaml]
+----
+spec:
+  limits:
+    global:
+      ingestion:
+        ingestionBurstSize: 40
+        ingestionRate: 20
+        maxGlobalStreamsPerTenant: 25000
+      queries:
+        maxChunksPerQuery: 2000000
+        maxEntriesLimitPerQuery: 10000
+        maxQuerySeries: 3000
+----
+For more information about these settings, see the link:https://loki-operator.dev/docs/api.md/#loki-grafana-com-v1-IngestionLimitSpec[LokiStack API reference].
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+
+// * networking/network_observability/installing-operators.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-auth-mutli-tenancy_{context}"]
+= Configuring authorization and multi-tenancy
+Define `ClusterRole` and `ClusterRoleBinding`. The `netobserv-reader` `ClusterRole` enables multi-tenancy and allows individual user access, or group access, to the flows stored in Loki. You can create a YAML file to define these roles.
+
+.Procedure
+
+. Using the web console, click the Import icon, *+*.
+. Drop your YAML file into the editor and click *Create*:
++
+// Text snippet included in the following assemblies:
+//
+//
+//
+// Text snippet included in the following modules:
+//
+// * modules/network-observability-auth-multi-tenancy.adoc
+
+:_mod-docs-content-type: SNIPPET
+.Example ClusterRole reader yaml
+[source, yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: netobserv-reader    <1>
+rules:
+- apiGroups:
+  - 'loki.grafana.com'
+  resources:
+  - network
+  resourceNames:
+  - logs
+  verbs:
+  - 'get'
+----
+<1> This role can be used for multi-tenancy.
+// Text snippet included in the following assemblies:
+//
+//
+//
+// Text snippet included in the following modules:
+//
+// * modules/network-observability-auth-multi-tenancy.adoc
+
+:_mod-docs-content-type: SNIPPET
+.Example ClusterRole writer yaml
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: netobserv-writer
+rules:
+- apiGroups:
+  - 'loki.grafana.com'
+  resources:
+  - network
+  resourceNames:
+  - logs
+  verbs:
+  - 'create'
+----
+// Text snippet included in the following assemblies:
+//
+//
+//
+// Text snippet included in the following modules:
+//
+// * modules/network-observability-auth-multi-tenancy.adoc
+
+:_mod-docs-content-type: SNIPPET
+
+.Example ClusterRoleBinding yaml
+[source, yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: netobserv-writer-flp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: netobserv-writer
+subjects:
+- kind: ServiceAccount
+  name: flowlogs-pipeline    <1>
+  namespace: netobserv
+- kind: ServiceAccount
+  name: flowlogs-pipeline-transformer
+  namespace: netobserv
+----
+<1> The `flowlogs-pipeline` writes to Loki. If you are using Kafka, this value is `flowlogs-pipeline-transformer`.
+
+:leveloffset!:
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// network_observability/observing-network-traffic.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-multi-tenancy{context}"]
+= Enabling multi-tenancy in Network Observability
+Multi-tenancy in the Network Observability Operator allows and restricts individual user access, or group access, to the flows stored in Loki. Access is enabled for project admins. Project admins who have limited access to some namespaces can access flows for only those namespaces.
+
+.Prerequisite
+* You have installed link:https://catalog.redhat.com/software/containers/openshift-logging/loki-rhel8-operator/622b46bcae289285d6fcda39[Loki Operator version 5.7]
+* The `FlowCollector` `spec.loki.authToken` configuration must be set to `FORWARD`.
+* You must be logged in as a project administrator
+
+.Procedure
+
+. Authorize reading permission to `user1` by running the following command:
++
+[source,terminal]
+----
+$ oc adm policy add-cluster-role-to-user netobserv-reader user1
+----
++
+Now, the data is restricted to only allowed user namespaces. For example, a user that has access to a single namespace can see all the flows internal to this namespace, as well as flows going from and to this namespace.
+Project admins have access to the Administrator perspective in the {product-title} console to access the Network Flows Traffic page.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+
+// * networking/network_observability/installing-operators.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-operator-installation_{context}"]
+= Installing the Network Observability Operator
+You can install the Network Observability Operator using the {product-title} web console Operator Hub. When you install the Operator,  it provides the `FlowCollector` custom resource definition (CRD). You can set specifications in the web console when you create the  `FlowCollector`.
+
+[IMPORTANT]
+====
+The actual memory consumption of the Operator depends on your cluster size and the number of resources deployed. Memory consumption might need to be adjusted accordingly. For more information refer to "Network Observability controller manager pod runs out of memory" in the "Important Flow Collector configuration considerations" section.
+====
+
+.Prerequisites
+
+* If you choose to use Loki, install the link:https://catalog.redhat.com/software/containers/openshift-logging/loki-rhel8-operator/622b46bcae289285d6fcda39[Loki Operator version 5.7+].
+* You must have `cluster-admin` privileges.
+* One of the following supported architectures is required: `amd64`, `ppc64le`, `arm64`, or `s390x`.
+* Any CPU supported by Red Hat Enterprise Linux (RHEL) 9.
+* Must be configured with OVN-Kubernetes or OpenShift SDN as the main network plugin, and optionally using secondary interfaces, such as Multus and SR-IOV.
+
+[NOTE]
+====
+This documentation assumes that your `LokiStack` instance name is `loki`. Using a different name requires additional configuration.
+====
+
+.Procedure
+
+. In the {product-title} web console, click *Operators* -> *OperatorHub*.
+. Choose  *Network Observability Operator* from the list of available Operators in the *OperatorHub*, and click *Install*.
+. Select the checkbox `Enable Operator recommended cluster monitoring on this Namespace`.
+. Navigate to *Operators* -> *Installed Operators*. Under Provided APIs for Network Observability, select the *Flow Collector* link.
+. Navigate to the *Flow Collector* tab, and click *Create FlowCollector*. Make the following selections in the form view:
+.. *spec.agent.ebpf.Sampling*: Specify a sampling size for flows. Lower sampling sizes will have higher impact on resource utilization. For more information, see the "FlowCollector API reference", `spec.agent.ebpf`.
+.. If you are using Loki, set the following specifications:
+... *spec.loki.enable*: Select the check box to enable storing flows in Loki.
+... *spec.loki.url*: Since authentication is specified separately, this URL needs to be updated to `https://loki-gateway-http.netobserv.svc:8080/api/logs/v1/network`. The first part of the URL, "loki", must match the name of your `LokiStack`.
+... *spec.loki.authToken*: Select the `FORWARD` value.
+... *spec.loki.statusUrl*: Set this to `https://loki-query-frontend-http.netobserv.svc:3100/`. The first part of the URL, "loki", must match the name of your `LokiStack`.
+... *spec.loki.tls.enable*: Select the checkbox to enable TLS.
+... *spec.loki.statusTls*: The `enable` value is false by default.
++
+For the first part of the certificate reference names: `loki-gateway-ca-bundle`, `loki-ca-bundle`, and `loki-query-frontend-http`,`loki`, must match the name of your `LokiStack`.
+.. Optional: If you are in a large-scale environment, consider configuring the `FlowCollector` with Kafka for forwarding data in a more resilient, scalable way. See "Configuring the Flow Collector resource with Kafka storage" in the "Important Flow Collector configuration considerations" section.
+.. Optional: Configure other optional settings before the next step of creating the `FlowCollector`. For example, if you choose not to use Loki, then you can configure exporting flows to Kafka or IPFIX. See "Export enriched network flow data to Kafka and IPFIX" and more in the "Important Flow Collector configuration considerations" section.
+.. Click *Create*.
+
+.Verification
+
+To confirm this was successful, when you navigate to *Observe* you should see *Network Traffic* listed in the options.
+
+In the absence of *Application Traffic* within the {product-title} cluster, default filters might show that there are "No results", which results in no visual flow. Beside the filter selections, select *Clear all filters* to see the flow.
+
+[IMPORTANT]
+====
+If you installed Loki using the Loki Operator, it is advised not to use `querierUrl`, as it can break the console access to Loki. If you installed Loki using another type of Loki installation, this does not apply.
+====
+
+
+:leveloffset!:
+
+
+[role="_additional-resources"]
+[id="additional-resources_configuring-flow-collector-considerations"]
+== Important Flow Collector configuration considerations
+Once you create the `FlowCollector` instance, you can reconfigure it, but the pods are terminated and recreated again, which can be disruptive. Therefore, you can consider configuring the following options when creating the `FlowCollector` for the first time:
+
+* xref:../network_observability/configuring-operator.adoc#network-observability-flowcollector-kafka-config_network_observability[Configuring the Flow Collector resource with Kafka]
+* xref:../network_observability/configuring-operator.adoc#network-observability-enriched-flows_network_observability[Export enriched network flow data to Kafka or IPFIX]
+* xref:../network_observability/configuring-operator.adoc#network-observability-SR-IOV-config_network_observability[Configuring monitoring for SR-IOV interface traffic]
+* xref:../network_observability/observing-network-traffic.adoc#network-observability-working-with-conversations_nw-observe-network-traffic[Working with conversation tracking]
+* xref:../network_observability/observing-network-traffic.adoc#network-observability-dns-tracking_nw-observe-network-traffic[Working with DNS tracking]
+* xref:../network_observability/observing-network-traffic.adoc#network-observability-packet-drops_nw-observe-network-traffic[Working with packet drops]
+
+[role="_additional-resources"]
+.Additional resources
+For more general information about Flow Collector specifications and the Network Observability Operator architecture and resource use, see the following resources:
+
+* xref:../network_observability/flowcollector-api.adoc#network-observability-flowcollector-api-specifications_network_observability[Flow Collector API Reference]
+* xref:../network_observability/configuring-operator.adoc#network-observability-flowcollector-view_network_observability[Flow Collector sample resource]
+* xref:../network_observability/configuring-operator.adoc#network-observability-resources-table_network_observability[Resource considerations]
+* xref:../network_observability/troubleshooting-network-observability.adoc#controller-manager-pod-runs-out-of-memory_network-observability-troubleshooting[Troubleshooting Network Observability controller manager pod runs out of memory]
+* xref:../network_observability/understanding-network-observability-operator.adoc#network-observability-architecture_nw-network-observability-operator[Network Observability architecture]
+
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+
+// * networking/network_observability/installing-operators.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="network-observability-kafka-option_{context}"]
+= Installing Kafka (optional)
+The Kafka Operator is supported for large scale environments. Kafka provides high-throughput and low-latency data feeds for forwarding network flow data in a more resilient, scalable way. You can install the Kafka Operator as link:https://access.redhat.com/documentation/en-us/red_hat_amq_streams/2.2[Red Hat AMQ Streams] from the Operator Hub, just as the Loki Operator and Network Observability Operator were installed. Refer to "Configuring the FlowCollector resource with Kafka" to configure Kafka as a storage option.
+
+[NOTE]
+====
+To uninstall Kafka, refer to the uninstallation process that corresponds with the method you used to install.
+====
+
+:leveloffset!:
+[role="_additional-resources"]
+.Additional resources
+xref:../network_observability/configuring-operator.adoc#network-observability-flowcollector-kafka-config_network_observability[Configuring the FlowCollector resource with Kafka].
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * networking/network_observability/installing-operators.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="network-observability-operator-uninstall_{context}"]
+= Uninstalling the Network Observability Operator
+
+You can uninstall the Network Observability Operator using the {product-title} web console Operator Hub, working in the *Operators* -> *Installed Operators* area.
+
+.Procedure
+
+. Remove the `FlowCollector` custom resource.
+.. Click *Flow Collector*, which is next to the *Network Observability Operator* in the *Provided APIs* column.
+.. Click the options menu {kebab} for the *cluster* and select *Delete FlowCollector*.
+. Uninstall the Network Observability Operator.
+.. Navigate back to the *Operators* -> *Installed Operators* area.
+.. Click the options menu {kebab} next to the  *Network Observability Operator* and select *Uninstall Operator*.
+.. *Home* -> *Projects* and select `openshift-netobserv-operator`
+.. Navigate to *Actions* and select *Delete Project*
+. Remove the `FlowCollector` custom resource definition (CRD).
+.. Navigate to *Administration* -> *CustomResourceDefinitions*.
+.. Look for *FlowCollector* and click the options menu {kebab}.
+.. Select *Delete CustomResourceDefinition*.
++
+[IMPORTANT]
+====
+The Loki Operator and Kafka remain if they were installed and must be removed separately. Additionally, you might have remaining data stored in an object store, and a persistent volume that must be removed.
+====
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/network-observability-without-loki,modules/network-observability-loki-install,modules/network-observability-loki-secret,modules/network-observability-lokistack-create,modules/snippets/logging-clusteradmin-access-logs-snip,modules/network-observability-lokistack-ingestion-query,modules/network-observability-auth-multi-tenancy,modules/snippets/network-observability-clusterrole-reader,modules/snippets/network-observability-clusterrole-writer,modules/snippets/network-observability-clusterrolebinding,modules/network-observability-multitenancy,modules/network-observability-operator-install,modules/network-observability-kafka-option,modules/network-observability-operator-uninstall

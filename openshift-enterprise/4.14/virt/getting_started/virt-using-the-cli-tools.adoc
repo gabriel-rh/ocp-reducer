@@ -1,0 +1,753 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="virt-using-the-cli-tools"]
+= Using the virtctl and libguestfs CLI tools
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: virt-using-the-cli-tools
+:toclevels: 3
+
+toc::[]
+
+You can manage {VirtProductName} resources by using the `virtctl` command line tool.
+
+You can access and modify virtual machine (VM) disk images by using the link:https://libguestfs.org[`libguestfs`] command line tool. You deploy `libguestfs` by using the `virtctl libguestfs` command.
+
+[id="installing-virtctl_virt-using-the-cli-tools"]
+== Installing virtctl
+
+To install `virtctl` on {op-system-base-full} 9, Linux, Windows, and MacOS operating systems, you download and install the `virtctl` binary file.
+
+To install `virtctl` on {op-system-base} 8, you enable the {VirtProductName} repository and then install the `kubevirt-virtctl` package.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/getting_started/virt-using-the-cli-tools.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-installing-virtctl-client_{context}"]
+= Installing the virtctl binary on {op-system-base} 9, Linux, Windows, or macOS
+
+You can download the `virtctl` binary for your operating system from the {product-title} web console and then install it.
+
+.Procedure
+
+. Navigate to the *Virtualization -> Overview* page in the web console.
+. Click the *Download virtctl* link to download the `virtctl` binary for your operating system.
+
+. Install `virtctl`:
+
+* For {op-system-base} 9 and other Linux operating systems:
+
+.. Decompress the archive file:
++
+[source,terminal]
+----
+$ tar -xvf <virtctl-version-distribution.arch>.tar.gz
+----
+
+.. Run the following command to make the `virtctl` binary executable:
++
+[source,terminal]
+----
+$ chmod +x <path/virtctl-file-name>
+----
+
+.. Move the `virtctl` binary to a directory in your `PATH` environment variable.
++
+You can check your path by running the following command:
++
+[source,terminal]
+----
+$ echo $PATH
+----
+
+.. Set the `KUBECONFIG` environment variable:
++
+[source,terminal]
+----
+$ export KUBECONFIG=/home/<user>/clusters/current/auth/kubeconfig
+----
+
+* For Windows:
++
+.. Decompress the archive file.
+
+.. Navigate the extracted folder hierarchy and double-click the `virtctl` executable file to install the client.
+
+.. Move the `virtctl` binary to a directory in your `PATH` environment variable.
++
+You can check your path by running the following command:
++
+[source,terminal]
+----
+C:\> path
+----
+
+* For macOS:
++
+.. Decompress the archive file.
+
+.. Move the `virtctl` binary to a directory in your `PATH` environment variable.
++
+You can check your path by running the following command:
++
+[source,terminal]
+----
+echo $PATH
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/getting_started/virt-using-the-cli-tools.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-installing-virtctl-client-yum_{context}"]
+= Installing the virtctl RPM on {op-system-base} 8
+
+You can install the `virtctl` RPM package on {op-system-base-full} 8 by enabling the {VirtProductName} repository and installing the `kubevirt-virtctl` package.
+
+.Prerequisites
+
+* Each host in your cluster must be registered with Red Hat Subscription Manager (RHSM) and have an active {product-title} subscription.
+
+.Procedure
+
+. Enable the {VirtProductName} repository by using the `subscription-manager` CLI tool to run the following command:
++
+[source,terminal,subs="attributes+"]
+----
+# subscription-manager repos --enable cnv-{VirtVersion}-for-rhel-8-x86_64-rpms
+----
+
+. Install the `kubevirt-virtctl` package by running the following command:
++
+[source,terminal]
+----
+# yum install kubevirt-virtctl
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/getting_started/virt-using-the-cli-tools.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-virtctl-commands_{context}"]
+= virtctl commands
+
+The `virtctl` client is a command-line utility for managing {VirtProductName} resources.
+
+[NOTE]
+====
+The virtual machine (VM) commands also apply to virtual machine instances (VMIs) unless otherwise specified.
+====
+
+// apinnick: I recommend not breaking these sections into separate modules because of maintenance issues.
+// These sections will never be used independently.
+
+[id='virtctl-information-commands_{context}']
+== virtctl information commands
+
+You use `virtctl` information commands to view information about the `virtctl` client.
+
+.Information commands
+[width="100%",cols="1a,2a",options="header"]
+|===
+|Command |Description
+|`virtctl version`
+|View the `virtctl` client and server versions.
+
+|`virtctl help`
+|View a list of `virtctl` commands.
+
+|`virtctl <command> -h\|--help`
+|View a list of options for a specific command.
+
+|`virtctl options`
+|View a list of global command options for any `virtctl` command.
+|===
+
+[id='vm-information-commands_{context}']
+== VM information commands
+
+You can use `virtctl` to view information about virtual machines (VMs) and virtual machine instances (VMIs).
+
+.VM information commands
+[width="100%",cols="1a,2a",options="header"]
+|===
+|Command |Description
+|`virtctl fslist <vm_name>`
+|View the file systems available on a guest machine.
+
+|`virtctl guestosinfo <vm_name>`
+|View information about the operating systems on a guest machine.
+
+|`virtctl userlist <vm_name>`
+|View the logged-in users on a guest machine.
+|===
+
+[id='vm-management-commands_{context}']
+== VM management commands
+
+You use `virtctl` virtual machine (VM) management commands to manage and migrate virtual machines (VMs) and virtual machine instances (VMIs).
+
+.VM management commands
+[width="100%",cols="1a,2a",options="header"]
+|===
+|Command |Description
+
+|`virtctl create -name <vm_name>`
+|Create a `VirtualMachine` manifest.
+
+|`virtctl start <vm_name>`
+|Start a VM.
+
+|`virtctl start --paused <vm_name>`
+|Start a VM in a paused state. This option enables you to interrupt the boot process from the VNC console.
+
+|`virtctl stop <vm_name>`
+|Stop a VM.
+
+|`virtctl stop <vm_name> --grace-period 0 --force`
+|Force stop a VM. This option might cause data inconsistency or data loss.
+
+|`virtctl pause vm <vm_name>`
+|Pause a VM. The machine state is kept in memory.
+
+|`virtctl unpause vm <vm_name>`
+|Unpause a VM.
+
+|`virtctl migrate <vm_name>`
+|Migrate a VM.
+
+|`virtctl migrate-cancel <vm_name>`
+|Cancel a VM migration.
+
+|`virtctl restart <vm_name>`
+|Restart a VM.
+
+|`virtctl create instancetype --cpu <cpu_value> --memory <memory_value> --name <instancetype_name>`
+|Create an `InstanceType` manifest for a `ClusterInstanceType`, or a namespaced `InstanceType`, to streamline the creation of your `InstanceType` specifications.
+
+|`virtctl create preference --name <preference_name>`
+|Create a `Preference` manifest for a `ClusterPreference`, or a namespaced `Preference`, to streamline the creation of your `Preference` specifications.
+|===
+
+[id='vm-connection-commands_{context}']
+== VM connection commands
+
+You use `virtctl` connection commands to expose ports and connect to virtual machines (VMs) and virtual machine instances (VMIs).
+
+.VM connection commands
+[width="100%",cols="1a,2a",options="header"]
+|===
+|Command |Description
+|`virtctl console <vm_name>`
+|Connect to the serial console of a VM.
+
+|`virtctl expose vm <vm_name> --name <service_name> --type <ClusterIP\|NodePort\|LoadBalancer> --port <port>`
+|Create a service that forwards a designated port of a VM and expose the service on the specified port of the node.
+
+Example: `virtctl expose vm rhel9_vm --name rhel9-ssh --type NodePort --port 22`
+
+|`virtctl scp -i <ssh_key> <file_name> <user_name>@<vm_name>`
+|Copy a file from your machine to a VM. This command uses the private key of an SSH key pair. The VM must be configured with the public key.
+
+|`virtctl scp -i <ssh_key> <user_name@<vm_name>:<file_name> .`
+|Copy a file from a VM to your machine. This command uses the private key of an SSH key pair. The VM must be configured with the public key.
+
+|`virtctl ssh -i <ssh_key> <user_name>@<vm_name>`
+|Open an SSH connection with a VM. This command uses the private key of an SSH key pair. The VM must be configured with the public key.
+
+|`virtctl vnc <vm_name>`
+|Connect to the VNC console of a VM.
+
+You must have `virt-viewer` installed.
+
+|`virtctl vnc --proxy-only=true <vm_name>`
+|Display the port number and connect manually to a VM by using any viewer through the VNC connection.
+
+|`virtctl vnc --port=<port-number> <vm_name>`
+|Specify a port number to run the proxy on the specified port, if that port is available.
+
+If a port number is not specified, the proxy runs on a random port.
+|===
+
+[id='vm-volume-export-commands_{context}']
+== VM export commands
+
+Use `virtctl vmexport` commands to create, download, or delete a volume exported from a VM, VM snapshot, or persistent volume claim (PVC). Certain manifests also contain a header secret, which grants access to the endpoint to import a disk image in a format that {VirtProductName} can use.
+
+.VM export commands
+[width="100%",cols="1a,2a",options="header"]
+|===
+|Command |Description
+|`virtctl vmexport create <vmexport_name> --vm\|snapshot\|pvc=<object_name>`
+|Create a `VirtualMachineExport` custom resource (CR) to export a volume from a VM, VM snapshot, or PVC.
+
+* `--vm`: Exports the PVCs of a VM.
+* `--snapshot`: Exports the PVCs contained in a `VirtualMachineSnapshot` CR.
+* `--pvc`: Exports a PVC.
+* Optional: `--ttl=1h` specifies the time to live. The default duration is 2 hours.
+
+|`virtctl vmexport delete <vmexport_name>`
+|Delete a `VirtualMachineExport` CR manually.
+
+|`virtctl vmexport download <vmexport_name> --output=<output_file> --volume=<volume_name>`
+|Download the volume defined in a `VirtualMachineExport` CR.
+
+* `--output` specifies the file format. Example: `disk.img.gz`.
+* `--volume` specifies the volume to download. This flag is optional if only one volume is available.
+
+Optional:
+
+* `--keep-vme` retains the `VirtualMachineExport` CR after download. The default behavior is to delete the `VirtualMachineExport` CR after download.
+* `--insecure` enables an insecure HTTP connection.
+
+|`virtctl vmexport download <vmexport_name> --<vm\|snapshot\|pvc>=<object_name> --output=<output_file> --volume=<volume_name>`
+|Create a `VirtualMachineExport` CR and then download the volume defined in the CR.
+
+|`virtctl vmexport download export --manifest`
+|Retrieve the manifest for an existing export. The manifest does not include the header secret.
+
+|`virtctl vmexport download export --manifest --vm=example`
+|Create a VM export for a VM example, and retrieve the manifest. The manifest does not include the header secret.
+
+|`virtctl vmexport download export --manifest --snap=example`
+|Create a VM export for a VM snapshot example, and retrieve the manifest. The manifest does not include the header secret.
+
+|`virtctl vmexport download export --manifest --include-secret`
+|Retrieve the manifest for an existing export. The manifest includes the header secret.
+
+|`virtctl vmexport download export --manifest --manifest-output-format=json`
+|Retrieve the manifest for an existing export in json format. The manifest does not include the header secret.
+
+|`virtctl vmexport download export --manifest --include-secret --output=manifest.yaml`
+|Retrieve the manifest for an existing export. The manifest includes the header secret and writes it to the file specified.
+|===
+
+[id='vm-memory-dump-commands_{context}']
+== VM memory dump commands
+
+You can use the `virtctl memory-dump` command to output a VM memory dump on a PVC. You can specify an existing PVC or use the `--create-claim` flag to create a new PVC.
+
+.Prerequisites
+
+* The PVC volume mode must be `FileSystem`.
+* The PVC must be large enough to contain the memory dump.
++
+The formula for calculating the PVC size is `(VMMemorySize + 100Mi) * FileSystemOverhead`, where `100Mi` is the memory dump overhead.
+
+* You must enable the hot plug feature gate in the `HyperConverged` custom resource by running the following command:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc patch hyperconverged kubevirt-hyperconverged -n {CNVNamespace} \
+  --type json -p '[{"op": "add", "path": "/spec/featureGates", \
+  "value": "HotplugVolumes"}]'
+----
+
+.Downloading the memory dump
+
+You must use the `virtctl vmexport download` command to download the memory dump:
+
+[source,terminal]
+----
+$ virtctl vmexport download <vmexport_name> --vm|pvc=<object_name> \
+  --volume=<volume_name> --output=<output_file>
+----
+
+.VM memory dump commands
+[width="100%",cols="1a,2a",options="header"]
+|===
+|Command |Description
+|`virtctl memory-dump get <vm_name> --claim-name=<pvc_name>`
+|Save the memory dump of a VM on a PVC. The memory dump status is displayed in the `status` section of the `VirtualMachine` resource.
+
+Optional:
+
+* `--create-claim` creates a new PVC with the appropriate size. This flag has the following options:
+
+** `--storage-class=<storage_class>`: Specify a storage class for the PVC.
+** `--access-mode=<access_mode>`: Specify `ReadWriteOnce` or `ReadWriteMany`.
+
+|`virtctl memory-dump get <vm_name>`
+|Rerun the `virtctl memory-dump` command with the same PVC.
+
+This command overwrites the previous memory dump.
+
+|`virtctl memory-dump remove <vm_name>`
+|Remove a memory dump.
+
+You must remove a memory dump manually if you want to change the target PVC.
+
+This command removes the association between the VM and the PVC, so that the memory dump is not displayed in the `status` section of the `VirtualMachine` resource. The PVC is not affected.
+|===
+
+// hot-plug/unplug NICs will be added in 4.14
+[id="hot-plug-and-hot-unplug-commands_{context}"]
+== Hot plug and hot unplug commands
+
+You use `virtctl` to add or remove resources from running virtual machines (VMs) and virtual machine instances (VMIs).
+
+.Hot plug and hot unplug commands
+[width="100%",cols="1a,2a",options="header"]
+|===
+|Command |Description
+|`virtctl addvolume <vm_name> --volume-name=<datavolume_or_PVC> [--persist] [--serial=<label>]`
+|Hot plug a data volume or persistent volume claim (PVC).
+
+Optional:
+
+* `--persist` mounts the virtual disk permanently on a VM. *This flag does not apply to VMIs.*
+* `--serial=<label>` adds a label to the VM. If you do not specify a label, the default label is the data volume or PVC name.
+
+|`virtctl removevolume <vm_name> --volume-name=<virtual_disk>`
+|Hot unplug a virtual disk.
+
+|`virtctl addinterface <vm_name> --network-attachment-definition-name <net_attach_def_name> --name <interface_name>`
+|Hot plug a Linux bridge network interface.
+
+|`virtctl removeinterface <vm_name> --name <interface_name>`
+|Hot unplug a Linux bridge network interface.
+|===
+
+[id='image-upload-commands_{context}']
+== Image upload commands
+
+You use the `virtctl image-upload` commands to upload a VM image to a data volume.
+
+.Image upload commands
+[width="100%",cols="1a,2a",options="header"]
+|===
+|Command |Description
+|`virtctl image-upload dv <datavolume_name> --image-path=</path/to/image> --no-create`
+|Upload a VM image to a data volume that already exists.
+
+|`virtctl image-upload dv <datavolume_name> --size=<datavolume_size> --image-path=</path/to/image>`
+|Upload a VM image to a new data volume of a specified requested size.
+|===
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/getting_started/virt-using-the-cli-tools.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-deploying-libguestfs-with-virtctl_{context}"]
+= Deploying libguestfs by using virtctl
+
+You can use the `virtctl guestfs` command to deploy an interactive container with `libguestfs-tools` and a persistent volume claim (PVC) attached to it.
+
+.Procedure
+
+* To deploy a container with `libguestfs-tools`, mount the PVC, and attach a shell to it, run the following command:
++
+[source,terminal]
+----
+$ virtctl guestfs -n <namespace> <pvc_name> <1>
+----
+<1> The PVC name is a required argument. If you do not include it, an error message appears.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/getting_started/virt-using-the-cli-tools.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-about-libguestfs-tools-virtctl-guestfs_{context}"]
+= Libguestfs and virtctl guestfs commands
+
+`Libguestfs` tools help you access and modify virtual machine (VM) disk images. You can use `libguestfs` tools to view and edit files in a guest, clone and build virtual machines, and format and resize disks.
+
+You can also use the `virtctl guestfs` command and its sub-commands to modify, inspect, and debug VM disks on a PVC. To see a complete list of possible sub-commands, enter `virt-` on the command line and press the Tab key. For example:
+
+[width="100%",cols="42%,58%",options="header",]
+|===
+|Command |Description
+
+|`virt-edit -a /dev/vda /etc/motd`
+|Edit a file interactively in your terminal.
+
+|`virt-customize -a /dev/vda --ssh-inject root:string:<public key example>`
+|Inject an ssh key into the guest and create a login.
+
+|`virt-df -a /dev/vda -h`
+|See how much disk space is used by a VM.
+
+|`virt-customize -a /dev/vda --run-command 'rpm -qa > /rpm-list'`
+|See the full list of all RPMs installed on a guest by creating an output file containing the full list.
+
+|`virt-cat -a /dev/vda /rpm-list`
+|Display the output file list of all RPMs created using the `virt-customize -a /dev/vda --run-command 'rpm -qa > /rpm-list'` command in your terminal.
+
+|`virt-sysprep -a /dev/vda`
+|Seal a virtual machine disk image to be used as a template.
+|===
+
+By default, `virtctl guestfs` creates a session with everything needed to manage a VM disk. However, the command also supports several flag options if you want to customize the behavior:
+
+[width="100%",cols="42%,58%",options="header",]
+|===
+|Flag Option |Description
+
+|`--h` or `--help`
+|Provides help for `guestfs`.
+
+|`-n <namespace>` option with a `<pvc_name>` argument
+|To use a PVC from a specific namespace.
+
+If you do not use the `-n <namespace>` option, your current project is used. To change projects, use `oc project <namespace>`.
+
+If you do not include a `<pvc_name>` argument, an error message appears.
+
+|`--image string`
+|Lists the `libguestfs-tools` container image.
+
+You can configure the container to use a custom image by using the `--image` option.
+
+|`--kvm`
+|Indicates that `kvm` is used by the `libguestfs-tools` container.
+
+By default, `virtctl guestfs` sets up `kvm` for the interactive container, which greatly speeds up the `libguest-tools` execution because it uses QEMU.
+
+If a cluster does not have any `kvm` supporting nodes, you must disable `kvm` by setting the option `--kvm=false`.
+
+If not set, the `libguestfs-tools` pod remains pending because it cannot be scheduled on any node.
+
+|`--pull-policy string`
+|Shows the pull policy for the `libguestfs` image.
+
+You can also overwrite the image's pull policy by setting the `pull-policy` option.
+|===
+
+The command also checks if a PVC is in use by another pod, in which case an error message appears. However, once the `libguestfs-tools` process starts, the setup cannot avoid a new pod using the same PVC. You must verify that there are no active `virtctl guestfs` pods before starting the VM that accesses the same PVC.
+
+[NOTE]
+=====
+The `virtctl guestfs` command accepts only a single PVC attached to the interactive pod.
+=====
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/virt-installing-virtctl-client,modules/virt-installing-virtctl-client-yum,modules/virt-virtctl-commands,modules/virt-deploying-libguestfs-with-virtctl,modules/virt-about-libguestfs-tools-virtctl-guestfs

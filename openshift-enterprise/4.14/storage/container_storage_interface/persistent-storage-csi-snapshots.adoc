@@ -1,0 +1,646 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="persistent-storage-csi-snapshots"]
+= CSI volume snapshots
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: persistent-storage-csi-snapshots
+
+toc::[]
+
+This document describes how to use volume snapshots with supported Container Storage Interface (CSI) drivers to help protect against data loss in {product-title}. Familiarity with xref:../../storage/understanding-persistent-storage.adoc#persistent-volumes_understanding-persistent-storage[persistent volumes] is suggested.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-snapshots.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="persistent-storage-csi-snapshots-overview_{context}"]
+= Overview of CSI volume snapshots
+
+A _snapshot_ represents the state of the storage volume in a cluster at a particular point in time. Volume snapshots can be used to provision a new volume.
+
+{product-title} supports Container Storage Interface (CSI) volume snapshots by default. However, a specific CSI driver is required.
+
+With CSI volume snapshots, a cluster administrator can:
+
+* Deploy a third-party CSI driver that supports snapshots.
+* Create a new persistent volume claim (PVC) from an existing volume snapshot.
+* Take a snapshot of an existing PVC.
+* Restore a snapshot as a different PVC.
+* Delete an existing volume snapshot.
+
+With CSI volume snapshots, an app developer can:
+
+* Use volume snapshots as building blocks for developing application- or cluster-level storage backup solutions.
+* Rapidly rollback to a previous development version.
+* Use storage more efficiently by not having to make a full copy each time.
+
+Be aware of the following when using volume snapshots:
+
+* Support is only available for CSI drivers. In-tree and FlexVolumes are not supported.
+* {product-title} only ships with select CSI drivers. For CSI drivers that are not provided by an {product-title} Driver Operator, it is recommended to use the CSI drivers provided by
+link:https://kubernetes-csi.github.io/docs/drivers.html[community or storage vendors]. Follow the installation instructions furnished by the CSI driver provider.
+* CSI drivers may or may not have implemented the volume snapshot functionality. CSI drivers that have provided support for volume snapshots will likely use the `csi-external-snapshotter` sidecar. See documentation provided by the CSI driver for details.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-snapshots.adoc
+
+[id="persistent-storage-csi-snapshots-controller-sidecar_{context}"]
+= CSI snapshot controller and sidecar
+
+{product-title} provides a snapshot controller that is deployed into the control plane. In addition, your CSI driver vendor provides the CSI snapshot sidecar as a helper container that is installed during the CSI driver installation.
+
+The CSI snapshot controller and sidecar provide volume snapshotting through the {product-title} API. These external components run in the cluster.
+
+The external controller is deployed by the CSI Snapshot Controller Operator.
+
+== External controller
+The CSI snapshot controller binds `VolumeSnapshot` and `VolumeSnapshotContent` objects. The controller manages dynamic provisioning by creating and deleting `VolumeSnapshotContent` objects.
+
+== External sidecar
+Your CSI driver vendor provides the `csi-external-snapshotter` sidecar. This is a separate helper container that is deployed with the CSI driver. The sidecar manages snapshots by triggering `CreateSnapshot` and `DeleteSnapshot` operations. Follow the installation instructions provided by your vendor.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-snapshots.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="persistent-storage-csi-snapshots-operator_{context}"]
+= About the CSI Snapshot Controller Operator
+
+The CSI Snapshot Controller Operator runs in the `openshift-cluster-storage-operator` namespace. It is installed by the Cluster Version Operator (CVO) in all clusters by default.
+
+The CSI Snapshot Controller Operator installs the CSI snapshot controller, which runs in the `openshift-cluster-storage-operator` namespace.
+
+== Volume snapshot CRDs
+
+During {product-title} installation, the CSI Snapshot Controller Operator creates the following snapshot custom resource definitions (CRDs) in the `snapshot.storage.k8s.io/v1` API group:
+
+`VolumeSnapshotContent`::
+
+A snapshot taken of a volume in the cluster that has been provisioned by a cluster administrator.
++
+Similar to the `PersistentVolume` object, the `VolumeSnapshotContent` CRD is a cluster resource that points to a real snapshot in the storage back end.
++
+For manually pre-provisioned snapshots, a cluster administrator creates a number of `VolumeSnapshotContent` CRDs. These carry the details of the real volume snapshot in the storage system.
++
+The `VolumeSnapshotContent` CRD is not namespaced and is for use by a cluster administrator.
+
+`VolumeSnapshot`::
+
+Similar to the `PersistentVolumeClaim` object, the `VolumeSnapshot` CRD defines a developer request for a snapshot. The CSI Snapshot Controller Operator runs the CSI snapshot controller, which handles the binding of a `VolumeSnapshot` CRD with an appropriate `VolumeSnapshotContent` CRD. The binding is a one-to-one mapping.
++
+The `VolumeSnapshot` CRD is namespaced. A developer uses the CRD as a distinct request for a snapshot.
+
+`VolumeSnapshotClass`::
+
+Allows a cluster administrator to specify different attributes belonging to a `VolumeSnapshot` object. These attributes may differ among snapshots taken of the same volume on the storage system, in which case they would not be expressed by using the same storage class of a persistent volume claim.
++
+The `VolumeSnapshotClass` CRD defines the parameters for the `csi-external-snapshotter` sidecar to use when creating a snapshot. This allows the storage back end to know what kind of snapshot to dynamically create if multiple options are supported.
++
+Dynamically provisioned snapshots use the `VolumeSnapshotClass` CRD to specify storage-provider-specific parameters to use when creating a snapshot.
++
+The `VolumeSnapshotContentClass` CRD is not namespaced and is for use by a cluster administrator to enable global configuration options for their storage back end.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-snapshots.adoc
+
+[id="persistent-storage-csi-snapshots-provision_{context}"]
+= Volume snapshot provisioning
+
+There are two ways to provision snapshots: dynamically and manually.
+
+[id="snapshots-dynamic-provisioning_{context}"]
+== Dynamic provisioning
+
+Instead of using a preexisting snapshot, you can request that a snapshot be taken dynamically from a persistent volume claim. Parameters are specified using a `VolumeSnapshotClass` CRD.
+
+[id="snapshots-manual-provisioning_{context}"]
+== Manual provisioning
+
+As a cluster administrator, you can manually pre-provision a number of `VolumeSnapshotContent` objects. These carry the real volume snapshot details available to cluster users.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-snapshots.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="persistent-storage-csi-snapshots-create_{context}"]
+= Creating a volume snapshot
+
+When you create a `VolumeSnapshot` object, {product-title} creates a volume snapshot.
+
+
+.Prerequisites
+* Logged in to a running {product-title} cluster.
+* A PVC created using a CSI driver that supports `VolumeSnapshot` objects.
+* A storage class to provision the storage back end.
+* No pods are using the persistent volume claim (PVC) that you want to take a snapshot of.
++
+[NOTE]
+====
+Do not create a volume snapshot of a PVC if a pod is using it. Doing so might cause data corruption because the PVC is not quiesced (paused). Be sure to first tear down a running pod to ensure consistent snapshots.
+====
+
+.Procedure
+
+To dynamically create a volume snapshot:
+
+. Create a file with the `VolumeSnapshotClass` object described by the following YAML:
+
++
+.volumesnapshotclass.yaml
+[source,yaml]
+----
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: csi-hostpath-snap
+driver: hostpath.csi.k8s.io <1>
+deletionPolicy: Delete
+----
++
+<1> The name of the CSI driver that is used to create snapshots of this `VolumeSnapshotClass` object. The name must be the same as the `Provisioner` field of the storage class that is responsible for the PVC that is being snapshotted.
++
+[NOTE]
+====
+Depending on the driver that you used to configure persistent storage, additional parameters might be required. You can also use an existing `VolumeSnapshotClass` object.
+====
+
+. Create the object you saved in the previous step by entering the following command:
++
+[source,terminal]
+----
+$ oc create -f volumesnapshotclass.yaml
+----
+
+. Create a `VolumeSnapshot` object:
+
++
+.volumesnapshot-dynamic.yaml
+[source,yaml]
+----
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: mysnap
+spec:
+  volumeSnapshotClassName: csi-hostpath-snap <1>
+  source:
+    persistentVolumeClaimName: myclaim <2>
+----
++
+<1> The request for a particular class by the volume snapshot. If the `volumeSnapshotClassName` setting is absent and there is a default volume snapshot class, a snapshot is created with the default volume snapshot class name. But if the field is absent and no default volume snapshot class exists, then no snapshot is created.
++
+<2> The name of the `PersistentVolumeClaim` object bound to a persistent volume. This defines what you want to create a snapshot of. Required for dynamically provisioning a snapshot.
+
+. Create the object you saved in the previous step by entering the following command:
++
+[source,terminal]
+----
+$ oc create -f volumesnapshot-dynamic.yaml
+----
+
+
+To manually provision a snapshot:
+
+. Provide a value for the `volumeSnapshotContentName` parameter as the source for the snapshot, in addition to defining volume snapshot class as shown above.
++
+.volumesnapshot-manual.yaml
+[source,yaml]
+----
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: snapshot-demo
+spec:
+  source:
+    volumeSnapshotContentName: mycontent <1>
+----
+<1> The `volumeSnapshotContentName` parameter is required for pre-provisioned snapshots.
+
+. Create the object you saved in the previous step by entering the following command:
++
+[source,terminal]
+----
+$ oc create -f volumesnapshot-manual.yaml
+----
+
+.Verification
+After the snapshot has been created in the cluster, additional details about the snapshot are available.
+
+. To display details about the volume snapshot that was created, enter the following command:
++
+[source,terminal]
+----
+$ oc describe volumesnapshot mysnap
+----
++
+The following example displays details about the `mysnap` volume snapshot:
++
+.volumesnapshot.yaml
+[source,yaml]
+----
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: mysnap
+spec:
+  source:
+    persistentVolumeClaimName: myclaim
+  volumeSnapshotClassName: csi-hostpath-snap
+status:
+  boundVolumeSnapshotContentName: snapcontent-1af4989e-a365-4286-96f8-d5dcd65d78d6 <1>
+  creationTime: "2020-01-29T12:24:30Z" <2>
+  readyToUse: true <3>
+  restoreSize: 500Mi
+----
+<1> The pointer to the actual storage content that was created by the controller.
+<2> The time when the snapshot was created. The snapshot contains the volume content that was available at this indicated time.
+<3> If the value is set to `true`, the snapshot can be used to restore as a new PVC.
+  +
+If the value is set to `false`, the snapshot was created. However, the storage back end needs to perform additional tasks to make the snapshot usable so that it can be restored as a new volume. For example, Amazon Elastic Block Store data might be moved to a different, less expensive location, which can take several minutes.
+
+. To verify that the volume snapshot was created, enter the following command:
++
+[source,terminal]
+----
+$ oc get volumesnapshotcontent
+----
++
+The pointer to the actual content is displayed. If the `boundVolumeSnapshotContentName` field is populated, a `VolumeSnapshotContent` object exists and the snapshot was created.
+
+. To verify that the snapshot is ready, confirm that the `VolumeSnapshot` object has `readyToUse: true`.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-snapshots.adoc
+// * microshift_storage/volume-snapshots-microshift.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="persistent-storage-csi-snapshots-delete_{context}"]
+= Deleting a volume snapshot
+
+You can configure how {product-title} deletes volume snapshots.
+
+.Procedure
+
+. Specify the deletion policy that you require in the `VolumeSnapshotClass` object, as shown in the following example:
++
+.volumesnapshotclass.yaml
++
+[source,yaml]
+----
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: csi-hostpath-snap
+driver: hostpath.csi.k8s.io
+deletionPolicy: Delete <1>
+----
+[.small]
+<1> When deleting the volume snapshot, if the `Delete` value is set, the underlying snapshot is deleted along with the `VolumeSnapshotContent` object. If the `Retain` value is set, both the underlying snapshot and `VolumeSnapshotContent` object remain.
+  +
+If the `Retain` value is set and the `VolumeSnapshot` object is deleted without deleting the corresponding `VolumeSnapshotContent` object, the content remains. The snapshot itself is also retained in the storage back end.
+
+. Delete the volume snapshot by entering the following command:
++
+[source,terminal]
+----
+$ oc delete volumesnapshot <volumesnapshot_name>
+----
++
+.Example output
++
+[source,terminal]
+----
+volumesnapshot.snapshot.storage.k8s.io "mysnapshot" deleted
+----
+
+. If the deletion policy is set to `Retain`, delete the volume snapshot content by entering the following command:
++
+[source,terminal]
+----
+$ oc delete volumesnapshotcontent <volumesnapshotcontent_name>
+----
++
+. Optional: If the `VolumeSnapshot` object is not successfully deleted, enter the following command to remove any finalizers for the leftover resource so that the delete operation can continue:
++
+[IMPORTANT]
+====
+Only remove the finalizers if you are confident that there are no existing references from either persistent volume claims or volume snapshot contents to the `VolumeSnapshot` object.
+Even with the `--force` option, the delete operation does not delete snapshot objects until all finalizers are removed.
+====
++
+[source,terminal]
+----
+$ oc patch -n $PROJECT volumesnapshot/$NAME --type=merge -p '{"metadata": {"finalizers":null}}'
+----
++
+.Example output
++
+[source,terminal]
+----
+volumesnapshotclass.snapshot.storage.k8s.io "csi-ocs-rbd-snapclass" deleted
+----
++
+The finalizers are removed and the volume snapshot is deleted.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * storage/container_storage_interface/persistent-storage-csi-snapshots.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="persistent-storage-csi-snapshots-restore_{context}"]
+= Restoring a volume snapshot
+
+The `VolumeSnapshot` CRD content can be used to restore the existing volume to a previous state.
+
+After your `VolumeSnapshot` CRD is bound and the `readyToUse` value is set to `true`, you can use that resource to provision a new volume that is pre-populated with data from the snapshot.
+
+.Prerequisites
+* Logged in to a running {product-title} cluster.
+* A persistent volume claim (PVC) created using a Container Storage Interface (CSI) driver that supports volume snapshots.
+* A storage class to provision the storage back end.
+* A volume snapshot has been created and is ready to use.
+
+.Procedure
+
+. Specify a `VolumeSnapshot` data source on a PVC as shown in the following:
++
+.pvc-restore.yaml
+[source,yaml]
+----
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: myclaim-restore
+spec:
+  storageClassName: csi-hostpath-sc
+  dataSource:
+    name: mysnap <1>
+    kind: VolumeSnapshot <2>
+    apiGroup: snapshot.storage.k8s.io <3>
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+----
+<1> Name of the `VolumeSnapshot` object representing the snapshot to use as source.
+<2> Must be set to the `VolumeSnapshot` value.
+<3> Must be set to the `snapshot.storage.k8s.io` value.
+
+. Create a PVC by entering the following command:
+
++
+[source,terminal]
+----
+$ oc create -f pvc-restore.yaml
+----
+
+. Verify that the restored PVC has been created by entering the following command:
+
++
+[source,terminal]
+----
+$ oc get pvc
+----
++
+A new PVC such as `myclaim-restore` is displayed.
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/persistent-storage-csi-snapshots-overview,modules/persistent-storage-csi-snapshots-controller-sidecar,modules/persistent-storage-csi-snapshots-operator,modules/persistent-storage-csi-snapshots-provision,modules/persistent-storage-csi-snapshots-create,modules/persistent-storage-csi-snapshots-delete,modules/persistent-storage-csi-snapshots-restore

@@ -1,0 +1,454 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="virt-configuring-local-storage-with-hpp"]
+= Configuring local storage by using the hostpath provisioner
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: virt-configuring-local-storage-with-hpp
+
+toc::[]
+
+You can configure local storage for virtual machines by using the hostpath provisioner (HPP).
+
+When you install the {VirtProductName} Operator, the Hostpath Provisioner Operator is automatically installed. HPP is a local storage provisioner designed for {VirtProductName} that is created by the Hostpath Provisioner Operator. To use HPP, you create an HPP custom resource (CR) with a basic storage pool.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/storage/virt-configuring-local-storage-with-hpp.adoc
+// * virt/post_installation_configuration/virt-post-install-storage-config.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-hpp-basic-storage-pool_{context}"]
+= Creating a hostpath provisioner with a basic storage pool
+
+You configure a hostpath provisioner (HPP) with a basic storage pool by creating an HPP custom resource (CR) with a `storagePools` stanza. The storage pool specifies the name and path used by the CSI driver.
+
+[IMPORTANT]
+====
+Do not create storage pools in the same partition as the operating system. Otherwise, the operating system partition might become filled to capacity, which will impact performance or cause the node to become unstable or unusable.
+====
+
+.Prerequisites
+
+* The directories specified in `spec.storagePools.path` must have read/write access.
+
+.Procedure
+
+. Create an `hpp_cr.yaml` file with a `storagePools` stanza as in the following example:
++
+[source,yaml]
+----
+apiVersion: hostpathprovisioner.kubevirt.io/v1beta1
+kind: HostPathProvisioner
+metadata:
+  name: hostpath-provisioner
+spec:
+  imagePullPolicy: IfNotPresent
+  storagePools: <1>
+  - name: any_name
+    path: "/var/myvolumes" <2>
+workload:
+  nodeSelector:
+    kubernetes.io/os: linux
+----
+<1> The `storagePools` stanza is an array to which you can add multiple entries.
+<2> Specify the storage pool directories under this node path.
+
+. Save the file and exit.
+
+. Create the HPP by running the following command:
++
+[source,terminal]
+----
+$ oc create -f hpp_cr.yaml
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/storage/virt-configuring-local-storage-with-hpp.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="virt-about-creating-storage-classes_{context}"]
+= About creating storage classes
+
+When you create a storage class, you set parameters that affect the dynamic provisioning of persistent volumes (PVs) that belong to that storage class. You cannot update a `StorageClass` object's parameters after you create it.
+
+In order to use the hostpath provisioner (HPP) you must create an associated storage class for the CSI driver with the `storagePools` stanza.
+
+[NOTE]
+====
+Virtual machines use data volumes that are based on local PVs. Local PVs are bound to specific nodes. While the disk image is prepared for consumption by the virtual machine, it is possible that the virtual machine cannot be scheduled to the node where the local storage PV was previously pinned.
+
+To solve this problem, use the Kubernetes pod scheduler to bind the persistent volume claim (PVC) to a PV on the correct node. By using the `StorageClass` value with `volumeBindingMode` parameter set to `WaitForFirstConsumer`, the binding and provisioning of the PV is delayed until a pod is created using the PVC.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/storage/virt-configuring-local-storage-with-hpp.adoc
+// * virt/post_installation_configuration/virt-post-install-storage-config.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-storage-class-csi-driver_{context}"]
+= Creating a storage class for the CSI driver with the storagePools stanza
+
+To use the hostpath provisioner (HPP) you must create an associated storage class for the Container Storage Interface (CSI) driver.
+
+When you create a storage class, you set parameters that affect the dynamic provisioning of persistent volumes (PVs) that belong to that storage class. You cannot update a `StorageClass` object's parameters after you create it.
+
+[NOTE]
+====
+Virtual machines use data volumes that are based on local PVs. Local PVs are bound to specific nodes. While a disk image is prepared for consumption by the virtual machine, it is possible that the virtual machine cannot be scheduled to the node where the local storage PV was previously pinned.
+
+To solve this problem, use the Kubernetes pod scheduler to bind the persistent volume claim (PVC) to a PV on the correct node. By using the `StorageClass` value with `volumeBindingMode` parameter set to `WaitForFirstConsumer`, the binding and provisioning of the PV is delayed until a pod is created using the PVC.
+====
+
+.Procedure
+
+. Create a `storageclass_csi.yaml` file to define the storage class:
++
+[source,yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: hostpath-csi
+provisioner: kubevirt.io.hostpath-provisioner
+reclaimPolicy: Delete <1>
+volumeBindingMode: WaitForFirstConsumer <2>
+parameters:
+  storagePool: my-storage-pool <3>
+----
+<1> The two possible `reclaimPolicy` values are `Delete` and `Retain`. If you do not specify a value, the default value is `Delete`.
+<2> The `volumeBindingMode` parameter determines when dynamic provisioning and volume binding occur. Specify `WaitForFirstConsumer` to delay the binding and provisioning of a persistent volume (PV) until after a pod that uses the persistent volume claim (PVC) is created. This ensures that the PV meets the pod's scheduling requirements.
+<3> Specify the name of the storage pool defined in the HPP CR.
+
+. Save the file and exit.
+
+. Create the `StorageClass` object by running the following command:
++
+[source,terminal]
+----
+$ oc create -f storageclass_csi.yaml
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/storage/virt-configuring-local-storage-with-hpp.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="virt-about-storage-pools-pvc-templates_{context}"]
+= About storage pools created with PVC templates
+
+If you have a single, large persistent volume (PV), you can create a storage pool by defining a PVC template in the hostpath provisioner (HPP) custom resource (CR).
+
+A storage pool created with a PVC template can contain multiple HPP volumes. Splitting a PV into smaller volumes provides greater flexibility for data allocation.
+
+The PVC template is based on the `spec` stanza of the `PersistentVolumeClaim` object:
+
+.Example `PersistentVolumeClaim` object
+[source,yaml]
+----
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: iso-pvc
+spec:
+  volumeMode: Block <1>
+  storageClassName: my-storage-class
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+----
+<1> This value is only required for block volume mode PVs.
+
+You define a storage pool using a `pvcTemplate` specification in the HPP CR. The Operator creates a PVC from the `pvcTemplate` specification for each node containing the HPP CSI driver. The PVC created from the PVC template consumes the single large PV, allowing the HPP to create smaller dynamic volumes.
+
+You can combine basic storage pools with storage pools created from PVC templates.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/storage/virt-configuring-local-storage-with-hpp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-creating-storage-pool-pvc-template_{context}"]
+= Creating a storage pool with a PVC template
+
+You can create a storage pool for multiple hostpath provisioner (HPP) volumes by specifying a PVC template in the HPP custom resource (CR).
+
+[IMPORTANT]
+====
+Do not create storage pools in the same partition as the operating system. Otherwise, the operating system partition might become filled to capacity, which will impact performance or cause the node to become unstable or unusable.
+====
+
+.Prerequisites
+
+* The directories specified in `spec.storagePools.path` must have read/write access.
+
+.Procedure
+
+. Create an `hpp_pvc_template_pool.yaml` file for the HPP CR that specifies a persistent volume (PVC) template in the `storagePools` stanza according to the following example:
++
+[source,yaml]
+----
+apiVersion: hostpathprovisioner.kubevirt.io/v1beta1
+kind: HostPathProvisioner
+metadata:
+  name: hostpath-provisioner
+spec:
+  imagePullPolicy: IfNotPresent
+  storagePools: <1>
+  - name: my-storage-pool
+    path: "/var/myvolumes" <2>
+    pvcTemplate:
+      volumeMode: Block <3>
+      storageClassName: my-storage-class <4>
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi <5>
+  workload:
+    nodeSelector:
+      kubernetes.io/os: linux
+----
+<1> The `storagePools` stanza is an array that can contain both basic and PVC template storage pools.
+<2> Specify the storage pool directories under this node path.
+<3> Optional: The `volumeMode` parameter can be either `Block` or `Filesystem` as long as it matches the provisioned volume format. If no value is specified, the default is `Filesystem`. If the `volumeMode` is `Block`, the mounting pod creates an XFS file system on the block volume before mounting it.
+<4> If the `storageClassName` parameter is omitted, the default storage class is used to create PVCs. If you omit `storageClassName`, ensure that the HPP storage class is not the default storage class.
+<5> You can specify statically or dynamically provisioned storage. In either case, ensure the requested storage size is appropriate for the volume you want to virtually divide or the PVC cannot be bound to the large PV. If the storage class you are using uses dynamically provisioned storage, pick an allocation size that matches the size of a typical request.
+
+. Save the file and exit.
+
+. Create the HPP with a storage pool by running the following command:
++
+[source,terminal]
+----
+$ oc create -f hpp_pvc_template_pool.yaml
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/virt-creating-hpp-basic-storage-pool,modules/virt-about-creating-storage-classes,modules/virt-creating-storage-class-csi-driver,modules/virt-about-storage-pools-pvc-templates,modules/virt-creating-storage-pool-pvc-template

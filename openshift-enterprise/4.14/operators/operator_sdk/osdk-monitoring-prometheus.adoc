@@ -1,0 +1,650 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="osdk-monitoring-prometheus"]
+= Configuring built-in monitoring with Prometheus
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: osdk-monitoring-prometheus
+
+toc::[]
+
+// Dedicated-admins in OSD and ROSA don't have the permissions to complete the procedures in this assembly. Also, the procedures use the default Prometheus Operator in the openshift-monitoring project, which OSD/ROSA customers should not use.
+
+This guide describes the built-in monitoring support provided by the Operator SDK using the Prometheus Operator and details usage for authors of Go-based and Ansible-based Operators.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-monitoring-prometheus.adoc
+
+[id="osdk-monitoring-prometheus-operator-support_{context}"]
+= Prometheus Operator support
+
+link:https://prometheus.io/[Prometheus] is an open-source systems monitoring and alerting toolkit. The Prometheus Operator creates, configures, and manages Prometheus clusters running on Kubernetes-based clusters, such as {product-title}.
+
+Helper functions exist in the Operator SDK by default to automatically set up metrics in any generated Go-based Operator for use on clusters where the Prometheus Operator is deployed.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-monitoring-prometheus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-monitoring-custom-metrics_{context}"]
+= Exposing custom metrics for Go-based Operators
+
+As an Operator author, you can publish custom metrics by using the global Prometheus registry from the `controller-runtime/pkg/metrics` library.
+
+.Prerequisites
+
+* Go-based Operator generated using the Operator SDK
+* Prometheus Operator, which is deployed by default on {product-title} clusters
+
+.Procedure
+
+. In your Operator SDK project, uncomment the following line in the `config/default/kustomization.yaml` file:
++
+[source,yaml]
+----
+../prometheus
+----
+
+. Create a custom controller class to publish additional metrics from the Operator. The following example declares the `widgets` and `widgetFailures` collectors as global variables, and then registers them with the `init()` function in the controller's package:
++
+.`controllers/memcached_controller_test_metrics.go` file
+[%collapsible]
+====
+[source,go]
+----
+package controllers
+
+import (
+	"github.com/prometheus/client_golang/prometheus"
+	"sigs.k8s.io/controller-runtime/pkg/metrics"
+)
+
+
+var (
+    widgets = prometheus.NewCounter(
+        prometheus.CounterOpts{
+            Name: "widgets_total",
+            Help: "Number of widgets processed",
+        },
+    )
+    widgetFailures = prometheus.NewCounter(
+        prometheus.CounterOpts{
+            Name: "widget_failures_total",
+            Help: "Number of failed widgets",
+        },
+    )
+)
+
+func init() {
+    // Register custom metrics with the global prometheus registry
+    metrics.Registry.MustRegister(widgets, widgetFailures)
+}
+----
+====
+
+. Record to these collectors from any part of the reconcile loop in the `main` controller class, which determines the business logic for the metric:
++
+.`controllers/memcached_controller.go` file
+[%collapsible]
+====
+[source,go]
+----
+func (r *MemcachedReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	...
+	...
+	// Add metrics
+	widgets.Inc()
+	widgetFailures.Inc()
+
+	return ctrl.Result{}, nil
+}
+----
+====
+
+. Build and push the Operator:
++
+[source,terminal]
+----
+$ make docker-build docker-push IMG=<registry>/<user>/<image_name>:<tag>
+----
+
+. Deploy the Operator:
++
+[source,terminal]
+----
+$ make deploy IMG=<registry>/<user>/<image_name>:<tag>
+----
+
+. Create role and role binding definitions to allow the service monitor of the Operator to be scraped by the Prometheus instance of the {product-title} cluster.
++
+Roles must be assigned so that service accounts have the permissions to scrape the metrics of the namespace:
++
+.`config/prometheus/role.yaml` role
+[%collapsible]
+====
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus-k8s-role
+  namespace: memcached-operator-system
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+      - pods
+      - services
+      - nodes
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+----
+====
++
+.`config/prometheus/rolebinding.yaml` role binding
+[%collapsible]
+====
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus-k8s-rolebinding
+  namespace: memcached-operator-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus-k8s-role
+subjects:
+  - kind: ServiceAccount
+    name: prometheus-k8s
+    namespace: openshift-monitoring
+----
+====
+
+. Apply the roles and role bindings for the deployed Operator:
++
+[source,terminal]
++
+----
+$ oc apply -f config/prometheus/role.yaml
+----
++
+[source,terminal]
+----
+$ oc apply -f config/prometheus/rolebinding.yaml
+----
+
+. Set the labels for the namespace that you want to scrape, which enables OpenShift cluster monitoring for that namespace:
++
+[source,terminal]
+----
+$ oc label namespace <operator_namespace> openshift.io/cluster-monitoring="true"
+----
+
+.Verification
+
+* Query and view the metrics in the {product-title} web console. You can use the names that were set in the custom controller class, for example `widgets_total` and `widget_failures_total`.
+
+:leveloffset!:
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * operators/operator_sdk/osdk-monitoring-prometheus.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="osdk-ansible-metrics_{context}"]
+= Exposing custom metrics for Ansible-based Operators
+
+As an Operator author creating Ansible-based Operators, you can use the Operator SDK's `osdk_metrics` module to expose custom Operator and Operand metrics, emit events, and support logging.
+
+.Prerequisites
+
+* Ansible-based Operator generated using the Operator SDK
+* Prometheus Operator, which is deployed by default on {product-title} clusters
+
+.Procedure
+
+. Generate an Ansible-based Operator. This example uses a `testmetrics.com` domain:
++
+[source,terminal]
+----
+$ operator-sdk init \
+    --plugins=ansible \
+    --domain=testmetrics.com
+----
+
+. Create a `metrics` API. This example uses a `kind` named `Testmetrics`:
++
+[source,terminal]
+----
+$ operator-sdk create api \
+    --group metrics \
+    --version v1 \
+    --kind Testmetrics \
+    --generate-role
+----
+
+. Edit the `roles/testmetrics/tasks/main.yml` file and use the `osdk_metrics` module to create custom metrics for your Operator project:
++
+.Example `roles/testmetrics/tasks/main.yml` file
+[%collapsible]
+====
+[source,yaml]
+----
+---
+# tasks file for Memcached
+- name: start k8sstatus
+  k8s:
+    definition:
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: '{{ ansible_operator_meta.name }}-memcached'
+        namespace: '{{ ansible_operator_meta.namespace }}'
+      spec:
+        replicas: "{{size}}"
+        selector:
+          matchLabels:
+            app: memcached
+        template:
+          metadata:
+            labels:
+              app: memcached
+          spec:
+            containers:
+            - name: memcached
+              command:
+              - memcached
+              - -m=64
+              - -o
+              - modern
+              - -v
+              image: "docker.io/memcached:1.4.36-alpine"
+              ports:
+                - containerPort: 11211
+
+- osdk_metric:
+    name: my_thing_counter
+    description: This metric counts things
+    counter: {}
+
+- osdk_metric:
+    name: my_counter_metric
+    description: Add 3.14 to the counter
+    counter:
+      increment: yes
+
+- osdk_metric:
+    name: my_gauge_metric
+    description: Create my gauge and set it to 2.
+    gauge:
+      set: 2
+
+- osdk_metric:
+    name: my_histogram_metric
+    description: Observe my histogram
+    histogram:
+      observe: 2
+
+- osdk_metric:
+    name: my_summary_metric
+    description: Observe my summary
+    summary:
+      observe: 2
+----
+====
+
+.Verification
+
+. Run your Operator on a cluster. For example, to use the "run as a deployment" method:
+
+
+.. Build the Operator image and push it to a registry:
++
+[source,terminal]
+----
+$ make docker-build docker-push IMG=<registry>/<user>/<image_name>:<tag>
+----
+
+.. Install the Operator on a cluster:
++
+[source,terminal]
+----
+$ make install
+----
+
+.. Deploy the Operator:
++
+[source,terminal]
+----
+$ make deploy IMG=<registry>/<user>/<image_name>:<tag>
+----
+
+. Create a `Testmetrics` custom resource (CR):
+
+.. Define the CR spec:
++
+.Example `config/samples/metrics_v1_testmetrics.yaml` file
+[%collapsible]
+====
+[source,yaml]
+----
+apiVersion: metrics.testmetrics.com/v1
+kind: Testmetrics
+metadata:
+  name: testmetrics-sample
+spec:
+  size: 1
+----
+====
+
+.. Create the object:
++
+[source,terminal]
+----
+$ oc create -f config/samples/metrics_v1_testmetrics.yaml
+----
+
+. Get the pod details:
++
+[source,terminal]
+----
+$ oc get pods
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                    READY   STATUS    RESTARTS   AGE
+ansiblemetrics-controller-manager-<id>  2/2     Running   0          149m
+testmetrics-sample-memcached-<id>       1/1     Running   0          147m
+----
+
+. Get the endpoint details:
++
+[source,terminal]
+----
+$ oc get ep
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                ENDPOINTS          AGE
+ansiblemetrics-controller-manager-metrics-service   10.129.2.70:8443   150m
+----
+
+. Request a custom metrics token:
++
+[source,terminal]
+----
+$ token=`oc create token prometheus-k8s -n openshift-monitoring`
+----
+
+. Check the metrics values:
+
+.. Check the `my_counter_metric` value:
++
+[source,terminal]
+----
+$ oc exec ansiblemetrics-controller-manager-<id> -- curl -k -H "Authoriza
+tion: Bearer $token" 'https://10.129.2.70:8443/metrics' | grep  my_counter
+----
++
+.Example output
+[source,terminal]
+----
+HELP my_counter_metric Add 3.14 to the counter
+TYPE my_counter_metric counter
+my_counter_metric 2
+----
+
+.. Check the `my_gauge_metric` value:
++
+[source,terminal]
+----
+$ oc exec ansiblemetrics-controller-manager-<id> -- curl -k -H "Authoriza
+tion: Bearer $token" 'https://10.129.2.70:8443/metrics' | grep  gauge
+----
++
+.Example output
+[source,terminal]
+----
+HELP my_gauge_metric Create my gauge and set it to 2.
+----
+
+.. Check the `my_histogram_metric` and `my_summary_metric` values:
++
+[source,terminal]
+----
+$ oc exec ansiblemetrics-controller-manager-<id> -- curl -k -H "Authoriza
+tion: Bearer $token" 'https://10.129.2.70:8443/metrics' | grep  Observe
+----
++
+.Example output
+[source,terminal]
+----
+HELP my_histogram_metric Observe my histogram
+HELP my_summary_metric Observe my summary
+----
+
+:leveloffset!:
+
+
+//# includes=_attributes/common-attributes,modules/osdk-monitoring-prometheus-operator-support,modules/osdk-monitoring-custom-metrics,modules/osdk-ansible-metrics

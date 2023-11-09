@@ -1,0 +1,1958 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="cnf-numa-aware-scheduling"]
+= Scheduling NUMA-aware workloads
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: numa-aware
+
+toc::[]
+
+Learn about NUMA-aware scheduling and how you can use it to deploy high performance workloads in an {product-title} cluster.
+
+:FeatureName: NUMA-aware scheduling
+
+The NUMA Resources Operator allows you to schedule high-performance workloads in the same NUMA zone. It deploys a node resources exporting agent that reports on available cluster node NUMA resources, and a secondary scheduler that manages the workloads.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cnf-about-numa-aware-scheduling_{context}"]
+= About NUMA-aware scheduling
+
+Non-Uniform Memory Access (NUMA) is a compute platform architecture that allows different CPUs to access different regions of memory at different speeds. NUMA resource topology refers to the locations of CPUs, memory, and PCI devices relative to each other in the compute node. Co-located resources are said to be in the same _NUMA zone_. For high-performance applications, the cluster needs to process pod workloads in a single NUMA zone.
+
+NUMA architecture allows a CPU with multiple memory controllers to use any available memory across CPU complexes, regardless of where the memory is located. This allows for increased flexibility at the expense of performance. A CPU processing a workload using memory that is outside its NUMA zone is slower than a workload processed in a single NUMA zone. Also, for I/O-constrained workloads, the network interface on a distant NUMA zone slows down how quickly information can reach the application. High-performance workloads, such as telecommunications workloads, cannot operate to specification under these conditions. NUMA-aware scheduling aligns the requested cluster compute resources (CPUs, memory, devices) in the same NUMA zone to process latency-sensitive or high-performance workloads efficiently. NUMA-aware scheduling also improves pod density per compute node for greater resource efficiency.
+
+By integrating the Node Tuning Operator's performance profile with NUMA-aware scheduling, you can further configure CPU affinity to optimize performance for latency-sensitive workloads.
+
+The default {product-title} pod scheduler scheduling logic considers the available resources of the entire compute node, not individual NUMA zones. If the most restrictive resource alignment is requested in the kubelet topology manager, error conditions can occur when admitting the pod to a node. Conversely, if the most restrictive resource alignment is not requested, the pod can be admitted to the node without proper resource alignment, leading to worse or unpredictable performance. For example, runaway pod creation with `Topology Affinity Error` statuses can occur when the pod scheduler makes suboptimal scheduling decisions for guaranteed pod workloads by not knowing if the pod's requested resources are available. Scheduling mismatch decisions can cause indefinite pod startup delays. Also, depending on the cluster state and resource allocation, poor pod scheduling decisions can cause extra load on the cluster because of failed startup attempts.
+
+The NUMA Resources Operator deploys a custom NUMA resources secondary scheduler and other resources to mitigate against the shortcomings of the default {product-title} pod scheduler. The following diagram provides a high-level overview of NUMA-aware pod scheduling.
+
+.NUMA-aware scheduling overview
+image::216_OpenShift_Topology-aware_Scheduling_0222.png[Diagram of NUMA-aware scheduling that shows how the various components interact with each other in the cluster]
+
+NodeResourceTopology API:: The `NodeResourceTopology` API describes the available NUMA zone resources in each compute node.
+NUMA-aware scheduler:: The NUMA-aware secondary scheduler receives information about the available NUMA zones from the `NodeResourceTopology` API and schedules high-performance workloads on a node where it can be optimally processed.
+Node topology exporter:: The node topology exporter exposes the available NUMA zone resources for each compute node to the `NodeResourceTopology` API. The node topology exporter daemon tracks the resource allocation from the kubelet by using the `PodResources` API.
+PodResources API:: The `PodResources` API is local to each node and exposes the resource topology and available resources to the kubelet.
++
+[NOTE]
+====
+The `List` endpoint of the `PodResources` API exposes exclusive CPUs allocated to a particular container. The API does not expose CPUs that belong to a shared pool.
+
+The `GetAllocatableResources` endpoint exposes allocatable resources available on a node.
+====
+
+:leveloffset!:
+
+.Additional resources
+
+* For more information about running secondary pod schedulers in your cluster and how to deploy pods with a secondary pod scheduler, see xref:../nodes/scheduling/secondary_scheduler/nodes-secondary-scheduler-configuring.adoc#secondary-scheduler-configuring[Scheduling pods using a secondary scheduler].
+
+[id="installing-the-numa-resources-operator_{context}"]
+== Installing the NUMA Resources Operator
+
+NUMA Resources Operator deploys resources that allow you to schedule NUMA-aware workloads and deployments. You can install the NUMA Resources Operator using the {product-title} CLI or the web console.
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-installing-numa-resources-operator-cli_{context}"]
+= Installing the NUMA Resources Operator using the CLI
+
+As a cluster administrator, you can install the Operator using the CLI.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create a namespace for the NUMA Resources Operator:
+
+.. Save the following YAML in the `nro-namespace.yaml` file:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-numaresources
+----
+
+.. Create the `Namespace` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nro-namespace.yaml
+----
+
+. Create the Operator group for the NUMA Resources Operator:
+
+.. Save the following YAML in the `nro-operatorgroup.yaml` file:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: numaresources-operator
+  namespace: openshift-numaresources
+spec:
+  targetNamespaces:
+  - openshift-numaresources
+----
+
+.. Create the `OperatorGroup` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nro-operatorgroup.yaml
+----
+
+. Create the subscription for the NUMA Resources Operator:
+
+.. Save the following YAML in the `nro-sub.yaml` file:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: operators.coreos.com/v1
+kind: Subscription
+metadata:
+  name: numaresources-operator
+  namespace: openshift-numaresources
+spec:
+  channel: "{product-version}"
+  name: numaresources-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+----
+
+.. Create the `Subscription` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nro-sub.yaml
+----
+
+.Verification
+
+. Verify that the installation succeeded by inspecting the CSV resource in the `openshift-numaresources` namespace. Run the following command:
++
+[source,terminal]
+----
+$ oc get csv -n openshift-numaresources
+----
++
+.Example output
+
+[source,terminal,subs="attributes+"]
+----
+NAME                             DISPLAY                  VERSION   REPLACES   PHASE
+numaresources-operator.v{product-version}.2   numaresources-operator   {product-version}.2               Succeeded
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-installing-numa-resources-operator-console_{context}"]
+= Installing the NUMA Resources Operator using the web console
+
+As a cluster administrator, you can install the NUMA Resources Operator using the web console.
+
+.Procedure
+
+. Install the NUMA Resources Operator using the {product-title} web console:
+
+.. In the {product-title} web console, click *Operators* -> *OperatorHub*.
+
+.. Choose *NUMA Resources Operator* from the list of available Operators, and then click *Install*.
+
+. Optional: Verify that the NUMA Resources Operator installed successfully:
+
+.. Switch to the *Operators* -> *Installed Operators* page.
+
+.. Ensure that *NUMA Resources Operator* is listed in the *default* project with a *Status* of *InstallSucceeded*.
++
+[NOTE]
+====
+During installation an Operator might display a *Failed* status. If the installation later succeeds with an *InstallSucceeded* message, you can ignore the *Failed* message.
+====
++
+If the Operator does not appear as installed, to troubleshoot further:
++
+* Go to the *Operators* -> *Installed Operators* page and inspect the *Operator Subscriptions* and *Install Plans* tabs for any failure or errors under *Status*.
+* Go to the *Workloads* -> *Pods* page and check the logs for pods in the `default` project.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+:_mod-docs-content-type: CONCEPT
+[id="cnf-scheduling-numa-aware-workloads-overview_{context}"]
+= Scheduling NUMA-aware workloads
+
+Clusters running latency-sensitive workloads typically feature performance profiles that help to minimize workload latency and optimize performance. The NUMA-aware scheduler deploys workloads based on available node NUMA resources and with respect to any performance profile settings applied to the node. The combination of NUMA-aware deployments, and the performance profile of the workload, ensures that workloads are scheduled in a way that maximizes performance.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_module-type: PROCEDURE
+[id="cnf-creating-nrop-cr_{context}"]
+= Creating the NUMAResourcesOperator custom resource
+
+When you have installed the NUMA Resources Operator, then create the `NUMAResourcesOperator` custom resource (CR) that instructs the NUMA Resources Operator to install all the cluster infrastructure needed to support the NUMA-aware scheduler, including daemon sets and APIs.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+* Install the NUMA Resources Operator.
+
+.Procedure
+
+. Create the `NUMAResourcesOperator` custom resource:
+
+.. Save the following YAML in the `nrop.yaml` file:
++
+[source,yaml]
+----
+apiVersion: nodetopology.openshift.io/v1
+kind: NUMAResourcesOperator
+metadata:
+  name: numaresourcesoperator
+spec:
+  nodeGroups:
+  - machineConfigPoolSelector:
+      matchLabels:
+        pools.operator.machineconfiguration.openshift.io/worker: ""
+----
+
+.. Create the `NUMAResourcesOperator` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nrop.yaml
+----
+
+.Verification
+
+* Verify that the NUMA Resources Operator deployed successfully by running the following command:
++
+[source,terminal]
+----
+$ oc get numaresourcesoperators.nodetopology.openshift.io
+----
++
+.Example output
+[source,terminal]
+----
+NAME                    AGE
+numaresourcesoperator   10m
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_module-type: PROCEDURE
+[id="cnf-deploying-the-numa-aware-scheduler_{context}"]
+= Deploying the NUMA-aware secondary pod scheduler
+
+After you install the NUMA Resources Operator, do the following to deploy the NUMA-aware secondary pod scheduler:
+
+* Configure the performance profile.
+
+* Deploy the NUMA-aware secondary scheduler.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+* Create the required machine config pool.
+
+* Install the NUMA Resources Operator.
+
+.Procedure
+
+. Create the `PerformanceProfile` custom resource (CR):
+
+.. Save the following YAML in the `nro-perfprof.yaml` file:
++
+[source,yaml]
+----
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: perfprof-nrop
+spec:
+  cpu: <1>
+    isolated: "4-51,56-103"
+    reserved: "0,1,2,3,52,53,54,55"
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
+  numa:
+    topologyPolicy: single-numa-node
+----
+<1> The `cpu.isolated` and `cpu.reserved` specifications define ranges for isolated and reserved CPUs. Enter valid values for your CPU configuration. See the _Additional resources_ section for more information about configuring a performance profile.
+
+.. Create the `PerformanceProfile` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nro-perfprof.yaml
+----
++
+.Example output
+[source,terminal]
+----
+performanceprofile.performance.openshift.io/perfprof-nrop created
+----
+
+. Create the `NUMAResourcesScheduler` custom resource that deploys the NUMA-aware custom pod scheduler:
+
+.. Save the following YAML in the `nro-scheduler.yaml` file:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: nodetopology.openshift.io/v1
+kind: NUMAResourcesScheduler
+metadata:
+  name: numaresourcesscheduler
+spec:
+  imageSpec: "registry.redhat.io/openshift4/noderesourcetopology-scheduler-container-rhel8:v{product-version}"
+  cacheResyncPeriod: "5s" <1>
+----
+<1> Enter an interval value in seconds for synchronization of the scheduler cache. A value of `5s` is typical for most implementations.
++
+[NOTE]
+====
+* Enable the `cacheResyncPeriod` specification to help the NUMA Resource Operator report more exact resource availability by monitoring pending resources on nodes and synchronizing this information in the scheduler cache at a defined interval. This also helps to minimize `Topology Affinity Error` errors because of sub-optimal scheduling decisions. The lower the interval the greater the network load. The `cacheResyncPeriod` specification is disabled by default.
+
+* Setting a value of `Enabled` for the `podsFingerprinting` specification in the `NUMAResourcesOperator` CR is a requirement for the implementation of the `cacheResyncPeriod` specification.
+====
+
+.. Create the `NUMAResourcesScheduler` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nro-scheduler.yaml
+----
+
+.Verification
+
+. Verify that the performance profile was applied by running the following command:
++
+[source,terminal]
+----
+$ oc describe performanceprofile <performance-profile-name>
+----
+
+. Verify that the required resources deployed successfully by running the following command:
++
+[source,terminal]
+----
+$ oc get all -n openshift-numaresources
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                    READY   STATUS    RESTARTS   AGE
+pod/numaresources-controller-manager-7575848485-bns4s   1/1     Running   0          13m
+pod/numaresourcesoperator-worker-dvj4n                  2/2     Running   0          16m
+pod/numaresourcesoperator-worker-lcg4t                  2/2     Running   0          16m
+pod/secondary-scheduler-56994cf6cf-7qf4q                1/1     Running   0          16m
+NAME                                          DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                     AGE
+daemonset.apps/numaresourcesoperator-worker   2         2         2       2            2           node-role.kubernetes.io/worker=   16m
+NAME                                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/numaresources-controller-manager   1/1     1            1           13m
+deployment.apps/secondary-scheduler                1/1     1            1           16m
+NAME                                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/numaresources-controller-manager-7575848485   1         1         1       13m
+replicaset.apps/secondary-scheduler-56994cf6cf                1         1         1       16m
+----
+
+:leveloffset!:
+
+.Additional resources
+
+* xref:../scalability_and_performance/cnf-create-performance-profiles.adoc#cnf-about-the-profile-creator-tool_cnf-create-performance-profiles[About the Performance Profile Creator].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-scheduling-numa-aware-workloads_{context}"]
+= Scheduling workloads with the NUMA-aware scheduler
+
+You can schedule workloads with the NUMA-aware scheduler using `Deployment` CRs that specify the minimum required resources to process the workload.
+
+The following example deployment uses NUMA-aware scheduling for a sample workload.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+* Install the NUMA Resources Operator and deploy the NUMA-aware secondary scheduler.
+
+.Procedure
+
+. Get the name of the NUMA-aware scheduler that is deployed in the cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get numaresourcesschedulers.nodetopology.openshift.io numaresourcesscheduler -o json | jq '.status.schedulerName'
+----
++
+.Example output
+[source,terminal]
+----
+topo-aware-scheduler
+----
+
+. Create a `Deployment` CR that uses scheduler named `topo-aware-scheduler`, for example:
+
+.. Save the following YAML in the `nro-deployment.yaml` file:
++
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: numa-deployment-1
+  namespace: openshift-numaresources
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test
+  template:
+    metadata:
+      labels:
+        app: test
+    spec:
+      schedulerName: topo-aware-scheduler <1>
+      containers:
+      - name: ctnr
+        image: quay.io/openshifttest/hello-openshift:openshift
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "100Mi"
+            cpu: "10"
+          requests:
+            memory: "100Mi"
+            cpu: "10"
+      - name: ctnr2
+        image: registry.access.redhat.com/rhel:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c"]
+        args: [ "while true; do sleep 1h; done;" ]
+        resources:
+          limits:
+            memory: "100Mi"
+            cpu: "8"
+          requests:
+            memory: "100Mi"
+            cpu: "8"
+----
+<1> `schedulerName` must match the name of the NUMA-aware scheduler that is deployed in your cluster, for example `topo-aware-scheduler`.
+
+.. Create the `Deployment` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nro-deployment.yaml
+----
+
+.Verification
+
+. Verify that the deployment was successful:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-numaresources
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                READY   STATUS    RESTARTS   AGE
+numa-deployment-1-56954b7b46-pfgw8                  2/2     Running   0          129m
+numaresources-controller-manager-7575848485-bns4s   1/1     Running   0          15h
+numaresourcesoperator-worker-dvj4n                  2/2     Running   0          18h
+numaresourcesoperator-worker-lcg4t                  2/2     Running   0          16h
+secondary-scheduler-56994cf6cf-7qf4q                1/1     Running   0          18h
+----
+
+. Verify that the `topo-aware-scheduler` is scheduling the deployed pod by running the following command:
++
+[source,terminal]
+----
+$ oc describe pod numa-deployment-1-56954b7b46-pfgw8 -n openshift-numaresources
+----
++
+.Example output
+[source,terminal]
+----
+Events:
+  Type    Reason          Age   From                  Message
+  ----    ------          ----  ----                  -------
+  Normal  Scheduled       130m  topo-aware-scheduler  Successfully assigned openshift-numaresources/numa-deployment-1-56954b7b46-pfgw8 to compute-0.example.com
+----
++
+[NOTE]
+====
+Deployments that request more resources than is available for scheduling will fail with a `MinimumReplicasUnavailable` error. The deployment succeeds when the required resources become available. Pods remain in the `Pending` state until the required resources are available.
+====
+
+. Verify that the expected allocated resources are listed for the node.
+
+.. Identify the node that is running the deployment pod by running the following command, replacing <namespace> with the namespace you specified in the `Deployment` CR:
++
+[source,terminal]
+----
+$ oc get pods -n <namespace> -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                 READY   STATUS    RESTARTS   AGE   IP            NODE     NOMINATED NODE   READINESS GATES
+numa-deployment-1-65684f8fcc-bw4bw   0/2     Running   0          82m   10.128.2.50   worker-0   <none>  <none>
+----
++
+.. Run the following command, replacing <node_name> with the name of that node that is running the deployment pod.
++
+[source,terminal]
+----
+$ oc describe noderesourcetopologies.topology.node.k8s.io <node_name>
+----
++
+.Example output
+[source,terminal]
+----
+...
+
+Zones:
+  Costs:
+    Name:   node-0
+    Value:  10
+    Name:   node-1
+    Value:  21
+  Name:     node-0
+  Resources:
+    Allocatable:  39
+    Available:    21 <1>
+    Capacity:     40
+    Name:         cpu
+    Allocatable:  6442450944
+    Available:    6442450944
+    Capacity:     6442450944
+    Name:         hugepages-1Gi
+    Allocatable:  134217728
+    Available:    134217728
+    Capacity:     134217728
+    Name:         hugepages-2Mi
+    Allocatable:  262415904768
+    Available:    262206189568
+    Capacity:     270146007040
+    Name:         memory
+  Type:           Node
+----
+<1> The `Available` capacity is reduced because of the resources that have been allocated to the guaranteed pod.
++
+Resources consumed by guaranteed pods are subtracted from the available node resources listed under `noderesourcetopologies.topology.node.k8s.io`.
+
+. Resource allocations for pods with a `Best-effort` or `Burstable` quality of service (`qosClass`) are not reflected in the NUMA node resources under `noderesourcetopologies.topology.node.k8s.io`. If a pod's consumed resources are not reflected in the node resource calculation, verify that the pod has `qosClass` of `Guaranteed` and the CPU request is an integer value, not a decimal value. You can verify the that the pod has a  `qosClass` of `Guaranteed` by running the following command:
++
+[source,terminal]
+----
+$ oc get pod <pod_name> -n <pod_namespace> -o jsonpath="{ .status.qosClass }"
+----
++
+.Example output
+[source,terminal]
+----
+Guaranteed
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+:_mod-docs-content-type: CONCEPT
+[id="cnf-scheduling-numa-aware-workloads-with-manual-perofrmance-settings_{context}"]
+= Scheduling NUMA-aware workloads with manual performance settings
+
+Clusters running latency-sensitive workloads typically feature performance profiles that help to minimize workload latency and optimize performance. However, you can schedule NUMA-aware workloads in a pristine cluster that does not feature a performance profile. The following workflow features a pristine cluster that you can manually configure for performance by using the `KubeletConfig` resource. This is not the typical environment for scheduling NUMA-aware workloads.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_module-type: PROCEDURE
+[id="cnf-creating-nrop-cr-with-manual-performance-settings_{context}"]
+= Creating the NUMAResourcesOperator custom resource with manual performance settings
+
+When you have installed the NUMA Resources Operator, then create the `NUMAResourcesOperator` custom resource (CR) that instructs the NUMA Resources Operator to install all the cluster infrastructure needed to support the NUMA-aware scheduler, including daemon sets and APIs.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+* Install the NUMA Resources Operator.
+
+.Procedure
+
+. Optional: Create the `MachineConfigPool` custom resource that enables custom kubelet configurations for worker nodes:
++
+[NOTE]
+====
+By default, {product-title} creates a `MachineConfigPool` resource for worker nodes in the cluster. You can create a custom `MachineConfigPool` resource if required.
+====
+
+.. Save the following YAML in the `nro-machineconfig.yaml` file:
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  labels:
+    cnf-worker-tuning: enabled
+    machineconfiguration.openshift.io/mco-built-in: ""
+    pools.operator.machineconfiguration.openshift.io/worker: ""
+  name: worker
+spec:
+  machineConfigSelector:
+    matchLabels:
+      machineconfiguration.openshift.io/role: worker
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/worker: ""
+----
+
+.. Create the `MachineConfigPool` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nro-machineconfig.yaml
+----
+
+. Create the `NUMAResourcesOperator` custom resource:
+
+.. Save the following YAML in the `nrop.yaml` file:
++
+[source,yaml]
+----
+apiVersion: nodetopology.openshift.io/v1
+kind: NUMAResourcesOperator
+metadata:
+  name: numaresourcesoperator
+spec:
+  nodeGroups:
+  - machineConfigPoolSelector:
+      matchLabels:
+        pools.operator.machineconfiguration.openshift.io/worker: "" <1>
+----
+<1> Should match the label applied to worker nodes in the related `MachineConfigPool` CR.
+
+.. Create the `NUMAResourcesOperator` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nrop.yaml
+----
+
+.Verification
+
+* Verify that the NUMA Resources Operator deployed successfully by running the following command:
++
+[source,terminal]
+----
+$ oc get numaresourcesoperators.nodetopology.openshift.io
+----
++
+.Example output
+[source,terminal]
+----
+NAME                    AGE
+numaresourcesoperator   10m
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_module-type: PROCEDURE
+[id="cnf-deploying-the-numa-aware-scheduler-with-manual-performance-settings_{context}"]
+= Deploying the NUMA-aware secondary pod scheduler with manual performance settings
+
+After you install the NUMA Resources Operator, do the following to deploy the NUMA-aware secondary pod scheduler:
+
+* Configure the pod admittance policy for the required machine profile
+
+* Create the required machine config pool
+
+* Deploy the NUMA-aware secondary scheduler
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+* Install the NUMA Resources Operator.
+
+.Procedure
+. Create the `KubeletConfig` custom resource that configures the pod admittance policy for the machine profile:
+
+.. Save the following YAML in the `nro-kubeletconfig.yaml` file:
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: KubeletConfig
+metadata:
+  name: cnf-worker-tuning
+spec:
+  machineConfigPoolSelector:
+    matchLabels:
+      cnf-worker-tuning: enabled
+  kubeletConfig:
+    cpuManagerPolicy: "static" <1>
+    cpuManagerReconcilePeriod: "5s"
+    reservedSystemCPUs: "0,1"
+    memoryManagerPolicy: "Static" <2>
+    evictionHard:
+      memory.available: "100Mi"
+    kubeReserved:
+      memory: "512Mi"
+    reservedMemory:
+      - numaNode: 0
+        limits:
+          memory: "1124Mi"
+    systemReserved:
+      memory: "512Mi"
+    topologyManagerPolicy: "single-numa-node" <3>
+    topologyManagerScope: "pod"
+----
+<1> For `cpuManagerPolicy`, `static` must use a lowercase `s`.
+<2> For `memoryManagerPolicy`, `Static` must use an uppercase `S`.
+<3> `topologyManagerPolicy` must be set to `single-numa-node`.
+
+.. Create the `KubeletConfig` custom resource (CR) by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nro-kubeletconfig.yaml
+----
+
+. Create the `NUMAResourcesScheduler` custom resource that deploys the NUMA-aware custom pod scheduler:
+
+.. Save the following YAML in the `nro-scheduler.yaml` file:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: nodetopology.openshift.io/v1
+kind: NUMAResourcesScheduler
+metadata:
+  name: numaresourcesscheduler
+spec:
+  imageSpec: "registry.redhat.io/openshift4/noderesourcetopology-scheduler-container-rhel8:v{product-version}"
+  cacheResyncPeriod: "5s" <1>
+----
+<1> Enter an interval value in seconds for synchronization of the scheduler cache. A value of `5s` is typical for most implementations.
++
+[NOTE]
+====
+* Enable the `cacheResyncPeriod` specification to help the NUMA Resource Operator report more exact resource availability by monitoring pending resources on nodes and synchronizing this information in the scheduler cache at a defined interval. This also helps to minimize `Topology Affinity Error` errors because of sub-optimal scheduling decisions. The lower the interval the greater the network load. The `cacheResyncPeriod` specification is disabled by default.
+
+* Setting a value of `Enabled` for the `podsFingerprinting` specification in the `NUMAResourcesOperator` CR is a requirement for the implementation of the `cacheResyncPeriod` specification.
+====
+
+.. Create the `NUMAResourcesScheduler` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nro-scheduler.yaml
+----
+
+.Verification
+
+* Verify that the required resources deployed successfully by running the following command:
++
+[source,terminal]
+----
+$ oc get all -n openshift-numaresources
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                    READY   STATUS    RESTARTS   AGE
+pod/numaresources-controller-manager-7575848485-bns4s   1/1     Running   0          13m
+pod/numaresourcesoperator-worker-dvj4n                  2/2     Running   0          16m
+pod/numaresourcesoperator-worker-lcg4t                  2/2     Running   0          16m
+pod/secondary-scheduler-56994cf6cf-7qf4q                1/1     Running   0          16m
+NAME                                          DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                     AGE
+daemonset.apps/numaresourcesoperator-worker   2         2         2       2            2           node-role.kubernetes.io/worker=   16m
+NAME                                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/numaresources-controller-manager   1/1     1            1           13m
+deployment.apps/secondary-scheduler                1/1     1            1           16m
+NAME                                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/numaresources-controller-manager-7575848485   1         1         1       13m
+replicaset.apps/secondary-scheduler-56994cf6cf                1         1         1       16m
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-scheduling-numa-aware-workloads-with-manual-performance-setttings_{context}"]
+= Scheduling workloads with the NUMA-aware scheduler with manual performance settings
+
+You can schedule workloads with the NUMA-aware scheduler using `Deployment` CRs that specify the minimum required resources to process the workload.
+
+The following example deployment uses NUMA-aware scheduling for a sample workload.
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+
+* Log in as a user with `cluster-admin` privileges.
+
+* Install the NUMA Resources Operator and deploy the NUMA-aware secondary scheduler.
+
+.Procedure
+
+. Get the name of the NUMA-aware scheduler that is deployed in the cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get numaresourcesschedulers.nodetopology.openshift.io numaresourcesscheduler -o json | jq '.status.schedulerName'
+----
++
+.Example output
+[source,terminal]
+----
+topo-aware-scheduler
+----
+
+. Create a `Deployment` CR that uses scheduler named `topo-aware-scheduler`, for example:
+
+.. Save the following YAML in the `nro-deployment.yaml` file:
++
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: numa-deployment-1
+  namespace: openshift-numaresources
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test
+  template:
+    metadata:
+      labels:
+        app: test
+    spec:
+      schedulerName: topo-aware-scheduler <1>
+      containers:
+      - name: ctnr
+        image: quay.io/openshifttest/hello-openshift:openshift
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "100Mi"
+            cpu: "10"
+          requests:
+            memory: "100Mi"
+            cpu: "10"
+      - name: ctnr2
+        image: registry.access.redhat.com/rhel:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c"]
+        args: [ "while true; do sleep 1h; done;" ]
+        resources:
+          limits:
+            memory: "100Mi"
+            cpu: "8"
+          requests:
+            memory: "100Mi"
+            cpu: "8"
+----
+<1> `schedulerName` must match the name of the NUMA-aware scheduler that is deployed in your cluster, for example `topo-aware-scheduler`.
+
+.. Create the `Deployment` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nro-deployment.yaml
+----
+
+.Verification
+
+. Verify that the deployment was successful:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-numaresources
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                READY   STATUS    RESTARTS   AGE
+numa-deployment-1-56954b7b46-pfgw8                  2/2     Running   0          129m
+numaresources-controller-manager-7575848485-bns4s   1/1     Running   0          15h
+numaresourcesoperator-worker-dvj4n                  2/2     Running   0          18h
+numaresourcesoperator-worker-lcg4t                  2/2     Running   0          16h
+secondary-scheduler-56994cf6cf-7qf4q                1/1     Running   0          18h
+----
+
+. Verify that the `topo-aware-scheduler` is scheduling the deployed pod by running the following command:
++
+[source,terminal]
+----
+$ oc describe pod numa-deployment-1-56954b7b46-pfgw8 -n openshift-numaresources
+----
++
+.Example output
+[source,terminal]
+----
+Events:
+  Type    Reason          Age   From                  Message
+  ----    ------          ----  ----                  -------
+  Normal  Scheduled       130m  topo-aware-scheduler  Successfully assigned openshift-numaresources/numa-deployment-1-56954b7b46-pfgw8 to compute-0.example.com
+----
++
+[NOTE]
+====
+Deployments that request more resources than is available for scheduling will fail with a `MinimumReplicasUnavailable` error. The deployment succeeds when the required resources become available. Pods remain in the `Pending` state until the required resources are available.
+====
+
+. Verify that the expected allocated resources are listed for the node.
+
+.. Identify the node that is running the deployment pod by running the following command, replacing <namespace> with the namespace you specified in the `Deployment` CR:
++
+[source,terminal]
+----
+$ oc get pods -n <namespace> -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                 READY   STATUS    RESTARTS   AGE   IP            NODE     NOMINATED NODE   READINESS GATES
+numa-deployment-1-65684f8fcc-bw4bw   0/2     Running   0          82m   10.128.2.50   worker-0   <none>  <none>
+----
++
+.. Run the following command, replacing <node_name> with the name of that node that is running the deployment pod:
++
+[source,terminal]
+----
+$ oc describe noderesourcetopologies.topology.node.k8s.io <node_name>
+----
++
+.Example output
+[source,terminal]
+----
+...
+
+Zones:
+  Costs:
+    Name:   node-0
+    Value:  10
+    Name:   node-1
+    Value:  21
+  Name:     node-0
+  Resources:
+    Allocatable:  39
+    Available:    21 <1>
+    Capacity:     40
+    Name:         cpu
+    Allocatable:  6442450944
+    Available:    6442450944
+    Capacity:     6442450944
+    Name:         hugepages-1Gi
+    Allocatable:  134217728
+    Available:    134217728
+    Capacity:     134217728
+    Name:         hugepages-2Mi
+    Allocatable:  262415904768
+    Available:    262206189568
+    Capacity:     270146007040
+    Name:         memory
+  Type:           Node
+----
+<1> The `Available` capacity is reduced because of the resources that have been allocated to the guaranteed pod.
++
+Resources consumed by guaranteed pods are subtracted from the available node resources listed under `noderesourcetopologies.topology.node.k8s.io`.
+
+. Resource allocations for pods with a `Best-effort` or `Burstable` quality of service (`qosClass`) are not reflected in the NUMA node resources under `noderesourcetopologies.topology.node.k8s.io`. If a pod's consumed resources are not reflected in the node resource calculation, verify that the pod has `qosClass` of `Guaranteed` and the CPU request is an integer value, not a decimal value. You can verify the that the pod has a  `qosClass` of `Guaranteed` by running the following command:
++
+[source,terminal]
+----
+$ oc get pod <pod_name> -n <pod_namespace> -o jsonpath="{ .status.qosClass }"
+----
++
+.Example output
+[source,terminal]
+----
+Guaranteed
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_mod-docs-content-type: PROCEDURE
+
+[id="cnf-configuring-node-groups-for-the-numaresourcesoperator_{context}"]
+= Optional: Configuring polling operations for NUMA resources updates
+
+The daemons controlled by the NUMA Resources Operator in their `nodeGroup` poll resources to retrieve updates about available NUMA resources. You can fine-tune polling operations for these daemons by configuring the `spec.nodeGroups` specification in the `NUMAResourcesOperator` custom resource (CR). This provides advanced control of polling operations. Configure these specifications to improve scheduling behaviour and troubleshoot suboptimal scheduling decisions.
+
+The configuration options are the following:
+
+* `infoRefreshMode`: Determines the trigger condition for polling the kubelet. The NUMA Resources Operator reports the resulting information to the API server.
+* `infoRefreshPeriod`: Determines the duration between polling updates.
+* `podsFingerprinting`: Determines if point-in-time information for the current set of pods running on a node is exposed in polling updates.
++
+[NOTE]
+====
+`podsFingerprinting` is enabled by default. `podsFingerprinting` is a requirement for the `cacheResyncPeriod` specification in the `NUMAResourcesScheduler` CR. The `cacheResyncPeriod` specification helps to report more exact resource availability by monitoring pending resources on nodes.
+====
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+* Install the NUMA Resources Operator.
+
+.Procedure
+
+* Configure the `spec.nodeGroups` specification in your `NUMAResourcesOperator` CR:
++
+[source,yaml]
+----
+apiVersion: nodetopology.openshift.io/v1
+kind: NUMAResourcesOperator
+metadata:
+  name: numaresourcesoperator
+spec:
+  nodeGroups:
+  - config:
+      infoRefreshMode: Periodic <1>
+      infoRefreshPeriod: 10s <2>
+      podsFingerprinting: Enabled <3>
+    name: worker
+----
+<1> Valid values are `Periodic`, `Events`, `PeriodicAndEvents`. Use `Periodic` to poll the kubelet at intervals that you define in `infoRefreshPeriod`. Use `Events` to poll the kubelet at every pod lifecycle event. Use `PeriodicAndEvents` to enable both methods.
+<2> Define the polling interval for `Periodic` or `PeriodicAndEvents` refresh modes. The field is ignored if the refresh mode is `Events`.
+<3> Valid values are `Enabled` or `Disabled`. Setting to `Enabled` is a requirement for the `cacheResyncPeriod` specification in the `NUMAResourcesScheduler`.
+
+.Verification
+
+. After you deploy the NUMA Resources Operator, verify that the node group configurations were applied by running the following command:
++
+[source,terminal]
+----
+$ oc get numaresop numaresourcesoperator -o json | jq '.status'
+----
++
+.Example output
+[source,terminal]
+----
+      ...
+
+        "config": {
+        "infoRefreshMode": "Periodic",
+        "infoRefreshPeriod": "10s",
+        "podsFingerprinting": "Enabled"
+      },
+      "name": "worker"
+
+      ...
+----
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-troubleshooting-numa-aware-workloads_{context}"]
+= Troubleshooting NUMA-aware scheduling
+
+To troubleshoot common problems with NUMA-aware pod scheduling, perform the following steps.
+
+.Prerequisites
+
+* Install the {product-title} CLI (`oc`).
+
+* Log in as a user with cluster-admin privileges.
+
+* Install the NUMA Resources Operator and deploy the NUMA-aware secondary scheduler.
+
+.Procedure
+
+. Verify that the `noderesourcetopologies` CRD is deployed in the cluster by running the following command:
++
+[source,terminal]
+----
+$ oc get crd | grep noderesourcetopologies
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                              CREATED AT
+noderesourcetopologies.topology.node.k8s.io                       2022-01-18T08:28:06Z
+----
+
+. Check that the NUMA-aware scheduler name matches the name specified in your NUMA-aware workloads by running the following command:
++
+[source,terminal]
+----
+$ oc get numaresourcesschedulers.nodetopology.openshift.io numaresourcesscheduler -o json | jq '.status.schedulerName'
+----
++
+.Example output
+[source,terminal]
+----
+topo-aware-scheduler
+----
+
+. Verify that NUMA-aware scheduable nodes have the `noderesourcetopologies` CR applied to them. Run the following command:
++
+[source,terminal]
+----
+$ oc get noderesourcetopologies.topology.node.k8s.io
+----
++
+.Example output
+[source,terminal]
+----
+NAME                    AGE
+compute-0.example.com   17h
+compute-1.example.com   17h
+----
++
+[NOTE]
+====
+The number of nodes should equal the number of worker nodes that are configured by the machine config pool (`mcp`) worker definition.
+====
+
+. Verify the NUMA zone granularity for all scheduable nodes by running the following command:
++
+[source,terminal]
+----
+$ oc get noderesourcetopologies.topology.node.k8s.io -o yaml
+----
++
+.Example output
+[source,yaml]
+----
+apiVersion: v1
+items:
+- apiVersion: topology.node.k8s.io/v1
+  kind: NodeResourceTopology
+  metadata:
+    annotations:
+      k8stopoawareschedwg/rte-update: periodic
+    creationTimestamp: "2022-06-16T08:55:38Z"
+    generation: 63760
+    name: worker-0
+    resourceVersion: "8450223"
+    uid: 8b77be46-08c0-4074-927b-d49361471590
+  topologyPolicies:
+  - SingleNUMANodeContainerLevel
+  zones:
+  - costs:
+    - name: node-0
+      value: 10
+    - name: node-1
+      value: 21
+    name: node-0
+    resources:
+    - allocatable: "38"
+      available: "38"
+      capacity: "40"
+      name: cpu
+    - allocatable: "134217728"
+      available: "134217728"
+      capacity: "134217728"
+      name: hugepages-2Mi
+    - allocatable: "262352048128"
+      available: "262352048128"
+      capacity: "270107316224"
+      name: memory
+    - allocatable: "6442450944"
+      available: "6442450944"
+      capacity: "6442450944"
+      name: hugepages-1Gi
+    type: Node
+  - costs:
+    - name: node-0
+      value: 21
+    - name: node-1
+      value: 10
+    name: node-1
+    resources:
+    - allocatable: "268435456"
+      available: "268435456"
+      capacity: "268435456"
+      name: hugepages-2Mi
+    - allocatable: "269231067136"
+      available: "269231067136"
+      capacity: "270573244416"
+      name: memory
+    - allocatable: "40"
+      available: "40"
+      capacity: "40"
+      name: cpu
+    - allocatable: "1073741824"
+      available: "1073741824"
+      capacity: "1073741824"
+      name: hugepages-1Gi
+    type: Node
+- apiVersion: topology.node.k8s.io/v1
+  kind: NodeResourceTopology
+  metadata:
+    annotations:
+      k8stopoawareschedwg/rte-update: periodic
+    creationTimestamp: "2022-06-16T08:55:37Z"
+    generation: 62061
+    name: worker-1
+    resourceVersion: "8450129"
+    uid: e8659390-6f8d-4e67-9a51-1ea34bba1cc3
+  topologyPolicies:
+  - SingleNUMANodeContainerLevel
+  zones: <1>
+  - costs:
+    - name: node-0
+      value: 10
+    - name: node-1
+      value: 21
+    name: node-0
+    resources: <2>
+    - allocatable: "38"
+      available: "38"
+      capacity: "40"
+      name: cpu
+    - allocatable: "6442450944"
+      available: "6442450944"
+      capacity: "6442450944"
+      name: hugepages-1Gi
+    - allocatable: "134217728"
+      available: "134217728"
+      capacity: "134217728"
+      name: hugepages-2Mi
+    - allocatable: "262391033856"
+      available: "262391033856"
+      capacity: "270146301952"
+      name: memory
+    type: Node
+  - costs:
+    - name: node-0
+      value: 21
+    - name: node-1
+      value: 10
+    name: node-1
+    resources:
+    - allocatable: "40"
+      available: "40"
+      capacity: "40"
+      name: cpu
+    - allocatable: "1073741824"
+      available: "1073741824"
+      capacity: "1073741824"
+      name: hugepages-1Gi
+    - allocatable: "268435456"
+      available: "268435456"
+      capacity: "268435456"
+      name: hugepages-2Mi
+    - allocatable: "269192085504"
+      available: "269192085504"
+      capacity: "270534262784"
+      name: memory
+    type: Node
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+----
+<1> Each stanza under `zones` describes the resources for a single NUMA zone.
+<2> `resources` describes the current state of the NUMA zone resources. Check that resources listed under `items.zones.resources.available` correspond to the exclusive NUMA zone resources allocated to each guaranteed pod.
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_module-type: PROCEDURE
+[id="cnf-checking-numa-aware-scheduler-logs_{context}"]
+= Checking the NUMA-aware scheduler logs
+
+Troubleshoot problems with the NUMA-aware scheduler by reviewing the logs. If required, you can increase the scheduler log level by modifying the `spec.logLevel` field of the `NUMAResourcesScheduler` resource. Acceptable values are `Normal`, `Debug`, and `Trace`, with `Trace` being the most verbose option.
+
+[NOTE]
+====
+To change the log level of the secondary scheduler, delete the running scheduler resource and re-deploy it with the changed log level. The scheduler is unavailable for scheduling new workloads during this downtime.
+====
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Delete the currently running `NUMAResourcesScheduler` resource:
+
+.. Get the active `NUMAResourcesScheduler` by running the following command:
++
+[source,terminal]
+----
+$ oc get NUMAResourcesScheduler
+----
++
+.Example output
+[source,terminal]
+----
+NAME                     AGE
+numaresourcesscheduler   90m
+----
+
+.. Delete the secondary scheduler resource by running the following command:
++
+[source,terminal]
+----
+$ oc delete NUMAResourcesScheduler numaresourcesscheduler
+----
++
+.Example output
+[source,terminal]
+----
+numaresourcesscheduler.nodetopology.openshift.io "numaresourcesscheduler" deleted
+----
+
+. Save the following YAML in the file `nro-scheduler-debug.yaml`. This example changes the log level to `Debug`:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: nodetopology.openshift.io/v1
+kind: NUMAResourcesScheduler
+metadata:
+  name: numaresourcesscheduler
+spec:
+  imageSpec: "registry.redhat.io/openshift4/noderesourcetopology-scheduler-container-rhel8:v{product-version}"
+  logLevel: Debug
+----
+
+. Create the updated `Debug` logging `NUMAResourcesScheduler` resource by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nro-scheduler-debug.yaml
+----
++
+.Example output
+[source,terminal]
+----
+numaresourcesscheduler.nodetopology.openshift.io/numaresourcesscheduler created
+----
+
+.Verification steps
+
+. Check that the NUMA-aware scheduler was successfully deployed:
+
+.. Run the following command to check that the CRD is created succesfully:
++
+[source,terminal]
+----
+$ oc get crd | grep numaresourcesschedulers
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                                              CREATED AT
+numaresourcesschedulers.nodetopology.openshift.io                 2022-02-25T11:57:03Z
+----
+
+.. Check that the new custom scheduler is available by running the following command:
++
+[source,terminal]
+----
+$ oc get numaresourcesschedulers.nodetopology.openshift.io
+----
++
+.Example output
+[source,terminal]
+----
+NAME                     AGE
+numaresourcesscheduler   3h26m
+----
+
+. Check that the logs for the scheduler shows the increased log level:
+
+.. Get the list of pods running in the `openshift-numaresources` namespace by running the following command:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-numaresources
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                               READY   STATUS    RESTARTS   AGE
+numaresources-controller-manager-d87d79587-76mrm   1/1     Running   0          46h
+numaresourcesoperator-worker-5wm2k                 2/2     Running   0          45h
+numaresourcesoperator-worker-pb75c                 2/2     Running   0          45h
+secondary-scheduler-7976c4d466-qm4sc               1/1     Running   0          21m
+----
+
+.. Get the logs for the secondary scheduler pod by running the following command:
++
+[source,terminal]
+----
+$ oc logs secondary-scheduler-7976c4d466-qm4sc -n openshift-numaresources
+----
++
+.Example output
+[source,terminal]
+----
+...
+I0223 11:04:55.614788       1 reflector.go:535] k8s.io/client-go/informers/factory.go:134: Watch close - *v1.Namespace total 11 items received
+I0223 11:04:56.609114       1 reflector.go:535] k8s.io/client-go/informers/factory.go:134: Watch close - *v1.ReplicationController total 10 items received
+I0223 11:05:22.626818       1 reflector.go:535] k8s.io/client-go/informers/factory.go:134: Watch close - *v1.StorageClass total 7 items received
+I0223 11:05:31.610356       1 reflector.go:535] k8s.io/client-go/informers/factory.go:134: Watch close - *v1.PodDisruptionBudget total 7 items received
+I0223 11:05:31.713032       1 eventhandlers.go:186] "Add event for scheduled pod" pod="openshift-marketplace/certified-operators-thtvq"
+I0223 11:05:53.461016       1 eventhandlers.go:244] "Delete event for scheduled pod" pod="openshift-marketplace/certified-operators-thtvq"
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_module-type: PROCEDURE
+[id="cnf-troubleshooting-resource-topo-exporter_{context}"]
+= Troubleshooting the resource topology exporter
+
+Troubleshoot `noderesourcetopologies` objects where unexpected results are occurring by inspecting the corresponding `resource-topology-exporter` logs.
+
+[NOTE]
+====
+It is recommended that NUMA resource topology exporter instances in the cluster are named for nodes they refer to. For example, a worker node with the name `worker` should have a corresponding `noderesourcetopologies` object called `worker`.
+====
+
+.Prerequisites
+
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Get the daemonsets managed by the NUMA Resources Operator. Each daemonset has a corresponding `nodeGroup` in the `NUMAResourcesOperator` CR. Run the following command:
++
+[source,terminal]
+----
+$ oc get numaresourcesoperators.nodetopology.openshift.io numaresourcesoperator -o jsonpath="{.status.daemonsets[0]}"
+----
++
+.Example output
+[source,json]
+----
+{"name":"numaresourcesoperator-worker","namespace":"openshift-numaresources"}
+----
+
+. Get the label for the daemonset of interest using the value for `name` from the previous step:
++
+[source,terminal]
+----
+$ oc get ds -n openshift-numaresources numaresourcesoperator-worker -o jsonpath="{.spec.selector.matchLabels}"
+----
++
+.Example output
+[source,json]
+----
+{"name":"resource-topology"}
+----
+
+. Get the pods using the `resource-topology` label by running the following command:
++
+[source,terminal]
+----
+$ oc get pods -n openshift-numaresources -l name=resource-topology -o wide
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                 READY   STATUS    RESTARTS   AGE    IP            NODE
+numaresourcesoperator-worker-5wm2k   2/2     Running   0          2d1h   10.135.0.64   compute-0.example.com
+numaresourcesoperator-worker-pb75c   2/2     Running   0          2d1h   10.132.2.33   compute-1.example.com
+----
+
+. Examine the logs of the `resource-topology-exporter` container running on the worker pod that corresponds to the node you are troubleshooting. Run the following command:
++
+[source,terminal]
+----
+$ oc logs -n openshift-numaresources -c resource-topology-exporter numaresourcesoperator-worker-pb75c
+----
++
+.Example output
+[source,terminal]
+----
+I0221 13:38:18.334140       1 main.go:206] using sysinfo:
+reservedCpus: 0,1
+reservedMemory:
+  "0": 1178599424
+I0221 13:38:18.334370       1 main.go:67] === System information ===
+I0221 13:38:18.334381       1 sysinfo.go:231] cpus: reserved "0-1"
+I0221 13:38:18.334493       1 sysinfo.go:237] cpus: online "0-103"
+I0221 13:38:18.546750       1 main.go:72]
+cpus: allocatable "2-103"
+hugepages-1Gi:
+  numa cell 0 -> 6
+  numa cell 1 -> 1
+hugepages-2Mi:
+  numa cell 0 -> 64
+  numa cell 1 -> 128
+memory:
+  numa cell 0 -> 45758Mi
+  numa cell 1 -> 48372Mi
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// *scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_module-type: PROCEDURE
+[id="cnf-troubleshooting-missing-rte-config-maps_{context}"]
+= Correcting a missing resource topology exporter config map
+
+If you install the NUMA Resources Operator in a cluster with misconfigured cluster settings, in some circumstances, the Operator is shown as active but the logs of the resource topology exporter (RTE) daemon set pods show that the configuration for the RTE is missing, for example:
+
+[source,text]
+----
+Info: couldn't find configuration in "/etc/resource-topology-exporter/config.yaml"
+----
+
+This log message indicates that the `kubeletconfig` with the required configuration was not properly applied in the cluster, resulting in a missing RTE `configmap`. For example, the following cluster is missing a `numaresourcesoperator-worker` `configmap` custom resource (CR):
+
+[source,terminal]
+----
+$ oc get configmap
+----
+
+.Example output
+[source,terminal]
+----
+NAME                           DATA   AGE
+0e2a6bd3.openshift-kni.io      0      6d21h
+kube-root-ca.crt               1      6d21h
+openshift-service-ca.crt       1      6d21h
+topo-aware-scheduler-config    1      6d18h
+----
+
+In a correctly configured cluster, `oc get configmap` also returns a `numaresourcesoperator-worker` `configmap` CR.
+
+.Prerequisites
+
+* Install the {product-title} CLI (`oc`).
+
+* Log in as a user with cluster-admin privileges.
+
+* Install the NUMA Resources Operator and deploy the NUMA-aware secondary scheduler.
+
+.Procedure
+
+. Compare the values for `spec.machineConfigPoolSelector.matchLabels` in `kubeletconfig` and
+`metadata.labels` in the `MachineConfigPool` (`mcp`) worker CR using the following commands:
+
+..  Check the `kubeletconfig` labels by running the following command:
++
+[source,terminal]
+----
+$ oc get kubeletconfig -o yaml
+----
++
+.Example output
+[source,yaml]
+----
+machineConfigPoolSelector:
+  matchLabels:
+    cnf-worker-tuning: enabled
+----
+
+.. Check the `mcp` labels by running the following command:
++
+[source,terminal]
+----
+$ oc get mcp worker -o yaml
+----
++
+.Example output
+[source,yaml]
+----
+labels:
+  machineconfiguration.openshift.io/mco-built-in: ""
+  pools.operator.machineconfiguration.openshift.io/worker: ""
+----
++
+The `cnf-worker-tuning: enabled` label is not present in the `MachineConfigPool` object.
+
+. Edit the `MachineConfigPool` CR to include the missing label, for example:
++
+[source,terminal]
+----
+$ oc edit mcp worker -o yaml
+----
++
+.Example output
+[source,yaml]
+----
+labels:
+  machineconfiguration.openshift.io/mco-built-in: ""
+  pools.operator.machineconfiguration.openshift.io/worker: ""
+  cnf-worker-tuning: enabled
+----
+
+. Apply the label changes and wait for the cluster to apply the updated configuration. Run the following command:
+
+.Verification
+
+* Check that the missing `numaresourcesoperator-worker` `configmap` CR is applied:
++
+[source,terminal]
+----
+$ oc get configmap
+----
++
+.Example output
+[source,terminal]
+----
+NAME                           DATA   AGE
+0e2a6bd3.openshift-kni.io      0      6d21h
+kube-root-ca.crt               1      6d21h
+numaresourcesoperator-worker   1      5m
+openshift-service-ca.crt       1      6d21h
+topo-aware-scheduler-config    1      6d18h
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/cnf-numa-aware-scheduling.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cnf-about-collecting-nro-data_{context}"]
+= Collecting NUMA Resources Operator data
+
+You can use the `oc adm must-gather` CLI command to collect information about your cluster, including features and objects associated with the NUMA Resources Operator.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+
+* You have installed the {oc-first}.
+
+.Procedure
+
+* To collect NUMA Resources Operator data with `must-gather`, you must specify the NUMA Resources Operator `must-gather` image.
++
+[source,terminal,subs="attributes+"]
+----
+$ oc adm must-gather --image=registry.redhat.io/numaresources-must-gather/numaresources-must-gather-rhel9:{product-version}
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,modules/cnf-about-numa-aware-scheduling,modules/cnf-installing-numa-resources-operator-cli,modules/cnf-installing-numa-resources-operator-console,modules/cnf-scheduling-numa-aware-workloads-overview,modules/cnf-creating-nrop-cr,modules/cnf-deploying-the-numa-aware-scheduler,modules/cnf-scheduling-numa-aware-workloads,modules/cnf-scheduling-numa-aware-workloads-overview-with-manual-performance-settings,modules/cnf-creating-nrop-cr-with-manual-performance-settings,modules/cnf-deploying-the-numa-aware-scheduler-with-manual-performance-settings,modules/cnf-scheduling-numa-aware-workloads-with-manual-performance-setttings,modules/cnf-configuring-node-groups-for-the-numaresourcesoperator,modules/cnf-troubleshooting-numa-aware-workloads,modules/cnf-checking-numa-aware-scheduler-logs,modules/cnf-troubleshooting-resource-topo-exporter,modules/cnf-troubleshooting-missing-rte-config-maps,modules/cnf-about-collecting-nro-data

@@ -1,0 +1,986 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="virt-running-cluster-checkups"]
+= {VirtProductName} cluster checkup framework
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: virt-running-cluster-checkups
+
+toc::[]
+
+{VirtProductName} includes the following predefined checkups that can be used for cluster maintenance and troubleshooting:
+
+xref:../../virt/monitoring/virt-running-cluster-checkups.adoc#virt-measuring-latency-vm-secondary-network_virt-running-cluster-checkups[Latency checkup]::
+Verifies network connectivity and measures latency between two virtual machines (VMs) that are attached to a secondary network interface.
+xref:../../virt/monitoring/virt-running-cluster-checkups.adoc#virt-checking-cluster-dpdk-readiness_virt-running-cluster-checkups[DPDK checkup]::
+Verifies that a node can run a VM with a Data Plane Development Kit (DPDK) workload with zero packet loss.
+
+:FeatureName: The {VirtProductName} cluster checkup framework
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * virt/monitoring/virt-running-cluster-checkups.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="virt-about-cluster-checkup-framework_{context}"]
+= About the {VirtProductName} cluster checkup framework
+
+A _checkup_ is an automated test workload that allows you to verify if a specific cluster functionality works as expected. The cluster checkup framework uses native Kubernetes resources to configure and execute the checkup.
+
+By using predefined checkups, cluster administrators and developers can improve cluster maintainability, troubleshoot unexpected behavior, minimize errors, and save time. They can also review the results of the checkup and share them with experts for further analysis. Vendors can write and publish checkups for features or services that they provide and verify that their customer environments are configured correctly.
+
+Running a predefined checkup in an existing namespace involves setting up a service account for the checkup, creating the `Role` and `RoleBinding` objects for the service account, enabling permissions for the checkup, and creating the input config map and the checkup job. You can run a checkup multiple times.
+
+[IMPORTANT]
+====
+You must always:
+
+* Verify that the checkup image is from a trustworthy source before applying it.
+* Review the checkup permissions before creating the `Role` and `RoleBinding` objects.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/monitoring/virt-running-cluster-checkups.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-measuring-latency-vm-secondary-network_{context}"]
+= Running a latency checkup
+
+You use a predefined checkup to verify network connectivity and measure latency between two virtual machines (VMs) that are attached to a secondary network interface. The latency checkup uses the ping utility.
+
+You run a latency checkup by performing the following steps:
+
+. Create a service account, roles, and rolebindings to provide cluster access permissions to the latency checkup.
+. Create a config map to provide the input to run the checkup and to store the results.
+. Create a job to run the checkup.
+. Review the results in the config map.
+. Optional: To rerun the checkup, delete the existing config map and job and then create a new config map and job.
+. When you are finished, delete the latency checkup resources.
+
+.Prerequisites
+
+* You installed the OpenShift CLI (`oc`).
+* The cluster has at least two worker nodes.
+* You configured a network attachment definition for a namespace.
+
+.Procedure
+
+. Create a `ServiceAccount`, `Role`, and `RoleBinding` manifest for the latency checkup:
++
+.Example role manifest file
+[%collapsible]
+====
+[source,yaml]
+----
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vm-latency-checkup-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kubevirt-vm-latency-checker
+rules:
+- apiGroups: ["kubevirt.io"]
+  resources: ["virtualmachineinstances"]
+  verbs: ["get", "create", "delete"]
+- apiGroups: ["subresources.kubevirt.io"]
+  resources: ["virtualmachineinstances/console"]
+  verbs: ["get"]
+- apiGroups: ["k8s.cni.cncf.io"]
+  resources: ["network-attachment-definitions"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubevirt-vm-latency-checker
+subjects:
+- kind: ServiceAccount
+  name: vm-latency-checkup-sa
+roleRef:
+  kind: Role
+  name: kubevirt-vm-latency-checker
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kiagnose-configmap-access
+rules:
+- apiGroups: [ "" ]
+  resources: [ "configmaps" ]
+  verbs: ["get", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kiagnose-configmap-access
+subjects:
+- kind: ServiceAccount
+  name: vm-latency-checkup-sa
+roleRef:
+  kind: Role
+  name: kiagnose-configmap-access
+  apiGroup: rbac.authorization.k8s.io
+----
+====
+
+. Apply the `ServiceAccount`, `Role`, and `RoleBinding` manifest:
++
+[source,terminal]
+----
+$ oc apply -n <target_namespace> -f <latency_sa_roles_rolebinding>.yaml <1>
+----
+<1> `<target_namespace>` is the namespace where the checkup is to be run. This must be an existing namespace where the `NetworkAttachmentDefinition` object resides.
+
+. Create a `ConfigMap` manifest that contains the input parameters for the checkup:
++
+.Example input config map
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubevirt-vm-latency-checkup-config
+data:
+  spec.timeout: 5m
+  spec.param.networkAttachmentDefinitionNamespace: <target_namespace>
+  spec.param.networkAttachmentDefinitionName: "blue-network" <1>
+  spec.param.maxDesiredLatencyMilliseconds: "10" <2>
+  spec.param.sampleDurationSeconds: "5" <3>
+  spec.param.sourceNode: "worker1" <4>
+  spec.param.targetNode: "worker2" <5>
+----
+<1> The name of the `NetworkAttachmentDefinition` object.
+<2> Optional: The maximum desired latency, in milliseconds, between the virtual machines. If the measured latency exceeds this value, the checkup fails.
+<3> Optional: The duration of the latency check, in seconds.
+<4> Optional: When specified, latency is measured from this node to the target node. If the source node is specified, the `spec.param.targetNode` field cannot be empty.
+<5> Optional: When specified, latency is measured from the source node to this node.
+
+. Apply the config map manifest in the target namespace:
++
+[source,terminal]
+----
+$ oc apply -n <target_namespace> -f <latency_config_map>.yaml
+----
+
+. Create a `Job` manifest to run the checkup:
++
+.Example job manifest
+[source,yaml,subs="attributes+"]
+----
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kubevirt-vm-latency-checkup
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      serviceAccountName: vm-latency-checkup-sa
+      restartPolicy: Never
+      containers:
+        - name: vm-latency-checkup
+          image: registry.redhat.io/container-native-virtualization/vm-network-latency-checkup-rhel9:v{product-version}.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            seccompProfile:
+              type: "RuntimeDefault"
+          env:
+            - name: CONFIGMAP_NAMESPACE
+              value: <target_namespace>
+            - name: CONFIGMAP_NAME
+              value: kubevirt-vm-latency-checkup-config
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+----
+
+. Apply the `Job` manifest:
++
+[source,terminal]
+----
+$ oc apply -n <target_namespace> -f <latency_job>.yaml
+----
+
+. Wait for the job to complete:
++
+[source,terminal]
+----
+$ oc wait job kubevirt-vm-latency-checkup -n <target_namespace> --for condition=complete --timeout 6m
+----
+
+. Review the results of the latency checkup by running the following command. If the maximum measured latency is greater than the value of the `spec.param.maxDesiredLatencyMilliseconds` attribute, the checkup fails and returns an error.
++
+[source,terminal]
+----
+$ oc get configmap kubevirt-vm-latency-checkup-config -n <target_namespace> -o yaml
+----
++
+.Example output config map (success)
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubevirt-vm-latency-checkup-config
+  namespace: <target_namespace>
+data:
+  spec.timeout: 5m
+  spec.param.networkAttachmentDefinitionNamespace: <target_namespace>
+  spec.param.networkAttachmentDefinitionName: "blue-network"
+  spec.param.maxDesiredLatencyMilliseconds: "10"
+  spec.param.sampleDurationSeconds: "5"
+  spec.param.sourceNode: "worker1"
+  spec.param.targetNode: "worker2"
+  status.succeeded: "true"
+  status.failureReason: ""
+  status.completionTimestamp: "2022-01-01T09:00:00Z"
+  status.startTimestamp: "2022-01-01T09:00:07Z"
+  status.result.avgLatencyNanoSec: "177000"
+  status.result.maxLatencyNanoSec: "244000" <1>
+  status.result.measurementDurationSec: "5"
+  status.result.minLatencyNanoSec: "135000"
+  status.result.sourceNode: "worker1"
+  status.result.targetNode: "worker2"
+----
+<1> The maximum measured latency in nanoseconds.
+
+. Optional: To view the detailed job log in case of checkup failure, use the following command:
++
+[source,terminal]
+----
+$ oc logs job.batch/kubevirt-vm-latency-checkup -n <target_namespace>
+----
+
+. Delete the job and config map that you previously created by running the following commands:
++
+[source,terminal]
+----
+$ oc delete job -n <target_namespace> kubevirt-vm-latency-checkup
+----
++
+[source,terminal]
+----
+$ oc delete config-map -n <target_namespace> kubevirt-vm-latency-checkup-config
+----
+
+. Optional: If you do not plan to run another checkup, delete the roles manifest:
++
+[source,terminal]
+----
+$ oc delete -f <latency_sa_roles_rolebinding>.yaml
+----
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * virt/monitoring/virt-running-cluster-checkups.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-checking-cluster-dpdk-readiness_{context}"]
+= DPDK checkup
+
+Use a predefined checkup to verify that your {product-title} cluster node can run a virtual machine (VM) with a Data Plane Development Kit (DPDK) workload with zero packet loss. The DPDK checkup runs traffic between a traffic generator and a VM running a test DPDK application.
+
+You run a DPDK checkup by performing the following steps:
+
+. Create a service account, role, and role bindings for the DPDK checkup.
+. Create a config map to provide the input to run the checkup and to store the results.
+. Create a job to run the checkup.
+. Review the results in the config map.
+. Optional: To rerun the checkup, delete the existing config map and job and then create a new config map and job.
+. When you are finished, delete the DPDK checkup resources.
+
+.Prerequisites
+* You have installed the OpenShift CLI (`oc`).
+* The cluster is configured to run DPDK applications.
+* The project is configured to run DPDK applications.
+
+.Procedure
+
+. Create a `ServiceAccount`, `Role`, and `RoleBinding` manifest for the DPDK checkup:
++
+.Example service account, role, and rolebinding manifest file
+[%collapsible]
+====
+[source,yaml]
+----
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dpdk-checkup-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kiagnose-configmap-access
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "configmaps" ]
+    verbs: [ "get", "update" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kiagnose-configmap-access
+subjects:
+  - kind: ServiceAccount
+    name: dpdk-checkup-sa
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kiagnose-configmap-access
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kubevirt-dpdk-checker
+rules:
+  - apiGroups: [ "kubevirt.io" ]
+    resources: [ "virtualmachineinstances" ]
+    verbs: [ "create", "get", "delete" ]
+  - apiGroups: [ "subresources.kubevirt.io" ]
+    resources: [ "virtualmachineinstances/console" ]
+    verbs: [ "get" ]
+  - apiGroups: [ "" ]
+    resources: [ "configmaps" ]
+    verbs: [ "create", "delete" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubevirt-dpdk-checker
+subjects:
+  - kind: ServiceAccount
+    name: dpdk-checkup-sa
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kubevirt-dpdk-checker
+----
+====
+
+. Apply the `ServiceAccount`, `Role`, and `RoleBinding` manifest:
++
+[source,terminal]
+----
+$ oc apply -n <target_namespace> -f <dpdk_sa_roles_rolebinding>.yaml
+----
+
+. Create a `ConfigMap` manifest that contains the input parameters for the checkup:
++
+.Example input config map
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dpdk-checkup-config
+data:
+  spec.timeout: 10m
+  spec.param.networkAttachmentDefinitionName: <network_name> <1>
+  spec.param.trafficGenContainerDiskImage: "quay.io/kiagnose/kubevirt-dpdk-checkup-traffic-gen:v0.2.0 <2>
+  spec.param.vmUnderTestContainerDiskImage: "quay.io/kiagnose/kubevirt-dpdk-checkup-vm:v0.2.0" <3>
+----
+<1> The name of the `NetworkAttachmentDefinition` object.
+<2> The container disk image for the traffic generator. In this example, the image is pulled from the upstream Project Quay Container Registry.
+<3> The container disk image for the VM under test. In this example, the image is pulled from the upstream Project Quay Container Registry.
+
+. Apply the `ConfigMap` manifest in the target namespace:
++
+[source,terminal]
+----
+$ oc apply -n <target_namespace> -f <dpdk_config_map>.yaml
+----
+
+. Create a `Job` manifest to run the checkup:
++
+.Example job manifest
+[source,yaml,subs="attributes+"]
+----
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dpdk-checkup
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      serviceAccountName: dpdk-checkup-sa
+      restartPolicy: Never
+      containers:
+        - name: dpdk-checkup
+          image: registry.redhat.io/container-native-virtualization/kubevirt-dpdk-checkup-rhel9:v{product-version}.0
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            seccompProfile:
+              type: "RuntimeDefault"
+          env:
+            - name: CONFIGMAP_NAMESPACE
+              value: <target-namespace>
+            - name: CONFIGMAP_NAME
+              value: dpdk-checkup-config
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+----
+
+. Apply the `Job` manifest:
++
+[source,terminal]
+----
+$ oc apply -n <target_namespace> -f <dpdk_job>.yaml
+----
+
+. Wait for the job to complete:
++
+[source,terminal]
+----
+$ oc wait job dpdk-checkup -n <target_namespace> --for condition=complete --timeout 10m
+----
+
+. Review the results of the checkup by running the following command:
++
+[source,terminal]
+----
+$ oc get configmap dpdk-checkup-config -n <target_namespace> -o yaml
+----
++
+.Example output config map (success)
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dpdk-checkup-config
+data:
+  spec.timeout: 10m
+  spec.param.NetworkAttachmentDefinitionName: "dpdk-network-1"
+  spec.param.trafficGenContainerDiskImage: "quay.io/kiagnose/kubevirt-dpdk-checkup-traffic-gen:v0.2.0"
+  spec.param.vmUnderTestContainerDiskImage: "quay.io/kiagnose/kubevirt-dpdk-checkup-vm:v0.2.0"
+  status.succeeded: "true" <1>
+  status.failureReason: "" <2>
+  status.startTimestamp: "2023-07-31T13:14:38Z" <3>
+  status.completionTimestamp: "2023-07-31T13:19:41Z" <4>
+  status.result.trafficGenSentPackets: "480000000" <5>
+  status.result.trafficGenOutputErrorPackets: "0" <6>
+  status.result.trafficGenInputErrorPackets: "0" <7>
+  status.result.trafficGenActualNodeName: worker-dpdk1 <8>
+  status.result.vmUnderTestActualNodeName: worker-dpdk2 <9>
+  status.result.vmUnderTestReceivedPackets: "480000000" <10>
+  status.result.vmUnderTestRxDroppedPackets: "0" <11>
+  status.result.vmUnderTestTxDroppedPackets: "0" <12>
+----
+<1> Specifies if the checkup is successful (`true`) or not (`false`).
+<2> The reason for failure if the checkup fails.
+<3> The time when the checkup started, in RFC 3339 time format.
+<4> The time when the checkup has completed, in RFC 3339 time format.
+<5> The number of packets sent from the traffic generator.
+<6> The number of error packets sent from the traffic generator.
+<7> The number of error packets received by the traffic generator.
+<8> The node on which the traffic generator VM was scheduled.
+<9> The node on which the VM under test was scheduled.
+<10> The number of packets received on the VM under test.
+<11> The ingress traffic packets that were dropped by the DPDK application.
+<12> The egress traffic packets that were dropped from the DPDK application.
+
+. Delete the job and config map that you previously created by running the following commands:
++
+[source,terminal]
+----
+$ oc delete job -n <target_namespace> dpdk-checkup
+----
++
+[source,terminal]
+----
+$ oc delete config-map -n <target_namespace> dpdk-checkup-config
+----
+
+. Optional: If you do not plan to run another checkup, delete the `ServiceAccount`, `Role`, and `RoleBinding` manifest:
++
+[source,terminal]
+----
+$ oc delete -f <dpdk_sa_roles_rolebinding>.yaml
+----
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt/monitoring/virt-running-cluster-checkups.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="virt-dpdk-config-map-parameters_{context}"]
+= DPDK checkup config map parameters
+
+The following table shows the mandatory and optional parameters that you can set in the `data` stanza of the input `ConfigMap` manifest when you run a cluster DPDK readiness checkup:
+
+.DPDK checkup config map input parameters
+[cols="1,1,1", options="header"]
+|====
+|Parameter
+|Description
+|Is Mandatory
+
+|`spec.timeout`
+|The time, in minutes, before the checkup fails.
+|True
+
+|`spec.param.networkAttachmentDefinitionName`
+|The name of the `NetworkAttachmentDefinition` object of the SR-IOV NICs connected.
+|True
+
+|`spec.param.trafficGenContainerDiskImage`
+|The container disk image for the traffic generator. The default value is `quay.io/kiagnose/kubevirt-dpdk-checkup-traffic-gen:main`.
+|False
+
+|`spec.param.trafficGenTargetNodeName`
+|The node on which the traffic generator VM is to be scheduled. The node should be configured to allow DPDK traffic.
+|False
+
+|`spec.param.trafficGenPacketsPerSecond`
+|The number of packets per second, in kilo (k) or million(m). The default value is 8m.
+|False
+
+|`spec.param.vmUnderTestContainerDiskImage`
+|The container disk image for the VM under test. The default value is `quay.io/kiagnose/kubevirt-dpdk-checkup-vm:main`.
+|False
+
+|`spec.param.vmUnderTestTargetNodeName`
+|The node on which the VM under test is to be scheduled. The node should be configured to allow DPDK traffic.
+|False
+
+|`spec.param.testDuration`
+|The duration, in minutes, for which the traffic generator runs. The default value is 5 minutes.
+|False
+
+|`spec.param.portBandwidthGbps`
+|The maximum bandwidth of the SR-IOV NIC. The default value is 10Gbps.
+|False
+
+|`spec.param.verbose`
+|When set to `true`, it increases the verbosity of the checkup log. The default value is `false`.
+|False
+|====
+
+:leveloffset!:
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * virt//support/monitoring/virt-running-cluster-checkups.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="virt-building-vm-containerdisk-image_{context}"]
+= Building a container disk image for {op-system-base} virtual machines
+
+You can build a custom {op-system-base-full} 8 OS image in `qcow2` format and use it to create a container disk image. You can store the container disk image in a registry that is accessible from your cluster and specify the image location in the `spec.param.vmContainerDiskImage` attribute of the DPDK checkup config map.
+
+To build a container disk image, you must create an image builder virtual machine (VM). The _image builder VM_ is a {op-system-base} 8 VM that can be used to build custom {op-system-base} images.
+
+.Prerequisites
+* The image builder VM must run {op-system-base} 8.7 and must have a minimum of 2 CPU cores, 4 GiB RAM, and 20 GB of free space in the `/var` directory.
+* You have installed the image builder tool and its CLI (`composer-cli`) on the VM.
+
+* You have installed the `virt-customize` tool:
++
+[source,terminal]
+----
+# dnf install libguestfs-tools
+----
+* You have installed the Podman CLI tool (`podman`).
+
+.Procedure
+
+. Verify that you can build a {op-system-base} 8.7 image:
++
+[source,terminal]
+----
+# composer-cli distros list
+----
++
+[NOTE]
+====
+To run the `composer-cli` commands as non-root, add your user to the `weldr` or `root` groups:
+
+[source,terminal]
+----
+# usermod -a -G weldr user
+----
+[source,terminal]
+----
+$ newgrp weldr
+----
+====
+
+. Enter the following command to create an image blueprint file in TOML format that contains the packages to be installed, kernel customizations, and the services to be disabled during boot time:
++
+[source,terminal]
+----
+$ cat << EOF > dpdk-vm.toml
+name = "dpdk_image"
+description = "Image to use with the DPDK checkup"
+version = "0.0.1"
+distro = "rhel-87"
+
+[[packages]]
+name = "dpdk"
+
+[[packages]]
+name = "dpdk-tools"
+
+[[packages]]
+name = "driverctl"
+
+[[packages]]
+name = "tuned-profiles-cpu-partitioning"
+
+[customizations.kernel]
+append = "default_hugepagesz=1GB hugepagesz=1G hugepages=8 isolcpus=2-7"
+
+[customizations.services]
+disabled = ["NetworkManager-wait-online", "sshd"]
+EOF
+----
+
+. Push the blueprint file to the image builder tool by running the following command:
++
+[source,terminal]
+----
+# composer-cli blueprints push dpdk-vm.toml
+----
+
+. Generate the system image by specifying the blueprint name and output file format. The Universally Unique Identifier (UUID) of the image is displayed when you start the compose process.
++
+[source,terminal]
+----
+# composer-cli compose start dpdk_image qcow2
+----
+
+. Wait for the compose process to complete. The compose status must show `FINISHED` before you can continue to the next step.
++
+[source,terminal]
+----
+# composer-cli compose status
+----
+
+. Enter the following command to download the `qcow2` image file by specifying its UUID:
++
+[source,terminal]
+----
+# composer-cli compose image <UUID>
+----
+
+. Create the customization scripts by running the following commands:
++
+[source,terminal]
+----
+$ cat <<EOF >customize-vm
+echo  isolated_cores=2-7 > /etc/tuned/cpu-partitioning-variables.conf
+tuned-adm profile cpu-partitioning
+echo "options vfio enable_unsafe_noiommu_mode=1" > /etc/modprobe.d/vfio-noiommu.conf
+EOF
+----
++
+[source,terminal]
+----
+$ cat <<EOF >first-boot
+driverctl set-override 0000:06:00.0 vfio-pci
+driverctl set-override 0000:07:00.0 vfio-pci
+
+mkdir /mnt/huge
+mount /mnt/huge --source nodev -t hugetlbfs -o pagesize=1GB
+EOF
+----
+
+. Use the `virt-customize` tool to customize the image generated by the image builder tool:
++
+[source,terminal]
+----
+$ virt-customize -a <UUID>.qcow2 --run=customize-vm --firstboot=first-boot --selinux-relabel
+----
+
+. To create a Dockerfile that contains all the commands to build the container disk image, enter the following command:
++
+[source,terminal]
+----
+$ cat << EOF > Dockerfile
+FROM scratch
+COPY <uuid>-disk.qcow2 /disk/
+EOF
+----
++
+where:
+
+<uuid>-disk.qcow2:: Specifies the name of the custom image in `qcow2` format.
+
+. Build and tag the container by running the following command:
++
+[source,terminal]
+----
+$ podman build . -t dpdk-rhel:latest
+----
+
+. Push the container disk image to a registry that is accessible from your cluster by running the following command:
++
+[source,terminal]
+----
+$ podman push dpdk-rhel:latest
+----
+
+. Provide a link to the container disk image in the `spec.param.vmContainerDiskImage` attribute in the DPDK checkup config map.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+[id="additional-resources_running-cluster-checkups"]
+== Additional resources
+* xref:../../virt/vm_networking/virt-connecting-vm-to-linux-bridge.adoc#virt-connecting-vm-to-linux-bridge[Attaching a virtual machine to multiple networks]
+* xref:../../networking/hardware_networks/using-dpdk-and-rdma.adoc#example-vf-use-in-dpdk-mode-intel_using-dpdk-and-rdma[Using a virtual function in DPDK mode with an Intel NIC]
+* xref:../../networking/hardware_networks/using-dpdk-and-rdma.adoc#nw-example-dpdk-line-rate_using-dpdk-and-rdma[Using SR-IOV and the Node Tuning Operator to achieve a DPDK line rate]
+* link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/composing_a_customized_rhel_system_image/installing-composer_composing-a-customized-rhel-system-image[Installing image builder]
+* link:https://access.redhat.com/solutions/253273[How to register and subscribe a RHEL system to the Red Hat Customer Portal using Red Hat Subscription Manager]
+
+//# includes=_attributes/common-attributes,snippets/technology-preview,modules/virt-about-cluster-checkup-framework,modules/virt-measuring-latency-vm-secondary-network,modules/virt-checking-cluster-dpdk-readiness,modules/virt-dpdk-config-map-parameters,modules/virt-building-vm-containerdisk-image

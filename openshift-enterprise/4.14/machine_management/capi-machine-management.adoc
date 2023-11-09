@@ -1,0 +1,872 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="capi-machine-management"]
+= Managing machines with the Cluster API
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: capi-machine-management
+
+toc::[]
+
+:FeatureName: Managing machines with the Cluster API
+// When including this file, ensure that {FeatureName} is set immediately before
+// the include. Otherwise it will result in an incorrect replacement.
+
+[IMPORTANT]
+====
+[subs="attributes+"]
+{FeatureName} is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.
+
+For more information about the support scope of Red Hat Technology Preview features, see link:https://access.redhat.com/support/offerings/techpreview/[Technology Preview Features Support Scope].
+====
+// Undefine {FeatureName} attribute, so that any mistakes are easily spotted
+:!FeatureName:
+
+The link:https://cluster-api.sigs.k8s.io/[Cluster API] is an upstream project that is integrated into {product-title} as a Technology Preview for Amazon Web Services (AWS) and Google Cloud Platform (GCP). You can use the Cluster API to create and manage compute machine sets and compute machines in your {product-title} cluster. This capability is in addition or an alternative to managing machines with the Machine API.
+
+For {product-title} {product-version} clusters, you can use the Cluster API to perform node host provisioning management actions after the cluster installation finishes. This system enables an elastic, dynamic provisioning method on top of public or private cloud infrastructure.
+
+With the Cluster API Technology Preview, you can create compute machines and compute machine sets on {product-title} clusters for supported providers. You can also explore the features that are enabled by this implementation that might not be available with the Machine API.
+
+[discrete]
+[id="cluster-api-benefits_{context}"]
+== Benefits
+
+By using the Cluster API, {product-title} users and developers are able to realize the following advantages:
+
+* The option to use upstream community Cluster API infrastructure providers which might not be supported by the Machine API.
+
+* The opportunity to collaborate with third parties who maintain machine controllers for infrastructure providers.
+
+* The ability to use the same set of Kubernetes tools for infrastructure management in {product-title}.
+
+* The ability to create compute machine sets by using the Cluster API that support features that are not available with the Machine API.
+
+[discrete]
+[id="capi-tech-preview-limitations"]
+== Limitations
+
+Using the Cluster API to manage machines is a Technology Preview feature and has the following limitations:
+
+* Only AWS and GCP clusters are supported.
+
+* To use this feature, you must enable the `TechPreviewNoUpgrade` xref:../nodes/clusters/nodes-cluster-enabling-features.adoc#nodes-cluster-enabling-features-about_nodes-cluster-enabling[feature set]. Enabling this feature set cannot be undone and prevents minor version updates.
+
+* You must create the primary resources that the Cluster API requires manually.
+
+* You cannot manage control plane machines by using the Cluster API.
+
+* Migration of existing compute machine sets created by the Machine API to Cluster API compute machine sets is not supported.
+
+* Full feature parity with the Machine API is not available.
+
+//Cluster API architecture
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/capi-machine-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="cluster-api-architecture_{context}"]
+= Cluster API architecture
+
+The {product-title} integration of the upstream Cluster API is implemented and managed by the Cluster CAPI Operator. The Cluster CAPI Operator and its operands are provisioned in the `openshift-cluster-api` namespace, in contrast to the Machine API, which uses the `openshift-machine-api` namespace.
+
+[id="capi-arch-operator"]
+== The Cluster CAPI Operator
+
+The Cluster CAPI Operator is an {product-title} Operator that maintains the lifecycle of Cluster API resources. This Operator is responsible for all administrative tasks related to deploying the Cluster API project within an {product-title} cluster.
+
+If a cluster is configured correctly to allow the use of the Cluster API, the Cluster CAPI Operator installs the Cluster API Operator on the cluster.
+
+[NOTE]
+====
+The Cluster CAPI Operator is distinct from the upstream Cluster API Operator.
+====
+
+For more information, see the entry for the Cluster CAPI Operator in the _Cluster Operators reference_ content.
+
+[id="capi-arch-resources"]
+== Primary resources
+
+The Cluster API is comprised of the following primary resources. For the Technology Preview of this feature, you must create these resources manually in the `openshift-cluster-api` namespace.
+
+Cluster:: A fundamental unit that represents a cluster that is managed by the Cluster API.
+
+Infrastructure:: A provider-specific resource that defines properties that are shared by all the compute machine sets in the cluster, such as the region and subnets.
+
+Machine template:: A provider-specific template that defines the properties of the machines that a compute machine set creates.
+
+Machine set:: A group of machines.
++
+Compute machine sets are to machines as replica sets are to pods. If you need more machines or must scale them down, you change the `replicas` field on the compute machine set to meet your compute needs.
++
+With the Cluster API, a compute machine set references a `Cluster` object and a provider-specific machine template.
+
+Machine:: A fundamental unit that describes the host for a node.
++
+The Cluster API creates machines based on the configuration in the machine template.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+* xref:../operators/operator-reference.adoc#cluster-capi-operator_cluster-operators-ref[Cluster CAPI Operator]
+
+[id="capi-sample-yaml-files"]
+== Sample YAML files
+
+For the Cluster API Technology Preview, you must create the primary resources that the Cluster API requires manually. The following example YAML files show how to make these resources work together and configure settings for the machines that they create that are appropriate for your environment.
+
+//Sample YAML for a CAPI cluster resource
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * machine_management/capi-machine-management.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="capi-yaml-cluster_{context}"]
+= Sample YAML for a Cluster API cluster resource
+
+The cluster resource defines the name and infrastructure provider for the cluster and is managed by the Cluster API. This resource has the same structure for all providers.
+
+[source,yaml]
+----
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: <cluster_name> <1>
+  namespace: openshift-cluster-api
+spec:
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: <infrastructure_kind> <2>
+    name: <cluster_name> <1>
+    namespace: openshift-cluster-api
+----
+<1> Specify the name of the cluster.
+<2> Specify the infrastructure kind for the cluster. Valid values are:
++
+--
+* `AWSCluster`: The cluster is running on Amazon Web Services (AWS).
+* `GCPCluster`: The cluster is running on Google Cloud Platform (GCP).
+--
+
+:leveloffset!:
+
+The remaining Cluster API resources are provider-specific. Refer to the example YAML files for your cluster:
+
+* xref:../machine_management/capi-machine-management.adoc#capi-sample-yaml-files-aws[Sample YAML files for configuring Amazon Web Services clusters]
+
+* xref:../machine_management/capi-machine-management.adoc#capi-sample-yaml-files-gcp[Sample YAML files for configuring Google Cloud Platform clusters]
+
+[id="capi-sample-yaml-files-aws"]
+=== Sample YAML files for configuring Amazon Web Services clusters
+
+Some Cluster API resources are provider-specific. The following example YAML files show configurations for an Amazon Web Services (AWS) cluster.
+
+//Sample YAML for a CAPI AWS provider resource
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * machine_management/capi-machine-management.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="capi-yaml-infrastructure-aws_{context}"]
+= Sample YAML for a Cluster API infrastructure resource on Amazon Web Services
+
+The infrastructure resource is provider-specific and defines properties that are shared by all the compute machine sets in the cluster, such as the region and subnets. The compute machine set references this resource when creating machines.
+
+[source,yaml]
+----
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AWSCluster <1>
+metadata:
+  name: <cluster_name> <2>
+  namespace: openshift-cluster-api
+spec:
+  region: <region> <3>
+----
+<1> Specify the infrastructure kind for the cluster. This value must match the value for your platform.
+<2> Specify the name of the cluster.
+<3> Specify the AWS region.
+
+:leveloffset!:
+
+//Sample YAML for CAPI AWS machine template resource
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * machine_management/capi-machine-management.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="capi-yaml-machine-template-aws_{context}"]
+= Sample YAML for a Cluster API machine template resource on Amazon Web Services
+
+The machine template resource is provider-specific and defines the basic properties of the machines that a compute machine set creates. The compute machine set references this template when creating machines.
+
+[source,yaml]
+----
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
+kind: AWSMachineTemplate <1>
+metadata:
+  name: <template_name> <2>
+  namespace: openshift-cluster-api
+spec:
+  template:
+    spec: <3>
+      uncompressedUserData: true
+      iamInstanceProfile: ....
+      instanceType: m5.large
+      cloudInit:
+        insecureSkipSecretsManager: true
+      ami:
+        id: ....
+      subnet:
+        filters:
+        - name: tag:Name
+          values:
+          - ...
+      additionalSecurityGroups:
+      - filters:
+        - name: tag:Name
+          values:
+          - ...
+----
+<1> Specify the machine template kind. This value must match the value for your platform.
+<2> Specify a name for the machine template.
+<3> Specify the details for your environment. The values here are examples.
+
+:leveloffset!:
+
+//Sample YAML for a CAPI AWS compute machine set resource
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * machine_management/capi-machine-management.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="capi-yaml-machine-set-aws_{context}"]
+= Sample YAML for a Cluster API compute machine set resource on Amazon Web Services
+
+The compute machine set resource defines additional properties of the machines that it creates. The compute machine set also references the infrastructure resource and machine template when creating machines.
+
+[source,yaml]
+----
+apiVersion: cluster.x-k8s.io/v1alpha4
+kind: MachineSet
+metadata:
+  name: <machine_set_name> <1>
+  namespace: openshift-cluster-api
+spec:
+  clusterName: <cluster_name> <2>
+  replicas: 1
+  selector:
+    matchLabels:
+      test: example
+  template:
+    metadata:
+      labels:
+        test: example
+    spec:
+      bootstrap:
+         dataSecretName: worker-user-data <3>
+      clusterName: <cluster_name> <2>
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
+        kind: AWSMachineTemplate <4>
+        name: <cluster_name> <2>
+----
+<1> Specify a name for the compute machine set.
+<2> Specify the name of the cluster.
+<3> For the Cluster API Technology Preview, the Operator can use the worker user data secret from `openshift-machine-api` namespace.
+<4> Specify the machine template kind. This value must match the value for your platform.
+
+:leveloffset!:
+
+[id="capi-sample-yaml-files-gcp"]
+=== Sample YAML files for configuring Google Cloud Platform clusters
+
+Some Cluster API resources are provider-specific. The following example YAML files show configurations for a Google Cloud Platform (GCP) cluster.
+
+//Sample YAML for a CAPI GCP provider resource
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * machine_management/capi-machine-management.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="capi-yaml-infrastructure-gcp_{context}"]
+= Sample YAML for a Cluster API infrastructure resource on Google Cloud Platform
+
+The infrastructure resource is provider-specific and defines properties that are shared by all the compute machine sets in the cluster, such as the region and subnets. The compute machine set references this resource when creating machines.
+
+[source,yaml]
+----
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPCluster <1>
+metadata:
+  name: <cluster_name> <2>
+spec:
+  network:
+    name: <cluster_name>-network <2>
+  project: <project> <3>
+  region: <region> <4>
+----
+<1> Specify the infrastructure kind for the cluster. This value must match the value for your platform.
+<2> Specify the name of the cluster.
+<3> Specify the GCP project name.
+<4> Specify the GCP region.
+
+:leveloffset!:
+
+//Sample YAML for CAPI GCP machine template resource
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * machine_management/capi-machine-management.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="capi-yaml-machine-template-gcp_{context}"]
+= Sample YAML for a Cluster API machine template resource on Google Cloud Platform
+
+The machine template resource is provider-specific and defines the basic properties of the machines that a compute machine set creates. The compute machine set references this template when creating machines.
+
+[source,yaml]
+----
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPMachineTemplate <1>
+metadata:
+  name: <template_name> <2>
+  namespace: openshift-cluster-api
+spec:
+  template:
+    spec: <3>
+      rootDeviceType: pd-ssd
+      rootDeviceSize: 128
+      instanceType: n1-standard-4
+      image: projects/rhcos-cloud/global/images/rhcos-411-85-202203181601-0-gcp-x86-64
+      subnet: <cluster_name>-worker-subnet
+      serviceAccounts:
+        email: <service_account_email_address>
+        scopes:
+          - https://www.googleapis.com/auth/cloud-platform
+      additionalLabels:
+        kubernetes-io-cluster-<cluster_name>: owned
+      additionalNetworkTags:
+        - <cluster_name>-worker
+      ipForwarding: Disabled
+----
+<1> Specify the machine template kind. This value must match the value for your platform.
+<2> Specify a name for the machine template.
+<3> Specify the details for your environment. The values here are examples.
+
+:leveloffset!:
+
+//Sample YAML for a CAPI GCP compute machine set resource
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * machine_management/capi-machine-management.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="capi-yaml-machine-set-gcp_{context}"]
+= Sample YAML for a Cluster API compute machine set resource on Google Cloud Platform
+
+The compute machine set resource defines additional properties of the machines that it creates. The compute machine set also references the infrastructure resource and machine template when creating machines.
+
+[source,yaml]
+----
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineSet
+metadata:
+  name: <machine_set_name> <1>
+  namespace: openshift-cluster-api
+spec:
+  clusterName: <cluster_name> <2>
+  replicas: 1
+  selector:
+    matchLabels:
+      test: test
+  template:
+    metadata:
+      labels:
+        test: test
+    spec:
+      bootstrap:
+         dataSecretName: worker-user-data <3>
+      clusterName: <cluster_name> <2>
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: GCPMachineTemplate <4>
+        name: <machine_set_name> <1>
+      failureDomain: <failure_domain> <5>
+----
+<1> Specify a name for the compute machine set.
+<2> Specify the name of the cluster.
+<3> For the Cluster API Technology Preview, the Operator can use the worker user data secret from `openshift-machine-api` namespace.
+<4> Specify the machine template kind. This value must match the value for your platform.
+<5> Specify the failure domain within the GCP region.
+
+:leveloffset!:
+
+//Creating a CAPI compute machine set
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/capi-machine-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="capi-machine-set-creating_{context}"]
+= Creating a Cluster API compute machine set
+
+You can create compute machine sets that use the Cluster API to dynamically manage the machine compute resources for specific workloads of your choice.
+
+.Prerequisites
+
+* Deploy an {product-title} cluster.
+* Enable the use of the Cluster API.
+* Install the OpenShift CLI (`oc`).
+* Log in to `oc` as a user with `cluster-admin` permission.
+
+.Procedure
+
+. Create a YAML file that contains the cluster custom resource (CR) and is named `<cluster_resource_file>.yaml`.
++
+If you are not sure which value to set for the `<cluster_name>` parameter, you can check the value for an existing Machine API compute machine set in your cluster.
+
+.. To list the Machine API compute machine sets, run the following command:
++
+[source,terminal]
+----
+$ oc get machinesets -n openshift-machine-api <1>
+----
+<1> Specify the `openshift-machine-api` namespace.
++
+.Example output
+[source,terminal]
+----
+NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m
+----
+
+.. To display the contents of a specific compute machine set CR, run the following command:
++
+[source,terminal]
+----
+$ oc get machineset <machineset_name> \
+-n openshift-machine-api \
+-o yaml
+----
++
+.Example output
+[source,yaml]
+----
+...
+template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: agl030519-vplxk <1>
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: agl030519-vplxk-worker-us-east-1a
+...
+----
+<1> The cluster ID, which you use for the `<cluster_name>` parameter.
+
+. Create the cluster CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <cluster_resource_file>.yaml
+----
++
+.Verification
++
+To confirm that the cluster CR is created, run the following command:
++
+[source,terminal]
+----
+$ oc get cluster
+----
++
+.Example output
+[source,terminal]
+----
+NAME           PHASE        AGE  VERSION
+<cluster_name> Provisioning 4h6m
+----
+
+. Create a YAML file that contains the infrastructure CR and is named `<infrastructure_resource_file>.yaml`.
+
+. Create the infrastructure CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <infrastructure_resource_file>.yaml
+----
++
+.Verification
++
+To confirm that the infrastructure CR is created, run the following command:
++
+[source,terminal]
+----
+$ oc get <infrastructure_kind>
+----
++
+where `<infrastructure_kind>` is the value that corresponds to your platform.
++
+.Example output
+[source,terminal]
+----
+NAME           CLUSTER        READY VPC BASTION IP
+<cluster_name> <cluster_name> true
+----
+
+. Create a YAML file that contains the machine template CR and is named `<machine_template_resource_file>.yaml`.
+
+. Create the machine template CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <machine_template_resource_file>.yaml
+----
++
+.Verification
++
+To confirm that the machine template CR is created, run the following command:
++
+[source,terminal]
+----
+$ oc get <machine_template_kind>
+----
++
+where `<machine_template_kind>` is the value that corresponds to your platform.
++
+.Example output
+[source,terminal]
+----
+NAME            AGE
+<template_name> 77m
+----
+
+. Create a YAML file that contains the compute machine set CR and is named `<machine_set_resource_file>.yaml`.
+
+. Create the compute machine set CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f <machine_set_resource_file>.yaml
+----
++
+.Verification
++
+To confirm that the compute machine set CR is created, run the following command:
++
+[source,terminal]
+----
+$ oc get machineset -n openshift-cluster-api <1>
+----
+<1> Specify the `openshift-cluster-api` namespace.
++
+.Example output
+[source,terminal]
+----
+NAME               CLUSTER        REPLICAS READY AVAILABLE AGE VERSION
+<machine_set_name> <cluster_name> 1        1     1         17m
+----
++
+When the new compute machine set is available, the `REPLICAS` and `AVAILABLE` values match. If the compute machine set is not available, wait a few minutes and run the command again.
+
+.Verification
+
+* To verify that the compute machine set is creating machines according to your desired configuration, you can review the lists of machines and nodes in the cluster.
+
+** To view the list of Cluster API machines, run the following command:
++
+[source,terminal]
+----
+$ oc get machine -n openshift-cluster-api <1>
+----
+<1> Specify the `openshift-cluster-api` namespace.
++
+.Example output
+[source,terminal]
+----
+NAME                           CLUSTER        NODENAME                               PROVIDERID    PHASE   AGE   VERSION
+<machine_set_name>-<string_id> <cluster_name> <ip_address>.<region>.compute.internal <provider_id> Running 8m23s
+----
+
+** To view the list of nodes, run the following command:
++
+[source,terminal]
+----
+$ oc get node
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                     STATUS ROLES  AGE   VERSION
+<ip_address_1>.<region>.compute.internal Ready  worker 5h14m v1.27.3
+<ip_address_2>.<region>.compute.internal Ready  master 5h19m v1.27.3
+<ip_address_3>.<region>.compute.internal Ready  worker 7m    v1.27.3
+----
+
+:leveloffset!:
+
+//Troubleshooting clusters that use the Cluster API
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * machine_management/capi-machine-management.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="capi-troubleshooting_{context}"]
+= Troubleshooting clusters that use the Cluster API
+
+Use the information in this section to understand and recover from issues you might encounter. Generally, troubleshooting steps for problems with the Cluster API are similar to those steps for problems with the Machine API.
+
+The Cluster CAPI Operator and its operands are provisioned in the `openshift-cluster-api` namespace, whereas the Machine API uses the `openshift-machine-api` namespace. When using `oc` commands that reference a namespace, be sure to reference the correct one.
+
+[id="ts-capi-cli_{context}"]
+== CLI commands return Cluster API machines
+
+For clusters that use the Cluster API, `oc` commands such as `oc get machine` return results for Cluster API machines. Because the letter `c` precedes the letter `m` alphabetically, Cluster API machines appear in the return before Machine API machines do.
+
+* To list only Machine API machines, use the fully qualified name `machines.machine.openshift.io` when running the `oc get machine` command:
++
+[source,terminal]
+----
+$ oc get machines.machine.openshift.io
+----
+
+* To list only Cluster API machines, use the fully qualified name `machines.cluster.x-k8s.io` when running the `oc get machine` command:
++
+[source,terminal]
+----
+$ oc get machines.cluster.x-k8s.io
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,snippets/technology-preview,modules/cluster-api-architecture,modules/capi-yaml-cluster,modules/capi-yaml-infrastructure-aws,modules/capi-yaml-machine-template-aws,modules/capi-yaml-machine-set-aws,modules/capi-yaml-infrastructure-gcp,modules/capi-yaml-machine-template-gcp,modules/capi-yaml-machine-set-gcp,modules/capi-machine-set-creating,modules/capi-troubleshooting

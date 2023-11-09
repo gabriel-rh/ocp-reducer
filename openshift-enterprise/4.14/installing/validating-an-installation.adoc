@@ -1,0 +1,746 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="validating-an-installation"]
+= Validating an installation
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: validating-an-installation
+
+toc::[]
+
+You can check the status of an {product-title} cluster after an installation by following the procedures in this document.
+
+//Reviewing the installation log
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *installing/validating-an-installation.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="reviewing-the-installation-log_{context}"]
+= Reviewing the installation log
+
+You can review a summary of an installation in the {product-title} installation log. If an installation succeeds, the information required to access the cluster is included in the log.
+
+.Prerequisites
+
+* You have access to the installation host.
+
+.Procedure
+
+* Review the `.openshift_install.log` log file in the installation directory on your installation host:
++
+[source,terminal]
+----
+$ cat <install_dir>/.openshift_install.log
+----
++
+.Example output
++
+Cluster credentials are included at the end of the log if the installation is successful, as outlined in the following example:
++
+[source,terminal]
+----
+...
+time="2020-12-03T09:50:47Z" level=info msg="Install complete!"
+time="2020-12-03T09:50:47Z" level=info msg="To access the cluster as the system:admin user when using 'oc', run 'export KUBECONFIG=/home/myuser/install_dir/auth/kubeconfig'"
+time="2020-12-03T09:50:47Z" level=info msg="Access the OpenShift web-console here: https://console-openshift-console.apps.mycluster.example.com"
+time="2020-12-03T09:50:47Z" level=info msg="Login to the console with user: \"kubeadmin\", and password: \"password\""
+time="2020-12-03T09:50:47Z" level=debug msg="Time elapsed per stage:"
+time="2020-12-03T09:50:47Z" level=debug msg="    Infrastructure: 6m45s"
+time="2020-12-03T09:50:47Z" level=debug msg="Bootstrap Complete: 11m30s"
+time="2020-12-03T09:50:47Z" level=debug msg=" Bootstrap Destroy: 1m5s"
+time="2020-12-03T09:50:47Z" level=debug msg=" Cluster Operators: 17m31s"
+time="2020-12-03T09:50:47Z" level=info msg="Time elapsed: 37m26s"
+----
+
+:leveloffset!:
+
+//Viewing the image pull source
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *installing/validating-an-installation.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="viewing-the-image-pull-source_{context}"]
+= Viewing the image pull source
+
+For clusters with unrestricted network connectivity, you can view the source of your pulled images by using a command on a node, such as `crictl images`.
+
+However, for disconnected installations, to view the source of pulled images, you must review the CRI-O logs to locate the `Trying to access` log entry, as shown in the following procedure. Other methods to view the image pull source, such as the `crictl images` command, show the non-mirrored image name, even though the image is pulled from the mirrored location.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+
+.Procedure
+
+* Review the CRI-O logs for a master or worker node:
++
+[source,terminal]
+----
+$  oc adm node-logs <node_name> -u crio
+----
++
+.Example output
++
+The `Trying to access` log entry indicates where the image is being pulled from.
++
+[source,terminal]
+----
+...
+Mar 17 02:52:50 ip-10-0-138-140.ec2.internal crio[1366]: time="2021-08-05 10:33:21.594930907Z" level=info msg="Pulling image: quay.io/openshift-release-dev/ocp-release:4.10.0-ppc64le" id=abcd713b-d0e1-4844-ac1c-474c5b60c07c name=/runtime.v1alpha2.ImageService/PullImage
+Mar 17 02:52:50 ip-10-0-138-140.ec2.internal crio[1484]: time="2021-03-17 02:52:50.194341109Z" level=info msg="Trying to access \"li0317gcp1.mirror-registry.qe.gcp.devcluster.openshift.com:5000/ocp/release@sha256:1926eae7cacb9c00f142ec98b00628970e974284b6ddaf9a6a086cb9af7a6c31\""
+Mar 17 02:52:50 ip-10-0-138-140.ec2.internal crio[1484]: time="2021-03-17 02:52:50.226788351Z" level=info msg="Trying to access \"li0317gcp1.mirror-registry.qe.gcp.devcluster.openshift.com:5000/ocp/release@sha256:1926eae7cacb9c00f142ec98b00628970e974284b6ddaf9a6a086cb9af7a6c31\""
+...
+----
++
+The log might show the image pull source twice, as shown in the preceding example.
++
+If your `ImageContentSourcePolicy` object lists multiple mirrors, {product-title} attempts to pull the images in the order listed in the configuration, for example:
++
+----
+Trying to access \"li0317gcp1.mirror-registry.qe.gcp.devcluster.openshift.com:5000/ocp/release@sha256:1926eae7cacb9c00f142ec98b00628970e974284b6ddaf9a6a086cb9af7a6c31\"
+Trying to access \"li0317gcp2.mirror-registry.qe.gcp.devcluster.openshift.com:5000/ocp/release@sha256:1926eae7cacb9c00f142ec98b00628970e974284b6ddaf9a6a086cb9af7a6c31\"
+----
+
+:leveloffset!:
+
+//Getting cluster version, status, and update details
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *installing/validating-an-installation.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="getting-cluster-version-and-update-details_{context}"]
+= Getting cluster version, status, and update details
+
+You can view the cluster version and status by running the `oc get clusterversion` command. If the status shows that the installation is still progressing, you can review the status of the Operators for more information.
+
+You can also list the current update channel and review the available cluster updates.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+* You have installed the OpenShift CLI (`oc`).
+
+.Procedure
+
+. Obtain the cluster version and overall status:
++
+[source,terminal]
+----
+$ oc get clusterversion
+----
++
+.Example output
+[source,terminal]
+----
+NAME      VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
+version   4.6.4     True        False         6m25s   Cluster version is 4.6.4
+----
++
+The example output indicates that the cluster has been installed successfully.
+
+. If the cluster status indicates that the installation is still progressing, you can obtain more detailed progress information by checking the status of the Operators:
++
+[source,terminal]
+----
+$ oc get clusteroperators.config.openshift.io
+----
+
+. View a detailed summary of cluster specifications, update availability, and update history:
++
+[source,terminal]
+----
+$ oc describe clusterversion
+----
+
+. List the current update channel:
++
+[source,terminal]
+----
+$ oc get clusterversion -o jsonpath='{.items[0].spec}{"\n"}'
+----
++
+.Example output
+[source,terminal]
+----
+{"channel":"stable-4.6","clusterID":"245539c1-72a3-41aa-9cec-72ed8cf25c5c"}
+----
+
+. Review the available cluster updates:
++
+[source,terminal]
+----
+$ oc adm upgrade
+----
++
+.Example output
+[source,terminal]
+----
+Cluster version is 4.6.4
+
+Updates:
+
+VERSION IMAGE
+4.6.6   quay.io/openshift-release-dev/ocp-release@sha256:c7e8f18e8116356701bd23ae3a23fb9892dd5ea66c8300662ef30563d7104f39
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See xref:../support/troubleshooting/troubleshooting-installations.adoc#querying-operator-status-after-installation_troubleshooting-installations[Querying Operator status after installation] for more information about querying Operator status if your installation is still progressing.
+
+* See xref:../support/troubleshooting/troubleshooting-operator-issues.adoc#troubleshooting-operator-issues[Troubleshooting Operator issues] for information about investigating issues with Operators.
+
+* See xref:../updating/updating_a_cluster/updating-cluster-web-console.adoc#updating-cluster-web-console[Updating a cluster using the web console] for more information on updating your cluster.
+
+* See xref:../updating/understanding_updates/understanding-update-channels-release.adoc#understanding-update-channels-releases[Understanding update channels and releases] for an overview about update release channels.
+
+// Verification steps for the Cloud Credential Operator utility (`ccoctl`)
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/validating-an-installation.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cco-ccoctl-install-verifying_{context}"]
+= Clusters that use short-term credentials: Verifying the credentials configuration
+
+You can verify that your cluster is using short-term security credentials for individual components.
+
+.Prerequisites
+
+* You deployed an {product-title} cluster using the Cloud Credential Operator utility (`ccoctl`) to implement short-term credentials.
+
+* You installed the {oc-first}.
+
+
+.Procedure
+
+. Log in as a user with `cluster-admin` privileges.
+
+. Verify that the cluster does not have `root` credentials by running the following command:
++
+[source,terminal]
+----
+$ oc get secrets -n kube-system <secret_name>
+----
++
+where `<secret_name>` is the name of the root secret for your cloud provider.
++
+[cols=2,options=header]
+|===
+|Platform
+|Secret name
+
+|AWS
+|`aws-creds`
+
+|Azure
+|`azure-credentials`
+
+|GCP
+|`gcp-credentials`
+
+|===
++
+An error confirms that the root secret is not present on the cluster. The following example shows the expected output from an AWS cluster:
++
+.Example output
+[source,text]
+----
+Error from server (NotFound): secrets "aws-creds" not found
+----
+
+. Verify that the components are using short-term security credentials for individual components by running the following command:
++
+[source,terminal]
+----
+$ oc get authentication cluster \
+  -o jsonpath \
+  --template='{ .spec.serviceAccountIssuer }'
+----
++
+This command displays the value of the `.spec.serviceAccountIssuer` parameter in the cluster `Authentication` object. An output of a URL that is associated with your cloud provider indicates that the cluster is using manual mode with short-term credentials that are created and managed from outside of the cluster.
+
+:leveloffset!:
+
+//Querying the status of the cluster nodes by using the CLI
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *installing/validating-an-installation.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="querying-the-status-of-cluster-nodes-using-the-cli_{context}"]
+= Querying the status of the cluster nodes by using the CLI
+
+You can verify the status of the cluster nodes after an installation.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+* You have installed the OpenShift CLI (`oc`).
+
+.Procedure
+
+. List the status of the cluster nodes. Verify that the output lists all of the expected control plane and compute nodes and that each node has a `Ready` status:
++
+[source,terminal]
+----
+$ oc get nodes
+----
++
+.Example output
+[source,terminal]
+----
+NAME                          STATUS   ROLES    AGE   VERSION
+compute-1.example.com         Ready    worker   33m   v1.27.3
+control-plane-1.example.com   Ready    master   41m   v1.27.3
+control-plane-2.example.com   Ready    master   45m   v1.27.3
+compute-2.example.com         Ready    worker   38m   v1.27.3
+compute-3.example.com         Ready    worker   33m   v1.27.3
+control-plane-3.example.com   Ready    master   41m   v1.27.3
+----
+
+. Review CPU and memory resource availability for each cluster node:
++
+[source,terminal]
+----
+$ oc adm top nodes
+----
++
+.Example output
+[source,terminal]
+----
+NAME                          CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
+compute-1.example.com         128m         8%     1132Mi          16%
+control-plane-1.example.com   801m         22%    3471Mi          23%
+control-plane-2.example.com   1718m        49%    6085Mi          40%
+compute-2.example.com         935m         62%    5178Mi          75%
+compute-3.example.com         111m         7%     1131Mi          16%
+control-plane-3.example.com   942m         26%    4100Mi          27%
+----
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See xref:../support/troubleshooting/verifying-node-health.adoc#verifying-node-health[Verifying node health] for more details about reviewing node health and investigating node issues.
+
+//Reviewing the cluster status from the OpenShift Container Platform web console
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *installing/validating-an-installation.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="reviewing-cluster-status-from-the-openshift-web-console_{context}"]
+= Reviewing the cluster status from the {product-title} web console
+
+You can review the following information in the *Overview* page in the {product-title} web console:
+
+* The general status of your cluster
+
+* The status of the control plane, cluster Operators, and storage
+
+* CPU, memory, file system, network transfer, and pod availability
+
+* The API address of the cluster, the cluster ID, and the name of the provider
+
+* Cluster version information
+
+* Cluster update status, including details of the current update channel and available updates
+
+* A cluster inventory detailing node, pod, storage class, and persistent volume claim (PVC) information
+
+* A list of ongoing cluster activities and recent events
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+
+.Procedure
+
+* In the *Administrator* perspective, navigate to *Home* -> *Overview*.
+
+
+
+:leveloffset!:
+
+//Reviewing the cluster status from {cluster-manager}
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *installing/validating-an-installation.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="reviewing-cluster-status-from-the-openshift-cluster-manager_{context}"]
+= Reviewing the cluster status from {cluster-manager-first}
+
+From the {product-title} web console, you can review detailed information about the status of your cluster on {cluster-manager}.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+
+.Procedure
+
+. In the *Administrator* perspective, navigate to *Home* -> *Overview* -> *Details* -> *Cluster ID* -> *{cluster-manager}* to open your cluster's *Overview* tab in the {cluster-manager} web console.
+
+. From the *Overview* tab on {cluster-manager-url}, review the following information about your cluster:
++
+* vCPU and memory availability and resource usage
++
+* The cluster ID, status, type, region, and the provider name
++
+* Node counts by node type
++
+* Cluster version details, the creation date of the cluster, and the name of the cluster owner
++
+* The life cycle support status of the cluster
++
+* Subscription information, including the service level agreement (SLA) status, the subscription unit type, the production status of the cluster, the subscription obligation, and the service level
++
+[TIP]
+====
+To view the history for your cluster, click the *Cluster history* tab.
+====
+
+. Navigate to the *Monitoring* page to review the following information:
+* A list of any issues that have been detected
++
+* A list of alerts that are firing
++
+* The cluster Operator status and version
++
+* The cluster's resource usage
+
+. Optional: You can view information about your cluster that Red Hat Insights collects by navigating to the *Overview* menu. From this menu you can view the following information:
+* Potential issues that your cluster might be exposed to, categorized by risk level
++
+* Health-check status by category
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See xref:../support/remote_health_monitoring/using-insights-to-identify-issues-with-your-cluster.adoc#using-insights-to-identify-issues-with-your-cluster[Using Insights to identify issues with your cluster] for more information about reviewing potential issues with your cluster.
+
+//Checking cluster resource availability and utilization
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *installing/validating-an-installation.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="checking-cluster-resource-availability-and-utilization_{context}"]
+= Checking cluster resource availability and utilization
+
+{product-title} provides a comprehensive set of monitoring dashboards that help you understand the state of cluster components.
+
+In the *Administrator* perspective, you can access dashboards for core {product-title} components, including:
+
+* etcd
+
+* Kubernetes compute resources
+
+* Kubernetes network resources
+
+* Prometheus
+
+* Dashboards relating to cluster and node performance
+
+.Example compute resources dashboard
+image::monitoring-dashboard-compute-resources.png[]
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+
+.Procedure
+
+. In the *Administrator* perspective in the {product-title} web console, navigate to *Observe* -> *Dashboards*.
+
+. Choose a dashboard in the *Dashboard* list. Some dashboards, such as the *etcd* dashboard, produce additional sub-menus when selected.
+
+. Optional: Select a time range for the graphs in the *Time Range* list.
++
+** Select a pre-defined time period.
++
+** Set a custom time range by selecting *Custom time range* in the *Time Range* list.
++
+.. Input or select the *From* and *To* dates and times.
++
+.. Click *Save* to save the custom time range.
+
+. Optional: Select a *Refresh Interval*.
+
+. Hover over each of the graphs within a dashboard to display detailed information about specific items.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See xref:../monitoring/monitoring-overview.adoc#monitoring-overview[Monitoring overview] for more information about the {product-title} monitoring stack.
+
+//Listing alerts that are firing
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// *installing/validating-an-installation.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="listing-alerts-that-are-firing_{context}"]
+= Listing alerts that are firing
+
+Alerts provide notifications when a set of defined conditions are true in an {product-title} cluster. You can review the alerts that are firing in your cluster by using the Alerting UI in the {product-title} web console.
+
+.Prerequisites
+
+* You have access to the cluster as a user with the `cluster-admin` role.
+
+.Procedure
+
+. In the *Administrator* perspective, navigate to the *Observe* -> *Alerting* -> *Alerts* page.
+
+. Review the alerts that are firing, including their *Severity*, *State*, and *Source*.
+
+. Select an alert to view more detailed information in the *Alert Details* page.
+
+:leveloffset!:
+
+[role="_additional-resources"]
+.Additional resources
+
+* See xref:../monitoring/managing-alerts.adoc#managing-alerts[Managing alerts] for further details about alerting in {product-title}.
+
+[id="validating-an-installation-next-steps"]
+== Next steps
+
+* See xref:../support/troubleshooting/troubleshooting-installations.adoc#troubleshooting-installations[Troubleshooting installations] if you experience issues when installing your cluster.
+
+* After installing {product-title}, you can xref:../post_installation_configuration/cluster-tasks.adoc#post-install-cluster-tasks[further expand and customize your cluster].
+
+//# includes=_attributes/common-attributes,modules/reviewing-the-installation-log,modules/viewing-the-image-pull-source,modules/getting-cluster-version-status-and-update-details,modules/cco-ccoctl-install-verifying,modules/querying-the-status-of-cluster-nodes-using-the-cli,modules/reviewing-cluster-status-from-the-openshift-web-console,modules/reviewing-cluster-status-from-the-openshift-cluster-manager,modules/checking-cluster-resource-availability-and-utilization,modules/listing-alerts-that-are-firing

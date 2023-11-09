@@ -1,0 +1,911 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="installing-gcp-account"]
+= Configuring a GCP project
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+:context: installing-gcp-account
+
+toc::[]
+
+Before you can install {product-title}, you must configure a
+Google Cloud Platform (GCP) project to host it.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_gcp/installing-gcp-account.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-gcp-project_{context}"]
+= Creating a GCP project
+
+To install {product-title}, you must create a project in your Google Cloud Platform (GCP) account to host the cluster.
+
+.Procedure
+
+* Create a project to host your {product-title} cluster. See
+link:https://cloud.google.com/resource-manager/docs/creating-managing-projects[Creating and Managing Projects] in the GCP documentation.
++
+[IMPORTANT]
+====
+Your GCP project must use the Premium Network Service Tier if you are using installer-provisioned infrastructure. The Standard Network Service Tier is not supported for clusters installed using the installation program. The installation program configures internal load balancing for the `api-int.<cluster_name>.<base_domain>` URL; the Premium Tier is required for internal load balancing.
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_gcp/installing-gcp-account.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-gcp-enabling-api-services_{context}"]
+= Enabling API services in GCP
+
+Your Google Cloud Platform (GCP) project requires access to several API services
+to complete {product-title} installation.
+
+.Prerequisites
+
+* You created a project to host your cluster.
+
+.Procedure
+
+* Enable the following required API services in the project that hosts your
+cluster. You may also enable optional API services which are not required for installation. See
+link:https://cloud.google.com/service-usage/docs/enable-disable#enabling[Enabling services]
+in the GCP documentation.
++
+.Required API services
+[cols="2a,3a",options="header"]
+|===
+|API service |Console service name
+
+|Compute Engine API
+|`compute.googleapis.com`
+
+|Cloud Resource Manager API
+|`cloudresourcemanager.googleapis.com`
+
+|Google DNS API
+|`dns.googleapis.com`
+
+|IAM Service Account Credentials API
+|`iamcredentials.googleapis.com`
+
+|Identity and Access Management (IAM) API
+|`iam.googleapis.com`
+
+|Service Usage API
+|`serviceusage.googleapis.com`
+
+|===
++
+.Optional API services
+[cols="2a,3a",options="header"]
+|===
+|API service |Console service name
+
+
+|Google Cloud APIs
+|`cloudapis.googleapis.com`
+
+|Service Management API
+|`servicemanagement.googleapis.com`
+
+|Google Cloud Storage JSON API
+|`storage-api.googleapis.com`
+
+|Cloud Storage
+|`storage-component.googleapis.com`
+
+|===
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_gcp/installing-gcp-account.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-gcp-dns_{context}"]
+= Configuring DNS for GCP
+
+To install {product-title}, the Google Cloud Platform (GCP) account you use must
+have a dedicated public hosted zone
+in the same project that you host the {product-title} cluster.
+This zone must be authoritative for the domain. The
+DNS service provides cluster DNS resolution and name lookup for external
+connections to the cluster.
+
+.Procedure
+
+. Identify your domain, or subdomain, and registrar. You can transfer an existing domain and
+registrar or obtain a new one through GCP or another source.
++
+[NOTE]
+====
+If you purchase a new domain, it can take time for the relevant DNS
+changes to propagate. For more information about purchasing domains
+through Google, see link:https://domains.google/[Google Domains].
+====
+
+. Create a public hosted zone for your domain or subdomain in your GCP project. See
+link:https://cloud.google.com/dns/zones/#creating_public_zones[Creating public zones]
+in the GCP documentation.
++
+Use an appropriate root domain, such as `openshiftcorp.com`, or subdomain,
+such as `clusters.openshiftcorp.com`.
+
+. Extract the new authoritative name servers from the hosted zone records. See
+link:https://cloud.google.com/dns/docs/update-name-servers#look_up_your_name_servers[Look up your Cloud DNS name servers]
+in the GCP documentation.
++
+You typically have four name servers.
+
+. Update the registrar records for the name servers that your domain
+uses. For example, if you registered your domain to Google Domains, see the
+following topic in the Google Domains Help:
+link:https://support.google.com/domains/answer/3290309?hl=en[How to switch to custom name servers].
+
+. If you migrated your root domain to Google Cloud DNS, migrate your DNS records. See link:https://cloud.google.com/dns/docs/migrating[Migrating to Cloud DNS] in the GCP documentation.
+
+. If you use a subdomain, follow your company's procedures to add its delegation records to the parent domain. This process might include a request to your company's IT department or the division that controls the root domain and DNS services for your company.
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_gcp/installing-gcp-account.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+
+
+[id="installation-gcp-limits_{context}"]
+= GCP account limits
+
+The {product-title} cluster uses a number of Google Cloud Platform (GCP)
+components, but the default
+link:https://cloud.google.com/docs/quota[Quotas]
+do not affect your ability to install a default {product-title} cluster.
+
+A default cluster, which contains three compute and three control plane machines,
+uses the following resources. Note that some resources are required only during
+the bootstrap process and are removed after the cluster deploys.
+
+.GCP resources used in a default cluster
+
+[cols="2a,2a,2a,2a,2a",options="header"]
+|===
+|Service
+|Component
+|Location
+|Total resources required
+|Resources removed after bootstrap
+
+|Service account |IAM	|Global	|6 |1
+|Firewall rules	|Compute	|Global	|11 |1
+|Forwarding rules	|Compute	|Global	|2	|0
+|In-use global IP addresses	|Compute	|Global	|4	|1
+|Health checks	|Compute	|Global	|3	|0
+|Images	|Compute	|Global	|1	|0
+|Networks	|Compute	|Global	|2	|0
+|Static IP addresses	|Compute	|Region	|4	|1
+|Routers	|Compute	|Global	|1	|0
+|Routes	|Compute	|Global	|2	|0
+|Subnetworks	|Compute	|Global	|2	|0
+|Target pools	|Compute	|Global	|3	|0
+|CPUs	|Compute	|Region	|28	|4
+|Persistent disk SSD (GB)	|Compute	|Region	|896	|128
+
+|===
+
+[NOTE]
+====
+If any of the quotas are insufficient during installation, the installation program displays an error that states both which quota was exceeded and the region.
+====
+
+Be sure to consider your actual cluster size, planned cluster growth, and any usage from other clusters that are associated with your account. The CPU, static IP addresses, and persistent disk SSD (storage) quotas are the ones that are most likely to be insufficient.
+
+If you plan to deploy your cluster in one of the following regions, you will exceed the maximum storage quota and are likely to exceed the CPU quota limit:
+
+* `asia-east2`
+* `asia-northeast2`
+* `asia-south1`
+* `australia-southeast1`
+* `europe-north1`
+* `europe-west2`
+* `europe-west3`
+* `europe-west6`
+* `northamerica-northeast1`
+* `southamerica-east1`
+* `us-west2`
+
+You can increase resource quotas from the link:https://console.cloud.google.com/iam-admin/quotas[GCP console], but you might need to file a support ticket. Be sure to plan your cluster size early so that you can allow time to resolve the support ticket before you install your {product-title} cluster.
+
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_gcp/installing-gcp-account.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installation-gcp-service-account_{context}"]
+= Creating a service account in GCP
+
+{product-title} requires a Google Cloud Platform (GCP) service account that provides authentication and authorization to access data in the Google APIs. If you do not have an existing IAM service account that contains the required roles in your project, you must create one.
+
+.Prerequisites
+
+* You created a project to host your cluster.
+
+.Procedure
+
+. Create a service account in the project that you use to host your
+{product-title} cluster. See
+link:https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating_a_service_account[Creating a service account]
+in the GCP documentation.
+
+. Grant the service account the appropriate permissions. You can either
+grant the individual permissions that follow or assign the `Owner` role to it.
+See link:https://cloud.google.com/iam/docs/granting-roles-to-service-accounts#granting_access_to_a_service_account_for_a_resource[Granting roles to a service account for specific resources].
++
+[NOTE]
+====
+While making the service account an owner of the project is the easiest way to gain the required permissions, it means that service account has complete control over the project. You must determine if the risk that comes from offering that power is acceptable.
+====
+
+. You can create the service account key in JSON format, or attach the service account to a GCP virtual machine.
+See link:https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys[Creating service account keys] and link:https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances[Creating and enabling service accounts for instances] in the GCP documentation.
++
+You must have a service account key or a virtual machine with an attached service account to create the cluster.
++
+[NOTE]
+====
+If you use a virtual machine with an attached service account to create your cluster, you must set `credentialsMode: Manual` in the `install-config.yaml` file before installation.
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_gcp/installing-gcp-account.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+
+
+[id="installation-gcp-permissions_{context}"]
+= Required GCP roles
+
+When you attach the `Owner` role to the service account that you create, you grant that service account all permissions, including those that are required to install {product-title}. If your organization's security policies require a more restrictive set of permissions, you can create a service account with the following permissions. If you deploy your cluster into an existing virtual private cloud (VPC), the service account does not require certain networking permissions, which are noted in the following lists:
+
+.Required roles for the installation program
+* Compute Admin
+* IAM Security Admin
+* Service Account Admin
+* Service Account Key Admin
+* Service Account User
+* Storage Admin
+
+.Required roles for creating network resources during installation
+* DNS Administrator
+
+.Required roles for using passthrough credentials mode
+* Compute Load Balancer Admin
+* IAM Role Viewer
+
+
+The roles are applied to the service accounts that the control plane and compute machines use:
+
+.GCP service account permissions
+[cols="2a,2a",options="header"]
+|===
+|Account
+|Roles
+.5+|Control Plane
+|`roles/compute.instanceAdmin`
+|`roles/compute.networkAdmin`
+|`roles/compute.securityAdmin`
+|`roles/storage.admin`
+|`roles/iam.serviceAccountUser`
+.2+|Compute
+|`roles/compute.viewer`
+|`roles/storage.admin`
+|===
+
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_gcp/installing-gcp-account.adoc
+
+[id="minimum-required-permissions-ipi-gcp_{context}"]
+= Required GCP permissions for installer-provisioned infrastructure
+
+When you attach the `Owner` role to the service account that you create, you grant that service account all permissions, including those that are required to install {product-title}.
+
+If your organization’s security policies require a more restrictive set of permissions, you can create link:https://cloud.google.com/iam/docs/creating-custom-roles[custom roles] with the necessary permissions. The following permissions are required for the installer-provisioned infrastructure for creating and deleting the {product-title} cluster.
+
+.Required permissions for creating network resources
+[%collapsible]
+====
+* `compute.addresses.create`
+* `compute.addresses.createInternal`
+* `compute.addresses.delete`
+* `compute.addresses.get`
+* `compute.addresses.list`
+* `compute.addresses.use`
+* `compute.addresses.useInternal`
+* `compute.firewalls.create`
+* `compute.firewalls.delete`
+* `compute.firewalls.get`
+* `compute.firewalls.list`
+* `compute.forwardingRules.create`
+* `compute.forwardingRules.get`
+* `compute.forwardingRules.list`
+* `compute.forwardingRules.setLabels`
+* `compute.networks.create`
+* `compute.networks.get`
+* `compute.networks.list`
+* `compute.networks.updatePolicy`
+* `compute.routers.create`
+* `compute.routers.get`
+* `compute.routers.list`
+* `compute.routers.update`
+* `compute.routes.list`
+* `compute.subnetworks.create`
+* `compute.subnetworks.get`
+* `compute.subnetworks.list`
+* `compute.subnetworks.use`
+* `compute.subnetworks.useExternalIp`
+====
+
+.Required permissions for creating load balancer resources
+[%collapsible]
+====
+* `compute.regionBackendServices.create`
+* `compute.regionBackendServices.get`
+* `compute.regionBackendServices.list`
+* `compute.regionBackendServices.update`
+* `compute.regionBackendServices.use`
+* `compute.targetPools.addInstance`
+* `compute.targetPools.create`
+* `compute.targetPools.get`
+* `compute.targetPools.list`
+* `compute.targetPools.removeInstance`
+* `compute.targetPools.use`
+====
+
+.Required permissions for creating DNS resources
+[%collapsible]
+====
+* `dns.changes.create`
+* `dns.changes.get`
+* `dns.managedZones.create`
+* `dns.managedZones.get`
+* `dns.managedZones.list`
+* `dns.networks.bindPrivateDNSZone`
+* `dns.resourceRecordSets.create`
+* `dns.resourceRecordSets.list`
+====
+
+.Required permissions for creating Service Account resources
+[%collapsible]
+====
+* `iam.serviceAccountKeys.create`
+* `iam.serviceAccountKeys.delete`
+* `iam.serviceAccountKeys.get`
+* `iam.serviceAccountKeys.list`
+* `iam.serviceAccounts.actAs`
+* `iam.serviceAccounts.create`
+* `iam.serviceAccounts.delete`
+* `iam.serviceAccounts.get`
+* `iam.serviceAccounts.list`
+* `resourcemanager.projects.get`
+* `resourcemanager.projects.getIamPolicy`
+* `resourcemanager.projects.setIamPolicy`
+====
+
+.Required permissions for creating compute resources
+[%collapsible]
+====
+* `compute.disks.create`
+* `compute.disks.get`
+* `compute.disks.list`
+* `compute.disks.setLabels`
+* `compute.instanceGroups.create`
+* `compute.instanceGroups.delete`
+* `compute.instanceGroups.get`
+* `compute.instanceGroups.list`
+* `compute.instanceGroups.update`
+* `compute.instanceGroups.use`
+* `compute.instances.create`
+* `compute.instances.delete`
+* `compute.instances.get`
+* `compute.instances.list`
+* `compute.instances.setLabels`
+* `compute.instances.setMetadata`
+* `compute.instances.setServiceAccount`
+* `compute.instances.setTags`
+* `compute.instances.use`
+* `compute.machineTypes.get`
+* `compute.machineTypes.list`
+====
+
+.Required for creating storage resources
+[%collapsible]
+====
+* `storage.buckets.create`
+* `storage.buckets.delete`
+* `storage.buckets.get`
+* `storage.buckets.list`
+* `storage.objects.create`
+* `storage.objects.delete`
+* `storage.objects.get`
+* `storage.objects.list`
+====
+
+.Required permissions for creating health check resources
+[%collapsible]
+====
+* `compute.healthChecks.create`
+* `compute.healthChecks.get`
+* `compute.healthChecks.list`
+* `compute.healthChecks.useReadOnly`
+* `compute.httpHealthChecks.create`
+* `compute.httpHealthChecks.get`
+* `compute.httpHealthChecks.list`
+* `compute.httpHealthChecks.useReadOnly`
+====
+
+.Required permissions to get GCP zone and region related information
+[%collapsible]
+====
+* `compute.globalOperations.get`
+* `compute.regionOperations.get`
+* `compute.regions.list`
+* `compute.zoneOperations.get`
+* `compute.zones.get`
+* `compute.zones.list`
+====
+
+.Required permissions for checking services and quotas
+[%collapsible]
+====
+* `monitoring.timeSeries.list`
+* `serviceusage.quotas.get`
+* `serviceusage.services.list`
+====
+
+.Required IAM permissions for installation
+[%collapsible]
+====
+* `iam.roles.get`
+====
+
+.Optional Images permissions for installation
+[%collapsible]
+====
+* `compute.images.list`
+====
+
+.Optional permission for running gather bootstrap
+[%collapsible]
+====
+* `compute.instances.getSerialPortOutput`
+====
+
+.Required permissions for deleting network resources
+[%collapsible]
+====
+* `compute.addresses.delete`
+* `compute.addresses.deleteInternal`
+* `compute.addresses.list`
+* `compute.firewalls.delete`
+* `compute.firewalls.list`
+* `compute.forwardingRules.delete`
+* `compute.forwardingRules.list`
+* `compute.networks.delete`
+* `compute.networks.list`
+* `compute.networks.updatePolicy`
+* `compute.routers.delete`
+* `compute.routers.list`
+* `compute.routes.list`
+* `compute.subnetworks.delete`
+* `compute.subnetworks.list`
+====
+
+.Required permissions for deleting load balancer resources
+[%collapsible]
+====
+* `compute.regionBackendServices.delete`
+* `compute.regionBackendServices.list`
+* `compute.targetPools.delete`
+* `compute.targetPools.list`
+====
+
+.Required permissions for deleting DNS resources
+[%collapsible]
+====
+* `dns.changes.create`
+* `dns.managedZones.delete`
+* `dns.managedZones.get`
+* `dns.managedZones.list`
+* `dns.resourceRecordSets.delete`
+* `dns.resourceRecordSets.list`
+====
+
+.Required permissions for deleting Service Account resources
+[%collapsible]
+====
+* `iam.serviceAccounts.delete`
+* `iam.serviceAccounts.get`
+* `iam.serviceAccounts.list`
+* `resourcemanager.projects.getIamPolicy`
+* `resourcemanager.projects.setIamPolicy`
+====
+
+.Required permissions for deleting compute resources
+[%collapsible]
+====
+* `compute.disks.delete`
+* `compute.disks.list`
+* `compute.instanceGroups.delete`
+* `compute.instanceGroups.list`
+* `compute.instances.delete`
+* `compute.instances.list`
+* `compute.instances.stop`
+* `compute.machineTypes.list`
+====
+
+.Required for deleting storage resources
+[%collapsible]
+====
+* `storage.buckets.delete`
+* `storage.buckets.getIamPolicy`
+* `storage.buckets.list`
+* `storage.objects.delete`
+* `storage.objects.list`
+====
+
+.Required permissions for deleting health check resources
+[%collapsible]
+====
+* `compute.healthChecks.delete`
+* `compute.healthChecks.list`
+* `compute.httpHealthChecks.delete`
+* `compute.httpHealthChecks.list`
+====
+
+.Required Images permissions for deletion
+[%collapsible]
+====
+* `compute.images.list`
+====
+
+:leveloffset!:
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * installing/installing_gcp/installing-gcp-account.adoc
+
+[id="minimum-required-permissions-ipi-gcp-xpn"]
+= Required GCP permissions for shared VPC installations
+
+When you are installing a cluster to a link:https://cloud.google.com/vpc/docs/shared-vpc[shared VPC], you must configure the service account for both the host project and the service project. If you are not installing to a shared VPC, you can skip this section.
+
+You must apply the minimum roles required for a standard installation as listed above, to the service project. Note that custom roles, and therefore fine-grained permissions, cannot be used in shared VPC installations because GCP does not support adding the required permission `compute.organizations.administerXpn` to custom roles.
+
+In addition, the host project must apply one of the following configurations to the service account:
+
+.Required permissions for creating firewalls in the host project
+[%collapsible]
+====
+* `projects/<host-project>/roles/dns.networks.bindPrivateDNSZone`
+* `roles/compute.networkAdmin`
+* `roles/compute.securityAdmin`
+====
+
+.Required minimal permissions
+[%collapsible]
+====
+* `projects/<host-project>/roles/dns.networks.bindPrivateDNSZone`
+* `roles/compute.networkUser`
+====
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * installing/installing_gcp/installing-gcp-account.adoc
+// * installing/installing_gcp/installing-gcp-user-infra.adoc
+// * installing/installing_gcp/installing-restricted-networks-gcp.adoc
+
+[id="installation-gcp-regions_{context}"]
+= Supported GCP regions
+
+You can deploy an {product-title} cluster to the following Google Cloud Platform (GCP)
+regions:
+
+* `asia-east1` (Changhua County, Taiwan)
+* `asia-east2` (Hong Kong)
+* `asia-northeast1` (Tokyo, Japan)
+* `asia-northeast2` (Osaka, Japan)
+* `asia-northeast3` (Seoul, South Korea)
+* `asia-south1` (Mumbai, India)
+* `asia-south2` (Delhi, India)
+* `asia-southeast1` (Jurong West, Singapore)
+* `asia-southeast2` (Jakarta, Indonesia)
+* `australia-southeast1` (Sydney, Australia)
+* `australia-southeast2` (Melbourne, Australia)
+* `europe-central2` (Warsaw, Poland)
+* `europe-north1` (Hamina, Finland)
+* `europe-southwest1` (Madrid, Spain)
+* `europe-west1` (St. Ghislain, Belgium)
+* `europe-west2` (London, England, UK)
+* `europe-west3` (Frankfurt, Germany)
+* `europe-west4` (Eemshaven, Netherlands)
+* `europe-west6` (Zürich, Switzerland)
+* `europe-west8` (Milan, Italy)
+* `europe-west9` (Paris, France)
+* `europe-west12` (Turin, Italy)
+* `me-central1` (Doha, Qatar, Middle East)
+* `me-west1` (Tel Aviv, Israel)
+* `northamerica-northeast1` (Montréal, Québec, Canada)
+* `northamerica-northeast2` (Toronto, Ontario, Canada)
+* `southamerica-east1` (São Paulo, Brazil)
+* `southamerica-west1` (Santiago, Chile)
+* `us-central1` (Council Bluffs, Iowa, USA)
+* `us-east1` (Moncks Corner, South Carolina, USA)
+* `us-east4` (Ashburn, Northern Virginia, USA)
+* `us-east5` (Columbus, Ohio)
+* `us-south1` (Dallas, Texas)
+* `us-west1` (The Dalles, Oregon, USA)
+* `us-west2` (Los Angeles, California, USA)
+* `us-west3` (Salt Lake City, Utah, USA)
+* `us-west4` (Las Vegas, Nevada, USA)
+
+:leveloffset!:
+
+== Next steps
+
+* Install an {product-title} cluster on GCP. You can
+xref:../../installing/installing_gcp/installing-gcp-customizations.adoc#installing-gcp-customizations[install a customized cluster]
+or xref:../../installing/installing_gcp/installing-gcp-default.adoc#installing-gcp-default[quickly install a cluster]
+with default options.
+
+//# includes=_attributes/common-attributes,modules/installation-gcp-project,modules/installation-gcp-enabling-api-services,modules/installation-gcp-dns,modules/installation-gcp-limits,modules/installation-gcp-service-account,modules/installation-gcp-permissions,modules/minimum-required-permissions-ipi-gcp,modules/minimum-required-permissions-ipi-gcp-xpn,modules/installation-gcp-regions

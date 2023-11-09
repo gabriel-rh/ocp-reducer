@@ -1,0 +1,560 @@
+:_mod-docs-content-type: ASSEMBLY
+:context: cluster-logging-collector
+[id="cluster-logging-collector"]
+= Configuring the logging collector
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 8.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:ai-version: 2.3
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.8
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.3
+:sandboxed-containers-version-z: 1.3.3
+:sandboxed-containers-legacy-version: 1.3.2
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.11
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.0
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.12
+:pipelines-version-number: 1.12
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.14
+:KubeVirtVersion: v0.59.0
+:HCOVersion: 4.14.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 2.9
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.47.0
+:OTELName: Red Hat OpenShift distributed tracing data collection
+:OTELShortName: distributed tracing data collection
+:OTELOperator: Red Hat OpenShift distributed tracing data collection Operator
+:OTELVersion: 0.81.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.1.1
+//logging
+:logging-title: logging subsystem for Red Hat OpenShift
+:logging-title-uc: Logging subsystem for Red Hat OpenShift
+:logging: logging subsystem
+:logging-uc: Logging subsystem
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.4
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+// Factory-precaching-cli tool
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service (STS)
+:sts-full: Security Token Service
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services (AWS)
+:aws-full: Amazon Web Services
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM Cloud VPC
+:ibmcloudVPCProductName: IBM Cloud VPC
+:ibmcloudVPCRegProductName: IBM(R) Cloud VPC
+// IBM Cloud
+:ibm-cloud-bm: IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm-reg: IBM Cloud(R) Bare Metal (Classic)
+// IBM Power
+:ibmpowerProductName: IBM Power
+:ibmpowerRegProductName: IBM(R) Power
+// IBM zSystems
+:ibmzProductName: IBM Z
+:ibmzRegProductName: IBM(R) Z
+:linuxoneProductName: IBM(R) LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+// common attributes
+:product-short-name: OpenShift Dedicated
+:toc:
+:toc-title:
+:experimental:
+:imagesdir: images
+:OCP: OpenShift Container Platform
+:ocp-version: 4.14
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+:AWS: Amazon Web Services (AWS)
+:GCP: Google Cloud Platform (GCP)
+:product-registry: OpenShift image registry
+:kebab: image:kebab.png[title="Options menu"]
+:rhq-short: Red Hat Quay
+:SMProductName: Red Hat OpenShift Service Mesh
+:pipelines-title: Red Hat OpenShift Pipelines
+:logging-sd: Red Hat OpenShift Logging
+:ServerlessProductName: OpenShift Serverless
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:rhoda: Red Hat OpenShift Database Access
+:rhoda-short: RHODA
+:rhods: Red Hat OpenShift Data Science
+:osd: OpenShift Dedicated
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+:hcp: hosted control planes
+:hcp-title: ROSA with HCP
+:hcp-title-first: {product-title} (ROSA) with {hcp} (HCP)
+//ROSA CLI variables
+:word: Testing this variable let's go www.google.com
+
+toc::[]
+
+{logging-title-uc} collects operations and application logs from your cluster and enriches the data with Kubernetes pod and project metadata.
+
+You can configure the CPU and memory limits for the log collector and xref:../../logging/config/cluster-logging-moving-nodes.adoc#cluster-logging-moving[move the log collector pods to specific nodes]. All supported modifications to the log collector can be performed though the `spec.collection.log.fluentd` stanza in the `ClusterLogging` custom resource (CR).
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * logging/cluster-logging-collector.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cluster-logging-collector-pod-location_{context}"]
+= Viewing logging collector pods
+
+You can view the Fluentd logging collector pods and the corresponding nodes that they are running on. The Fluentd logging collector pods run only in the `openshift-logging` project.
+
+.Procedure
+
+* Run the following command in the `openshift-logging` project to view the Fluentd logging collector pods and their details:
+
+[source,terminal]
+----
+$ oc get pods --selector component=collector -o wide -n openshift-logging
+----
+
+.Example output
+[source,terminal]
+----
+NAME           READY  STATUS    RESTARTS   AGE     IP            NODE                  NOMINATED NODE   READINESS GATES
+fluentd-8d69v  1/1    Running   0          134m    10.130.2.30   master1.example.com   <none>           <none>
+fluentd-bd225  1/1    Running   0          134m    10.131.1.11   master2.example.com   <none>           <none>
+fluentd-cvrzs  1/1    Running   0          134m    10.130.0.21   master3.example.com   <none>           <none>
+fluentd-gpqg2  1/1    Running   0          134m    10.128.2.27   worker1.example.com   <none>           <none>
+fluentd-l9j7j  1/1    Running   0          134m    10.129.2.31   worker2.example.com   <none>           <none>
+----
+
+////
+[source,terminal]
+----
+$ oc get pods -o wide | grep rsyslog
+----
+
+.Example output
+[source,terminal]
+----
+NAME                         READY     STATUS    RESTARTS   AGE     IP            NODE                           NOMINATED NODE   READINESS GATES
+rsyslog-5gtfs                1/1       Running   0          3m6s    10.130.0.40   ip-10-0-148-139.ec2.internal   <none>           <none>
+rsyslog-67rv6                1/1       Running   0          3m6s    10.128.2.13   ip-10-0-158-206.ec2.internal   <none>           <none>
+rsyslog-bqgjn                1/1       Running   0          3m6s    10.131.0.11   ip-10-0-132-167.ec2.internal   <none>           <none>
+rsyslog-cjmdp                1/1       Running   0          3m6s    10.129.2.16   ip-10-0-139-191.ec2.internal   <none>           <none>
+rsyslog-kqlzh                1/1       Running   0          3m6s    10.129.0.37   ip-10-0-141-243.ec2.internal   <none>           <none>
+rsyslog-nhshr                1/1       Running   0          3m6s    10.128.0.41   ip-10-0-143-38.ec2.internal    <none>           <none>
+----
+////
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * logging/cluster-logging-collector.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cluster-logging-collector-limits_{context}"]
+= Configure log collector CPU and memory limits
+
+The log collector allows for adjustments to both the CPU and memory limits.
+
+.Procedure
+
+. Edit the `ClusterLogging` custom resource (CR) in the `openshift-logging` project:
++
+[source,terminal]
+----
+$ oc -n openshift-logging edit ClusterLogging instance
+----
++
+[source,yaml]
+----
+
+apiVersion: "logging.openshift.io/v1"
+kind: "ClusterLogging"
+metadata:
+  name: "instance"
+  namespace: openshift-logging
+
+...
+
+spec:
+  collection:
+    logs:
+      fluentd:
+        resources:
+          limits: <1>
+            memory: 736Mi
+          requests:
+            cpu: 100m
+            memory: 736Mi
+----
+<1> Specify the CPU and memory limits and requests as needed. The values shown are the default values.
+
+////
+[source,yaml]
+----
+$ oc edit ClusterLogging instance
+
+apiVersion: "logging.openshift.io/v1"
+kind: "ClusterLogging"
+metadata:
+  name: "instance"
+
+....
+
+spec:
+  collection:
+    logs:
+      rsyslog:
+        resources:
+          limits: <1>
+            memory: 358Mi
+          requests:
+            cpu: 100m
+            memory: 358Mi
+----
+<1> Specify the CPU and memory limits and requests as needed. The values shown are the default values.
+////
+
+:leveloffset!:
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * logging/cluster-logging-collector.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="cluster-logging-collector-tuning_{context}"]
+= Advanced configuration for the Fluentd log forwarder
+
+The {logging-title} includes multiple Fluentd parameters that you can use for tuning the performance of the Fluentd log forwarder. With these parameters, you can change the following Fluentd behaviors:
+
+* Chunk and chunk buffer sizes
+* Chunk flushing behavior
+* Chunk forwarding retry behavior
+
+Fluentd collects log data in a single blob called a _chunk_. When Fluentd creates a chunk, the chunk is considered to be in the _stage_, where the chunk gets filled with data. When the chunk is full, Fluentd moves the chunk to the _queue_, where chunks are held before being flushed, or written out to their destination. Fluentd can fail to flush a chunk for a number of reasons, such as network issues or capacity issues at the destination. If a chunk cannot be flushed, Fluentd retries flushing as configured.
+
+By default in {product-title}, Fluentd uses the _exponential backoff_ method to retry flushing, where Fluentd doubles the time it waits between attempts to retry flushing again, which helps reduce connection requests to the destination. You can disable exponential backoff and use the _periodic_ retry method instead, which retries flushing the chunks at a specified interval.
+
+These parameters can help you determine the trade-offs between latency and throughput.
+
+* To optimize Fluentd for throughput, you could use these parameters to reduce network packet count by configuring larger buffers and queues, delaying flushes, and setting longer times between retries. Be aware that larger buffers require more space on the node file system.
+
+* To optimize for low latency, you could use the parameters to send data as soon as possible, avoid the build-up of batches, have shorter queues and buffers, and use more frequent flush and retries.
+
+You can configure the chunking and flushing behavior using the following parameters in the `ClusterLogging` custom resource (CR). The parameters are then automatically added to the Fluentd config map for use by Fluentd.
+
+[NOTE]
+====
+These parameters are:
+
+* Not relevant to most users. The default settings should give good general performance.
+* Only for advanced users with detailed knowledge of Fluentd configuration and performance.
+* Only for performance tuning. They have no effect on functional aspects of logging.
+====
+
+.Advanced Fluentd Configuration Parameters
+[options="header"]
+|===
+
+|Parameter |Description |Default
+
+|`chunkLimitSize`
+|The maximum size of each chunk. Fluentd stops writing data to a chunk when it reaches this size. Then, Fluentd sends the chunk to the queue and opens a new chunk.
+|`8m`
+
+|`totalLimitSize`
+|The maximum size of the buffer, which is the total size of the stage and the queue. If the buffer size exceeds this value, Fluentd stops adding data to chunks and fails with an error. All data not in chunks is lost.
+|`8G`
+
+|`flushInterval`
+|The interval between chunk flushes. You can use `s` (seconds), `m` (minutes), `h` (hours), or `d` (days).
+|`1s`
+
+|`flushMode`
+a| The method to perform flushes:
+
+* `lazy`: Flush chunks based on the `timekey` parameter. You cannot modify the `timekey` parameter.
+* `interval`: Flush chunks based on the `flushInterval` parameter.
+* `immediate`: Flush chunks immediately after data is added to a chunk.
+|`interval`
+
+|`flushThreadCount`
+|The number of threads that perform chunk flushing. Increasing the number of threads improves the flush throughput, which hides network latency.
+|`2`
+
+|`overflowAction`
+a|The chunking behavior when the queue is full:
+
+* `throw_exception`: Raise an exception to show in the log.
+* `block`: Stop data chunking until the full buffer issue is resolved.
+* `drop_oldest_chunk`: Drop the oldest chunk to accept new incoming chunks. Older chunks have less value than newer chunks.
+|`block`
+
+|`retryMaxInterval`
+|The maximum time in seconds for the `exponential_backoff` retry method.
+|`300s`
+
+|`retryType`
+a|The retry method when flushing fails:
+
+* `exponential_backoff`: Increase the time between flush retries. Fluentd doubles the time it waits until the next retry until the `retry_max_interval` parameter is reached.
+* `periodic`: Retries flushes periodically, based on the `retryWait` parameter.
+|`exponential_backoff`
+
+|`retryTimeOut`
+|The maximum time interval to attempt retries before the record is discarded.
+|`60m`
+
+|`retryWait`
+|The time in seconds before the next chunk flush.
+|`1s`
+
+|===
+
+For more information on the Fluentd chunk lifecycle, see link:https://docs.fluentd.org/buffer[Buffer Plugins] in the Fluentd documentation.
+
+.Procedure
+
+. Edit the `ClusterLogging` custom resource (CR) in the `openshift-logging` project:
++
+[source,terminal]
++
+----
+$ oc edit ClusterLogging instance
+----
+
+. Add or modify any of the following parameters:
++
+[source,yaml]
+----
+apiVersion: logging.openshift.io/v1
+kind: ClusterLogging
+metadata:
+  name: instance
+  namespace: openshift-logging
+spec:
+  forwarder:
+    fluentd:
+      buffer:
+        chunkLimitSize: 8m <1>
+        flushInterval: 5s <2>
+        flushMode: interval <3>
+        flushThreadCount: 3 <4>
+        overflowAction: throw_exception <5>
+        retryMaxInterval: "300s" <6>
+        retryType: periodic <7>
+        retryWait: 1s <8>
+        totalLimitSize: 32m <9>
+...
+----
+<1> Specify the maximum size of each chunk before it is queued for flushing.
+<2> Specify the interval between chunk flushes.
+<3> Specify the method to perform chunk flushes: `lazy`, `interval`, or `immediate`.
+<4> Specify the number of threads to use for chunk flushes.
+<5> Specify the chunking behavior when the queue is full: `throw_exception`, `block`, or `drop_oldest_chunk`.
+<6> Specify the maximum interval in seconds for the `exponential_backoff` chunk flushing method.
+<7> Specify the retry type when chunk flushing fails: `exponential_backoff` or `periodic`.
+<8> Specify the time in seconds before the next chunk flush.
+<9> Specify the maximum size of the chunk buffer.
+
+. Verify that the Fluentd pods are redeployed:
++
+[source,terminal]
+----
+$ oc get pods -l component=collector -n openshift-logging
+----
+
+. Check that the new values are in the `fluentd` config map:
++
+[source,terminal]
+----
+$ oc extract configmap/fluentd --confirm
+----
++
+.Example fluentd.conf
+[source,terminal]
+----
+<buffer>
+ @type file
+ path '/var/lib/fluentd/default'
+ flush_mode interval
+ flush_interval 5s
+ flush_thread_count 3
+ retry_type periodic
+ retry_wait 1s
+ retry_max_interval 300s
+ retry_timeout 60m
+ queued_chunks_limit_size "#{ENV['BUFFER_QUEUE_LIMIT'] || '32'}"
+ total_limit_size 32m
+ chunk_limit_size 8m
+ overflow_action throw_exception
+</buffer>
+----
+
+:leveloffset!:
+
+//# includes=_attributes/common-attributes,_attributes/attributes-openshift-dedicated,modules/cluster-logging-collector-pod-location,modules/cluster-logging-collector-limits,modules/cluster-logging-collector-tuning
