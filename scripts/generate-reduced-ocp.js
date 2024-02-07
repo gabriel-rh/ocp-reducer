@@ -60,7 +60,7 @@ function processAdoc(dir, file)
 
     var adocFile = process.env.INPUT_DIR + dir + "/" + file + ".adoc"
 
-    var cmd = "asciidoctor-reducer -r asciidoctor/reducer/include_mapper -o "
+    var cmd = "asciidoctor-reducer --attribute=" +  process.env.DISTRO + " -r asciidoctor/reducer/include_mapper -o "
     cmd += outFile + " " + adocFile; 
 
     console.log(cmd);
