@@ -1,0 +1,4438 @@
+= Specialized hardware and driver enablement
+
+:leveloffset: +1
+
+:_mod-docs-content-type: ASSEMBLY
+[id="about-hardware-enablement"]
+= About specialized hardware and driver enablement
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 9.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+// OADP attributes
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oadp-short: OADP
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.9
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.5
+:sandboxed-containers-version-z: 1.5.0
+:sandboxed-containers-legacy-version: 1.4.1
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+:descheduler-operator: Kube Descheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.12
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.2
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.13
+:pipelines-version-number: 1.13
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.15
+:HCOVersion: 4.15.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 3.0
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.51.0
+:OTELName: Red Hat build of OpenTelemetry
+:OTELShortName: Red Hat build of OpenTelemetry
+:OTELOperator: Red Hat build of OpenTelemetry Operator
+:OTELVersion: 0.89.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.3.0
+//telco
+//logging
+:logging: logging
+:logging-uc: Logging
+:for: for Red Hat OpenShift
+:clo: Red Hat OpenShift Logging Operator
+:loki-op: Loki Operator
+:es-op: OpenShift Elasticsearch Operator
+:log-plug: logging Console plugin
+//power monitoring
+:PM-title-c: Power monitoring for Red Hat OpenShift
+:PM-title: power monitoring for Red Hat OpenShift
+:PM-shortname: power monitoring
+:PM-shortname-c: Power monitoring
+:PM-operator: Power monitoring Operator
+:PM-kepler: Kepler
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.5
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service
+:sts-full: Security Token Service (STS)
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services
+:aws-full: Amazon Web Services (AWS)
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM general
+:ibm-name: IBM(R)
+:ibm-title: IBM
+// IBM Cloud
+:ibm-cloud-name: IBM Cloud(R)
+:ibm-cloud-title: IBM Cloud
+// IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm: IBM Cloud(R) Bare Metal (Classic)
+:ibm-cloud-bm-title: IBM Cloud Bare Metal (Classic)
+// IBM Power
+:ibm-power-name: IBM Power(R)
+:ibm-power-title: IBM Power
+:ibm-power-server-name: IBM Power(R) Virtual Server
+:ibm-power-server-title: IBM Power Virtual Server
+// IBM zSystems
+:ibm-z-name: IBM Z(R)
+:ibm-z-title: IBM Z
+:ibm-linuxone-name: IBM(R) LinuxONE
+:ibm-linuxone-title: IBM LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure (OCI)
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+// Cluster Observability Operator
+:coo-first: Cluster Observability Operator (COO)
+:coo-full: Cluster Observability Operator
+:coo-short: COO
+//ODF
+:odf-first: Red Hat OpenShift Data Foundation (ODF)
+:odf-full: Red Hat OpenShift Data Foundation
+:odf-short: ODF
+:rh-dev-hub: Red Hat Developer Hub
+:context: about-hardware-enablement
+
+toc::[]
+
+The Driver Toolkit (DTK) is a container image in the {product-title} payload which is meant to be used as a base image on which to build driver containers. The Driver Toolkit image contains the kernel packages commonly required as dependencies to build or install kernel modules as well as a few tools needed in driver containers. The version of these packages will match the kernel version running on the RHCOS nodes in the corresponding {product-title} release.
+
+Driver containers are container images used for building and deploying out-of-tree kernel modules and drivers on container operating systems such as {op-system-first}. Kernel modules and drivers are software libraries running with a high level of privilege in the operating system kernel. They extend the kernel functionalities or provide the hardware-specific code required to control new devices. Examples include hardware devices like field-programmable gate arrays (FPGA) or graphics processing units (GPU), and software-defined storage solutions, which all require kernel modules on client machines. Driver containers are the first layer of the software stack used to enable these technologies on {product-title} deployments.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+:_mod-docs-content-type: ASSEMBLY
+[id="driver-toolkit"]
+= Driver Toolkit
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 9.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+// OADP attributes
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oadp-short: OADP
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.9
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.5
+:sandboxed-containers-version-z: 1.5.0
+:sandboxed-containers-legacy-version: 1.4.1
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+:descheduler-operator: Kube Descheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.12
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.2
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.13
+:pipelines-version-number: 1.13
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.15
+:HCOVersion: 4.15.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 3.0
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.51.0
+:OTELName: Red Hat build of OpenTelemetry
+:OTELShortName: Red Hat build of OpenTelemetry
+:OTELOperator: Red Hat build of OpenTelemetry Operator
+:OTELVersion: 0.89.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.3.0
+//telco
+//logging
+:logging: logging
+:logging-uc: Logging
+:for: for Red Hat OpenShift
+:clo: Red Hat OpenShift Logging Operator
+:loki-op: Loki Operator
+:es-op: OpenShift Elasticsearch Operator
+:log-plug: logging Console plugin
+//power monitoring
+:PM-title-c: Power monitoring for Red Hat OpenShift
+:PM-title: power monitoring for Red Hat OpenShift
+:PM-shortname: power monitoring
+:PM-shortname-c: Power monitoring
+:PM-operator: Power monitoring Operator
+:PM-kepler: Kepler
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.5
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service
+:sts-full: Security Token Service (STS)
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services
+:aws-full: Amazon Web Services (AWS)
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM general
+:ibm-name: IBM(R)
+:ibm-title: IBM
+// IBM Cloud
+:ibm-cloud-name: IBM Cloud(R)
+:ibm-cloud-title: IBM Cloud
+// IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm: IBM Cloud(R) Bare Metal (Classic)
+:ibm-cloud-bm-title: IBM Cloud Bare Metal (Classic)
+// IBM Power
+:ibm-power-name: IBM Power(R)
+:ibm-power-title: IBM Power
+:ibm-power-server-name: IBM Power(R) Virtual Server
+:ibm-power-server-title: IBM Power Virtual Server
+// IBM zSystems
+:ibm-z-name: IBM Z(R)
+:ibm-z-title: IBM Z
+:ibm-linuxone-name: IBM(R) LinuxONE
+:ibm-linuxone-title: IBM LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure (OCI)
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+// Cluster Observability Operator
+:coo-first: Cluster Observability Operator (COO)
+:coo-full: Cluster Observability Operator
+:coo-short: COO
+//ODF
+:odf-first: Red Hat OpenShift Data Foundation (ODF)
+:odf-full: Red Hat OpenShift Data Foundation
+:odf-short: ODF
+:rh-dev-hub: Red Hat Developer Hub
+:context: driver-toolkit
+
+toc::[]
+
+Learn about the Driver Toolkit and how you can use it as a base image for driver containers for enabling special software and hardware devices on {product-title} deployments.
+
+:FeatureName: The Driver Toolkit
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/psap-driver-toolkit.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="about-driver-toolkit_{context}"]
+= About the Driver Toolkit
+
+[discrete]
+== Background
+The Driver Toolkit is a container image in the {product-title} payload used as a base image on which you can build driver containers. The Driver Toolkit image includes the kernel packages commonly required as dependencies to build or install kernel modules, as well as a few tools needed in driver containers. The version of these packages will match the kernel version running on the {op-system-first} nodes in the corresponding {product-title} release.
+
+Driver containers are container images used for building and deploying out-of-tree kernel modules and drivers on container operating systems like {op-system}. Kernel modules and drivers are software libraries running with a high level of privilege in the operating system kernel. They extend the kernel functionalities or provide the hardware-specific code required to control new devices. Examples include hardware devices like Field Programmable Gate Arrays (FPGA) or GPUs, and software-defined storage (SDS) solutions, such as Lustre parallel file systems, which require kernel modules on client machines. Driver containers are the first layer of the software stack used to enable these technologies on Kubernetes.
+
+The list of kernel packages in the Driver Toolkit includes the following and their dependencies:
+
+* `kernel-core`
+* `kernel-devel`
+* `kernel-headers`
+* `kernel-modules`
+* `kernel-modules-extra`
+
+In addition, the Driver Toolkit also includes the corresponding real-time kernel packages:
+
+* `kernel-rt-core`
+* `kernel-rt-devel`
+* `kernel-rt-modules`
+* `kernel-rt-modules-extra`
+
+The Driver Toolkit also has several tools that are commonly needed to build and install kernel modules, including:
+
+* `elfutils-libelf-devel`
+* `kmod`
+* `binutilskabi-dw`
+* `kernel-abi-whitelists`
+* dependencies for the above
+
+[discrete]
+== Purpose
+Prior to the Driver Toolkit's existence, users would install kernel packages in a pod or build config on {product-title} using link:https://www.openshift.com/blog/how-to-use-entitled-image-builds-to-build-drivercontainers-with-ubi-on-openshift[entitled builds] or by installing from the kernel RPMs in the hosts `machine-os-content`. The Driver Toolkit simplifies the process by removing the entitlement step, and avoids the privileged operation of accessing the machine-os-content in a pod. The Driver Toolkit can also be used by partners who have access to pre-released {product-title} versions to prebuild driver-containers for their hardware devices for future {product-title} releases.
+
+The Driver Toolkit is also used by the Kernel Module Management (KMM), which is currently available as a community Operator on OperatorHub. KMM supports out-of-tree and third-party kernel drivers and the support software for the underlying operating system. Users can create modules for KMM to build and deploy a driver container, as well as support software like a device plugin, or metrics. Modules can include a build config to build a driver container-based on the Driver Toolkit, or KMM can deploy a prebuilt driver container.
+
+:leveloffset: 1
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/psap-driver-toolkit.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="pulling-the-driver-toolkit_{context}"]
+= Pulling the Driver Toolkit container image
+
+The `driver-toolkit` image is available from the link:https://registry.redhat.io/[Container images section of the Red Hat Ecosystem Catalog] and in the {product-title} release payload. The image corresponding to the most recent minor release of {product-title} will be tagged with the version number in the catalog. The image URL for a specific release can be found using the `oc adm` CLI command.
+
+[id="pulling-the-driver-toolkit-from-registry"]
+== Pulling the Driver Toolkit container image from registry.redhat.io
+
+Instructions for pulling the `driver-toolkit` image from `registry.redhat.io` with `podman` or in {product-title} can be found on the link:https://catalog.redhat.com/software/containers/openshift4/driver-toolkit-rhel8/604009d6122bd89307e00865?container-tabs=gti[Red Hat Ecosystem Catalog].
+The driver-toolkit image for the latest minor release are tagged with the minor release version on `registry.redhat.io`, for example: `registry.redhat.io/openshift4/driver-toolkit-rhel8:v{product-version}`.
+
+[id="pulling-the-driver-toolkit-from-payload"]
+== Finding the Driver Toolkit image URL in the payload
+
+.Prerequisites
+
+* You obtained the image {cluster-manager-url-pull}.
+* You installed the OpenShift CLI (`oc`).
+
+.Procedure
+
+. Use the `oc adm` command to extract the image URL of the `driver-toolkit` corresponding to a certain release:
++
+--
+* For an x86 image, the command is as follows:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc adm release info quay.io/openshift-release-dev/ocp-release:{product-version}.z-x86_64 --image-for=driver-toolkit
+----
+
+* For an ARM image, the command is as follows:
++
+[source,terminal,subs="attributes+"]
+----
+$ oc adm release info quay.io/openshift-release-dev/ocp-release:{product-version}.z-aarch64 --image-for=driver-toolkit
+----
+--
++
+.Example output
+[source,terminal]
+----
+quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:b53883ca2bac5925857148c4a1abc300ced96c222498e3bc134fe7ce3a1dd404
+----
+
+. Obtain this image using a valid pull secret, such as the pull secret required to install {product-title}:
++
+[source,terminal]
+----
+$ podman pull --authfile=path/to/pullsecret.json quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:<SHA>
+----
+
+:leveloffset: 1
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/psap-driver-toolkit.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="using-the-driver-toolkit_{context}"]
+= Using the Driver Toolkit
+
+As an example, the Driver Toolkit can be used as the base image for building a very simple kernel module called `simple-kmod`.
+
+[NOTE]
+====
+The Driver Toolkit includes the necessary dependencies, `openssl`, `mokutil`, and `keyutils`, needed to sign a kernel module. However, in this example, the `simple-kmod` kernel module is not signed and therefore cannot be loaded on systems with `Secure Boot` enabled.
+====
+
+[id="create-simple-kmod-image_{context}"]
+== Build and run the simple-kmod driver container on a cluster
+
+.Prerequisites
+
+* You have a running {product-title} cluster.
+* You set the Image Registry Operator state to `Managed` for your cluster.
+* You installed the OpenShift CLI (`oc`).
+* You are logged into the OpenShift CLI as a user with `cluster-admin` privileges.
+
+.Procedure
+
+Create a namespace. For example:
+[source,terminal]
+-----
+$ oc new-project simple-kmod-demo
+-----
+
+. The YAML defines an `ImageStream` for storing the `simple-kmod` driver container image, and a `BuildConfig` for building the container. Save this YAML as `0000-buildconfig.yaml.template`.
++
+[source,yaml]
+----
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: simple-kmod-driver-container
+  name: simple-kmod-driver-container
+  namespace: simple-kmod-demo
+spec: {}
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: simple-kmod-driver-build
+  name: simple-kmod-driver-build
+  namespace: simple-kmod-demo
+spec:
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
+  runPolicy: "Serial"
+  triggers:
+    - type: "ConfigChange"
+    - type: "ImageChange"
+  source:
+    dockerfile: |
+      ARG DTK
+      FROM ${DTK} as builder
+
+      ARG KVER
+
+      WORKDIR /build/
+
+      RUN git clone https://github.com/openshift-psap/simple-kmod.git
+
+      WORKDIR /build/simple-kmod
+
+      RUN make all install KVER=${KVER}
+
+      FROM registry.redhat.io/ubi8/ubi-minimal
+
+      ARG KVER
+
+      # Required for installing `modprobe`
+      RUN microdnf install kmod
+
+      COPY --from=builder /lib/modules/${KVER}/simple-kmod.ko /lib/modules/${KVER}/
+      COPY --from=builder /lib/modules/${KVER}/simple-procfs-kmod.ko /lib/modules/${KVER}/
+      RUN depmod ${KVER}
+  strategy:
+    dockerStrategy:
+      buildArgs:
+        - name: KMODVER
+          value: DEMO
+          # $ oc adm release info quay.io/openshift-release-dev/ocp-release:<cluster version>-x86_64 --image-for=driver-toolkit
+        - name: DTK
+          value: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:34864ccd2f4b6e385705a730864c04a40908e57acede44457a783d739e377cae
+        - name: KVER
+          value: 4.18.0-372.26.1.el8_6.x86_64
+  output:
+    to:
+      kind: ImageStreamTag
+      name: simple-kmod-driver-container:demo
+----
+
+. Substitute the correct driver toolkit image for the {product-title} version you are running in place of “DRIVER_TOOLKIT_IMAGE” with the following commands.
++
+[source,terminal]
+----
+$ OCP_VERSION=$(oc get clusterversion/version -ojsonpath={.status.desired.version})
+----
++
+[source,terminal]
+----
+$ DRIVER_TOOLKIT_IMAGE=$(oc adm release info $OCP_VERSION --image-for=driver-toolkit)
+----
++
+[source,terminal]
+----
+$ sed "s#DRIVER_TOOLKIT_IMAGE#${DRIVER_TOOLKIT_IMAGE}#" 0000-buildconfig.yaml.template > 0000-buildconfig.yaml
+----
+
+. Create the image stream and build config with
++
+[source,terminal]
+----
+$ oc create -f 0000-buildconfig.yaml
+----
+
+. After the builder pod completes successfully, deploy the driver container image as a `DaemonSet`.
+
+.. The driver container must run with the privileged security context in order to load the kernel modules on the host. The following YAML file contains the RBAC rules and the `DaemonSet` for running the driver container. Save this YAML as `1000-drivercontainer.yaml`.
++
+[source,yaml]
+----
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: simple-kmod-driver-container
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: simple-kmod-driver-container
+rules:
+- apiGroups:
+  - security.openshift.io
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+  resourceNames:
+  - privileged
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: simple-kmod-driver-container
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: simple-kmod-driver-container
+subjects:
+- kind: ServiceAccount
+  name: simple-kmod-driver-container
+userNames:
+- system:serviceaccount:simple-kmod-demo:simple-kmod-driver-container
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: simple-kmod-driver-container
+spec:
+  selector:
+    matchLabels:
+      app: simple-kmod-driver-container
+  template:
+    metadata:
+      labels:
+        app: simple-kmod-driver-container
+    spec:
+      serviceAccount: simple-kmod-driver-container
+      serviceAccountName: simple-kmod-driver-container
+      containers:
+      - image: image-registry.openshift-image-registry.svc:5000/simple-kmod-demo/simple-kmod-driver-container:demo
+        name: simple-kmod-driver-container
+        imagePullPolicy: Always
+        command: [sleep, infinity]
+        lifecycle:
+          postStart:
+            exec:
+              command: ["modprobe", "-v", "-a" , "simple-kmod", "simple-procfs-kmod"]
+          preStop:
+            exec:
+              command: ["modprobe", "-r", "-a" , "simple-kmod", "simple-procfs-kmod"]
+        securityContext:
+          privileged: true
+      nodeSelector:
+        node-role.kubernetes.io/worker: ""
+----
+
+.. Create the RBAC rules and daemon set:
++
+[source,terminal]
+----
+$ oc create -f 1000-drivercontainer.yaml
+----
+
+. After the pods are running on the worker nodes, verify that the `simple_kmod` kernel module is loaded successfully on the host machines with `lsmod`.
+
+.. Verify that the pods are running:
++
+[source,terminal]
+----
+$ oc get pod -n simple-kmod-demo
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                 READY   STATUS      RESTARTS   AGE
+simple-kmod-driver-build-1-build     0/1     Completed   0          6m
+simple-kmod-driver-container-b22fd   1/1     Running     0          40s
+simple-kmod-driver-container-jz9vn   1/1     Running     0          40s
+simple-kmod-driver-container-p45cc   1/1     Running     0          40s
+----
+
+.. Execute the `lsmod` command in the driver container pod:
++
+[source,terminal]
+----
+$ oc exec -it pod/simple-kmod-driver-container-p45cc -- lsmod | grep simple
+----
++
+.Example output
+[source,terminal]
+----
+simple_procfs_kmod     16384  0
+simple_kmod            16384  0
+----
+
+:leveloffset: 1
+
+[role="_additional-resources"]
+[id="additional-resources_driver-toolkkit-id"]
+== Additional resources
+
+* For more information about configuring registry storage for your cluster, see xref:../registry/configuring-registry-operator.adoc#registry-removed_configuring-registry-operator[Image Registry Operator in OpenShift Container Platform].
+
+:leveloffset!:
+
+:leveloffset: +1
+
+:_mod-docs-content-type: ASSEMBLY
+[id="node-feature-discovery-operator"]
+= Node Feature Discovery Operator
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 9.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+// OADP attributes
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oadp-short: OADP
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.9
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.5
+:sandboxed-containers-version-z: 1.5.0
+:sandboxed-containers-legacy-version: 1.4.1
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+:descheduler-operator: Kube Descheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.12
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.2
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.13
+:pipelines-version-number: 1.13
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.15
+:HCOVersion: 4.15.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 3.0
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.51.0
+:OTELName: Red Hat build of OpenTelemetry
+:OTELShortName: Red Hat build of OpenTelemetry
+:OTELOperator: Red Hat build of OpenTelemetry Operator
+:OTELVersion: 0.89.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.3.0
+//telco
+//logging
+:logging: logging
+:logging-uc: Logging
+:for: for Red Hat OpenShift
+:clo: Red Hat OpenShift Logging Operator
+:loki-op: Loki Operator
+:es-op: OpenShift Elasticsearch Operator
+:log-plug: logging Console plugin
+//power monitoring
+:PM-title-c: Power monitoring for Red Hat OpenShift
+:PM-title: power monitoring for Red Hat OpenShift
+:PM-shortname: power monitoring
+:PM-shortname-c: Power monitoring
+:PM-operator: Power monitoring Operator
+:PM-kepler: Kepler
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.5
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service
+:sts-full: Security Token Service (STS)
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services
+:aws-full: Amazon Web Services (AWS)
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM general
+:ibm-name: IBM(R)
+:ibm-title: IBM
+// IBM Cloud
+:ibm-cloud-name: IBM Cloud(R)
+:ibm-cloud-title: IBM Cloud
+// IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm: IBM Cloud(R) Bare Metal (Classic)
+:ibm-cloud-bm-title: IBM Cloud Bare Metal (Classic)
+// IBM Power
+:ibm-power-name: IBM Power(R)
+:ibm-power-title: IBM Power
+:ibm-power-server-name: IBM Power(R) Virtual Server
+:ibm-power-server-title: IBM Power Virtual Server
+// IBM zSystems
+:ibm-z-name: IBM Z(R)
+:ibm-z-title: IBM Z
+:ibm-linuxone-name: IBM(R) LinuxONE
+:ibm-linuxone-title: IBM LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure (OCI)
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+// Cluster Observability Operator
+:coo-first: Cluster Observability Operator (COO)
+:coo-full: Cluster Observability Operator
+:coo-short: COO
+//ODF
+:odf-first: Red Hat OpenShift Data Foundation (ODF)
+:odf-full: Red Hat OpenShift Data Foundation
+:odf-short: ODF
+:rh-dev-hub: Red Hat Developer Hub
+:context: node-feature-discovery-operator
+
+toc::[]
+
+Learn about the Node Feature Discovery (NFD) Operator and how you can use it to expose node-level information by orchestrating Node Feature Discovery, a Kubernetes add-on for detecting hardware features and system configuration.
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/psap-node-feature-discovery-operator.adoc
+
+:perf:
+:_mod-docs-content-type: CONCEPT
+[id="about-node-feature-discovery-operator_{context}"]
+= About the Node Feature Discovery Operator
+The Node Feature Discovery Operator (NFD) manages the detection of hardware features and configuration in an {product-title} cluster by labeling the nodes with hardware-specific information. NFD labels the host with node-specific attributes, such as PCI cards, kernel, operating system version, and so on.
+
+The NFD Operator can be found on the Operator Hub by searching for “Node Feature Discovery”.
+
+:leveloffset: 1
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/psap-node-feature-discovery-operator.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="installing-the-node-feature-discovery-operator_{context}"]
+= Installing the Node Feature Discovery Operator
+
+The Node Feature Discovery (NFD) Operator orchestrates all resources needed to run the NFD daemon set. As a cluster administrator, you can install the NFD Operator by using the {product-title} CLI or the web console.
+
+[id="install-operator-cli_{context}"]
+== Installing the NFD Operator using the CLI
+
+As a cluster administrator, you can install the NFD Operator using the CLI.
+
+.Prerequisites
+
+* An {product-title} cluster
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Create a namespace for the NFD Operator.
+
+.. Create the following `Namespace` custom resource (CR) that defines the `openshift-nfd` namespace, and then save the YAML in the `nfd-namespace.yaml` file:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-nfd
+----
+
+.. Create the namespace by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nfd-namespace.yaml
+----
+
+. Install the NFD Operator in the namespace you created in the previous step by creating the following objects:
+
+.. Create the following `OperatorGroup` CR and save the YAML in the `nfd-operatorgroup.yaml` file:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  generateName: openshift-nfd-
+  name: openshift-nfd
+  namespace: openshift-nfd
+spec:
+  targetNamespaces:
+  - openshift-nfd
+----
+
+.. Create the `OperatorGroup` CR by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nfd-operatorgroup.yaml
+----
+
+.. Create the following `Subscription` CR and save the YAML in the `nfd-sub.yaml` file:
++
+.Example Subscription
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: nfd
+  namespace: openshift-nfd
+spec:
+  channel: "stable"
+  installPlanApproval: Automatic
+  name: nfd
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+----
+
+.. Create the subscription object by running the following command:
++
+[source,terminal]
+----
+$ oc create -f nfd-sub.yaml
+----
+
+.. Change to the `openshift-nfd` project:
++
+[source,terminal]
+----
+$ oc project openshift-nfd
+----
+
+.Verification
+
+* To verify that the Operator deployment is successful, run:
++
+[source,terminal]
+----
+$ oc get pods
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                      READY   STATUS    RESTARTS   AGE
+nfd-controller-manager-7f86ccfb58-vgr4x   2/2     Running   0          10m
+----
++
+A successful deployment shows a `Running` status.
+
+[id="install-operator-web-console_{context}"]
+== Installing the NFD Operator using the web console
+
+As a cluster administrator, you can install the NFD Operator using the web console.
+
+.Procedure
+
+. In the {product-title} web console, click *Operators* -> *OperatorHub*.
+
+. Choose *Node Feature Discovery* from the list of available Operators, and then click *Install*.
+
+. On the *Install Operator* page, select *A specific namespace on the cluster*, and then click *Install*. You do not need to create a namespace because it is created for you.
+
+.Verification
+
+To verify that the NFD Operator installed successfully:
+
+. Navigate to the *Operators* -> *Installed Operators* page.
+. Ensure that *Node Feature Discovery* is listed in the *openshift-nfd* project with a *Status* of *InstallSucceeded*.
++
+[NOTE]
+====
+During installation an Operator might display a *Failed* status. If the installation later succeeds with an *InstallSucceeded* message, you can ignore the *Failed* message.
+====
+
+.Troubleshooting
+
+If the Operator does not appear as installed, troubleshoot further:
+
+. Navigate to the *Operators* -> *Installed Operators* page and inspect the *Operator Subscriptions* and *Install Plans* tabs for any failure or errors under *Status*.
+. Navigate to the *Workloads* -> *Pods* page and check the logs for pods in the `openshift-nfd` project.
+
+:leveloffset: 1
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/psap-node-feature-discovery-operator.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="using-the-node-feature-discovery-operator_{context}"]
+= Using the Node Feature Discovery Operator
+
+The Node Feature Discovery (NFD) Operator orchestrates all resources needed to run the Node-Feature-Discovery daemon set by watching for a `NodeFeatureDiscovery` CR. Based on the `NodeFeatureDiscovery` CR, the Operator will create the operand (NFD) components in the desired namespace. You can edit the CR to choose another `namespace`, `image`, `imagePullPolicy`, and `nfd-worker-conf`, among other options.
+
+As a cluster administrator, you can create a `NodeFeatureDiscovery` instance using the {product-title} CLI or the web console.
+
+[id="create-cd-cli_{context}"]
+== Create a NodeFeatureDiscovery instance using the CLI
+
+As a cluster administrator, you can create a `NodeFeatureDiscovery` CR instance using the CLI.
+
+.Prerequisites
+
+* An {product-title} cluster
+* Install the OpenShift CLI (`oc`).
+* Log in as a user with `cluster-admin` privileges.
+* Install the NFD Operator.
+
+.Procedure
+
+. Create the following `NodeFeatureDiscovery` Custom Resource (CR), and then save the YAML in the `NodeFeatureDiscovery.yaml` file:
++
+[source,yaml,subs="attributes+"]
+----
+apiVersion: nfd.openshift.io/v1
+kind: NodeFeatureDiscovery
+metadata:
+  name: nfd-instance
+  namespace: openshift-nfd
+spec:
+  instance: "" # instance is empty by default
+  topologyupdater: false # False by default
+  operand:
+    image: registry.redhat.io/openshift4/ose-node-feature-discovery:v{product-version}
+    imagePullPolicy: Always
+  workerConfig:
+    configData: |
+      core:
+      #  labelWhiteList:
+      #  noPublish: false
+        sleepInterval: 60s
+      #  sources: [all]
+      #  klog:
+      #    addDirHeader: false
+      #    alsologtostderr: false
+      #    logBacktraceAt:
+      #    logtostderr: true
+      #    skipHeaders: false
+      #    stderrthreshold: 2
+      #    v: 0
+      #    vmodule:
+      ##   NOTE: the following options are not dynamically run-time configurable
+      ##         and require a nfd-worker restart to take effect after being changed
+      #    logDir:
+      #    logFile:
+      #    logFileMaxSize: 1800
+      #    skipLogHeaders: false
+      sources:
+        cpu:
+          cpuid:
+      #     NOTE: whitelist has priority over blacklist
+            attributeBlacklist:
+              - "BMI1"
+              - "BMI2"
+              - "CLMUL"
+              - "CMOV"
+              - "CX16"
+              - "ERMS"
+              - "F16C"
+              - "HTT"
+              - "LZCNT"
+              - "MMX"
+              - "MMXEXT"
+              - "NX"
+              - "POPCNT"
+              - "RDRAND"
+              - "RDSEED"
+              - "RDTSCP"
+              - "SGX"
+              - "SSE"
+              - "SSE2"
+              - "SSE3"
+              - "SSE4.1"
+              - "SSE4.2"
+              - "SSSE3"
+            attributeWhitelist:
+        kernel:
+          kconfigFile: "/path/to/kconfig"
+          configOpts:
+            - "NO_HZ"
+            - "X86"
+            - "DMI"
+        pci:
+          deviceClassWhitelist:
+            - "0200"
+            - "03"
+            - "12"
+          deviceLabelFields:
+            - "class"
+  customConfig:
+    configData: |
+          - name: "more.kernel.features"
+            matchOn:
+            - loadedKMod: ["example_kmod3"]
+----
+
+For more details on how to customize NFD workers, refer to the link:https://kubernetes-sigs.github.io/node-feature-discovery/v0.10/advanced/worker-configuration-reference.html[Configuration file reference of nfd-worker].
+
+. Create the `NodeFeatureDiscovery` CR instance by running the following command:
++
+[source,terminal]
+----
+$ oc create -f NodeFeatureDiscovery.yaml
+----
+
+.Verification
+
+* To verify that the instance is created, run:
++
+[source,terminal]
+----
+$ oc get pods
+----
++
+.Example output
+[source,terminal]
+----
+NAME                                      READY   STATUS    RESTARTS   AGE
+nfd-controller-manager-7f86ccfb58-vgr4x   2/2     Running   0          11m
+nfd-master-hcn64                          1/1     Running   0          60s
+nfd-master-lnnxx                          1/1     Running   0          60s
+nfd-master-mp6hr                          1/1     Running   0          60s
+nfd-worker-vgcz9                          1/1     Running   0          60s
+nfd-worker-xqbws                          1/1     Running   0          60s
+----
++
+A successful deployment shows a `Running` status.
+
+[id="create-nfd-cr-web-console_{context}"]
+== Create a NodeFeatureDiscovery CR using the web console
+
+.Procedure
+
+. Navigate to the *Operators* -> *Installed Operators* page.
+. Find *Node Feature Discovery* and see a box under *Provided APIs*.
+. Click *Create instance*.
+. Edit the values of the `NodeFeatureDiscovery` CR.
+. Click *Create*.
+
+:leveloffset: 1
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * scalability_and_performance/psap-node-feature-discovery-operator.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="configuring-the-node-feature-discovery_{context}"]
+= Configuring the Node Feature Discovery Operator
+
+[id="configuring-node-feature-discovery-operator-core_{context}"]
+== core
+
+The `core` section contains common configuration settings that are not specific to any particular feature source.
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-sleepInterval_{context}"]
+=== core.sleepInterval
+
+`core.sleepInterval` specifies the interval between consecutive passes of feature detection or re-detection, and thus also the interval between node re-labeling. A non-positive value implies infinite sleep interval; no re-detection or re-labeling is done.
+
+This value is overridden by the deprecated `--sleep-interval` command line flag, if specified.
+
+.Example usage
+[source,yaml]
+----
+core:
+  sleepInterval: 60s <1>
+----
+The default value is `60s`.
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-sources_{context}"]
+=== core.sources
+
+`core.sources` specifies the list of enabled feature sources. A special value `all` enables all feature sources.
+
+This value is overridden by the deprecated `--sources` command line flag, if specified.
+
+Default: `[all]`
+
+.Example usage
+[source,yaml]
+----
+core:
+  sources:
+    - system
+    - custom
+----
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-label-whitelist_{context}"]
+=== core.labelWhiteList
+
+`core.labelWhiteList` specifies a regular expression for filtering feature labels based on the label name. Non-matching labels are not published.
+
+The regular expression is only matched against the basename part of the label, the part of the name after '/'. The label prefix,  or namespace, is omitted.
+
+This value is overridden by the deprecated `--label-whitelist` command line flag, if specified.
+
+Default: `null`
+
+.Example usage
+[source,yaml]
+----
+core:
+  labelWhiteList: '^cpu-cpuid'
+----
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-no-publish_{context}"]
+=== core.noPublish
+
+Setting `core.noPublish` to `true` disables all communication with the `nfd-master`. It is effectively a dry run flag; `nfd-worker` runs feature detection normally, but no labeling requests are sent to `nfd-master`.
+
+This value is overridden by the `--no-publish` command line flag, if specified.
+
+Example:
+
+.Example usage
+[source,yaml]
+----
+core:
+  noPublish: true <1>
+----
+The default value is `false`.
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog_{context}"]
+== core.klog
+
+The following options specify the logger configuration, most of which can be dynamically adjusted at run-time.
+
+The logger options can also be specified using command line flags, which take precedence over any corresponding config file options.
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-adddirheader_{context}"]
+=== core.klog.addDirHeader
+
+If set to `true`, `core.klog.addDirHeader` adds the file directory to the header of the log messages.
+
+Default: `false`
+
+Run-time configurable: yes
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-alsologtostderr_{context}"]
+=== core.klog.alsologtostderr
+
+Log to standard error as well as files.
+
+Default: `false`
+
+Run-time configurable: yes
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-BacktraceAt_{context}"]
+=== core.klog.logBacktraceAt
+
+When logging hits line file:N, emit a stack trace.
+
+Default: *empty*
+
+Run-time configurable: yes
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-logdir_{context}"]
+=== core.klog.logDir
+
+If non-empty, write log files in this directory.
+
+Default: *empty*
+
+Run-time configurable: no
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-logfile_{context}"]
+=== core.klog.logFile
+
+If not empty, use this log file.
+
+Default: *empty*
+
+Run-time configurable: no
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-logFileMaxSize_{context}"]
+=== core.klog.logFileMaxSize
+
+`core.klog.logFileMaxSize` defines the maximum size a log file can grow to. Unit is megabytes. If the value is `0`, the maximum file size is unlimited.
+
+Default: `1800`
+
+Run-time configurable: no
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-logtostderr_{context}"]
+=== core.klog.logtostderr
+
+Log to standard error instead of files
+
+Default: `true`
+
+Run-time configurable: yes
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-skipHeaders_{context}"]
+=== core.klog.skipHeaders
+
+If `core.klog.skipHeaders` is set to `true`, avoid header prefixes in the log messages.
+
+Default: `false`
+
+Run-time configurable: yes
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-skipLogHeaders_{context}"]
+=== core.klog.skipLogHeaders
+
+If `core.klog.skipLogHeaders` is set to `true`, avoid headers when opening log files.
+
+Default: `false`
+
+Run-time configurable: no
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-stderrthreshold_{context}"]
+=== core.klog.stderrthreshold
+
+Logs at or above this threshold go to stderr.
+
+Default: `2`
+
+Run-time configurable: yes
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-v_{context}"]
+=== core.klog.v
+
+`core.klog.v` is the number for the log level verbosity.
+
+Default: `0`
+
+Run-time configurable: yes
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-core-klog-vmodule_{context}"]
+=== core.klog.vmodule
+
+`core.klog.vmodule` is a comma-separated list of `pattern=N` settings for file-filtered logging.
+
+Default: *empty*
+
+Run-time configurable: yes
+
+[id="configuring-node-feature-discovery-operator-sources_{context}"]
+== sources
+
+The `sources` section contains feature source specific configuration parameters.
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-sources-cpu-cpuid-attributeBlacklist_{context}"]
+=== sources.cpu.cpuid.attributeBlacklist
+
+Prevent publishing `cpuid` features listed in this option.
+
+This value is overridden by `sources.cpu.cpuid.attributeWhitelist`, if specified.
+
+Default: `[BMI1, BMI2, CLMUL, CMOV, CX16, ERMS, F16C, HTT, LZCNT, MMX, MMXEXT, NX, POPCNT, RDRAND, RDSEED, RDTSCP, SGX, SGXLC, SSE, SSE2, SSE3, SSE4.1, SSE4.2, SSSE3]`
+
+.Example usage
+[source,yaml]
+----
+sources:
+  cpu:
+    cpuid:
+      attributeBlacklist: [MMX, MMXEXT]
+----
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-sources-cpu-cpuid-attributeWhitelist_{context}"]
+=== sources.cpu.cpuid.attributeWhitelist
+
+Only publish the `cpuid` features listed in this option.
+
+`sources.cpu.cpuid.attributeWhitelist` takes precedence over `sources.cpu.cpuid.attributeBlacklist`.
+
+Default: *empty*
+
+.Example usage
+[source,yaml]
+----
+sources:
+  cpu:
+    cpuid:
+      attributeWhitelist: [AVX512BW, AVX512CD, AVX512DQ, AVX512F, AVX512VL]
+----
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-sources-kernel-kconfigFilet_{context}"]
+=== sources.kernel.kconfigFile
+
+`sources.kernel.kconfigFile` is the path of the kernel config file. If empty, NFD runs a search in the well-known standard locations.
+
+Default: *empty*
+
+.Example usage
+[source,yaml]
+----
+sources:
+  kernel:
+    kconfigFile: "/path/to/kconfig"
+----
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-sources-kernel-configOpts_{context}"]
+=== sources.kernel.configOpts
+
+`sources.kernel.configOpts` represents kernel configuration options to publish as feature labels.
+
+Default: `[NO_HZ, NO_HZ_IDLE, NO_HZ_FULL, PREEMPT]`
+
+.Example usage
+[source,yaml]
+----
+sources:
+  kernel:
+    configOpts: [NO_HZ, X86, DMI]
+----
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-sources-pci-deviceClassWhitelist_{context}"]
+=== sources.pci.deviceClassWhitelist
+
+`sources.pci.deviceClassWhitelist` is a list of link:https://pci-ids.ucw.cz/read/PD[PCI device class IDs] for which to publish a label. It can be specified as a main class only (for example, `03`) or full class-subclass combination (for example `0300`). The former implies that all
+subclasses are accepted.  The format of the labels can be further configured with `deviceLabelFields`.
+
+Default: `["03", "0b40", "12"]`
+
+.Example usage
+[source,yaml]
+----
+sources:
+  pci:
+    deviceClassWhitelist: ["0200", "03"]
+----
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-sources-pci-deviceLabelFields_{context}"]
+=== sources.pci.deviceLabelFields
+
+`sources.pci.deviceLabelFields` is the set of PCI ID fields to use when constructing the name of the feature label. Valid fields are `class`, `vendor`, `device`, `subsystem_vendor` and `subsystem_device`.
+
+Default: `[class, vendor]`
+
+.Example usage
+[source,yaml]
+----
+sources:
+  pci:
+    deviceLabelFields: [class, vendor, device]
+----
+
+With the example config above, NFD would publish labels such as `feature.node.kubernetes.io/pci-<class-id>_<vendor-id>_<device-id>.present=true`
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-sources-usb-deviceClassWhitelist_{context}"]
+=== sources.usb.deviceClassWhitelist
+
+`sources.usb.deviceClassWhitelist` is a list of USB link:https://www.usb.org/defined-class-codes[device class] IDs for
+which to publish a feature label. The format of the labels can be further
+configured with `deviceLabelFields`.
+
+Default: `["0e", "ef", "fe", "ff"]`
+
+.Example usage
+[source,yaml]
+----
+sources:
+  usb:
+    deviceClassWhitelist: ["ef", "ff"]
+----
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-sources-usb-deviceLabelFields_{context}"]
+=== sources.usb.deviceLabelFields
+
+`sources.usb.deviceLabelFields` is the set of USB ID fields from which to compose the name of the feature label. Valid fields are `class`, `vendor`, and `device`.
+
+Default: `[class, vendor, device]`
+
+.Example usage
+[source,yaml]
+----
+sources:
+  pci:
+    deviceLabelFields: [class, vendor]
+----
+
+With the example config above, NFD would publish labels like: `feature.node.kubernetes.io/usb-<class-id>_<vendor-id>.present=true`.
+
+[discrete]
+[id="configuring-node-feature-discovery-operator-sources-custom_{context}"]
+=== sources.custom
+
+`sources.custom` is the list of rules to process in the custom feature source to create user-specific labels.
+
+Default: *empty*
+
+.Example usage
+[source,yaml]
+----
+source:
+  custom:
+  - name: "my.custom.feature"
+    matchOn:
+    - loadedKMod: ["e1000e"]
+    - pciId:
+        class: ["0200"]
+        vendor: ["8086"]
+----
+
+:leveloffset: 1
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/psap-node-feature-discovery-operator.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="nfd-rules-about_{context}"]
+= About the NodeFeatureRule custom resource
+
+`NodeFeatureRule` objects are a `NodeFeatureDiscovery` custom resource designed for rule-based custom labeling of nodes. Some use cases include application-specific labeling or distribution by hardware vendors to create specific labels for their devices.
+
+`NodeFeatureRule` objects provide a method to create vendor- or application-specific labels and taints. It uses a flexible rule-based mechanism for creating labels and optionally taints based on node features.
+
+:leveloffset: 1
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/psap-node-feature-discovery-operator.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="nfd-rules-using_{context}"]
+= Using the NodeFeatureRule custom resource
+
+Create a `NodeFeatureRule` object to label nodes if a set of rules match the conditions.
+
+.Procedure
+
+. Create a custom resource file named `nodefeaturerule.yaml` that contains the following text:
++
+[source,yaml]
+----
+apiVersion: nfd.openshift.io/v1
+kind: NodeFeatureRule
+metadata:
+  name: example-rule
+spec:
+  rules:
+    - name: "example rule"
+      labels:
+        "example-custom-feature": "true"
+      # Label is created if all of the rules below match
+      matchFeatures:
+        # Match if "veth" kernel module is loaded
+        - feature: kernel.loadedmodule
+          matchExpressions:
+            veth: {op: Exists}
+        # Match if any PCI device with vendor 8086 exists in the system
+        - feature: pci.device
+          matchExpressions:
+            vendor: {op: In, value: ["8086"]}
+----
++
+This custom resource specifies that labelling occurs when the `veth` module is loaded and any PCI device with vendor code `8086` exists in the cluster.
+
+. Apply the `nodefeaturerule.yaml` file to your cluster by running the following command:
++
+[source,terminal]
+----
+$ oc apply -f https://raw.githubusercontent.com/kubernetes-sigs/node-feature-discovery/v0.13.6/examples/nodefeaturerule.yaml
+----
+The example applies the feature label on nodes with the `veth` module loaded and any PCI device with vendor code `8086` exists.
++
+[NOTE]
+====
+A relabeling delay of up to 1 minute might occur.
+====
+
+:leveloffset: 1
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/psap-node-feature-discovery-operator.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="using-the-nfd-topology-updater_{context}"]
+= Using the NFD Topology Updater
+
+The Node Feature Discovery (NFD) Topology Updater is a daemon responsible for examining allocated resources on a worker node. It accounts for resources that are available to be allocated to new pod on a per-zone basis, where a zone can be a Non-Uniform Memory Access (NUMA) node. The NFD Topology Updater communicates the information to nfd-master, which creates a `NodeResourceTopology` custom resource (CR) corresponding to all of the worker nodes in the cluster. One instance of the NFD Topology Updater runs on each node of the cluster.
+
+To enable the Topology Updater workers in NFD, set the `topologyupdater` variable to `true` in the `NodeFeatureDiscovery` CR, as described in the section *Using the Node Feature Discovery Operator*.
+
+== NodeResourceTopology CR
+
+When run with NFD Topology Updater, NFD creates custom resource instances corresponding to the node resource hardware topology, such as:
+
+[source,yaml]
+----
+apiVersion: topology.node.k8s.io/v1alpha1
+kind: NodeResourceTopology
+metadata:
+  name: node1
+topologyPolicies: ["SingleNUMANodeContainerLevel"]
+zones:
+  - name: node-0
+    type: Node
+    resources:
+      - name: cpu
+        capacity: 20
+        allocatable: 16
+        available: 10
+      - name: vendor/nic1
+        capacity: 3
+        allocatable: 3
+        available: 3
+  - name: node-1
+    type: Node
+    resources:
+      - name: cpu
+        capacity: 30
+        allocatable: 30
+        available: 15
+      - name: vendor/nic2
+        capacity: 6
+        allocatable: 6
+        available: 6
+  - name: node-2
+    type: Node
+    resources:
+      - name: cpu
+        capacity: 30
+        allocatable: 30
+        available: 15
+      - name: vendor/nic1
+        capacity: 3
+        allocatable: 3
+        available: 3
+----
+
+:leveloffset: 1
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/psap-node-feature-discovery-operator.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="nfd-topology-updater-command-line-flags_{context}"]
+= NFD Topology Updater command line flags
+
+To view available command line flags, run the `nfd-topology-updater -help` command. For example, in a podman container, run the following command:
+
+[source,terminal]
+----
+$ podman run gcr.io/k8s-staging-nfd/node-feature-discovery:master nfd-topology-updater -help
+----
+
+[discrete]
+[id="nfd-topology-updater-ca-file_{context}"]
+== -ca-file
+
+The `-ca-file` flag is one of the three flags, together with the `-cert-file` and `-key-file`flags, that controls the mutual TLS authentication on the NFD Topology Updater. This flag specifies the TLS root certificate that is used for verifying the authenticity of nfd-master.
+
+Default: empty
+
+[IMPORTANT]
+====
+The `-ca-file` flag must be specified together with the `-cert-file` and `-key-file` flags.
+====
+
+.Example
+[source,terminal]
+----
+$ nfd-topology-updater -ca-file=/opt/nfd/ca.crt -cert-file=/opt/nfd/updater.crt -key-file=/opt/nfd/updater.key
+----
+
+[discrete]
+[id="nfd-topology-updater-cert-file_{context}"]
+== -cert-file
+
+The `-cert-file` flag is one of the three flags, together with the `-ca-file` and `-key-file flags`, that controls mutual TLS authentication on the NFD Topology Updater. This flag specifies the TLS certificate presented for authenticating outgoing requests.
+
+Default: empty
+
+[IMPORTANT]
+====
+The `-cert-file` flag must be specified together with the `-ca-file` and `-key-file` flags.
+====
+
+.Example
+[source,terminal]
+----
+$ nfd-topology-updater -cert-file=/opt/nfd/updater.crt -key-file=/opt/nfd/updater.key -ca-file=/opt/nfd/ca.crt
+----
+
+[discrete]
+[id="nfd-topology-updater-help_{context}"]
+== -h, -help
+
+Print usage and exit.
+
+[discrete]
+[id="nfd-topology-updater-key-file_{context}"]
+== -key-file
+
+The `-key-file` flag is one of the three flags, together with the `-ca-file` and `-cert-file` flags, that controls the mutual TLS authentication on the NFD Topology Updater. This flag specifies the private key corresponding the given certificate file, or `-cert-file`, that is used for authenticating outgoing requests.
+
+Default: empty
+
+[IMPORTANT]
+====
+The `-key-file` flag must be specified together with the `-ca-file` and `-cert-file` flags.
+====
+
+.Example
+[source,terminal]
+----
+$ nfd-topology-updater -key-file=/opt/nfd/updater.key -cert-file=/opt/nfd/updater.crt -ca-file=/opt/nfd/ca.crt
+----
+
+[discrete]
+[id="nfd-topology-updater-kubelet-config-file_{context}"]
+== -kubelet-config-file
+
+The `-kubelet-config-file` specifies the path to the Kubelet's configuration
+file.
+
+Default: `/host-var/lib/kubelet/config.yaml`
+
+.Example
+[source,terminal]
+----
+$ nfd-topology-updater -kubelet-config-file=/var/lib/kubelet/config.yaml
+----
+
+[discrete]
+[id="nfd-topology-updater-no-publish_{context}"]
+== -no-publish
+
+The `-no-publish` flag disables all communication with the nfd-master, making it a dry run flag for nfd-topology-updater. NFD Topology Updater runs resource hardware topology detection normally, but no CR requests are sent to nfd-master.
+
+Default: `false`
+
+.Example
+[source,terminal]
+----
+$ nfd-topology-updater -no-publish
+----
+
+[id="nfd-topology-updater-oneshot_{context}"]
+== -oneshot
+
+The `-oneshot` flag causes the NFD Topology Updater to exit after one pass of resource hardware topology detection.
+
+Default: `false`
+
+.Example
+[source,terminal]
+----
+$ nfd-topology-updater -oneshot -no-publish
+----
+
+[discrete]
+[id="nfd-topology-updater-podresources-socket_{context}"]
+== -podresources-socket
+
+The `-podresources-socket` flag specifies the path to the Unix socket where kubelet exports a gRPC service to enable discovery of in-use CPUs and devices, and to provide metadata for them.
+
+Default: `/host-var/liblib/kubelet/pod-resources/kubelet.sock`
+
+.Example
+[source,terminal]
+----
+$ nfd-topology-updater -podresources-socket=/var/lib/kubelet/pod-resources/kubelet.sock
+----
+
+[discrete]
+[id="nfd-topology-updater-server_{context}"]
+== -server
+
+The `-server` flag specifies the address of the nfd-master endpoint to connect to.
+
+Default: `localhost:8080`
+
+.Example
+[source,terminal]
+----
+$ nfd-topology-updater -server=nfd-master.nfd.svc.cluster.local:443
+----
+
+[discrete]
+[id="nfd-topology-updater-server-name-override_{context}"]
+== -server-name-override
+
+The `-server-name-override` flag specifies the common name (CN) which to expect from the nfd-master TLS certificate. This flag is mostly intended for development and debugging purposes.
+
+Default: empty
+
+.Example
+[source,terminal]
+----
+$ nfd-topology-updater -server-name-override=localhost
+----
+
+[discrete]
+[id="nfd-topology-updater-sleep-interval_{context}"]
+== -sleep-interval
+
+The `-sleep-interval` flag specifies the interval between resource hardware topology re-examination and custom resource updates. A non-positive value implies infinite sleep interval and no re-detection is done.
+
+Default: `60s`
+
+.Example
+[source,terminal]
+----
+$ nfd-topology-updater -sleep-interval=1h
+----
+
+[discrete]
+[id="nfd-topology-updater-version_{context}"]
+== -version
+
+Print version and exit.
+
+[discrete]
+[id="nfd-topology-updater-watch-namespace_{context}"]
+== -watch-namespace
+
+The `-watch-namespace` flag specifies the namespace to ensure that resource hardware topology examination only happens for the pods running in the
+specified namespace. Pods that are not running in the specified namespace are not considered during resource accounting. This is particularly useful for testing and debugging purposes. A `*` value means that all of the pods across all namespaces are considered during the accounting process.
+
+Default: `*`
+
+.Example
+[source,terminal]
+----
+$ nfd-topology-updater -watch-namespace=rte
+----
+
+:leveloffset: 1
+
+:leveloffset!:
+
+:leveloffset: +1
+
+:_mod-docs-content-type: ASSEMBLY
+[id="kernel-module-management-operator"]
+= Kernel Module Management Operator
+// The {product-title} attribute provides the context-sensitive name of the relevant OpenShift distribution, for example, "OpenShift Container Platform" or "OKD". The {product-version} attribute provides the product version relative to the distribution, for example "4.9".
+// {product-title} and {product-version} are parsed when AsciiBinder queries the _distro_map.yml file in relation to the base branch of a pull request.
+// See https://github.com/openshift/openshift-docs/blob/main/contributing_to_docs/doc_guidelines.adoc#product-name-and-version for more information on this topic.
+// Other common attributes are defined in the following lines:
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:imagesdir: images
+:prewrap!:
+:op-system-first: Red Hat Enterprise Linux CoreOS (RHCOS)
+:op-system: RHCOS
+:op-system-lowercase: rhcos
+:op-system-base: RHEL
+:op-system-base-full: Red Hat Enterprise Linux (RHEL)
+:op-system-version: 9.x
+:tsb-name: Template Service Broker
+:kebab: image:kebab.png[title="Options menu"]
+:rh-openstack-first: Red Hat OpenStack Platform (RHOSP)
+:rh-openstack: RHOSP
+:ai-full: Assisted Installer
+:cluster-manager-first: Red Hat OpenShift Cluster Manager
+:cluster-manager: OpenShift Cluster Manager
+:cluster-manager-url: link:https://console.redhat.com/openshift[OpenShift Cluster Manager Hybrid Cloud Console]
+:cluster-manager-url-pull: link:https://console.redhat.com/openshift/install/pull-secret[pull secret from the Red Hat OpenShift Cluster Manager]
+:insights-advisor-url: link:https://console.redhat.com/openshift/insights/advisor/[Insights Advisor]
+:hybrid-console: Red Hat Hybrid Cloud Console
+:hybrid-console-second: Hybrid Cloud Console
+// OADP attributes
+:oadp-first: OpenShift API for Data Protection (OADP)
+:oadp-full: OpenShift API for Data Protection
+:oadp-short: OADP
+:oc-first: pass:quotes[OpenShift CLI (`oc`)]
+:product-registry: OpenShift image registry
+:rh-storage-first: Red Hat OpenShift Data Foundation
+:rh-storage: OpenShift Data Foundation
+:rh-rhacm-first: Red Hat Advanced Cluster Management (RHACM)
+:rh-rhacm: RHACM
+:rh-rhacm-version: 2.9
+:sandboxed-containers-first: OpenShift sandboxed containers
+:sandboxed-containers-operator: OpenShift sandboxed containers Operator
+:sandboxed-containers-version: 1.5
+:sandboxed-containers-version-z: 1.5.0
+:sandboxed-containers-legacy-version: 1.4.1
+:cert-manager-operator: cert-manager Operator for Red Hat OpenShift
+:secondary-scheduler-operator-full: Secondary Scheduler Operator for Red Hat OpenShift
+:secondary-scheduler-operator: Secondary Scheduler Operator
+:descheduler-operator: Kube Descheduler Operator
+// Backup and restore
+:velero-domain: velero.io
+:velero-version: 1.12
+:launch: image:app-launcher.png[title="Application Launcher"]
+:mtc-short: MTC
+:mtc-full: Migration Toolkit for Containers
+:mtc-version: 1.8
+:mtc-version-z: 1.8.2
+// builds (Valid only in 4.11 and later)
+:builds-v2title: Builds for Red Hat OpenShift
+:builds-v2shortname: OpenShift Builds v2
+:builds-v1shortname: OpenShift Builds v1
+//gitops
+:gitops-title: Red Hat OpenShift GitOps
+:gitops-shortname: GitOps
+:gitops-ver: 1.1
+:rh-app-icon: image:red-hat-applications-menu-icon.jpg[title="Red Hat applications"]
+//pipelines
+:pipelines-title: Red Hat OpenShift Pipelines
+:pipelines-shortname: OpenShift Pipelines
+:pipelines-ver: pipelines-1.13
+:pipelines-version-number: 1.13
+:tekton-chains: Tekton Chains
+:tekton-hub: Tekton Hub
+:artifact-hub: Artifact Hub
+:pac: Pipelines as Code
+//odo
+:odo-title: odo
+//OpenShift Kubernetes Engine
+:oke: OpenShift Kubernetes Engine
+//OpenShift Platform Plus
+:opp: OpenShift Platform Plus
+//openshift virtualization (cnv)
+:VirtProductName: OpenShift Virtualization
+:VirtVersion: 4.15
+:HCOVersion: 4.15.0
+:CNVNamespace: openshift-cnv
+:CNVOperatorDisplayName: OpenShift Virtualization Operator
+:CNVSubscriptionSpecSource: redhat-operators
+:CNVSubscriptionSpecName: kubevirt-hyperconverged
+:delete: image:delete.png[title="Delete"]
+//distributed tracing
+:DTProductName: Red Hat OpenShift distributed tracing platform
+:DTShortName: distributed tracing platform
+:DTProductVersion: 3.0
+:JaegerName: Red Hat OpenShift distributed tracing platform (Jaeger)
+:JaegerShortName: distributed tracing platform (Jaeger)
+:JaegerVersion: 1.51.0
+:OTELName: Red Hat build of OpenTelemetry
+:OTELShortName: Red Hat build of OpenTelemetry
+:OTELOperator: Red Hat build of OpenTelemetry Operator
+:OTELVersion: 0.89.0
+:TempoName: Red Hat OpenShift distributed tracing platform (Tempo)
+:TempoShortName: distributed tracing platform (Tempo)
+:TempoOperator: Tempo Operator
+:TempoVersion: 2.3.0
+//telco
+//logging
+:logging: logging
+:logging-uc: Logging
+:for: for Red Hat OpenShift
+:clo: Red Hat OpenShift Logging Operator
+:loki-op: Loki Operator
+:es-op: OpenShift Elasticsearch Operator
+:log-plug: logging Console plugin
+//power monitoring
+:PM-title-c: Power monitoring for Red Hat OpenShift
+:PM-title: power monitoring for Red Hat OpenShift
+:PM-shortname: power monitoring
+:PM-shortname-c: Power monitoring
+:PM-operator: Power monitoring Operator
+:PM-kepler: Kepler
+//serverless
+:ServerlessProductName: OpenShift Serverless
+:ServerlessProductShortName: Serverless
+:ServerlessOperatorName: OpenShift Serverless Operator
+:FunctionsProductName: OpenShift Serverless Functions
+//service mesh v2
+:product-dedicated: Red Hat OpenShift Dedicated
+:product-rosa: Red Hat OpenShift Service on AWS
+:SMProductName: Red Hat OpenShift Service Mesh
+:SMProductShortName: Service Mesh
+:SMProductVersion: 2.4.5
+:MaistraVersion: 2.4
+//Service Mesh v1
+:SMProductVersion1x: 1.1.18.2
+//Windows containers
+:productwinc: Red Hat OpenShift support for Windows Containers
+// Red Hat Quay Container Security Operator
+:rhq-cso: Red Hat Quay Container Security Operator
+// Red Hat Quay
+:quay: Red Hat Quay
+:sno: single-node OpenShift
+:sno-caps: Single-node OpenShift
+//TALO and Redfish events Operators
+:cgu-operator-first: Topology Aware Lifecycle Manager (TALM)
+:cgu-operator-full: Topology Aware Lifecycle Manager
+:cgu-operator: TALM
+:redfish-operator: Bare Metal Event Relay
+//Formerly known as CodeReady Containers and CodeReady Workspaces
+:openshift-local-productname: Red Hat OpenShift Local
+:openshift-dev-spaces-productname: Red Hat OpenShift Dev Spaces
+:factory-prestaging-tool: factory-precaching-cli tool
+:factory-prestaging-tool-caps: Factory-precaching-cli tool
+:openshift-networking: Red Hat OpenShift Networking
+// TODO - this probably needs to be different for OKD
+//ifdef::openshift-origin[]
+//:openshift-networking: OKD Networking
+//endif::[]
+// logical volume manager storage
+:lvms-first: Logical volume manager storage (LVM Storage)
+:lvms: LVM Storage
+//Operator SDK version
+:osdk_ver: 1.31.0
+//Operator SDK version that shipped with the previous OCP 4.x release
+:osdk_ver_n1: 1.28.0
+//Next-gen (OCP 4.14+) Operator Lifecycle Manager, aka "v1"
+:olmv1: OLM 1.0
+:olmv1-first: Operator Lifecycle Manager (OLM) 1.0
+:ztp-first: GitOps Zero Touch Provisioning (ZTP)
+:ztp: GitOps ZTP
+:3no: three-node OpenShift
+:3no-caps: Three-node OpenShift
+:run-once-operator: Run Once Duration Override Operator
+// Web terminal
+:web-terminal-op: Web Terminal Operator
+:devworkspace-op: DevWorkspace Operator
+:secrets-store-driver: Secrets Store CSI driver
+:secrets-store-operator: Secrets Store CSI Driver Operator
+//AWS STS
+:sts-first: Security Token Service
+:sts-full: Security Token Service (STS)
+:sts-short: STS
+//Cloud provider names
+//AWS
+:aws-first: Amazon Web Services
+:aws-full: Amazon Web Services (AWS)
+:aws-short: AWS
+//GCP
+:gcp-first: Google Cloud Platform (GCP)
+:gcp-full: Google Cloud Platform
+:gcp-short: GCP
+//alibaba cloud
+:alibaba: Alibaba Cloud
+// IBM general
+:ibm-name: IBM(R)
+:ibm-title: IBM
+// IBM Cloud
+:ibm-cloud-name: IBM Cloud(R)
+:ibm-cloud-title: IBM Cloud
+// IBM Cloud Bare Metal (Classic)
+:ibm-cloud-bm: IBM Cloud(R) Bare Metal (Classic)
+:ibm-cloud-bm-title: IBM Cloud Bare Metal (Classic)
+// IBM Power
+:ibm-power-name: IBM Power(R)
+:ibm-power-title: IBM Power
+:ibm-power-server-name: IBM Power(R) Virtual Server
+:ibm-power-server-title: IBM Power Virtual Server
+// IBM zSystems
+:ibm-z-name: IBM Z(R)
+:ibm-z-title: IBM Z
+:ibm-linuxone-name: IBM(R) LinuxONE
+:ibm-linuxone-title: IBM LinuxONE
+//Azure
+:azure-full: Microsoft Azure
+:azure-short: Azure
+//vSphere
+:vmw-full: VMware vSphere
+:vmw-short: vSphere
+//Oracle
+:oci-first: Oracle(R) Cloud Infrastructure (OCI)
+:oci: OCI
+:ocvs-first: Oracle(R) Cloud VMware Solution (OCVS)
+:ocvs: OCVS
+// Cluster Observability Operator
+:coo-first: Cluster Observability Operator (COO)
+:coo-full: Cluster Observability Operator
+:coo-short: COO
+//ODF
+:odf-first: Red Hat OpenShift Data Foundation (ODF)
+:odf-full: Red Hat OpenShift Data Foundation
+:odf-short: ODF
+:rh-dev-hub: Red Hat Developer Hub
+:context: kernel-module-management-operator
+
+toc::[]
+
+Learn about the Kernel Module Management (KMM) Operator and how you can use it to deploy out-of-tree kernel modules and device plugins on {product-title} clusters.
+
+:FeatureName: Kernel Module Management Operator
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="about-kmm_{context}"]
+= About the Kernel Module Management Operator
+
+The Kernel Module Management (KMM) Operator manages, builds, signs, and deploys out-of-tree kernel modules and device plugins on {product-title} clusters.
+
+KMM adds a new `Module` CRD which describes an out-of-tree kernel module and its associated device plugin.
+You can use `Module` resources to configure how to load the module, define `ModuleLoader` images for kernel versions, and include instructions for building and signing modules for specific kernel versions.
+
+KMM is designed to accommodate multiple kernel versions at once for any kernel module, allowing for seamless node upgrades and reduced application downtime.
+
+:leveloffset: 1
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-install_{context}"]
+= Installing the Kernel Module Management Operator
+
+As a cluster administrator, you can install the Kernel Module Management (KMM) Operator by using the OpenShift CLI or the web console.
+
+The KMM Operator is supported on {product-title} 4.12 and later.
+Installing KMM on version 4.11 does not require specific additional steps.
+For details on installing KMM on version 4.10 and earlier, see the section "Installing the Kernel Module Management Operator on earlier versions of {product-title}".
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-install-using-web-console_{context}"]
+= Installing the Kernel Module Management Operator using the web console
+
+As a cluster administrator, you can install the Kernel Module Management (KMM) Operator using the {product-title} web console.
+
+.Procedure
+
+. Log in to the {product-title} web console.
+. Install the Kernel Module Management Operator:
+.. In the {product-title} web console, click *Operators* -> *OperatorHub*.
+
+.. Select *Kernel Module Management Operator* from the list of available Operators, and then click *Install*.
+
+.. From the *Installed Namespace* list, select the `openshift-kmm` namespace.
+
+..  Click *Install*.
+
+.Verification
+
+To verify that KMM Operator installed successfully:
+
+. Navigate to the *Operators* -> *Installed Operators* page.
+. Ensure that *Kernel Module Management Operator* is listed in the *openshift-kmm* project with a *Status* of *InstallSucceeded*.
++
+[NOTE]
+====
+During installation, an Operator might display a *Failed* status. If the installation later succeeds with an *InstallSucceeded* message, you can ignore the *Failed* message.
+====
+
+.Troubleshooting
+. To troubleshoot issues with Operator installation:
++
+.. Navigate to the *Operators* -> *Installed Operators* page and inspect the *Operator Subscriptions* and *Install Plans* tabs for any failure or errors under *Status*.
+.. Navigate to the *Workloads* -> *Pods* page and check the logs for pods in the `openshift-kmm` project.
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-install-using-cli_{context}"]
+= Installing the Kernel Module Management Operator by using the CLI
+
+As a cluster administrator, you can install the Kernel Module Management (KMM) Operator by using the OpenShift CLI.
+
+.Prerequisites
+
+* You have a running {product-title} cluster.
+* You installed the OpenShift CLI (`oc`).
+* You are logged into the OpenShift CLI as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Install KMM in the `openshift-kmm` namespace:
+
+.. Create the following `Namespace` CR and save the YAML  file, for example, `kmm-namespace.yaml`:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-kmm
+----
+
+.. Create the following `OperatorGroup` CR and save the YAML file, for example, `kmm-op-group.yaml`:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: kernel-module-management
+  namespace: openshift-kmm
+----
+
+.. Create the following `Subscription` CR and save the YAML file, for example, `kmm-sub.yaml`:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: kernel-module-management
+  namespace: openshift-kmm
+spec:
+  channel: release-1.0
+  installPlanApproval: Automatic
+  name: kernel-module-management
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: kernel-module-management.v1.0.0
+----
+
+.. Create the subscription object by running the following command:
++
+[source,terminal]
+----
+$ oc create -f kmm-sub.yaml
+----
+
+.Verification
+
+* To verify that the Operator deployment is successful, run the following command:
++
+[source,terminal]
+----
+$ oc get -n openshift-kmm deployments.apps kmm-operator-controller-manager
+----
++
+.Example output
+[source,terminal]
+----
+NAME                              READY UP-TO-DATE  AVAILABLE AGE
+kmm-operator-controller-manager   1/1   1           1         97s
+----
++
+The Operator is available.
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-install-older-version_{context}"]
+= Installing the Kernel Module Management Operator on earlier versions of {product-title}
+
+The KMM Operator is supported on {product-title} 4.12 and later.
+For version 4.10 and earlier, you must create a new `SecurityContextConstraint` object and bind it to the Operator's `ServiceAccount`.
+As a cluster administrator, you can install the Kernel Module Management (KMM) Operator by using the OpenShift CLI.
+
+.Prerequisites
+
+* You have a running {product-title} cluster.
+* You installed the OpenShift CLI (`oc`).
+* You are logged into the OpenShift CLI as a user with `cluster-admin` privileges.
+
+.Procedure
+
+. Install KMM in the `openshift-kmm` namespace:
+
+.. Create the following `Namespace` CR and save the YAML file, for example, `kmm-namespace.yaml` file:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-kmm
+----
+
+.. Create the following `SecurityContextConstraint` object and save the YAML file, for example, `kmm-security-constraint.yaml`:
++
+[source,yaml]
+----
+allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegeEscalation: false
+allowPrivilegedContainer: false
+allowedCapabilities:
+  - NET_BIND_SERVICE
+apiVersion: security.openshift.io/v1
+defaultAddCapabilities: null
+fsGroup:
+  type: MustRunAs
+groups: []
+kind: SecurityContextConstraints
+metadata:
+  name: restricted-v2
+priority: null
+readOnlyRootFilesystem: false
+requiredDropCapabilities:
+  - ALL
+runAsUser:
+  type: MustRunAsRange
+seLinuxContext:
+  type: MustRunAs
+seccompProfiles:
+  - runtime/default
+supplementalGroups:
+  type: RunAsAny
+users: []
+volumes:
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - persistentVolumeClaim
+  - projected
+  - secret
+----
+
+.. Bind the `SecurityContextConstraint` object to the Operator's `ServiceAccount` by running the following commands:
++
+[source,terminal]
+----
+$ oc apply -f kmm-security-constraint.yaml
+----
++
+[source,terminal]
+----
+$ oc adm policy add-scc-to-user kmm-security-constraint -z kmm-operator-controller-manager -n openshift-kmm
+----
+
+.. Create the following `OperatorGroup` CR and save the YAML file, for example, `kmm-op-group.yaml`:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: kernel-module-management
+  namespace: openshift-kmm
+----
+
+.. Create the following `Subscription` CR and save the YAML file, for example, `kmm-sub.yaml`:
++
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: kernel-module-management
+  namespace: openshift-kmm
+spec:
+  channel: release-1.0
+  installPlanApproval: Automatic
+  name: kernel-module-management
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: kernel-module-management.v1.0.0
+----
+
+.. Create the subscription object by running the following command:
++
+[source,terminal]
+----
+$ oc create -f kmm-sub.yaml
+----
+
+.Verification
+
+* To verify that the Operator deployment is successful, run the following command:
++
+[source,terminal]
+----
+$ oc get -n openshift-kmm deployments.apps kmm-operator-controller-manager
+----
++
+.Example output
+[source,terminal]
+----
+NAME                              READY UP-TO-DATE  AVAILABLE AGE
+kmm-operator-controller-manager   1/1   1           1         97s
+----
++
+The Operator is available.
+
+:leveloffset: 1
+// Added for TELCODOCS-1309
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-uninstalling-kmmo_{context}"]
+= Uninstalling the Kernel Module Management Operator
+
+Use one of the following procedures to uninstall the Kernel Module Management (KMM) Operator, depending on how
+the KMM Operator was installed.
+
+:leveloffset: 1
+:leveloffset: +2
+
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-uninstalling-kmmo-red-hat-catalog_{context}"]
+= Uninstalling a Red Hat catalog installation
+
+Use this procedure if KMM was installed from the Red Hat catalog.
+
+.Procedure
+
+Use the following method to uninstall the KMM Operator:
+
+* Use the OpenShift console under *Operators* --> *Installed Operators* to locate and uninstall the Operator.
+
+[NOTE]
+====
+Alternatively, you can delete the `Subscription` resource in the KMM namespace.
+====
+
+:leveloffset: 1
+:leveloffset: +2
+
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-uninstalling-kmmo-cli_{context}"]
+= Uninstalling a CLI installation
+
+Use this command if the KMM Operator was installed using the OpenShift CLI.
+
+.Procedure
+
+* Run the following command to uninstall the KMM Operator:
++
+[source,terminal]
+----
+$ oc delete -k https://github.com/rh-ecosystem-edge/kernel-module-management/config/default
+----
++
+[NOTE]
+====
+Using this command deletes the ``Module`` CRD and all ``Module`` instances in the cluster.
+====
+
+:leveloffset: 1
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-deploy-kernel-modules_{context}"]
+= Kernel module deployment
+
+For each `Module` resource, Kernel Module Management (KMM) can create a number of `DaemonSet` resources:
+
+* One ModuleLoader `DaemonSet` per compatible kernel version running in the cluster.
+* One device plugin `DaemonSet`, if configured.
+
+The module loader daemon set resources run ModuleLoader images to load kernel modules.
+A module loader image is an OCI image that contains the `.ko` files and both the `modprobe` and `sleep` binaries.
+
+When the module loader pod is created, the pod runs `modprobe` to insert the specified module into the kernel.
+It then enters a sleep state until it is terminated.
+When that happens, the `ExecPreStop` hook runs `modprobe -r` to unload the kernel module.
+
+If the `.spec.devicePlugin` attribute is configured in a `Module` resource, then KMM creates a link:https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/[device plugin]
+daemon set in the cluster.
+That daemon set targets:
+
+* Nodes that match the `.spec.selector` of the `Module` resource.
+* Nodes with the kernel module loaded (where the module loader pod is in the `Ready` condition).
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-creating-module-cr_{context}"]
+
+= The Module custom resource definition
+
+The `Module` custom resource definition (CRD) represents a kernel module that can be loaded on all or select nodes in the cluster, through a module loader image.
+A `Module` custom resource (CR) specifies one or more kernel versions with which it is compatible, and a node selector.
+
+The compatible versions for a `Module` resource are listed under `.spec.moduleLoader.container.kernelMappings`.
+A kernel mapping can either match a `literal` version, or use `regexp` to match many of them at the same time.
+
+The reconciliation loop for the `Module` resource runs the following steps:
+
+. List all nodes matching `.spec.selector`.
+. Build a set of all kernel versions running on those nodes.
+. For each kernel version:
+ .. Go through `.spec.moduleLoader.container.kernelMappings` and find the appropriate container image name. If the kernel mapping has `build` or `sign` defined and the container image does not already exist, run the build, the signing job, or both, as needed.
+.. Create a module loader daemon set with the container image determined in the previous step.
+.. If `.spec.devicePlugin` is defined, create a device plugin daemon set using the configuration specified under `.spec.devicePlugin.container`.
+. Run `garbage-collect` on:
+ .. Existing daemon set resources targeting kernel versions that are not run by any node in the cluster.
+ .. Successful build jobs.
+ .. Successful signing jobs.
+
+:leveloffset: 1
+
+// Added for TELCODOCS-1280
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-setting-soft-dependencies-between-kernel-modules_{context}"]
+= Set soft dependencies between kernel modules
+
+Some configurations require that several kernel modules be loaded in a specific order to work properly, even though the modules do not directly depend on each other through symbols.
+These are called soft dependencies.
+`depmod` is usually not aware of these dependencies, and they do not appear in the files it produces.
+For example, if `mod_a` has a soft dependency on `mod_b`, `modprobe mod_a` will not load `mod_b`.
+
+You can resolve these situations by declaring soft dependencies in the Module Custom Resource Definition (CRD) using the `modulesLoadingOrder` field.
+
+[source,yaml]
+----
+# ...
+spec:
+  moduleLoader:
+    container:
+      modprobe:
+        moduleName: mod_a
+        dirName: /opt
+        firmwarePath: /firmware
+        parameters:
+          - param=1
+        modulesLoadingOrder:
+          - mod_a
+          - mod_b
+----
+
+In the configuration above:
+
+* The loading order is `mod_b`, then `mod_a`.
+* The unloading order is `mod_a`, then `mod_b`.
+
+[NOTE]
+====
+The first value in the list, to be loaded last, must be equivalent to the `moduleName`.
+====
+
+:leveloffset: 1
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="kmm-security_{context}"]
+= Security and permissions
+
+[IMPORTANT]
+====
+Loading kernel modules is a highly sensitive operation.
+After they are loaded, kernel modules have all possible permissions to do any kind of operation on the node.
+====
+
+[id="serviceaccounts-and-securitycontextconstraint_{context}"]
+== ServiceAccounts and SecurityContextConstraints
+
+Kernel Module Management (KMM) creates a privileged workload to load the kernel modules on nodes.
+That workload needs `ServiceAccounts` allowed to use the `privileged` `SecurityContextConstraint` (SCC) resource.
+
+The authorization model for that workload depends on the namespace of the `Module` resource, as well as its spec.
+
+* If the `.spec.moduleLoader.serviceAccountName` or `.spec.devicePlugin.serviceAccountName` fields are set, they are always used.
+* If those fields are not set, then:
+ ** If the `Module` resource is created in the operator's namespace (`openshift-kmm` by default), then KMM uses its default, powerful `ServiceAccounts` to run the daemon sets.
+ ** If the `Module` resource is created in any other namespace, then KMM runs the daemon sets as the namespace's `default` `ServiceAccount`. The `Module` resource cannot run a privileged workload unless you manually enable it to use the `privileged` SCC.
+
+[IMPORTANT]
+====
+`openshift-kmm` is a trusted namespace.
+
+When setting up RBAC permissions, remember that any user or `ServiceAccount` creating a `Module` resource in the `openshift-kmm` namespace results in KMM automatically running privileged workloads on potentially all nodes in the cluster.
+====
+
+To allow any `ServiceAccount` to use the `privileged` SCC and therefore to run module loader or device plugin pods, use the following command:
+
+[source,terminal]
+----
+$ oc adm policy add-scc-to-user privileged -z "${serviceAccountName}" [ -n "${namespace}" ]
+----
+
+[id="pod-security-standards_{context}"]
+== Pod security standards
+
+OpenShift runs a synchronization mechanism that sets the namespace Pod Security level automatically based on
+the security contexts in use. No action is needed.
+
+:leveloffset: 1
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../authentication/understanding-and-managing-pod-security-admission.adoc#understanding-and-managing-pod-security-admission[Understanding and managing pod security admission].
+
+// Added for TELCODOCS-1279
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-replacing-in-tree-modules-with-out-of-tree-modules_{context}"]
+= Replacing in-tree modules with out-of-tree modules
+
+You can use Kernel Module Management (KMM) to build kernel modules that can be loaded or unloaded into the kernel on demand. These modules extend the functionality of the kernel without the need to reboot the system. Modules can be configured as built-in or dynamically loaded.
+
+Dynamically loaded modules include in-tree modules and out-of-tree (OOT) modules. In-tree modules are internal to the Linux kernel tree, that is, they are already part of the kernel. Out-of-tree modules are external to the Linux kernel tree. They are generally written for development and testing purposes, such as testing the new version of a kernel module that is shipped in-tree, or to deal with incompatibilities.
+
+Some modules loaded by KMM could replace in-tree modules already loaded on the node. To unload an in-tree module before loading your module, set the `.spec.moduleLoader.container.inTreeModuleToRemove` field. The following is an example for module replacement for all kernel mappings:
+
+[source,yaml]
+----
+# ...
+spec:
+  moduleLoader:
+    container:
+      modprobe:
+        moduleName: mod_a
+
+      inTreeModuleToRemove: mod_b
+----
+
+In this example, the `moduleLoader` pod uses `inTreeModuleToRemove` to unload the in-tree `mod_b` before loading `mod_a`
+from the `moduleLoader` image.
+When the `moduleLoader`pod is terminated and `mod_a` is unloaded, `mod_b` is not loaded again.
+
+The following is an example for module replacement for specific kernel mappings:
+
+[source,yaml]
+----
+# ...
+spec:
+  moduleLoader:
+    container:
+      kernelMappings:
+        - literal: 6.0.15-300.fc37.x86_64
+          containerImage: some.registry/org/my-kmod:6.0.15-300.fc37.x86_64
+          inTreeModuleToRemove: <module_name>
+----
+
+:leveloffset: 1
+
+[role="_additional-resources"]
+.Additional resources
+
+* link:https://fastbitlab.com/building-a-linux-kernel-module/[Building a linux kernel module]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: REFERENCE
+[id="kmm-example-cr_{context}"]
+
+= Example Module CR
+
+The following is an annotated `Module` example:
+
+[source,yaml]
+----
+apiVersion: kmm.sigs.x-k8s.io/v1beta1
+kind: Module
+metadata:
+  name: <my_kmod>
+spec:
+  moduleLoader:
+    container:
+      modprobe:
+        moduleName: <my_kmod> <1>
+        dirName: /opt <2>
+        firmwarePath: /firmware <3>
+        parameters:  <4>
+          - param=1
+      kernelMappings:  <5>
+        - literal: 6.0.15-300.fc37.x86_64
+          containerImage: some.registry/org/my-kmod:6.0.15-300.fc37.x86_64
+        - regexp: '^.+\fc37\.x86_64$' <6>
+          containerImage: "some.other.registry/org/<my_kmod>:${KERNEL_FULL_VERSION}"
+        - regexp: '^.+$' <7>
+          containerImage: "some.registry/org/<my_kmod>:${KERNEL_FULL_VERSION}"
+          build:
+            buildArgs:  <8>
+              - name: ARG_NAME
+                value: <some_value>
+            secrets:
+              - name: <some_kubernetes_secret>  <9>
+            baseImageRegistryTLS: <10>
+              insecure: false
+              insecureSkipTLSVerify: false <11>
+            dockerfileConfigMap:  <12>
+              name: <my_kmod_dockerfile>
+          sign:
+            certSecret:
+              name: <cert_secret>  <13>
+            keySecret:
+              name: <key_secret>  <14>
+            filesToSign:
+              - /opt/lib/modules/${KERNEL_FULL_VERSION}/<my_kmod>.ko
+          registryTLS: <15>
+            insecure: false <16>
+            insecureSkipTLSVerify: false
+    serviceAccountName: <sa_module_loader>  <17>
+  devicePlugin:  <18>
+    container:
+      image: some.registry/org/device-plugin:latest  <19>
+      env:
+        - name: MY_DEVICE_PLUGIN_ENV_VAR
+          value: SOME_VALUE
+      volumeMounts:  <20>
+        - mountPath: /some/mountPath
+          name: <device_plugin_volume>
+    volumes:  <21>
+      - name: <device_plugin_volume>
+        configMap:
+          name: <some_configmap>
+    serviceAccountName: <sa_device_plugin> <22>
+  imageRepoSecret:  <23>
+    name: <secret_name>
+  selector:
+    node-role.kubernetes.io/worker: ""
+----
+<1> Required.
+<2> Optional.
+<3> Optional: Copies `/firmware/*` into `/var/lib/firmware/` on the node.
+<4> Optional.
+<5> At least one kernel item is required.
+<6> For each node running a kernel matching the regular expression, KMM creates a `DaemonSet` resource running the image specified in `containerImage` with `${KERNEL_FULL_VERSION}` replaced with the kernel version.
+<7> For any other kernel, build the image using the Dockerfile in the `my-kmod` ConfigMap.
+<8> Optional.
+<9> Optional: A value for `some-kubernetes-secret` can be obtained from the build environment at `/run/secrets/some-kubernetes-secret`.
+<10> Optional: Avoid using this parameter. If set to `true`, the build is allowed to pull the image in the Dockerfile `FROM` instruction using plain HTTP.
+<11> Optional: Avoid using this parameter. If set to `true`, the build will skip any TLS server certificate validation when pulling the image in the Dockerfile `FROM` instruction using plain HTTP.
+<12> Required.
+<13> Required: A secret holding the public secureboot key with the key 'cert'.
+<14> Required: A secret holding the private secureboot key with the key 'key'.
+<15> Optional: Avoid using this parameter. If set to `true`, KMM will be allowed to check if the container image already exists using plain HTTP.
+<16> Optional: Avoid using this parameter. If set to `true`, KMM will skip any TLS server certificate validation when checking if the container image already exists.
+<17> Optional.
+<18> Optional.
+<19> Required: If the device plugin section is present.
+<20> Optional.
+<21> Optional.
+<22> Optional.
+<23> Optional: Used to pull module loader and device plugin images.
+
+:leveloffset: 1
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-creating-moduleloader-image_{context}"]
+= Using a ModuleLoader image
+
+Kernel Module Management (KMM) works with purpose-built module loader images.
+These are standard OCI images that must satisfy the following requirements:
+
+* `.ko` files must be located in `+/opt/lib/modules/${KERNEL_VERSION}+`.
+* `modprobe` and `sleep` binaries must be defined in the `$PATH` variable.
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-running-depmod_{context}"]
+
+= Running depmod
+
+If your module loader image contains several kernel modules and if one of the modules depends on another module, it is best practice to run `depmod` at the end of the build process to generate dependencies and map files.
+
+[NOTE]
+====
+You must have a Red Hat subscription to download the `kernel-devel` package.
+====
+
+.Procedure
+
+. To generate `modules.dep` and `.map` files for a specific kernel version, run `+depmod -b /opt ${KERNEL_VERSION}+`.
+
+[id="example-dockerfile_{context}"]
+== Example Dockerfile
+
+If you are building your image on {product-title}, consider using the Driver Tool Kit (DTK).
+
+For further information, see link:https://cloud.redhat.com/blog/how-to-use-entitled-image-builds-to-build-drivercontainers-with-ubi-on-openshift[using an entitled build].
+
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kmm-ci-dockerfile
+data:
+  dockerfile: |
+    ARG DTK_AUTO
+    FROM ${DTK_AUTO} as builder
+    ARG KERNEL_VERSION
+    WORKDIR /usr/src
+    RUN ["git", "clone", "https://github.com/rh-ecosystem-edge/kernel-module-management.git"]
+    WORKDIR /usr/src/kernel-module-management/ci/kmm-kmod
+    RUN KERNEL_SRC_DIR=/lib/modules/${KERNEL_VERSION}/build make all
+    FROM registry.redhat.io/ubi9/ubi-minimal
+    ARG KERNEL_VERSION
+    RUN microdnf install kmod
+    COPY --from=builder /usr/src/kernel-module-management/ci/kmm-kmod/kmm_ci_a.ko /opt/lib/modules/${KERNEL_VERSION}/
+    COPY --from=builder /usr/src/kernel-module-management/ci/kmm-kmod/kmm_ci_b.ko /opt/lib/modules/${KERNEL_VERSION}/
+    RUN depmod -b /opt ${KERNEL_VERSION}
+----
+
+:leveloffset: 1
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../hardware_enablement/psap-driver-toolkit.adoc#driver-toolkit[Driver Toolkit].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-building-in-cluster_{context}"]
+
+= Building in the cluster
+
+KMM can build module loader images in the cluster. Follow these guidelines:
+
+* Provide build instructions using the `build` section of a kernel mapping.
+* Copy the `Dockerfile` for your container image into a `ConfigMap` resource, under the `dockerfile` key.
+* Ensure that the `ConfigMap` is located in the same namespace as the `Module`.
+
+KMM checks if the image name specified in the `containerImage` field exists. If it does, the build is skipped.
+
+Otherwise, KMM creates a `Build` resource to build your image. After the image is built, KMM proceeds with the `Module` reconciliation. See the following example.
+
+[source,yaml]
+----
+# ...
+- regexp: '^.+$'
+  containerImage: "some.registry/org/<my_kmod>:${KERNEL_FULL_VERSION}"
+  build:
+    buildArgs:  <1>
+      - name: ARG_NAME
+        value: <some_value>
+    secrets: <2>
+      - name: <some_kubernetes_secret> <3>
+    baseImageRegistryTLS:
+      insecure: false <4>
+      insecureSkipTLSVerify: false <5>
+    dockerfileConfigMap:  <6>
+      name: <my_kmod_dockerfile>
+  registryTLS:
+    insecure: false <7>
+    insecureSkipTLSVerify: false <8>
+----
+<1> Optional.
+<2> Optional.
+<3> Will be mounted in the build pod as `/run/secrets/some-kubernetes-secret`.
+<4> Optional: Avoid using this parameter. If set to `true`, the build will be allowed to pull the image in the Dockerfile `FROM` instruction using plain HTTP.
+<5> Optional: Avoid using this parameter. If set to `true`, the build will skip any TLS server certificate validation when pulling the image in the Dockerfile `FROM` instruction using plain HTTP.
+<6> Required.
+<7> Optional: Avoid using this parameter. If set to `true`, KMM will be allowed to check if the container image already exists using plain HTTP.
+<8> Optional: Avoid using this parameter. If set to `true`, KMM will skip any TLS server certificate validation when checking if the container image already exists.
+
+:leveloffset: 1
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../cicd/builds/build-configuration.adoc#build-configuration[Build configuration resources].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-using-driver-toolkit_{context}"]
+
+= Using the Driver Toolkit
+
+The Driver Toolkit (DTK) is a convenient base image for building build module loader images.
+It contains tools and libraries for the OpenShift version currently running in the cluster.
+
+.Procedure
+
+Use DTK as the first stage of a multi-stage `Dockerfile`.
+
+. Build the kernel modules.
+
+. Copy the `.ko` files into a smaller end-user image such as https://catalog.redhat.com/software/containers/ubi9/ubi-minimal[`ubi-minimal`].
+
+. To leverage DTK in your in-cluster build, use the `DTK_AUTO` build argument.
+The value is automatically set by KMM when creating the `Build` resource. See the following example.
++
+[source,dockerfile]
+----
+ARG DTK_AUTO
+FROM ${DTK_AUTO} as builder
+ARG KERNEL_VERSION
+WORKDIR /usr/src
+RUN ["git", "clone", "https://github.com/rh-ecosystem-edge/kernel-module-management.git"]
+WORKDIR /usr/src/kernel-module-management/ci/kmm-kmod
+RUN KERNEL_SRC_DIR=/lib/modules/${KERNEL_VERSION}/build make all
+FROM registry.redhat.io/ubi9/ubi-minimal
+ARG KERNEL_VERSION
+RUN microdnf install kmod
+COPY --from=builder /usr/src/kernel-module-management/ci/kmm-kmod/kmm_ci_a.ko /opt/lib/modules/${KERNEL_VERSION}/
+COPY --from=builder /usr/src/kernel-module-management/ci/kmm-kmod/kmm_ci_b.ko /opt/lib/modules/${KERNEL_VERSION}/
+RUN depmod -b /opt ${KERNEL_VERSION}
+----
+
+:leveloffset: 1
+
+[role="_additional-resources"]
+.Additional resources
+
+* xref:../hardware_enablement/psap-driver-toolkit.adoc#driver-toolkit[Driver Toolkit].
+
+//Deploying kernel modules (Might just leave this short intro in the assembly and put further module below it)
+//    * Running ModuleLoader images (CONCEPT, or could be included in the assembly with the intro)
+//    * Using the device plugin (CONCEPT, or could be included in the assembly with the intro)
+//  * Creating the Module Custom Resource (PROCEDURE? Seems like not a process the user does after reading it. Maybe a REFERENCE)
+//  * Security and permissions (CONCEPT or REFERENCE)
+//    * ServiceAccounts and SecurityContextConstraints (can include in Security and permissions)
+//    * Pod Security Standards (can include in Security and permissions)
+//  * Example Module CR (REFERENCE)
+
+// Added for TELCODOCS-1065
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-using-signing-with-kmm_{context}"]
+= Using signing with Kernel Module Management (KMM)
+
+On a Secure Boot enabled system, all kernel modules (kmods) must be signed with a public/private key-pair enrolled into the Machine Owner's Key (MOK) database. Drivers distributed as part of a distribution should already be signed by the distribution's private key, but for kernel modules build out-of-tree, KMM supports signing kernel modules using the `sign` section of the kernel mapping.
+
+For more details on using Secure Boot, see link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_monitoring_and_updating_the_kernel/signing-a-kernel-and-modules-for-secure-boot_managing-monitoring-and-updating-the-kernel#generating-a-public-and-private-key-pair_signing-a-kernel-and-modules-for-secure-boot[Generating a public and private key pair]
+
+.Prerequisites
+
+* A public private key pair in the correct (DER) format.
+* At least one secure-boot enabled node with the public key enrolled in its MOK database.
+* Either a pre-built driver container image, or the source code and `Dockerfile` needed to build one in-cluster.
+
+:leveloffset: 1
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-adding-the-keys-for-secureboot_{context}"]
+= Adding the keys for secureboot
+
+To use KMM Kernel Module Management (KMM) to sign kernel modules, a certificate and private key are required. For details on how to create these, see link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_monitoring_and_updating_the_kernel/signing-a-kernel-and-modules-for-secure-boot_managing-monitoring-and-updating-the-kernel#generating-a-public-and-private-key-pair_signing-a-kernel-and-modules-for-secure-boot[Generating a public and private key pair].
+
+For details on how to extract the public and private key pair, see link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_monitoring_and_updating_the_kernel/signing-a-kernel-and-modules-for-secure-boot_managing-monitoring-and-updating-the-kernel#signing-kernel-modules-with-the-private-key_signing-a-kernel-and-modules-for-secure-boot[Signing kernel modules with the private key]. Use steps 1 through 4 to extract the keys into files.
+
+.Procedure
+
+. Create the `sb_cert.cer` file that contains the certificate and the `sb_cert.priv` file that contains the private key:
++
+[source,terminal]
+----
+$ openssl req -x509 -new -nodes -utf8 -sha256 -days 36500 -batch -config configuration_file.config -outform DER -out my_signing_key_pub.der -keyout my_signing_key.priv
+----
+
+. Add the files by using one of the following methods:
++
+* Add the files as link:https://kubernetes.io/docs/concepts/configuration/secret/[secrets] directly:
++
+[source,terminal]
+----
+$ oc create secret generic my-signing-key --from-file=key=<my_signing_key.priv>
+----
++
+[source,terminal]
+----
+$ oc create secret generic my-signing-key-pub --from-file=key=<my_signing_key_pub.der>
+----
++
+* Add the files by base64 encoding them:
++
+[source,terminal]
+----
+$ cat sb_cert.priv | base64 -w 0 > my_signing_key2.base64
+----
++
+[source,terminal]
+----
+$ cat sb_cert.cer | base64 -w 0 > my_signing_key_pub.base64
+----
+
+. Add the encoded text to a YAML file:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-signing-key-pub
+  namespace: default <1>
+type: Opaque
+data:
+  cert: <base64_encoded_secureboot_public_key>
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-signing-key
+  namespace: default <1>
+type: Opaque
+data:
+  key: <base64_encoded_secureboot_private_key>
+----
+<1> `namespace` - Replace `default` with a valid namespace.
+
+. Apply the YAML file:
++
+[source,terminal]
+----
+$ oc apply -f <yaml_filename>
+----
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-checking-the-keys_{context}"]
+= Checking the keys
+
+After you have added the keys, you must check them to ensure they are set correctly.
+
+.Procedure
+
+. Check to ensure the public key secret is set correctly:
++
+[source,terminal]
+----
+$ oc get secret -o yaml <certificate secret name> | awk '/cert/{print $2; exit}' | base64 -d  | openssl x509 -inform der -text
+----
++
+This should display a certificate with a Serial Number, Issuer, Subject, and more.
+
+. Check to ensure the private key secret is set correctly:
++
+[source,terminal]
+----
+$ oc get secret -o yaml <private key secret name> | awk '/key/{print $2; exit}' | base64 -d
+----
++
+This should display the key enclosed in the `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----` lines.
+
+:leveloffset: 1
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-signing-a-prebuilt-driver-container_{context}"]
+= Signing a pre-built driver container
+
+Use this procedure if you have a pre-built image, such as an image either distributed by a hardware vendor or built elsewhere.
+
+The following YAML file adds the public/private key-pair as secrets with the required key names - `key` for the private key, `cert` for the public key. The cluster then pulls down the `unsignedImage` image, opens it, signs the kernel modules listed in `filesToSign`, adds them back, and pushes the resulting image as `containerImage`.
+
+
+Kernel Module Management (KMM) should then deploy the DaemonSet that loads the signed kmods onto all the nodes that match the selector. The driver containers should run successfully on any nodes that have the public key in their MOK database, and any nodes that are not secure-boot enabled, which ignore the signature. They should fail to load on any that have secure-boot enabled but do not have that key in their MOK database.
+
+.Prerequisites
+
+* The `keySecret` and `certSecret` secrets have been created.
+
+.Procedure
+
+. Apply the YAML file:
++
+[source,yaml]
+----
+---
+apiVersion: kmm.sigs.x-k8s.io/v1beta1
+kind: Module
+metadata:
+  name: example-module
+spec:
+  moduleLoader:
+    serviceAccountName: default
+    container:
+      modprobe: <1>
+        moduleName: '<your module name>'
+      kernelMappings:
+        # the kmods will be deployed on all nodes in the cluster with a kernel that matches the regexp
+        - regexp: '^.*\.x86_64$'
+          # the container to produce containing the signed kmods
+          containerImage: <image name e.g. quay.io/myuser/my-driver:<kernelversion>-signed>
+          sign:
+            # the image containing the unsigned kmods (we need this because we are not building the kmods within the cluster)
+            unsignedImage: <image name e.g. quay.io/myuser/my-driver:<kernelversion> >
+            keySecret: # a secret holding the private secureboot key with the key 'key'
+              name: <private key secret name>
+            certSecret: # a secret holding the public secureboot key with the key 'cert'
+              name: <certificate secret name>
+            filesToSign: # full path within the unsignedImage container to the kmod(s) to sign
+              - /opt/lib/modules/4.18.0-348.2.1.el8_5.x86_64/kmm_ci_a.ko
+  imageRepoSecret:
+    # the name of a secret containing credentials to pull unsignedImage and push containerImage to the registry
+    name: repo-pull-secret
+  selector:
+    kubernetes.io/arch: amd64
+----
+
+<1> `modprobe` - The name of the kmod to load.
+
+:leveloffset: 1
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-building-and-signing-a-moduleloader-container-image_{context}"]
+= Building and signing a ModuleLoader container image
+
+Use this procedure if you have source code and must build your image first.
+
+The following YAML file builds a new container image using the source code from the repository. The image produced is saved back in the registry with a temporary name, and this temporary image is then signed using the parameters in the `sign` section.
+
+The temporary image name is based on the final image name and is set to be `<containerImage>:<tag>-<namespace>_<module name>_kmm_unsigned`.
+
+For example, using the following YAML file, Kernel Module Management (KMM) builds an image named `example.org/repository/minimal-driver:final-default_example-module_kmm_unsigned` containing the build with unsigned kmods and push it to the registry. Then it creates a second image named `example.org/repository/minimal-driver:final` that contains the signed kmods. It is this second image that is loaded by the `DaemonSet` object and deploys the kmods to the cluster nodes.
+
+After it is signed, the temporary image can be safely deleted from the registry. It will be rebuilt, if needed.
+
+.Prerequisites
+
+* The `keySecret` and `certSecret` secrets have been created.
+
+.Procedure
+
+. Apply the YAML file:
++
+[source,yaml]
+----
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-module-dockerfile
+  namespace: default <1>
+data:
+  Dockerfile: |
+    ARG DTK_AUTO
+    ARG KERNEL_VERSION
+    FROM ${DTK_AUTO} as builder
+    WORKDIR /build/
+    RUN git clone -b main --single-branch https://github.com/rh-ecosystem-edge/kernel-module-management.git
+    WORKDIR kernel-module-management/ci/kmm-kmod/
+    RUN make
+    FROM registry.access.redhat.com/ubi9/ubi:latest
+    ARG KERNEL_VERSION
+    RUN yum -y install kmod && yum clean all
+    RUN mkdir -p /opt/lib/modules/${KERNEL_VERSION}
+    COPY --from=builder /build/kernel-module-management/ci/kmm-kmod/*.ko /opt/lib/modules/${KERNEL_VERSION}/
+    RUN /usr/sbin/depmod -b /opt
+---
+apiVersion: kmm.sigs.x-k8s.io/v1beta1
+kind: Module
+metadata:
+  name: example-module
+  namespace: default <1>
+spec:
+  moduleLoader:
+    serviceAccountName: default <2>
+    container:
+      modprobe:
+        moduleName: simple_kmod
+      kernelMappings:
+        - regexp: '^.*\.x86_64$'
+          containerImage: < the name of the final driver container to produce>
+          build:
+            dockerfileConfigMap:
+              name: example-module-dockerfile
+          sign:
+            keySecret:
+              name: <private key secret name>
+            certSecret:
+              name: <certificate secret name>
+            filesToSign:
+              - /opt/lib/modules/4.18.0-348.2.1.el8_5.x86_64/kmm_ci_a.ko
+  imageRepoSecret: <3>
+    name: repo-pull-secret
+  selector: # top-level selector
+    kubernetes.io/arch: amd64
+----
+
+<1> `namespace` - Replace `default` with a valid namespace.
+
+<2> `serviceAccountName` - The default `serviceAccountName` does not have the required permissions to run a module that is privileged. For information on creating a service account, see "Creating service accounts" in the "Additional resources" of this section.
+
+<3> `imageRepoSecret` - Used as `imagePullSecrets` in the `DaemonSet` object and to pull and push for the build and sign features.
+
+:leveloffset: 1
+[role="_additional-resources"]
+.Additional resources
+For information on creating a service account, see link:https://docs.openshift.com/container-platform/4.12/authentication/understanding-and-creating-service-accounts.html#service-accounts-managing_understanding-service-accounts[Creating service accounts].
+
+// Added for TELCODOCS-1109
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-hub-hub-and-spoke_{context}"]
+= KMM hub and spoke
+
+In hub and spoke scenarios, many spoke clusters are connected to a central, powerful hub cluster. Kernel Module Management (KMM) depends on Red{nbsp}Hat Advanced Cluster Management (RHACM) to operate in hub and spoke environments.
+
+KMM is compatible with hub and spoke environments through decoupling KMM features. A `ManagedClusterModule` Custom Resource Definition (CRD) is provided to wrap the existing `Module` CRD and extend it to select Spoke clusters. Also provided is KMM-Hub, a new standalone controller that builds images and signs modules on the hub cluster.
+
+In hub and spoke setups, spokes are focused, resource-constrained clusters that are centrally managed by a hub cluster. Spokes run the single-cluster edition of KMM, with those resource-intensive features disabled. To adapt KMM to this environment, you should reduce the workload running on the spokes to the minimum, while the hub takes care of the expensive tasks.
+
+Building kernel module images and signing the `.ko` files, should run on the hub. The scheduling of the Module Loader and Device Plugin `DaemonSets` can only happen on the spokes.
+
+:leveloffset: 1
+[role="_additional-resources"]
+.Additional resources
+* link:https://www.redhat.com/en/technologies/management/advanced-cluster-management[Red{nbsp}Hat Advanced Cluster Management (RHACM)]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-hub-kmm-hub_{context}"]
+= KMM-Hub
+
+The KMM project provides KMM-Hub, an edition of KMM dedicated to hub clusters. KMM-Hub monitors all kernel versions running on the spokes and determines the nodes on the cluster that should receive a kernel module.
+
+KMM-Hub runs all compute-intensive tasks such as image builds and kmod signing, and prepares the trimmed-down `Module` to be transferred to the spokes through RHACM.
+
+[NOTE]
+====
+KMM-Hub cannot be used to load kernel modules on the hub cluster. Install the regular edition of KMM to load kernel modules.
+====
+
+:leveloffset: 1
+[role="_additional-resources"]
+.Additional resources
+* link:https://openshift-kmm.netlify.app/documentation/install/[Installing KMM]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-hub-installing-kmm-hub_{context}"]
+= Installing KMM-Hub
+
+You can use one of the following methods to install KMM-Hub:
+
+* Using the Operator Lifecycle Manager (OLM)
+* Creating KMM resources
+
+:leveloffset: 1
+[role="_additional-resources"]
+.Additional resources
+* link:https://catalog.redhat.com/software/containers/kmm/kernel-module-management-hub-operator-bundle/63d84cc33862da54bb19b8c6?architecture=amd64&image=654273ac86f7e537ae452f6ehttps://catalog.redhat.com/software/containers/kmm/kernel-module-management-hub-operator-bundle/63d84cc33862da54bb19b8c6?architecture=amd64&image=654273ac86f7e537ae452f6e[KMM Operator bundle]
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-hub-installing-kmm-hub-olm_{context}"]
+= Installing KMM-Hub using the Operator Lifecycle Manager
+
+Use the *Operators* section of the OpenShift console to install KMM-Hub.
+
+:leveloffset: 1
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-hub-installing-kmm-hub-creating-resources_{context}"]
+= Installing KMM-Hub by creating KMM resources
+
+.Procedure
+
+* If you want to install KMM-Hub programmatically, you can use the following resources to create
+the `Namespace`, `OperatorGroup` and `Subscription` resources:
+
+[source,yaml]
+----
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-kmm-hub
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: kernel-module-management-hub
+  namespace: openshift-kmm-hub
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: kernel-module-management-hub
+  namespace: openshift-kmm-hub
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: kernel-module-management-hub
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+----
+
+:leveloffset: 1
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-hub-using-the-managedclustermodule_{context}"]
+= Using the `ManagedClusterModule` CRD
+
+Use the `ManagedClusterModule` Custom Resource Definition (CRD) to configure the deployment of kernel modules on spoke clusters.
+This CRD is cluster-scoped, wraps a `Module` spec and adds the following additional fields:
+
+[source,yaml]
+----
+apiVersion: hub.kmm.sigs.x-k8s.io/v1beta1
+kind: ManagedClusterModule
+metadata:
+  name: <my-mcm>
+  # No namespace, because this resource is cluster-scoped.
+spec:
+  moduleSpec: <1>
+    selector: <2>
+      node-wants-my-mcm: 'true'
+
+  spokeNamespace: <some-namespace> <3>
+
+  selector: <4>
+    wants-my-mcm: 'true'
+----
+<1> `moduleSpec`: Contains `moduleLoader` and `devicePlugin` sections, similar to a `Module` resource.
+
+<2> Selects nodes within the `ManagedCluster`.
+<3> Specifies in which namespace the `Module` should be created.
+<4> Selects `ManagedCluster` objects.
+
+If build or signing instructions are present in `.spec.moduleSpec`, those pods are run on the hub cluster in the operator's namespace.
+
+When the `.spec.selector matches` one or more `ManagedCluster` resources, then KMM-Hub creates a `ManifestWork` resource in the corresponding namespace(s). `ManifestWork` contains a trimmed-down `Module` resource, with kernel mappings preserved but all `build` and `sign` subsections are removed. `containerImage` fields that contain image names ending with a tag are replaced with their digest equivalent.
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-hub-running-kmm-on-the-spoke_{context}"]
+= Running KMM on the spoke
+
+After installing KMM on the spoke, no further action is required. Create a `ManagedClusterModule` object from the hub to deploy kernel modules on spoke clusters.
+
+.Procedure
+
+You can install KMM on the spokes cluster through a RHACM `Policy` object.
+In addition to installing KMM from the Operator hub and running it in a lightweight spoke mode,
+the `Policy` configures additional RBAC required for the RHACM agent to be able to manage `Module` resources.
+
+* Use the following RHACM policy to install KMM on spoke clusters:
++
+[source.yaml]
+[%collapsible]
+----
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: install-kmm
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: install-kmm
+        spec:
+          severity: high
+          object-templates:
+          - complianceType: mustonlyhave
+            objectDefinition:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: openshift-kmm
+          - complianceType: mustonlyhave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1
+              kind: OperatorGroup
+              metadata:
+                name: kmm
+                namespace: openshift-kmm
+              spec:
+                upgradeStrategy: Default
+          - complianceType: mustonlyhave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1alpha1
+              kind: Subscription
+              metadata:
+                name: kernel-module-management
+                namespace: openshift-kmm
+              spec:
+                channel: stable
+                config:
+                  env:
+                    - name: KMM_MANAGED
+                      value: "1"
+                installPlanApproval: Automatic
+                name: kernel-module-management
+                source: redhat-operators
+                sourceNamespace: openshift-marketplace
+          - complianceType: mustonlyhave
+            objectDefinition:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: ClusterRole
+              metadata:
+                name: kmm-module-manager
+              rules:
+                - apiGroups: [kmm.sigs.x-k8s.io]
+                  resources: [modules]
+                  verbs: [create, delete, get, list, patch, update, watch]
+          - complianceType: mustonlyhave
+            objectDefinition:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: ClusterRoleBinding
+              metadata:
+                name: klusterlet-kmm
+              subjects:
+              - kind: ServiceAccount
+                name: klusterlet-work-sa
+                namespace: open-cluster-management-agent
+              roleRef:
+                kind: ClusterRole
+                name: kmm-module-manager
+                apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: all-managed-clusters
+spec:
+  clusterSelector: <1>
+    matchExpressions: []
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: install-kmm
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: all-managed-clusters
+subjects:
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: install-kmm
+----
+<1> The `spec.clusterSelector` field can be customized to target select clusters only.
+
+:leveloffset: 1
+
+
+// Added for TELCODOCS-1277
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-customizing-upgrades-for-kernel-modules_{context}"]
+= Customizing upgrades for kernel modules
+
+Use this procedure to upgrade the kernel module while running maintenance operations on the node, including rebooting the node, if needed. To minimize the impact on the workloads running in the cluster, run the kernel upgrade process sequentially, one node at a time.
+
+[NOTE]
+====
+This procedure requires knowledge of the workload utilizing the kernel module and must be managed by the cluster administrator.
+====
+
+
+.Prerequisites
+
+* Before upgrading, set the `kmm.node.kubernetes.io/version-module.<module_namespace>.<module_name>=$moduleVersion` label on all the nodes that are used by the kernel module.
+
+* Terminate all user application workloads on the node or move them to another node.
+
+* Unload the currently loaded kernel module.
+
+* Ensure that the user workload (the application running in the cluster that is accessing kernel module) is not running on the node prior to kernel module unloading and that the workload is back running on the node after the new kernel module version has been loaded.
+
+.Procedure
+
+. Ensure that the device plugin managed by KMM on the node is unloaded.
+
+. Update the following fields in the `Module` custom resource (CR):
+- `containerImage` (to the appropriate kernel version)
+- `version`
++
+The update should be atomic; that is, both the `containerImage` and `version` fields must be updated simultaneously.
+
+. Terminate any workload using the kernel module on the node being upgraded.
+
+. Remove the `kmm.node.kubernetes.io/version-module.<module_namespace>.<module_name>` label on the node.
+Run the following command to unload the kernel module from the node:
++
+[source,terminal]
+----
+$ oc label node/<node_name> kmm.node.kubernetes.io/version-module.<module_namespace>.<module_name>-
+----
+
+. If required, as the cluster administrator, perform any additional maintenance required on the node for the kernel module upgrade.
++
+If no additional upgrading is needed, you can skip Steps 3 through 6 by updating the `kmm.node.kubernetes.io/version-module.<module-namespace>.<module-name>` label value to the new `$moduleVersion` as set in the `Module`.
+
+. Run the following command to add the `kmm.node.kubernetes.io/version-module.<module_namespace>.<module_name>=$moduleVersion` label to the node. The `$moduleVersion` must be equal to the new value of the `version` field in the `Module` CR.
++
+[source,terminal]
+----
+$ oc label node/<node_name> kmm.node.kubernetes.io/version-module.<module_namespace>.<module_name>=<desired_version>
+----
++
+[NOTE]
+====
+Because of Kubernetes limitations in label names, the combined length of `Module` name and namespace must not exceed 39 characters.
+====
+
+. Restore any workload that leverages the kernel module on the node.
+
+. Reload the device plugin managed by KMM on the node.
+
+:leveloffset: 1
+
+// Added for TELCODOCS-1278
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-day1-kernel-module-loading_{context}"]
+= Day 1 kernel module loading
+
+Kernel Module Management (KMM) is typically a Day 2 Operator. Kernel modules are loaded only after the complete initialization of a Linux (RHCOS) server. However, in some scenarios the kernel module must be loaded at an earlier stage. Day 1 functionality allows you to use the Machine Config Operator (MCO) to load kernel modules during the Linux `systemd` initialization stage.
+
+:leveloffset: 1
+[role="_additional-resources"]
+.Additional resources
+* link:https://docs.openshift.com/container-platform/4.13/post_installation_configuration/machine-configuration-tasks.html#machine-config-operator_post-install-machine-configuration-tasks[Machine Config Operator]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-day1-supported-use-cases_{context}"]
+= Day 1 supported use cases
+
+The Day 1 functionality supports a limited number of use cases. The main use case is to allow loading out-of-tree (OOT) kernel modules prior to NetworkManager service initialization. It does not support loading kernel module at the `initramfs` stage.
+
+The following are the conditions needed for Day 1 functionality:
+
+* The kernel module is not loaded in the kernel.
+
+* The in-tree kernel module is loaded into the kernel, but can be unloaded and replaced by the OOT kernel module. This means that the in-tree module is not referenced by any other kernel modules.
+
+* In order for Day 1 functionlity to work, the node must have a functional network interface, that is, an in-tree kernel driver for that interface. The OOT kernel module can be a network driver that will replace the functional network driver.
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-day1-oot-kernel-module-loading-flow_{context}"]
+= OOT kernel module loading flow
+
+The loading of the out-of-tree (OOT) kernel module leverages the Machine Config Operator (MCO). The flow sequence is as follows:
+
+.Procedure
+
+. Apply a `MachineConfig` resource to the existing running cluster. In order to identify the necessary nodes that need to be updated,
+you must create an appropriate `MachineConfigPool` resource.
+
+. MCO applies the reboots node by node. On any rebooted node, two new `systemd` services are deployed: `pull` service and `load` service.
+
+. The `load` service is configured to run prior to the `NetworkConfiguration` service. The service tries to pull a predefined kernel module image and then, using that image, to unload an in-tree module and load an OOT kernel module.
+
+. The `pull` service is configured to run after NetworkManager service. The service checks if the preconfigured kernel module image is located on the node's filesystem. If it is, the service exists normally, and the server continues with the boot process. If not, it pulls the image onto the node and reboots the node afterwards.
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-day1-kernel-module-image_{context}"]
+= The kernel module image
+
+The Day 1 functionality uses the same DTK based image leveraged by Day 2 KMM builds. The out-of-tree kernel module should be located under `/opt/lib/modules/${kernelVersion}`.
+
+:leveloffset: 1
+[role="_additional-resources"]
+.Additional resources
+* link:https://docs.openshift.com/container-platform/4.13/hardware_enablement/psap-driver-toolkit.html[Driver Toolkit]
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-day1-in-tree-module-replacement_{context}"]
+= In-tree module replacement
+
+The Day 1 functionality always tries to replace the in-tree kernel module with the OOT version. If the in-tree kernel module is not loaded, the flow is not affected; the service proceeds and loads the OOT kernel module.
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-day1-mco-yaml-creation_{context}"]
+= MCO yaml creation
+
+KMM provides an API to create an MCO YAML manifest for the Day 1 functionality:
+
+[source,console]
+----
+ProduceMachineConfig(machineConfigName, machineConfigPoolRef, kernelModuleImage, kernelModuleName string) (string, error)
+----
+
+The returned output is a string representation of the MCO YAML manifest to be applied. It is up to the customer to apply this YAML.
+
+The parameters are:
+
+`machineConfigName`:: The name of the MCO YAML manifest. This parameter is set as the `name` parameter of the metadata of the MCO YAML manifest.
+
+`machineConfigPoolRef`:: The `MachineConfigPool` name used to identify the targeted nodes.
+
+`kernelModuleImage`:: The name of the container image that includes the OOT kernel module.
+
+`kernelModuleName`:: The name of the OOT kernel module. This parameter is used both to unload the in-tree kernel module (if loaded into the kernel) and to load the OOT kernel module.
+
+The API is located under `pkg/mcproducer` package of the KMM source code. The KMM operator does not need to be running to use the Day 1 functionality. You only need to import the `pkg/mcproducer` package into their operator/utility code, call the API, and apply the produced MCO YAML to the cluster.
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-day1-machineconfigpool_{context}"]
+= The MachineConfigPool
+
+The `MachineConfigPool` identifies a collection of nodes that are affected by the applied MCO.
+
+[source,yaml]
+----
+kind: MachineConfigPool
+metadata:
+  name: sfc
+spec:
+  machineConfigSelector: <1>
+    matchExpressions:
+      - {key: machineconfiguration.openshift.io/role, operator: In, values: [worker, sfc]}
+  nodeSelector: <2>
+    matchLabels:
+      node-role.kubernetes.io/sfc: ""
+  paused: false
+  maxUnavailable: 1
+----
+<1> Matches the labels in the MachineConfig.
+<2> Matches the labels on the node.
+
+There are predefined `MachineConfigPools` in the OCP cluster:
+
+* `worker`: Targets all worker nodes in the cluster
+
+* `master`: Targets all master nodes in the cluster
+
+Define the following `MachineConfig` to target the master `MachineConfigPool`:
+
+[source,yaml]
+----
+metadata:
+  labels:
+    machineconfiguration.opensfhit.io/role: master
+----
+
+
+Define the following `MachineConfig` to target the worker `MachineConfigPool`:
+
+[source,yaml]
+----
+metadata:
+  labels:
+    machineconfiguration.opensfhit.io/role: worker
+----
+
+:leveloffset: 1
+
+[role="_additional-resources"]
+.Additional resources
+* link:https://www.redhat.com/en/blog/openshift-container-platform-4-how-does-machine-config-pool-work[About MachineConfigPool]
+
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-debugging-and-troubleshooting_{context}"]
+= Debugging and troubleshooting
+
+If the kmods in your driver container are not signed or are signed with the wrong key, then the container can enter a `PostStartHookError` or `CrashLoopBackOff` status. You can verify by running the `oc describe` command on your container, which displays the following message in this scenario:
+
+[source,terminal]
+----
+modprobe: ERROR: could not insert '<your_kmod_name>': Required key not available
+----
+
+:leveloffset: 1
+
+// Added for TELCODOCS-1067
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-firmware-support_{context}"]
+= KMM firmware support
+
+Kernel modules sometimes need to load firmware files from the file system. KMM supports copying firmware files from the ModuleLoader image to the node's file system.
+
+The contents of `.spec.moduleLoader.container.modprobe.firmwarePath` are copied into the `/var/lib/firmware` path on the node before running the `modprobe` command to insert the kernel module.
+
+All files and empty directories are removed from that location before running the `modprobe -r` command to unload the kernel module, when the pod is terminated.
+
+:leveloffset: 1
+[role="_additional-resources"]
+.Additional resources
+* xref:../hardware_enablement/kmm-kernel-module-management.adoc#kmm-creating-moduleloader-image_kernel-module-management-operator[Creating a ModuleLoader image].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-configuring-the-lookup-path-on-nodes_{context}"]
+= Configuring the lookup path on nodes
+
+On {product-title} nodes, the set of default lookup paths for firmwares does not include the `/var/lib/firmware` path.
+
+.Procedure
+
+. Use the Machine Config Operator to create a `MachineConfig` custom resource (CR) that contains the `/var/lib/firmware` path:
++
+[source,yaml]
+----
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker <1>
+  name: 99-worker-kernel-args-firmware-path
+spec:
+  kernelArguments:
+    - 'firmware_class.path=/var/lib/firmware'
+----
+<1> You can configure the label based on your needs. In the case of {sno}, use either `control-pane` or `master` objects.
+
+
+. By applying the `MachineConfig` CR, the nodes are automatically rebooted.
+
+:leveloffset: 1
+[role="_additional-resources"]
+.Additional resources
+* xref:../post_installation_configuration/machine-configuration-tasks.adoc#understanding-the-machine-config-operator[Machine Config Operator].
+
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-building-a-moduleloader-image_{context}"]
+= Building a ModuleLoader image
+
+.Procedure
+
+* In addition to building the kernel module itself, include the binary firmware in the builder image:
++
+[source,dockerfile]
+----
+FROM registry.redhat.io/ubi9/ubi-minimal as builder
+
+# Build the kmod
+
+RUN ["mkdir", "/firmware"]
+RUN ["curl", "-o", "/firmware/firmware.bin", "https://artifacts.example.com/firmware.bin"]
+
+FROM registry.redhat.io/ubi9/ubi-minimal
+
+# Copy the kmod, install modprobe, run depmod
+
+COPY --from=builder /firmware /firmware
+----
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-tuning-the-module-resource_{context}"]
+= Tuning the Module resource
+
+.Procedure
+
+* Set `.spec.moduleLoader.container.modprobe.firmwarePath` in the `Module` custom resource (CR):
++
+[source,yaml]
+----
+apiVersion: kmm.sigs.x-k8s.io/v1beta1
+kind: Module
+metadata:
+  name: my-kmod
+spec:
+  moduleLoader:
+    container:
+      modprobe:
+        moduleName: my-kmod  # Required
+
+        firmwarePath: /firmware <1>
+----
+<1> Optional: Copies `/firmware/*` into `/var/lib/firmware/` on the node.
+
+:leveloffset: 1
+
+// Added for TELCODOCS-1059
+:leveloffset: +1
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: CONCEPT
+[id="kmm-troubleshooting_{context}"]
+= Troubleshooting KMM
+
+When troubleshooting KMM installation issues, you can monitor logs to determine at which stage issues occur.
+Then, retrieve diagnostic data relevant to that stage.
+
+:leveloffset: 1
+:leveloffset: +2
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-must-gather-tool_{context}"]
+= Using the must-gather tool
+
+The `oc adm must-gather` command is the preferred way to collect a support bundle and provide debugging information to Red Hat
+Support. Collect specific information by running the command with the appropriate arguments as described in the following sections.
+
+:leveloffset: 1
+[role="_additional-resources"]
+.Additional resources
+* xref:../support/gathering-cluster-data.adoc#about-must-gather_gathering-cluster-data[About the must-gather tool]
+
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-gathering-data-for-kmm_{context}"]
+= Gathering data for KMM
+
+.Procedure
+
+. Gather the data for the KMM Operator controller manager:
+
+.. Set the `MUST_GATHER_IMAGE` variable:
++
+[source,terminal]
+----
+$ export MUST_GATHER_IMAGE=$(oc get deployment -n openshift-kmm kmm-operator-controller-manager -ojsonpath='{.spec.template.spec.containers[?(@.name=="manager")].env[?(@.name=="RELATED_IMAGES_MUST_GATHER")].value}')
+----
++
+[NOTE]
+====
+Use the `-n <namespace>` switch to specify a namespace if you installed KMM in a custom namespace.
+====
+
+.. Run the `must-gather` tool:
++
+[source,terminal]
+----
+$ oc adm must-gather --image="${MUST_GATHER_IMAGE}" -- /usr/bin/gather
+----
+
+. View the Operator logs:
++
+[source,terminal]
+----
+$ oc logs -fn openshift-kmm deployments/kmm-operator-controller-manager
+----
++
+.Example output
+[%collapsible]
+====
+[source,terminal]
+----
+I0228 09:36:37.352405       1 request.go:682] Waited for 1.001998746s due to client-side throttling, not priority and fairness, request: GET:https://172.30.0.1:443/apis/machine.openshift.io/v1beta1?timeout=32s
+I0228 09:36:40.767060       1 listener.go:44] kmm/controller-runtime/metrics "msg"="Metrics server is starting to listen" "addr"="127.0.0.1:8080"
+I0228 09:36:40.769483       1 main.go:234] kmm/setup "msg"="starting manager"
+I0228 09:36:40.769907       1 internal.go:366] kmm "msg"="Starting server" "addr"={"IP":"127.0.0.1","Port":8080,"Zone":""} "kind"="metrics" "path"="/metrics"
+I0228 09:36:40.770025       1 internal.go:366] kmm "msg"="Starting server" "addr"={"IP":"::","Port":8081,"Zone":""} "kind"="health probe"
+I0228 09:36:40.770128       1 leaderelection.go:248] attempting to acquire leader lease openshift-kmm/kmm.sigs.x-k8s.io...
+I0228 09:36:40.784396       1 leaderelection.go:258] successfully acquired lease openshift-kmm/kmm.sigs.x-k8s.io
+I0228 09:36:40.784876       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module" "source"="kind source: *v1beta1.Module"
+I0228 09:36:40.784925       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module" "source"="kind source: *v1.DaemonSet"
+I0228 09:36:40.784968       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module" "source"="kind source: *v1.Build"
+I0228 09:36:40.785001       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module" "source"="kind source: *v1.Job"
+I0228 09:36:40.785025       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module" "source"="kind source: *v1.Node"
+I0228 09:36:40.785039       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module"
+I0228 09:36:40.785458       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="PodNodeModule" "controllerGroup"="" "controllerKind"="Pod" "source"="kind source: *v1.Pod"
+I0228 09:36:40.786947       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="PreflightValidation" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidation" "source"="kind source: *v1beta1.PreflightValidation"
+I0228 09:36:40.787406       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="PreflightValidation" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidation" "source"="kind source: *v1.Build"
+I0228 09:36:40.787474       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="PreflightValidation" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidation" "source"="kind source: *v1.Job"
+I0228 09:36:40.787488       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="PreflightValidation" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidation" "source"="kind source: *v1beta1.Module"
+I0228 09:36:40.787603       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="NodeKernel" "controllerGroup"="" "controllerKind"="Node" "source"="kind source: *v1.Node"
+I0228 09:36:40.787634       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="NodeKernel" "controllerGroup"="" "controllerKind"="Node"
+I0228 09:36:40.787680       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="PreflightValidation" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidation"
+I0228 09:36:40.785607       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream" "source"="kind source: *v1.ImageStream"
+I0228 09:36:40.787822       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="preflightvalidationocp" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidationOCP" "source"="kind source: *v1beta1.PreflightValidationOCP"
+I0228 09:36:40.787853       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream"
+I0228 09:36:40.787879       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="preflightvalidationocp" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidationOCP" "source"="kind source: *v1beta1.PreflightValidation"
+I0228 09:36:40.787905       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="preflightvalidationocp" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidationOCP"
+I0228 09:36:40.786489       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="PodNodeModule" "controllerGroup"="" "controllerKind"="Pod"
+----
+====
+
+:leveloffset: 1
+:leveloffset: +3
+
+// Module included in the following assemblies:
+//
+// * hardware_enablement/kmm-kernel-module-management.adoc
+
+:_mod-docs-content-type: PROCEDURE
+[id="kmm-gathering-data-for-kmm-hub_{context}"]
+= Gathering data for KMM-Hub
+
+.Procedure
+
+. Gather the data for the KMM Operator hub controller manager:
+
+.. Set the `MUST_GATHER_IMAGE` variable:
++
+[source,terminal]
+----
+$ export MUST_GATHER_IMAGE=$(oc get deployment -n openshift-kmm-hub kmm-operator-hub-controller-manager -ojsonpath='{.spec.template.spec.containers[?(@.name=="manager")].env[?(@.name=="RELATED_IMAGES_MUST_GATHER")].value}')
+----
++
+[NOTE]
+====
+Use the `-n <namespace>` switch to specify a namespace if you installed KMM in a custom namespace.
+====
+
+.. Run the `must-gather` tool:
++
+[source,terminal]
+----
+$ oc adm must-gather --image="${MUST_GATHER_IMAGE}" -- /usr/bin/gather -u
+----
+
+. View the Operator logs:
++
+[source,terminal]
+----
+$ oc logs -fn openshift-kmm-hub deployments/kmm-operator-hub-controller-manager
+----
++
+.Example output
+[%collapsible]
+====
+[source,terminal]
+----
+I0417 11:34:08.807472       1 request.go:682] Waited for 1.023403273s due to client-side throttling, not priority and fairness, request: GET:https://172.30.0.1:443/apis/tuned.openshift.io/v1?timeout=32s
+I0417 11:34:12.373413       1 listener.go:44] kmm-hub/controller-runtime/metrics "msg"="Metrics server is starting to listen" "addr"="127.0.0.1:8080"
+I0417 11:34:12.376253       1 main.go:150] kmm-hub/setup "msg"="Adding controller" "name"="ManagedClusterModule"
+I0417 11:34:12.376621       1 main.go:186] kmm-hub/setup "msg"="starting manager"
+I0417 11:34:12.377690       1 leaderelection.go:248] attempting to acquire leader lease openshift-kmm-hub/kmm-hub.sigs.x-k8s.io...
+I0417 11:34:12.378078       1 internal.go:366] kmm-hub "msg"="Starting server" "addr"={"IP":"127.0.0.1","Port":8080,"Zone":""} "kind"="metrics" "path"="/metrics"
+I0417 11:34:12.378222       1 internal.go:366] kmm-hub "msg"="Starting server" "addr"={"IP":"::","Port":8081,"Zone":""} "kind"="health probe"
+I0417 11:34:12.395703       1 leaderelection.go:258] successfully acquired lease openshift-kmm-hub/kmm-hub.sigs.x-k8s.io
+I0417 11:34:12.396334       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "source"="kind source: *v1beta1.ManagedClusterModule"
+I0417 11:34:12.396403       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "source"="kind source: *v1.ManifestWork"
+I0417 11:34:12.396430       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "source"="kind source: *v1.Build"
+I0417 11:34:12.396469       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "source"="kind source: *v1.Job"
+I0417 11:34:12.396522       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "source"="kind source: *v1.ManagedCluster"
+I0417 11:34:12.396543       1 controller.go:193] kmm-hub "msg"="Starting Controller" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule"
+I0417 11:34:12.397175       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream" "source"="kind source: *v1.ImageStream"
+I0417 11:34:12.397221       1 controller.go:193] kmm-hub "msg"="Starting Controller" "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream"
+I0417 11:34:12.498335       1 filter.go:196] kmm-hub "msg"="Listing all ManagedClusterModules" "managedcluster"="local-cluster"
+I0417 11:34:12.498570       1 filter.go:205] kmm-hub "msg"="Listed ManagedClusterModules" "count"=0 "managedcluster"="local-cluster"
+I0417 11:34:12.498629       1 filter.go:238] kmm-hub "msg"="Adding reconciliation requests" "count"=0 "managedcluster"="local-cluster"
+I0417 11:34:12.498687       1 filter.go:196] kmm-hub "msg"="Listing all ManagedClusterModules" "managedcluster"="sno1-0"
+I0417 11:34:12.498750       1 filter.go:205] kmm-hub "msg"="Listed ManagedClusterModules" "count"=0 "managedcluster"="sno1-0"
+I0417 11:34:12.498801       1 filter.go:238] kmm-hub "msg"="Adding reconciliation requests" "count"=0 "managedcluster"="sno1-0"
+I0417 11:34:12.501947       1 controller.go:227] kmm-hub "msg"="Starting workers" "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream" "worker count"=1
+I0417 11:34:12.501948       1 controller.go:227] kmm-hub "msg"="Starting workers" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "worker count"=1
+I0417 11:34:12.502285       1 imagestream_reconciler.go:50] kmm-hub "msg"="registered imagestream info mapping" "ImageStream"={"name":"driver-toolkit","namespace":"openshift"} "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream" "dtkImage"="quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:df42b4785a7a662b30da53bdb0d206120cf4d24b45674227b16051ba4b7c3934" "name"="driver-toolkit" "namespace"="openshift" "osImageVersion"="412.86.202302211547-0" "reconcileID"="e709ff0a-5664-4007-8270-49b5dff8bae9"
+----
+====
+
+:leveloffset: 1
+
+:leveloffset!:
+
+//# includes=about-hardware-enablement,_attributes/common-attributes,psap-driver-toolkit,modules/psap-driver-toolkit,modules/psap-driver-toolkit-pulling,modules/psap-driver-toolkit-using,psap-node-feature-discovery-operator,modules/psap-node-feature-discovery-operator,modules/psap-installing-node-feature-discovery-operator,modules/psap-using-node-feature-discovery-operator,modules/psap-configuring-node-feature-discovery,modules/nfd-rules-about,modules/nfd-rules-using,modules/psap-node-feature-discovery-using-topology-updater,modules/psap-node-feature-discovery-topology-updater-command-reference,kmm-kernel-module-management,modules/kmm-about-kmm,modules/kmm-installation,modules/kmm-installing-using-web-console,modules/kmm-installing-using-cli,modules/kmm-installing-older-versions,modules/kmm-uninstalling-kmm,modules/kmm-uninstalling-kmmo-red-hat-catalog,modules/kmm-uninstalling-kmmo-cli,modules/kmm-deploying-modules,modules/kmm-creating-module-cr,modules/kmm-setting-soft-dependencies-between-kernel-modules,modules/kmm-security,modules/kmm-replacing-in-tree-modules-with-out-of-tree-modules,modules/kmm-example-module-cr,modules/kmm-creating-moduleloader-image,modules/kmm-running-depmod,modules/kmm-building-in-cluster,modules/kmm-using-driver-toolkit,modules/kmm-using-signing-with-kmm,modules/kmm-adding-the-keys-for-secureboot,modules/kmm-checking-the-keys,modules/kmm-signing-a-prebuilt-driver-container,modules/kmm-building-and-signing-a-moduleloader-container-image,modules/kmm-hub-hub-and-spoke,modules/kmm-hub-kmm-hub,modules/kmm-hub-installing-kmm-hub,modules/kmm-hub-installing-kmm-hub-olm,modules/kmm-hub-installing-kmm-hub-creating-resources,modules/kmm-hub-using-the-managedclustermodule,modules/kmm-hub-running-kmm-on-the-spoke,modules/kmm-customizing-upgrades-for-kernel-modules,modules/kmm-day1-kernel-module-loading,modules/kmm-day1-supported-use-cases,modules/kmm-day1-oot-kernel-module-loading-flow,modules/kmm-day1-kernel-module-image,modules/kmm-day1-in-tree-module-replacement,modules/kmm-day1-mco-yaml-creation,modules/kmm-day1-machineconfigpool,modules/kmm-debugging-and-troubleshooting,modules/kmm-firmware-support,modules/kmm-configuring-the-lookup-path-on-nodes,modules/kmm-building-a-moduleloader-image,modules/kmm-tuning-the-module-resource,modules/kmm-troubleshooting,modules/kmm-must-gather-tool,modules/kmm-gathering-data-for-kmm,modules/kmm-gathering-data-for-kmm-hub

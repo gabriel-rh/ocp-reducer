@@ -1,0 +1,2767 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?asciidoc-toc?>
+<?asciidoc-numbered?>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
+<info>
+<title>Specialized hardware and driver enablement</title>
+<date>2024-02-13</date>
+</info>
+<chapter xml:id="about-hardware-enablement">
+<title>About specialized hardware and driver enablement</title>
+
+<simpara>The Driver Toolkit (DTK) is a container image in the {product-title} payload which is meant to be used as a base image on which to build driver containers. The Driver Toolkit image contains the kernel packages commonly required as dependencies to build or install kernel modules as well as a few tools needed in driver containers. The version of these packages will match the kernel version running on the RHCOS nodes in the corresponding {product-title} release.</simpara>
+<simpara>Driver containers are container images used for building and deploying out-of-tree kernel modules and drivers on container operating systems such as Red Hat Enterprise Linux CoreOS (RHCOS). Kernel modules and drivers are software libraries running with a high level of privilege in the operating system kernel. They extend the kernel functionalities or provide the hardware-specific code required to control new devices. Examples include hardware devices like field-programmable gate arrays (FPGA) or graphics processing units (GPU), and software-defined storage solutions, which all require kernel modules on client machines. Driver containers are the first layer of the software stack used to enable these technologies on {product-title} deployments.</simpara>
+</chapter>
+<chapter xml:id="driver-toolkit">
+<title>Driver Toolkit</title>
+
+<simpara>Learn about the Driver Toolkit and how you can use it as a base image for driver containers for enabling special software and hardware devices on {product-title} deployments.</simpara>
+<section xml:id="about-driver-toolkit_driver-toolkit">
+<title>About the Driver Toolkit</title>
+<bridgehead xml:id="_background" renderas="sect3">Background</bridgehead>
+<simpara>The Driver Toolkit is a container image in the {product-title} payload used as a base image on which you can build driver containers. The Driver Toolkit image includes the kernel packages commonly required as dependencies to build or install kernel modules, as well as a few tools needed in driver containers. The version of these packages will match the kernel version running on the Red Hat Enterprise Linux CoreOS (RHCOS) nodes in the corresponding {product-title} release.</simpara>
+<simpara>Driver containers are container images used for building and deploying out-of-tree kernel modules and drivers on container operating systems like RHCOS. Kernel modules and drivers are software libraries running with a high level of privilege in the operating system kernel. They extend the kernel functionalities or provide the hardware-specific code required to control new devices. Examples include hardware devices like Field Programmable Gate Arrays (FPGA) or GPUs, and software-defined storage (SDS) solutions, such as Lustre parallel file systems, which require kernel modules on client machines. Driver containers are the first layer of the software stack used to enable these technologies on Kubernetes.</simpara>
+<simpara>The list of kernel packages in the Driver Toolkit includes the following and their dependencies:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>kernel-core</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>kernel-devel</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>kernel-headers</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>kernel-modules</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>kernel-modules-extra</literal></simpara>
+</listitem>
+</itemizedlist>
+<simpara>In addition, the Driver Toolkit also includes the corresponding real-time kernel packages:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>kernel-rt-core</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>kernel-rt-devel</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>kernel-rt-modules</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>kernel-rt-modules-extra</literal></simpara>
+</listitem>
+</itemizedlist>
+<simpara>The Driver Toolkit also has several tools that are commonly needed to build and install kernel modules, including:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>elfutils-libelf-devel</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>kmod</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>binutilskabi-dw</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>kernel-abi-whitelists</literal></simpara>
+</listitem>
+<listitem>
+<simpara>dependencies for the above</simpara>
+</listitem>
+</itemizedlist>
+<bridgehead xml:id="_purpose" renderas="sect3">Purpose</bridgehead>
+<simpara>Prior to the Driver Toolkit&#8217;s existence, users would install kernel packages in a pod or build config on {product-title} using <link xl:href="https://www.openshift.com/blog/how-to-use-entitled-image-builds-to-build-drivercontainers-with-ubi-on-openshift">entitled builds</link> or by installing from the kernel RPMs in the hosts <literal>machine-os-content</literal>. The Driver Toolkit simplifies the process by removing the entitlement step, and avoids the privileged operation of accessing the machine-os-content in a pod. The Driver Toolkit can also be used by partners who have access to pre-released {product-title} versions to prebuild driver-containers for their hardware devices for future {product-title} releases.</simpara>
+<simpara>The Driver Toolkit is also used by the Kernel Module Management (KMM), which is currently available as a community Operator on OperatorHub. KMM supports out-of-tree and third-party kernel drivers and the support software for the underlying operating system. Users can create modules for KMM to build and deploy a driver container, as well as support software like a device plugin, or metrics. Modules can include a build config to build a driver container-based on the Driver Toolkit, or KMM can deploy a prebuilt driver container.</simpara>
+</section>
+<section xml:id="pulling-the-driver-toolkit_driver-toolkit">
+<title>Pulling the Driver Toolkit container image</title>
+<simpara>The <literal>driver-toolkit</literal> image is available from the <link xl:href="https://registry.redhat.io/">Container images section of the Red Hat Ecosystem Catalog</link> and in the {product-title} release payload. The image corresponding to the most recent minor release of {product-title} will be tagged with the version number in the catalog. The image URL for a specific release can be found using the <literal>oc adm</literal> CLI command.</simpara>
+<section xml:id="pulling-the-driver-toolkit-from-registry">
+<title>Pulling the Driver Toolkit container image from registry.redhat.io</title>
+<simpara>Instructions for pulling the <literal>driver-toolkit</literal> image from <literal>registry.redhat.io</literal> with <literal>podman</literal> or in {product-title} can be found on the <link xl:href="https://catalog.redhat.com/software/containers/openshift4/driver-toolkit-rhel8/604009d6122bd89307e00865?container-tabs=gti">Red Hat Ecosystem Catalog</link>.
+The driver-toolkit image for the latest minor release are tagged with the minor release version on <literal>registry.redhat.io</literal>, for example: <literal>registry.redhat.io/openshift4/driver-toolkit-rhel8:v{product-version}</literal>.</simpara>
+</section>
+<section xml:id="pulling-the-driver-toolkit-from-payload">
+<title>Finding the Driver Toolkit image URL in the payload</title>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You obtained the image <link xl:href="https://console.redhat.com/openshift/install/pull-secret">pull secret from the Red Hat OpenShift Cluster Manager</link>.</simpara>
+</listitem>
+<listitem>
+<simpara>You installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Use the <literal>oc adm</literal> command to extract the image URL of the <literal>driver-toolkit</literal> corresponding to a certain release:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>For an x86 image, the command is as follows:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc adm release info quay.io/openshift-release-dev/ocp-release:{product-version}.z-x86_64 --image-for=driver-toolkit</programlisting>
+</listitem>
+<listitem>
+<simpara>For an ARM image, the command is as follows:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc adm release info quay.io/openshift-release-dev/ocp-release:{product-version}.z-aarch64 --image-for=driver-toolkit</programlisting>
+</listitem>
+</itemizedlist>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:b53883ca2bac5925857148c4a1abc300ced96c222498e3bc134fe7ce3a1dd404</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>Obtain this image using a valid pull secret, such as the pull secret required to install {product-title}:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ podman pull --authfile=path/to/pullsecret.json quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:&lt;SHA&gt;</programlisting>
+</listitem>
+</orderedlist>
+</section>
+</section>
+<section xml:id="using-the-driver-toolkit_driver-toolkit">
+<title>Using the Driver Toolkit</title>
+<simpara>As an example, the Driver Toolkit can be used as the base image for building a very simple kernel module called <literal>simple-kmod</literal>.</simpara>
+<note>
+<simpara>The Driver Toolkit includes the necessary dependencies, <literal>openssl</literal>, <literal>mokutil</literal>, and <literal>keyutils</literal>, needed to sign a kernel module. However, in this example, the <literal>simple-kmod</literal> kernel module is not signed and therefore cannot be loaded on systems with <literal>Secure Boot</literal> enabled.</simpara>
+</note>
+<section xml:id="create-simple-kmod-image_driver-toolkit">
+<title>Build and run the simple-kmod driver container on a cluster</title>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You have a running {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You set the Image Registry Operator state to <literal>Managed</literal> for your cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You are logged into the OpenShift CLI as a user with <literal>cluster-admin</literal> privileges.</simpara>
+</listitem>
+</itemizedlist>
+<formalpara>
+<title>Procedure</title>
+<para>Create a namespace. For example:</para>
+</formalpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc new-project simple-kmod-demo</programlisting>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>The YAML defines an <literal>ImageStream</literal> for storing the <literal>simple-kmod</literal> driver container image, and a <literal>BuildConfig</literal> for building the container. Save this YAML as <literal>0000-buildconfig.yaml.template</literal>.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: simple-kmod-driver-container
+  name: simple-kmod-driver-container
+  namespace: simple-kmod-demo
+spec: {}
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: simple-kmod-driver-build
+  name: simple-kmod-driver-build
+  namespace: simple-kmod-demo
+spec:
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
+  runPolicy: "Serial"
+  triggers:
+    - type: "ConfigChange"
+    - type: "ImageChange"
+  source:
+    dockerfile: |
+      ARG DTK
+      FROM ${DTK} as builder
+
+      ARG KVER
+
+      WORKDIR /build/
+
+      RUN git clone https://github.com/openshift-psap/simple-kmod.git
+
+      WORKDIR /build/simple-kmod
+
+      RUN make all install KVER=${KVER}
+
+      FROM registry.redhat.io/ubi8/ubi-minimal
+
+      ARG KVER
+
+      # Required for installing `modprobe`
+      RUN microdnf install kmod
+
+      COPY --from=builder /lib/modules/${KVER}/simple-kmod.ko /lib/modules/${KVER}/
+      COPY --from=builder /lib/modules/${KVER}/simple-procfs-kmod.ko /lib/modules/${KVER}/
+      RUN depmod ${KVER}
+  strategy:
+    dockerStrategy:
+      buildArgs:
+        - name: KMODVER
+          value: DEMO
+          # $ oc adm release info quay.io/openshift-release-dev/ocp-release:&lt;cluster version&gt;-x86_64 --image-for=driver-toolkit
+        - name: DTK
+          value: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:34864ccd2f4b6e385705a730864c04a40908e57acede44457a783d739e377cae
+        - name: KVER
+          value: 4.18.0-372.26.1.el8_6.x86_64
+  output:
+    to:
+      kind: ImageStreamTag
+      name: simple-kmod-driver-container:demo</programlisting>
+</listitem>
+<listitem>
+<simpara>Substitute the correct driver toolkit image for the {product-title} version you are running in place of “DRIVER_TOOLKIT_IMAGE” with the following commands.</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ OCP_VERSION=$(oc get clusterversion/version -ojsonpath={.status.desired.version})</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ DRIVER_TOOLKIT_IMAGE=$(oc adm release info $OCP_VERSION --image-for=driver-toolkit)</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ sed "s#DRIVER_TOOLKIT_IMAGE#${DRIVER_TOOLKIT_IMAGE}#" 0000-buildconfig.yaml.template &gt; 0000-buildconfig.yaml</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the image stream and build config with</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f 0000-buildconfig.yaml</programlisting>
+</listitem>
+<listitem>
+<simpara>After the builder pod completes successfully, deploy the driver container image as a <literal>DaemonSet</literal>.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>The driver container must run with the privileged security context in order to load the kernel modules on the host. The following YAML file contains the RBAC rules and the <literal>DaemonSet</literal> for running the driver container. Save this YAML as <literal>1000-drivercontainer.yaml</literal>.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: simple-kmod-driver-container
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: simple-kmod-driver-container
+rules:
+- apiGroups:
+  - security.openshift.io
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+  resourceNames:
+  - privileged
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: simple-kmod-driver-container
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: simple-kmod-driver-container
+subjects:
+- kind: ServiceAccount
+  name: simple-kmod-driver-container
+userNames:
+- system:serviceaccount:simple-kmod-demo:simple-kmod-driver-container
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: simple-kmod-driver-container
+spec:
+  selector:
+    matchLabels:
+      app: simple-kmod-driver-container
+  template:
+    metadata:
+      labels:
+        app: simple-kmod-driver-container
+    spec:
+      serviceAccount: simple-kmod-driver-container
+      serviceAccountName: simple-kmod-driver-container
+      containers:
+      - image: image-registry.openshift-image-registry.svc:5000/simple-kmod-demo/simple-kmod-driver-container:demo
+        name: simple-kmod-driver-container
+        imagePullPolicy: Always
+        command: [sleep, infinity]
+        lifecycle:
+          postStart:
+            exec:
+              command: ["modprobe", "-v", "-a" , "simple-kmod", "simple-procfs-kmod"]
+          preStop:
+            exec:
+              command: ["modprobe", "-r", "-a" , "simple-kmod", "simple-procfs-kmod"]
+        securityContext:
+          privileged: true
+      nodeSelector:
+        node-role.kubernetes.io/worker: ""</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the RBAC rules and daemon set:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f 1000-drivercontainer.yaml</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>After the pods are running on the worker nodes, verify that the <literal>simple_kmod</literal> kernel module is loaded successfully on the host machines with <literal>lsmod</literal>.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Verify that the pods are running:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get pod -n simple-kmod-demo</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                 READY   STATUS      RESTARTS   AGE
+simple-kmod-driver-build-1-build     0/1     Completed   0          6m
+simple-kmod-driver-container-b22fd   1/1     Running     0          40s
+simple-kmod-driver-container-jz9vn   1/1     Running     0          40s
+simple-kmod-driver-container-p45cc   1/1     Running     0          40s</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>Execute the <literal>lsmod</literal> command in the driver container pod:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc exec -it pod/simple-kmod-driver-container-p45cc -- lsmod | grep simple</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">simple_procfs_kmod     16384  0
+simple_kmod            16384  0</programlisting>
+</para>
+</formalpara>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+</section>
+</section>
+<section xml:id="additional-resources_driver-toolkkit-id" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara>For more information about configuring registry storage for your cluster, see <link xl:href="../registry/configuring-registry-operator.xml#registry-removed_configuring-registry-operator">Image Registry Operator in OpenShift Container Platform</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="node-feature-discovery-operator">
+<title>Node Feature Discovery Operator</title>
+
+<simpara>Learn about the Node Feature Discovery (NFD) Operator and how you can use it to expose node-level information by orchestrating Node Feature Discovery, a Kubernetes add-on for detecting hardware features and system configuration.</simpara>
+<section xml:id="about-node-feature-discovery-operator_node-feature-discovery-operator">
+<title>About the Node Feature Discovery Operator</title>
+<simpara>The Node Feature Discovery Operator (NFD) manages the detection of hardware features and configuration in an {product-title} cluster by labeling the nodes with hardware-specific information. NFD labels the host with node-specific attributes, such as PCI cards, kernel, operating system version, and so on.</simpara>
+<simpara>The NFD Operator can be found on the Operator Hub by searching for “Node Feature Discovery”.</simpara>
+</section>
+<section xml:id="installing-the-node-feature-discovery-operator_node-feature-discovery-operator">
+<title>Installing the Node Feature Discovery Operator</title>
+<simpara>The Node Feature Discovery (NFD) Operator orchestrates all resources needed to run the NFD daemon set. As a cluster administrator, you can install the NFD Operator by using the {product-title} CLI or the web console.</simpara>
+<section xml:id="install-operator-cli_node-feature-discovery-operator">
+<title>Installing the NFD Operator using the CLI</title>
+<simpara>As a cluster administrator, you can install the NFD Operator using the CLI.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>An {product-title} cluster</simpara>
+</listitem>
+<listitem>
+<simpara>Install the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>Log in as a user with <literal>cluster-admin</literal> privileges.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a namespace for the NFD Operator.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Create the following <literal>Namespace</literal> custom resource (CR) that defines the <literal>openshift-nfd</literal> namespace, and then save the YAML in the <literal>nfd-namespace.yaml</literal> file:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-nfd</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the namespace by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f nfd-namespace.yaml</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Install the NFD Operator in the namespace you created in the previous step by creating the following objects:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Create the following <literal>OperatorGroup</literal> CR and save the YAML in the <literal>nfd-operatorgroup.yaml</literal> file:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  generateName: openshift-nfd-
+  name: openshift-nfd
+  namespace: openshift-nfd
+spec:
+  targetNamespaces:
+  - openshift-nfd</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the <literal>OperatorGroup</literal> CR by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f nfd-operatorgroup.yaml</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the following <literal>Subscription</literal> CR and save the YAML in the <literal>nfd-sub.yaml</literal> file:</simpara>
+<formalpara>
+<title>Example Subscription</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: nfd
+  namespace: openshift-nfd
+spec:
+  channel: "stable"
+  installPlanApproval: Automatic
+  name: nfd
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>Create the subscription object by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f nfd-sub.yaml</programlisting>
+</listitem>
+<listitem>
+<simpara>Change to the <literal>openshift-nfd</literal> project:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc project openshift-nfd</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>To verify that the Operator deployment is successful, run:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get pods</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                      READY   STATUS    RESTARTS   AGE
+nfd-controller-manager-7f86ccfb58-vgr4x   2/2     Running   0          10m</programlisting>
+</para>
+</formalpara>
+<simpara>A successful deployment shows a <literal>Running</literal> status.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="install-operator-web-console_node-feature-discovery-operator">
+<title>Installing the NFD Operator using the web console</title>
+<simpara>As a cluster administrator, you can install the NFD Operator using the web console.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>In the {product-title} web console, click <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">OperatorHub</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Choose <emphasis role="strong">Node Feature Discovery</emphasis> from the list of available Operators, and then click <emphasis role="strong">Install</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>On the <emphasis role="strong">Install Operator</emphasis> page, select <emphasis role="strong">A specific namespace on the cluster</emphasis>, and then click <emphasis role="strong">Install</emphasis>. You do not need to create a namespace because it is created for you.</simpara>
+</listitem>
+</orderedlist>
+<formalpara>
+<title>Verification</title>
+<para>To verify that the NFD Operator installed successfully:</para>
+</formalpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Navigate to the <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">Installed Operators</emphasis> page.</simpara>
+</listitem>
+<listitem>
+<simpara>Ensure that <emphasis role="strong">Node Feature Discovery</emphasis> is listed in the <emphasis role="strong">openshift-nfd</emphasis> project with a <emphasis role="strong">Status</emphasis> of <emphasis role="strong">InstallSucceeded</emphasis>.</simpara>
+<note>
+<simpara>During installation an Operator might display a <emphasis role="strong">Failed</emphasis> status. If the installation later succeeds with an <emphasis role="strong">InstallSucceeded</emphasis> message, you can ignore the <emphasis role="strong">Failed</emphasis> message.</simpara>
+</note>
+</listitem>
+</orderedlist>
+<formalpara>
+<title>Troubleshooting</title>
+<para>If the Operator does not appear as installed, troubleshoot further:</para>
+</formalpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Navigate to the <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">Installed Operators</emphasis> page and inspect the <emphasis role="strong">Operator Subscriptions</emphasis> and <emphasis role="strong">Install Plans</emphasis> tabs for any failure or errors under <emphasis role="strong">Status</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Navigate to the <emphasis role="strong">Workloads</emphasis> &#8594; <emphasis role="strong">Pods</emphasis> page and check the logs for pods in the <literal>openshift-nfd</literal> project.</simpara>
+</listitem>
+</orderedlist>
+</section>
+</section>
+<section xml:id="using-the-node-feature-discovery-operator_node-feature-discovery-operator">
+<title>Using the Node Feature Discovery Operator</title>
+<simpara>The Node Feature Discovery (NFD) Operator orchestrates all resources needed to run the Node-Feature-Discovery daemon set by watching for a <literal>NodeFeatureDiscovery</literal> CR. Based on the <literal>NodeFeatureDiscovery</literal> CR, the Operator will create the operand (NFD) components in the desired namespace. You can edit the CR to choose another <literal>namespace</literal>, <literal>image</literal>, <literal>imagePullPolicy</literal>, and <literal>nfd-worker-conf</literal>, among other options.</simpara>
+<simpara>As a cluster administrator, you can create a <literal>NodeFeatureDiscovery</literal> instance using the {product-title} CLI or the web console.</simpara>
+<section xml:id="create-cd-cli_node-feature-discovery-operator">
+<title>Create a NodeFeatureDiscovery instance using the CLI</title>
+<simpara>As a cluster administrator, you can create a <literal>NodeFeatureDiscovery</literal> CR instance using the CLI.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>An {product-title} cluster</simpara>
+</listitem>
+<listitem>
+<simpara>Install the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>Log in as a user with <literal>cluster-admin</literal> privileges.</simpara>
+</listitem>
+<listitem>
+<simpara>Install the NFD Operator.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create the following <literal>NodeFeatureDiscovery</literal> Custom Resource (CR), and then save the YAML in the <literal>NodeFeatureDiscovery.yaml</literal> file:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: nfd.openshift.io/v1
+kind: NodeFeatureDiscovery
+metadata:
+  name: nfd-instance
+  namespace: openshift-nfd
+spec:
+  instance: "" # instance is empty by default
+  topologyupdater: false # False by default
+  operand:
+    image: registry.redhat.io/openshift4/ose-node-feature-discovery:v{product-version}
+    imagePullPolicy: Always
+  workerConfig:
+    configData: |
+      core:
+      #  labelWhiteList:
+      #  noPublish: false
+        sleepInterval: 60s
+      #  sources: [all]
+      #  klog:
+      #    addDirHeader: false
+      #    alsologtostderr: false
+      #    logBacktraceAt:
+      #    logtostderr: true
+      #    skipHeaders: false
+      #    stderrthreshold: 2
+      #    v: 0
+      #    vmodule:
+      ##   NOTE: the following options are not dynamically run-time configurable
+      ##         and require a nfd-worker restart to take effect after being changed
+      #    logDir:
+      #    logFile:
+      #    logFileMaxSize: 1800
+      #    skipLogHeaders: false
+      sources:
+        cpu:
+          cpuid:
+      #     NOTE: whitelist has priority over blacklist
+            attributeBlacklist:
+              - "BMI1"
+              - "BMI2"
+              - "CLMUL"
+              - "CMOV"
+              - "CX16"
+              - "ERMS"
+              - "F16C"
+              - "HTT"
+              - "LZCNT"
+              - "MMX"
+              - "MMXEXT"
+              - "NX"
+              - "POPCNT"
+              - "RDRAND"
+              - "RDSEED"
+              - "RDTSCP"
+              - "SGX"
+              - "SSE"
+              - "SSE2"
+              - "SSE3"
+              - "SSE4.1"
+              - "SSE4.2"
+              - "SSSE3"
+            attributeWhitelist:
+        kernel:
+          kconfigFile: "/path/to/kconfig"
+          configOpts:
+            - "NO_HZ"
+            - "X86"
+            - "DMI"
+        pci:
+          deviceClassWhitelist:
+            - "0200"
+            - "03"
+            - "12"
+          deviceLabelFields:
+            - "class"
+  customConfig:
+    configData: |
+          - name: "more.kernel.features"
+            matchOn:
+            - loadedKMod: ["example_kmod3"]</programlisting>
+</listitem>
+</orderedlist>
+<simpara>For more details on how to customize NFD workers, refer to the <link xl:href="https://kubernetes-sigs.github.io/node-feature-discovery/v0.10/advanced/worker-configuration-reference.html">Configuration file reference of nfd-worker</link>.</simpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Create the <literal>NodeFeatureDiscovery</literal> CR instance by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f NodeFeatureDiscovery.yaml</programlisting>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>To verify that the instance is created, run:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get pods</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                      READY   STATUS    RESTARTS   AGE
+nfd-controller-manager-7f86ccfb58-vgr4x   2/2     Running   0          11m
+nfd-master-hcn64                          1/1     Running   0          60s
+nfd-master-lnnxx                          1/1     Running   0          60s
+nfd-master-mp6hr                          1/1     Running   0          60s
+nfd-worker-vgcz9                          1/1     Running   0          60s
+nfd-worker-xqbws                          1/1     Running   0          60s</programlisting>
+</para>
+</formalpara>
+<simpara>A successful deployment shows a <literal>Running</literal> status.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="create-nfd-cr-web-console_node-feature-discovery-operator">
+<title>Create a NodeFeatureDiscovery CR using the web console</title>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Navigate to the <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">Installed Operators</emphasis> page.</simpara>
+</listitem>
+<listitem>
+<simpara>Find <emphasis role="strong">Node Feature Discovery</emphasis> and see a box under <emphasis role="strong">Provided APIs</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create instance</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Edit the values of the <literal>NodeFeatureDiscovery</literal> CR.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+</section>
+</section>
+<section xml:id="configuring-the-node-feature-discovery_node-feature-discovery-operator">
+<title>Configuring the Node Feature Discovery Operator</title>
+<section xml:id="configuring-node-feature-discovery-operator-core_node-feature-discovery-operator">
+<title>core</title>
+<simpara>The <literal>core</literal> section contains common configuration settings that are not specific to any particular feature source.</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-sleepInterval_node-feature-discovery-operator" renderas="sect4">core.sleepInterval</bridgehead>
+<simpara><literal>core.sleepInterval</literal> specifies the interval between consecutive passes of feature detection or re-detection, and thus also the interval between node re-labeling. A non-positive value implies infinite sleep interval; no re-detection or re-labeling is done.</simpara>
+<simpara>This value is overridden by the deprecated <literal>--sleep-interval</literal> command line flag, if specified.</simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">core:
+  sleepInterval: 60s <co xml:id="CO1-1"/></programlisting>
+</para>
+</formalpara>
+<simpara>The default value is <literal>60s</literal>.</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-sources_node-feature-discovery-operator" renderas="sect4">core.sources</bridgehead>
+<simpara><literal>core.sources</literal> specifies the list of enabled feature sources. A special value <literal>all</literal> enables all feature sources.</simpara>
+<simpara>This value is overridden by the deprecated <literal>--sources</literal> command line flag, if specified.</simpara>
+<simpara>Default: <literal>[all]</literal></simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">core:
+  sources:
+    - system
+    - custom</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-label-whitelist_node-feature-discovery-operator" renderas="sect4">core.labelWhiteList</bridgehead>
+<simpara><literal>core.labelWhiteList</literal> specifies a regular expression for filtering feature labels based on the label name. Non-matching labels are not published.</simpara>
+<simpara>The regular expression is only matched against the basename part of the label, the part of the name after '/'. The label prefix,  or namespace, is omitted.</simpara>
+<simpara>This value is overridden by the deprecated <literal>--label-whitelist</literal> command line flag, if specified.</simpara>
+<simpara>Default: <literal>null</literal></simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">core:
+  labelWhiteList: '^cpu-cpuid'</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-no-publish_node-feature-discovery-operator" renderas="sect4">core.noPublish</bridgehead>
+<simpara>Setting <literal>core.noPublish</literal> to <literal>true</literal> disables all communication with the <literal>nfd-master</literal>. It is effectively a dry run flag; <literal>nfd-worker</literal> runs feature detection normally, but no labeling requests are sent to <literal>nfd-master</literal>.</simpara>
+<simpara>This value is overridden by the <literal>--no-publish</literal> command line flag, if specified.</simpara>
+<simpara>Example:</simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">core:
+  noPublish: true <co xml:id="CO1-2"/></programlisting>
+</para>
+</formalpara>
+<simpara>The default value is <literal>false</literal>.</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog_node-feature-discovery-operator" renderas="sect3">core.klog</bridgehead>
+<simpara>The following options specify the logger configuration, most of which can be dynamically adjusted at run-time.</simpara>
+<simpara>The logger options can also be specified using command line flags, which take precedence over any corresponding config file options.</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-adddirheader_node-feature-discovery-operator" renderas="sect4">core.klog.addDirHeader</bridgehead>
+<simpara>If set to <literal>true</literal>, <literal>core.klog.addDirHeader</literal> adds the file directory to the header of the log messages.</simpara>
+<simpara>Default: <literal>false</literal></simpara>
+<simpara>Run-time configurable: yes</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-alsologtostderr_node-feature-discovery-operator" renderas="sect4">core.klog.alsologtostderr</bridgehead>
+<simpara>Log to standard error as well as files.</simpara>
+<simpara>Default: <literal>false</literal></simpara>
+<simpara>Run-time configurable: yes</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-BacktraceAt_node-feature-discovery-operator" renderas="sect4">core.klog.logBacktraceAt</bridgehead>
+<simpara>When logging hits line file:N, emit a stack trace.</simpara>
+<simpara>Default: <emphasis role="strong">empty</emphasis></simpara>
+<simpara>Run-time configurable: yes</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-logdir_node-feature-discovery-operator" renderas="sect4">core.klog.logDir</bridgehead>
+<simpara>If non-empty, write log files in this directory.</simpara>
+<simpara>Default: <emphasis role="strong">empty</emphasis></simpara>
+<simpara>Run-time configurable: no</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-logfile_node-feature-discovery-operator" renderas="sect4">core.klog.logFile</bridgehead>
+<simpara>If not empty, use this log file.</simpara>
+<simpara>Default: <emphasis role="strong">empty</emphasis></simpara>
+<simpara>Run-time configurable: no</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-logFileMaxSize_node-feature-discovery-operator" renderas="sect4">core.klog.logFileMaxSize</bridgehead>
+<simpara><literal>core.klog.logFileMaxSize</literal> defines the maximum size a log file can grow to. Unit is megabytes. If the value is <literal>0</literal>, the maximum file size is unlimited.</simpara>
+<simpara>Default: <literal>1800</literal></simpara>
+<simpara>Run-time configurable: no</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-logtostderr_node-feature-discovery-operator" renderas="sect4">core.klog.logtostderr</bridgehead>
+<simpara>Log to standard error instead of files</simpara>
+<simpara>Default: <literal>true</literal></simpara>
+<simpara>Run-time configurable: yes</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-skipHeaders_node-feature-discovery-operator" renderas="sect4">core.klog.skipHeaders</bridgehead>
+<simpara>If <literal>core.klog.skipHeaders</literal> is set to <literal>true</literal>, avoid header prefixes in the log messages.</simpara>
+<simpara>Default: <literal>false</literal></simpara>
+<simpara>Run-time configurable: yes</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-skipLogHeaders_node-feature-discovery-operator" renderas="sect4">core.klog.skipLogHeaders</bridgehead>
+<simpara>If <literal>core.klog.skipLogHeaders</literal> is set to <literal>true</literal>, avoid headers when opening log files.</simpara>
+<simpara>Default: <literal>false</literal></simpara>
+<simpara>Run-time configurable: no</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-stderrthreshold_node-feature-discovery-operator" renderas="sect4">core.klog.stderrthreshold</bridgehead>
+<simpara>Logs at or above this threshold go to stderr.</simpara>
+<simpara>Default: <literal>2</literal></simpara>
+<simpara>Run-time configurable: yes</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-v_node-feature-discovery-operator" renderas="sect4">core.klog.v</bridgehead>
+<simpara><literal>core.klog.v</literal> is the number for the log level verbosity.</simpara>
+<simpara>Default: <literal>0</literal></simpara>
+<simpara>Run-time configurable: yes</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-core-klog-vmodule_node-feature-discovery-operator" renderas="sect4">core.klog.vmodule</bridgehead>
+<simpara><literal>core.klog.vmodule</literal> is a comma-separated list of <literal>pattern=N</literal> settings for file-filtered logging.</simpara>
+<simpara>Default: <emphasis role="strong">empty</emphasis></simpara>
+<simpara>Run-time configurable: yes</simpara>
+</section>
+<section xml:id="configuring-node-feature-discovery-operator-sources_node-feature-discovery-operator">
+<title>sources</title>
+<simpara>The <literal>sources</literal> section contains feature source specific configuration parameters.</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-sources-cpu-cpuid-attributeBlacklist_node-feature-discovery-operator" renderas="sect4">sources.cpu.cpuid.attributeBlacklist</bridgehead>
+<simpara>Prevent publishing <literal>cpuid</literal> features listed in this option.</simpara>
+<simpara>This value is overridden by <literal>sources.cpu.cpuid.attributeWhitelist</literal>, if specified.</simpara>
+<simpara>Default: <literal>[BMI1, BMI2, CLMUL, CMOV, CX16, ERMS, F16C, HTT, LZCNT, MMX, MMXEXT, NX, POPCNT, RDRAND, RDSEED, RDTSCP, SGX, SGXLC, SSE, SSE2, SSE3, SSE4.1, SSE4.2, SSSE3]</literal></simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">sources:
+  cpu:
+    cpuid:
+      attributeBlacklist: [MMX, MMXEXT]</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-sources-cpu-cpuid-attributeWhitelist_node-feature-discovery-operator" renderas="sect4">sources.cpu.cpuid.attributeWhitelist</bridgehead>
+<simpara>Only publish the <literal>cpuid</literal> features listed in this option.</simpara>
+<simpara><literal>sources.cpu.cpuid.attributeWhitelist</literal> takes precedence over <literal>sources.cpu.cpuid.attributeBlacklist</literal>.</simpara>
+<simpara>Default: <emphasis role="strong">empty</emphasis></simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">sources:
+  cpu:
+    cpuid:
+      attributeWhitelist: [AVX512BW, AVX512CD, AVX512DQ, AVX512F, AVX512VL]</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-sources-kernel-kconfigFilet_node-feature-discovery-operator" renderas="sect4">sources.kernel.kconfigFile</bridgehead>
+<simpara><literal>sources.kernel.kconfigFile</literal> is the path of the kernel config file. If empty, NFD runs a search in the well-known standard locations.</simpara>
+<simpara>Default: <emphasis role="strong">empty</emphasis></simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">sources:
+  kernel:
+    kconfigFile: "/path/to/kconfig"</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-sources-kernel-configOpts_node-feature-discovery-operator" renderas="sect4">sources.kernel.configOpts</bridgehead>
+<simpara><literal>sources.kernel.configOpts</literal> represents kernel configuration options to publish as feature labels.</simpara>
+<simpara>Default: <literal>[NO_HZ, NO_HZ_IDLE, NO_HZ_FULL, PREEMPT]</literal></simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">sources:
+  kernel:
+    configOpts: [NO_HZ, X86, DMI]</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-sources-pci-deviceClassWhitelist_node-feature-discovery-operator" renderas="sect4">sources.pci.deviceClassWhitelist</bridgehead>
+<simpara><literal>sources.pci.deviceClassWhitelist</literal> is a list of <link xl:href="https://pci-ids.ucw.cz/read/PD">PCI device class IDs</link> for which to publish a label. It can be specified as a main class only (for example, <literal>03</literal>) or full class-subclass combination (for example <literal>0300</literal>). The former implies that all
+subclasses are accepted.  The format of the labels can be further configured with <literal>deviceLabelFields</literal>.</simpara>
+<simpara>Default: <literal>["03", "0b40", "12"]</literal></simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">sources:
+  pci:
+    deviceClassWhitelist: ["0200", "03"]</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-sources-pci-deviceLabelFields_node-feature-discovery-operator" renderas="sect4">sources.pci.deviceLabelFields</bridgehead>
+<simpara><literal>sources.pci.deviceLabelFields</literal> is the set of PCI ID fields to use when constructing the name of the feature label. Valid fields are <literal>class</literal>, <literal>vendor</literal>, <literal>device</literal>, <literal>subsystem_vendor</literal> and <literal>subsystem_device</literal>.</simpara>
+<simpara>Default: <literal>[class, vendor]</literal></simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">sources:
+  pci:
+    deviceLabelFields: [class, vendor, device]</programlisting>
+</para>
+</formalpara>
+<simpara>With the example config above, NFD would publish labels such as <literal>feature.node.kubernetes.io/pci-&lt;class-id&gt;_&lt;vendor-id&gt;_&lt;device-id&gt;.present=true</literal></simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-sources-usb-deviceClassWhitelist_node-feature-discovery-operator" renderas="sect4">sources.usb.deviceClassWhitelist</bridgehead>
+<simpara><literal>sources.usb.deviceClassWhitelist</literal> is a list of USB <link xl:href="https://www.usb.org/defined-class-codes">device class</link> IDs for
+which to publish a feature label. The format of the labels can be further
+configured with <literal>deviceLabelFields</literal>.</simpara>
+<simpara>Default: <literal>["0e", "ef", "fe", "ff"]</literal></simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">sources:
+  usb:
+    deviceClassWhitelist: ["ef", "ff"]</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-sources-usb-deviceLabelFields_node-feature-discovery-operator" renderas="sect4">sources.usb.deviceLabelFields</bridgehead>
+<simpara><literal>sources.usb.deviceLabelFields</literal> is the set of USB ID fields from which to compose the name of the feature label. Valid fields are <literal>class</literal>, <literal>vendor</literal>, and <literal>device</literal>.</simpara>
+<simpara>Default: <literal>[class, vendor, device]</literal></simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">sources:
+  pci:
+    deviceLabelFields: [class, vendor]</programlisting>
+</para>
+</formalpara>
+<simpara>With the example config above, NFD would publish labels like: <literal>feature.node.kubernetes.io/usb-&lt;class-id&gt;_&lt;vendor-id&gt;.present=true</literal>.</simpara>
+<bridgehead xml:id="configuring-node-feature-discovery-operator-sources-custom_node-feature-discovery-operator" renderas="sect4">sources.custom</bridgehead>
+<simpara><literal>sources.custom</literal> is the list of rules to process in the custom feature source to create user-specific labels.</simpara>
+<simpara>Default: <emphasis role="strong">empty</emphasis></simpara>
+<formalpara>
+<title>Example usage</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">source:
+  custom:
+  - name: "my.custom.feature"
+    matchOn:
+    - loadedKMod: ["e1000e"]
+    - pciId:
+        class: ["0200"]
+        vendor: ["8086"]</programlisting>
+</para>
+</formalpara>
+</section>
+</section>
+<section xml:id="nfd-rules-about_node-feature-discovery-operator">
+<title>About the NodeFeatureRule custom resource</title>
+<simpara><literal>NodeFeatureRule</literal> objects are a <literal>NodeFeatureDiscovery</literal> custom resource designed for rule-based custom labeling of nodes. Some use cases include application-specific labeling or distribution by hardware vendors to create specific labels for their devices.</simpara>
+<simpara><literal>NodeFeatureRule</literal> objects provide a method to create vendor- or application-specific labels and taints. It uses a flexible rule-based mechanism for creating labels and optionally taints based on node features.</simpara>
+</section>
+<section xml:id="nfd-rules-using_node-feature-discovery-operator">
+<title>Using the NodeFeatureRule custom resource</title>
+<simpara>Create a <literal>NodeFeatureRule</literal> object to label nodes if a set of rules match the conditions.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a custom resource file named <literal>nodefeaturerule.yaml</literal> that contains the following text:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: nfd.openshift.io/v1
+kind: NodeFeatureRule
+metadata:
+  name: example-rule
+spec:
+  rules:
+    - name: "example rule"
+      labels:
+        "example-custom-feature": "true"
+      # Label is created if all of the rules below match
+      matchFeatures:
+        # Match if "veth" kernel module is loaded
+        - feature: kernel.loadedmodule
+          matchExpressions:
+            veth: {op: Exists}
+        # Match if any PCI device with vendor 8086 exists in the system
+        - feature: pci.device
+          matchExpressions:
+            vendor: {op: In, value: ["8086"]}</programlisting>
+<simpara>This custom resource specifies that labelling occurs when the <literal>veth</literal> module is loaded and any PCI device with vendor code <literal>8086</literal> exists in the cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>Apply the <literal>nodefeaturerule.yaml</literal> file to your cluster by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc apply -f https://raw.githubusercontent.com/kubernetes-sigs/node-feature-discovery/v0.13.6/examples/nodefeaturerule.yaml</programlisting>
+<simpara>The example applies the feature label on nodes with the <literal>veth</literal> module loaded and any PCI device with vendor code <literal>8086</literal> exists.</simpara>
+<note>
+<simpara>A relabeling delay of up to 1 minute might occur.</simpara>
+</note>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="using-the-nfd-topology-updater_node-feature-discovery-operator">
+<title>Using the NFD Topology Updater</title>
+<simpara>The Node Feature Discovery (NFD) Topology Updater is a daemon responsible for examining allocated resources on a worker node. It accounts for resources that are available to be allocated to new pod on a per-zone basis, where a zone can be a Non-Uniform Memory Access (NUMA) node. The NFD Topology Updater communicates the information to nfd-master, which creates a <literal>NodeResourceTopology</literal> custom resource (CR) corresponding to all of the worker nodes in the cluster. One instance of the NFD Topology Updater runs on each node of the cluster.</simpara>
+<simpara>To enable the Topology Updater workers in NFD, set the <literal>topologyupdater</literal> variable to <literal>true</literal> in the <literal>NodeFeatureDiscovery</literal> CR, as described in the section <emphasis role="strong">Using the Node Feature Discovery Operator</emphasis>.</simpara>
+<section xml:id="_noderesourcetopology_cr">
+<title>NodeResourceTopology CR</title>
+<simpara>When run with NFD Topology Updater, NFD creates custom resource instances corresponding to the node resource hardware topology, such as:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: topology.node.k8s.io/v1alpha1
+kind: NodeResourceTopology
+metadata:
+  name: node1
+topologyPolicies: ["SingleNUMANodeContainerLevel"]
+zones:
+  - name: node-0
+    type: Node
+    resources:
+      - name: cpu
+        capacity: 20
+        allocatable: 16
+        available: 10
+      - name: vendor/nic1
+        capacity: 3
+        allocatable: 3
+        available: 3
+  - name: node-1
+    type: Node
+    resources:
+      - name: cpu
+        capacity: 30
+        allocatable: 30
+        available: 15
+      - name: vendor/nic2
+        capacity: 6
+        allocatable: 6
+        available: 6
+  - name: node-2
+    type: Node
+    resources:
+      - name: cpu
+        capacity: 30
+        allocatable: 30
+        available: 15
+      - name: vendor/nic1
+        capacity: 3
+        allocatable: 3
+        available: 3</programlisting>
+</section>
+<section xml:id="nfd-topology-updater-command-line-flags_node-feature-discovery-operator">
+<title>NFD Topology Updater command line flags</title>
+<simpara>To view available command line flags, run the <literal>nfd-topology-updater -help</literal> command. For example, in a podman container, run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ podman run gcr.io/k8s-staging-nfd/node-feature-discovery:master nfd-topology-updater -help</programlisting>
+<bridgehead xml:id="nfd-topology-updater-ca-file_node-feature-discovery-operator" renderas="sect4">-ca-file</bridgehead>
+<simpara>The <literal>-ca-file</literal> flag is one of the three flags, together with the <literal>-cert-file</literal> and `-key-file`flags, that controls the mutual TLS authentication on the NFD Topology Updater. This flag specifies the TLS root certificate that is used for verifying the authenticity of nfd-master.</simpara>
+<simpara>Default: empty</simpara>
+<important>
+<simpara>The <literal>-ca-file</literal> flag must be specified together with the <literal>-cert-file</literal> and <literal>-key-file</literal> flags.</simpara>
+</important>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ nfd-topology-updater -ca-file=/opt/nfd/ca.crt -cert-file=/opt/nfd/updater.crt -key-file=/opt/nfd/updater.key</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="nfd-topology-updater-cert-file_node-feature-discovery-operator" renderas="sect4">-cert-file</bridgehead>
+<simpara>The <literal>-cert-file</literal> flag is one of the three flags, together with the <literal>-ca-file</literal> and <literal>-key-file flags</literal>, that controls mutual TLS authentication on the NFD Topology Updater. This flag specifies the TLS certificate presented for authenticating outgoing requests.</simpara>
+<simpara>Default: empty</simpara>
+<important>
+<simpara>The <literal>-cert-file</literal> flag must be specified together with the <literal>-ca-file</literal> and <literal>-key-file</literal> flags.</simpara>
+</important>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ nfd-topology-updater -cert-file=/opt/nfd/updater.crt -key-file=/opt/nfd/updater.key -ca-file=/opt/nfd/ca.crt</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="nfd-topology-updater-help_node-feature-discovery-operator" renderas="sect4">-h, -help</bridgehead>
+<simpara>Print usage and exit.</simpara>
+<bridgehead xml:id="nfd-topology-updater-key-file_node-feature-discovery-operator" renderas="sect4">-key-file</bridgehead>
+<simpara>The <literal>-key-file</literal> flag is one of the three flags, together with the <literal>-ca-file</literal> and <literal>-cert-file</literal> flags, that controls the mutual TLS authentication on the NFD Topology Updater. This flag specifies the private key corresponding the given certificate file, or <literal>-cert-file</literal>, that is used for authenticating outgoing requests.</simpara>
+<simpara>Default: empty</simpara>
+<important>
+<simpara>The <literal>-key-file</literal> flag must be specified together with the <literal>-ca-file</literal> and <literal>-cert-file</literal> flags.</simpara>
+</important>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ nfd-topology-updater -key-file=/opt/nfd/updater.key -cert-file=/opt/nfd/updater.crt -ca-file=/opt/nfd/ca.crt</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="nfd-topology-updater-kubelet-config-file_node-feature-discovery-operator" renderas="sect4">-kubelet-config-file</bridgehead>
+<simpara>The <literal>-kubelet-config-file</literal> specifies the path to the Kubelet&#8217;s configuration
+file.</simpara>
+<simpara>Default: <literal>/host-var/lib/kubelet/config.yaml</literal></simpara>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ nfd-topology-updater -kubelet-config-file=/var/lib/kubelet/config.yaml</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="nfd-topology-updater-no-publish_node-feature-discovery-operator" renderas="sect4">-no-publish</bridgehead>
+<simpara>The <literal>-no-publish</literal> flag disables all communication with the nfd-master, making it a dry run flag for nfd-topology-updater. NFD Topology Updater runs resource hardware topology detection normally, but no CR requests are sent to nfd-master.</simpara>
+<simpara>Default: <literal>false</literal></simpara>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ nfd-topology-updater -no-publish</programlisting>
+</para>
+</formalpara>
+<section xml:id="nfd-topology-updater-oneshot_node-feature-discovery-operator">
+<title>-oneshot</title>
+<simpara>The <literal>-oneshot</literal> flag causes the NFD Topology Updater to exit after one pass of resource hardware topology detection.</simpara>
+<simpara>Default: <literal>false</literal></simpara>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ nfd-topology-updater -oneshot -no-publish</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="nfd-topology-updater-podresources-socket_node-feature-discovery-operator" renderas="sect4">-podresources-socket</bridgehead>
+<simpara>The <literal>-podresources-socket</literal> flag specifies the path to the Unix socket where kubelet exports a gRPC service to enable discovery of in-use CPUs and devices, and to provide metadata for them.</simpara>
+<simpara>Default: <literal>/host-var/liblib/kubelet/pod-resources/kubelet.sock</literal></simpara>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ nfd-topology-updater -podresources-socket=/var/lib/kubelet/pod-resources/kubelet.sock</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="nfd-topology-updater-server_node-feature-discovery-operator" renderas="sect4">-server</bridgehead>
+<simpara>The <literal>-server</literal> flag specifies the address of the nfd-master endpoint to connect to.</simpara>
+<simpara>Default: <literal>localhost:8080</literal></simpara>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ nfd-topology-updater -server=nfd-master.nfd.svc.cluster.local:443</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="nfd-topology-updater-server-name-override_node-feature-discovery-operator" renderas="sect4">-server-name-override</bridgehead>
+<simpara>The <literal>-server-name-override</literal> flag specifies the common name (CN) which to expect from the nfd-master TLS certificate. This flag is mostly intended for development and debugging purposes.</simpara>
+<simpara>Default: empty</simpara>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ nfd-topology-updater -server-name-override=localhost</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="nfd-topology-updater-sleep-interval_node-feature-discovery-operator" renderas="sect4">-sleep-interval</bridgehead>
+<simpara>The <literal>-sleep-interval</literal> flag specifies the interval between resource hardware topology re-examination and custom resource updates. A non-positive value implies infinite sleep interval and no re-detection is done.</simpara>
+<simpara>Default: <literal>60s</literal></simpara>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ nfd-topology-updater -sleep-interval=1h</programlisting>
+</para>
+</formalpara>
+<bridgehead xml:id="nfd-topology-updater-version_node-feature-discovery-operator" renderas="sect4">-version</bridgehead>
+<simpara>Print version and exit.</simpara>
+<bridgehead xml:id="nfd-topology-updater-watch-namespace_node-feature-discovery-operator" renderas="sect4">-watch-namespace</bridgehead>
+<simpara>The <literal>-watch-namespace</literal> flag specifies the namespace to ensure that resource hardware topology examination only happens for the pods running in the
+specified namespace. Pods that are not running in the specified namespace are not considered during resource accounting. This is particularly useful for testing and debugging purposes. A <literal>*</literal> value means that all of the pods across all namespaces are considered during the accounting process.</simpara>
+<simpara>Default: <literal>*</literal></simpara>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ nfd-topology-updater -watch-namespace=rte</programlisting>
+</para>
+</formalpara>
+</section>
+</section>
+</section>
+</chapter>
+<chapter xml:id="kernel-module-management-operator">
+<title>Kernel Module Management Operator</title>
+
+<simpara>Learn about the Kernel Module Management (KMM) Operator and how you can use it to deploy out-of-tree kernel modules and device plugins on {product-title} clusters.</simpara>
+<section xml:id="about-kmm_kernel-module-management-operator">
+<title>About the Kernel Module Management Operator</title>
+<simpara>The Kernel Module Management (KMM) Operator manages, builds, signs, and deploys out-of-tree kernel modules and device plugins on {product-title} clusters.</simpara>
+<simpara>KMM adds a new <literal>Module</literal> CRD which describes an out-of-tree kernel module and its associated device plugin.
+You can use <literal>Module</literal> resources to configure how to load the module, define <literal>ModuleLoader</literal> images for kernel versions, and include instructions for building and signing modules for specific kernel versions.</simpara>
+<simpara>KMM is designed to accommodate multiple kernel versions at once for any kernel module, allowing for seamless node upgrades and reduced application downtime.</simpara>
+</section>
+<section xml:id="kmm-install_kernel-module-management-operator">
+<title>Installing the Kernel Module Management Operator</title>
+<simpara>As a cluster administrator, you can install the Kernel Module Management (KMM) Operator by using the OpenShift CLI or the web console.</simpara>
+<simpara>The KMM Operator is supported on {product-title} 4.12 and later.
+Installing KMM on version 4.11 does not require specific additional steps.
+For details on installing KMM on version 4.10 and earlier, see the section "Installing the Kernel Module Management Operator on earlier versions of {product-title}".</simpara>
+<section xml:id="kmm-install-using-web-console_kernel-module-management-operator">
+<title>Installing the Kernel Module Management Operator using the web console</title>
+<simpara>As a cluster administrator, you can install the Kernel Module Management (KMM) Operator using the {product-title} web console.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Log in to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>Install the Kernel Module Management Operator:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>In the {product-title} web console, click <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">OperatorHub</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Select <emphasis role="strong">Kernel Module Management Operator</emphasis> from the list of available Operators, and then click <emphasis role="strong">Install</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>From the <emphasis role="strong">Installed Namespace</emphasis> list, select the <literal>openshift-kmm</literal> namespace.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Install</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+<formalpara>
+<title>Verification</title>
+<para>To verify that KMM Operator installed successfully:</para>
+</formalpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Navigate to the <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">Installed Operators</emphasis> page.</simpara>
+</listitem>
+<listitem>
+<simpara>Ensure that <emphasis role="strong">Kernel Module Management Operator</emphasis> is listed in the <emphasis role="strong">openshift-kmm</emphasis> project with a <emphasis role="strong">Status</emphasis> of <emphasis role="strong">InstallSucceeded</emphasis>.</simpara>
+<note>
+<simpara>During installation, an Operator might display a <emphasis role="strong">Failed</emphasis> status. If the installation later succeeds with an <emphasis role="strong">InstallSucceeded</emphasis> message, you can ignore the <emphasis role="strong">Failed</emphasis> message.</simpara>
+</note>
+</listitem>
+</orderedlist>
+<orderedlist numeration="arabic">
+<title>Troubleshooting</title>
+<listitem>
+<simpara>To troubleshoot issues with Operator installation:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Navigate to the <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">Installed Operators</emphasis> page and inspect the <emphasis role="strong">Operator Subscriptions</emphasis> and <emphasis role="strong">Install Plans</emphasis> tabs for any failure or errors under <emphasis role="strong">Status</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Navigate to the <emphasis role="strong">Workloads</emphasis> &#8594; <emphasis role="strong">Pods</emphasis> page and check the logs for pods in the <literal>openshift-kmm</literal> project.</simpara>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="kmm-install-using-cli_kernel-module-management-operator">
+<title>Installing the Kernel Module Management Operator by using the CLI</title>
+<simpara>As a cluster administrator, you can install the Kernel Module Management (KMM) Operator by using the OpenShift CLI.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You have a running {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You are logged into the OpenShift CLI as a user with <literal>cluster-admin</literal> privileges.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Install KMM in the <literal>openshift-kmm</literal> namespace:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Create the following <literal>Namespace</literal> CR and save the YAML  file, for example, <literal>kmm-namespace.yaml</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-kmm</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the following <literal>OperatorGroup</literal> CR and save the YAML file, for example, <literal>kmm-op-group.yaml</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: kernel-module-management
+  namespace: openshift-kmm</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the following <literal>Subscription</literal> CR and save the YAML file, for example, <literal>kmm-sub.yaml</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: kernel-module-management
+  namespace: openshift-kmm
+spec:
+  channel: release-1.0
+  installPlanApproval: Automatic
+  name: kernel-module-management
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: kernel-module-management.v1.0.0</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the subscription object by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f kmm-sub.yaml</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>To verify that the Operator deployment is successful, run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get -n openshift-kmm deployments.apps kmm-operator-controller-manager</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                              READY UP-TO-DATE  AVAILABLE AGE
+kmm-operator-controller-manager   1/1   1           1         97s</programlisting>
+</para>
+</formalpara>
+<simpara>The Operator is available.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="kmm-install-older-version_kernel-module-management-operator">
+<title>Installing the Kernel Module Management Operator on earlier versions of {product-title}</title>
+<simpara>The KMM Operator is supported on {product-title} 4.12 and later.
+For version 4.10 and earlier, you must create a new <literal>SecurityContextConstraint</literal> object and bind it to the Operator&#8217;s <literal>ServiceAccount</literal>.
+As a cluster administrator, you can install the Kernel Module Management (KMM) Operator by using the OpenShift CLI.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You have a running {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You are logged into the OpenShift CLI as a user with <literal>cluster-admin</literal> privileges.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Install KMM in the <literal>openshift-kmm</literal> namespace:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Create the following <literal>Namespace</literal> CR and save the YAML file, for example, <literal>kmm-namespace.yaml</literal> file:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-kmm</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the following <literal>SecurityContextConstraint</literal> object and save the YAML file, for example, <literal>kmm-security-constraint.yaml</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegeEscalation: false
+allowPrivilegedContainer: false
+allowedCapabilities:
+  - NET_BIND_SERVICE
+apiVersion: security.openshift.io/v1
+defaultAddCapabilities: null
+fsGroup:
+  type: MustRunAs
+groups: []
+kind: SecurityContextConstraints
+metadata:
+  name: restricted-v2
+priority: null
+readOnlyRootFilesystem: false
+requiredDropCapabilities:
+  - ALL
+runAsUser:
+  type: MustRunAsRange
+seLinuxContext:
+  type: MustRunAs
+seccompProfiles:
+  - runtime/default
+supplementalGroups:
+  type: RunAsAny
+users: []
+volumes:
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - persistentVolumeClaim
+  - projected
+  - secret</programlisting>
+</listitem>
+<listitem>
+<simpara>Bind the <literal>SecurityContextConstraint</literal> object to the Operator&#8217;s <literal>ServiceAccount</literal> by running the following commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc apply -f kmm-security-constraint.yaml</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc adm policy add-scc-to-user kmm-security-constraint -z kmm-operator-controller-manager -n openshift-kmm</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the following <literal>OperatorGroup</literal> CR and save the YAML file, for example, <literal>kmm-op-group.yaml</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: kernel-module-management
+  namespace: openshift-kmm</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the following <literal>Subscription</literal> CR and save the YAML file, for example, <literal>kmm-sub.yaml</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: kernel-module-management
+  namespace: openshift-kmm
+spec:
+  channel: release-1.0
+  installPlanApproval: Automatic
+  name: kernel-module-management
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: kernel-module-management.v1.0.0</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the subscription object by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f kmm-sub.yaml</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>To verify that the Operator deployment is successful, run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get -n openshift-kmm deployments.apps kmm-operator-controller-manager</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                              READY UP-TO-DATE  AVAILABLE AGE
+kmm-operator-controller-manager   1/1   1           1         97s</programlisting>
+</para>
+</formalpara>
+<simpara>The Operator is available.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="kmm-uninstalling-kmmo_kernel-module-management-operator">
+<title>Uninstalling the Kernel Module Management Operator</title>
+<simpara>Use one of the following procedures to uninstall the Kernel Module Management (KMM) Operator, depending on how
+the KMM Operator was installed.</simpara>
+<section xml:id="kmm-uninstalling-kmmo-red-hat-catalog_kernel-module-management-operator">
+<title>Uninstalling a Red Hat catalog installation</title>
+<simpara>Use this procedure if KMM was installed from the Red Hat catalog.</simpara>
+<formalpara>
+<title>Procedure</title>
+<para>Use the following method to uninstall the KMM Operator:</para>
+</formalpara>
+<itemizedlist>
+<listitem>
+<simpara>Use the OpenShift console under <emphasis role="strong">Operators</emphasis> -&#8594; <emphasis role="strong">Installed Operators</emphasis> to locate and uninstall the Operator.</simpara>
+</listitem>
+</itemizedlist>
+<note>
+<simpara>Alternatively, you can delete the <literal>Subscription</literal> resource in the KMM namespace.</simpara>
+</note>
+</section>
+<section xml:id="kmm-uninstalling-kmmo-cli_kernel-module-management-operator">
+<title>Uninstalling a CLI installation</title>
+<simpara>Use this command if the KMM Operator was installed using the OpenShift CLI.</simpara>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>Run the following command to uninstall the KMM Operator:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc delete -k https://github.com/rh-ecosystem-edge/kernel-module-management/config/default</programlisting>
+<note>
+<simpara>Using this command deletes the <literal>Module</literal> CRD and all <literal>Module</literal> instances in the cluster.</simpara>
+</note>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="kmm-deploy-kernel-modules_kernel-module-management-operator">
+<title>Kernel module deployment</title>
+<simpara>For each <literal>Module</literal> resource, Kernel Module Management (KMM) can create a number of <literal>DaemonSet</literal> resources:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>One ModuleLoader <literal>DaemonSet</literal> per compatible kernel version running in the cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>One device plugin <literal>DaemonSet</literal>, if configured.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>The module loader daemon set resources run ModuleLoader images to load kernel modules.
+A module loader image is an OCI image that contains the <literal>.ko</literal> files and both the <literal>modprobe</literal> and <literal>sleep</literal> binaries.</simpara>
+<simpara>When the module loader pod is created, the pod runs <literal>modprobe</literal> to insert the specified module into the kernel.
+It then enters a sleep state until it is terminated.
+When that happens, the <literal>ExecPreStop</literal> hook runs <literal>modprobe -r</literal> to unload the kernel module.</simpara>
+<simpara>If the <literal>.spec.devicePlugin</literal> attribute is configured in a <literal>Module</literal> resource, then KMM creates a <link xl:href="https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/">device plugin</link>
+daemon set in the cluster.
+That daemon set targets:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Nodes that match the <literal>.spec.selector</literal> of the <literal>Module</literal> resource.</simpara>
+</listitem>
+<listitem>
+<simpara>Nodes with the kernel module loaded (where the module loader pod is in the <literal>Ready</literal> condition).</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="kmm-creating-module-cr_kernel-module-management-operator">
+<title>The Module custom resource definition</title>
+<simpara>The <literal>Module</literal> custom resource definition (CRD) represents a kernel module that can be loaded on all or select nodes in the cluster, through a module loader image.
+A <literal>Module</literal> custom resource (CR) specifies one or more kernel versions with which it is compatible, and a node selector.</simpara>
+<simpara>The compatible versions for a <literal>Module</literal> resource are listed under <literal>.spec.moduleLoader.container.kernelMappings</literal>.
+A kernel mapping can either match a <literal>literal</literal> version, or use <literal>regexp</literal> to match many of them at the same time.</simpara>
+<simpara>The reconciliation loop for the <literal>Module</literal> resource runs the following steps:</simpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>List all nodes matching <literal>.spec.selector</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>Build a set of all kernel versions running on those nodes.</simpara>
+</listitem>
+<listitem>
+<simpara>For each kernel version:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Go through <literal>.spec.moduleLoader.container.kernelMappings</literal> and find the appropriate container image name. If the kernel mapping has <literal>build</literal> or <literal>sign</literal> defined and the container image does not already exist, run the build, the signing job, or both, as needed.</simpara>
+</listitem>
+<listitem>
+<simpara>Create a module loader daemon set with the container image determined in the previous step.</simpara>
+</listitem>
+<listitem>
+<simpara>If <literal>.spec.devicePlugin</literal> is defined, create a device plugin daemon set using the configuration specified under <literal>.spec.devicePlugin.container</literal>.</simpara>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Run <literal>garbage-collect</literal> on:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Existing daemon set resources targeting kernel versions that are not run by any node in the cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>Successful build jobs.</simpara>
+</listitem>
+<listitem>
+<simpara>Successful signing jobs.</simpara>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="kmm-setting-soft-dependencies-between-kernel-modules_kernel-module-management-operator">
+<title>Set soft dependencies between kernel modules</title>
+<simpara>Some configurations require that several kernel modules be loaded in a specific order to work properly, even though the modules do not directly depend on each other through symbols.
+These are called soft dependencies.
+<literal>depmod</literal> is usually not aware of these dependencies, and they do not appear in the files it produces.
+For example, if <literal>mod_a</literal> has a soft dependency on <literal>mod_b</literal>, <literal>modprobe mod_a</literal> will not load <literal>mod_b</literal>.</simpara>
+<simpara>You can resolve these situations by declaring soft dependencies in the Module Custom Resource Definition (CRD) using the <literal>modulesLoadingOrder</literal> field.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered"># ...
+spec:
+  moduleLoader:
+    container:
+      modprobe:
+        moduleName: mod_a
+        dirName: /opt
+        firmwarePath: /firmware
+        parameters:
+          - param=1
+        modulesLoadingOrder:
+          - mod_a
+          - mod_b</programlisting>
+<simpara>In the configuration above:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>The loading order is <literal>mod_b</literal>, then <literal>mod_a</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>The unloading order is <literal>mod_a</literal>, then <literal>mod_b</literal>.</simpara>
+</listitem>
+</itemizedlist>
+<note>
+<simpara>The first value in the list, to be loaded last, must be equivalent to the <literal>moduleName</literal>.</simpara>
+</note>
+</section>
+<section xml:id="kmm-security_kernel-module-management-operator">
+<title>Security and permissions</title>
+<important>
+<simpara>Loading kernel modules is a highly sensitive operation.
+After they are loaded, kernel modules have all possible permissions to do any kind of operation on the node.</simpara>
+</important>
+<section xml:id="serviceaccounts-and-securitycontextconstraint_kernel-module-management-operator">
+<title>ServiceAccounts and SecurityContextConstraints</title>
+<simpara>Kernel Module Management (KMM) creates a privileged workload to load the kernel modules on nodes.
+That workload needs <literal>ServiceAccounts</literal> allowed to use the <literal>privileged</literal> <literal>SecurityContextConstraint</literal> (SCC) resource.</simpara>
+<simpara>The authorization model for that workload depends on the namespace of the <literal>Module</literal> resource, as well as its spec.</simpara>
+<itemizedlist>
+<listitem>
+<simpara>If the <literal>.spec.moduleLoader.serviceAccountName</literal> or <literal>.spec.devicePlugin.serviceAccountName</literal> fields are set, they are always used.</simpara>
+</listitem>
+<listitem>
+<simpara>If those fields are not set, then:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>If the <literal>Module</literal> resource is created in the operator&#8217;s namespace (<literal>openshift-kmm</literal> by default), then KMM uses its default, powerful <literal>ServiceAccounts</literal> to run the daemon sets.</simpara>
+</listitem>
+<listitem>
+<simpara>If the <literal>Module</literal> resource is created in any other namespace, then KMM runs the daemon sets as the namespace&#8217;s <literal>default</literal> <literal>ServiceAccount</literal>. The <literal>Module</literal> resource cannot run a privileged workload unless you manually enable it to use the <literal>privileged</literal> SCC.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</itemizedlist>
+<important>
+<simpara><literal>openshift-kmm</literal> is a trusted namespace.</simpara>
+<simpara>When setting up RBAC permissions, remember that any user or <literal>ServiceAccount</literal> creating a <literal>Module</literal> resource in the <literal>openshift-kmm</literal> namespace results in KMM automatically running privileged workloads on potentially all nodes in the cluster.</simpara>
+</important>
+<simpara>To allow any <literal>ServiceAccount</literal> to use the <literal>privileged</literal> SCC and therefore to run module loader or device plugin pods, use the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc adm policy add-scc-to-user privileged -z "${serviceAccountName}" [ -n "${namespace}" ]</programlisting>
+</section>
+<section xml:id="pod-security-standards_kernel-module-management-operator">
+<title>Pod security standards</title>
+<simpara>OpenShift runs a synchronization mechanism that sets the namespace Pod Security level automatically based on
+the security contexts in use. No action is needed.</simpara>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../authentication/understanding-and-managing-pod-security-admission.xml#understanding-and-managing-pod-security-admission">Understanding and managing pod security admission</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+</section>
+<section xml:id="kmm-replacing-in-tree-modules-with-out-of-tree-modules_kernel-module-management-operator">
+<title>Replacing in-tree modules with out-of-tree modules</title>
+<simpara>You can use Kernel Module Management (KMM) to build kernel modules that can be loaded or unloaded into the kernel on demand. These modules extend the functionality of the kernel without the need to reboot the system. Modules can be configured as built-in or dynamically loaded.</simpara>
+<simpara>Dynamically loaded modules include in-tree modules and out-of-tree (OOT) modules. In-tree modules are internal to the Linux kernel tree, that is, they are already part of the kernel. Out-of-tree modules are external to the Linux kernel tree. They are generally written for development and testing purposes, such as testing the new version of a kernel module that is shipped in-tree, or to deal with incompatibilities.</simpara>
+<simpara>Some modules loaded by KMM could replace in-tree modules already loaded on the node. To unload an in-tree module before loading your module, set the <literal>.spec.moduleLoader.container.inTreeModuleToRemove</literal> field. The following is an example for module replacement for all kernel mappings:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered"># ...
+spec:
+  moduleLoader:
+    container:
+      modprobe:
+        moduleName: mod_a
+
+      inTreeModuleToRemove: mod_b</programlisting>
+<simpara>In this example, the <literal>moduleLoader</literal> pod uses <literal>inTreeModuleToRemove</literal> to unload the in-tree <literal>mod_b</literal> before loading <literal>mod_a</literal>
+from the <literal>moduleLoader</literal> image.
+When the <literal>moduleLoader`pod is terminated and `mod_a</literal> is unloaded, <literal>mod_b</literal> is not loaded again.</simpara>
+<simpara>The following is an example for module replacement for specific kernel mappings:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered"># ...
+spec:
+  moduleLoader:
+    container:
+      kernelMappings:
+        - literal: 6.0.15-300.fc37.x86_64
+          containerImage: some.registry/org/my-kmod:6.0.15-300.fc37.x86_64
+          inTreeModuleToRemove: &lt;module_name&gt;</programlisting>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="https://fastbitlab.com/building-a-linux-kernel-module/">Building a linux kernel module</link></simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="kmm-example-cr_kernel-module-management-operator">
+<title>Example Module CR</title>
+<simpara>The following is an annotated <literal>Module</literal> example:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: kmm.sigs.x-k8s.io/v1beta1
+kind: Module
+metadata:
+  name: &lt;my_kmod&gt;
+spec:
+  moduleLoader:
+    container:
+      modprobe:
+        moduleName: &lt;my_kmod&gt; <co xml:id="CO1-3"/>
+        dirName: /opt <co xml:id="CO1-4"/>
+        firmwarePath: /firmware <co xml:id="CO1-5"/>
+        parameters:  <co xml:id="CO1-6"/>
+          - param=1
+      kernelMappings:  <co xml:id="CO1-7"/>
+        - literal: 6.0.15-300.fc37.x86_64
+          containerImage: some.registry/org/my-kmod:6.0.15-300.fc37.x86_64
+        - regexp: '^.+\fc37\.x86_64$' <co xml:id="CO1-8"/>
+          containerImage: "some.other.registry/org/&lt;my_kmod&gt;:${KERNEL_FULL_VERSION}"
+        - regexp: '^.+$' <co xml:id="CO1-9"/>
+          containerImage: "some.registry/org/&lt;my_kmod&gt;:${KERNEL_FULL_VERSION}"
+          build:
+            buildArgs:  <co xml:id="CO1-10"/>
+              - name: ARG_NAME
+                value: &lt;some_value&gt;
+            secrets:
+              - name: &lt;some_kubernetes_secret&gt;  <co xml:id="CO1-11"/>
+            baseImageRegistryTLS: <co xml:id="CO1-12"/>
+              insecure: false
+              insecureSkipTLSVerify: false <co xml:id="CO1-13"/>
+            dockerfileConfigMap:  <co xml:id="CO1-14"/>
+              name: &lt;my_kmod_dockerfile&gt;
+          sign:
+            certSecret:
+              name: &lt;cert_secret&gt;  <co xml:id="CO1-15"/>
+            keySecret:
+              name: &lt;key_secret&gt;  <co xml:id="CO1-16"/>
+            filesToSign:
+              - /opt/lib/modules/${KERNEL_FULL_VERSION}/&lt;my_kmod&gt;.ko
+          registryTLS: <co xml:id="CO1-17"/>
+            insecure: false <co xml:id="CO1-18"/>
+            insecureSkipTLSVerify: false
+    serviceAccountName: &lt;sa_module_loader&gt;  <co xml:id="CO1-19"/>
+  devicePlugin:  <co xml:id="CO1-20"/>
+    container:
+      image: some.registry/org/device-plugin:latest  <co xml:id="CO1-21"/>
+      env:
+        - name: MY_DEVICE_PLUGIN_ENV_VAR
+          value: SOME_VALUE
+      volumeMounts:  <co xml:id="CO1-22"/>
+        - mountPath: /some/mountPath
+          name: &lt;device_plugin_volume&gt;
+    volumes:  <co xml:id="CO1-23"/>
+      - name: &lt;device_plugin_volume&gt;
+        configMap:
+          name: &lt;some_configmap&gt;
+    serviceAccountName: &lt;sa_device_plugin&gt; <co xml:id="CO1-24"/>
+  imageRepoSecret:  <co xml:id="CO1-25"/>
+    name: &lt;secret_name&gt;
+  selector:
+    node-role.kubernetes.io/worker: ""</programlisting>
+<calloutlist>
+<callout arearefs="CO1-1 CO1-2 CO1-3">
+<para>Required.</para>
+</callout>
+<callout arearefs="CO1-4">
+<para>Optional.</para>
+</callout>
+<callout arearefs="CO1-5">
+<para>Optional: Copies <literal>/firmware/*</literal> into <literal>/var/lib/firmware/</literal> on the node.</para>
+</callout>
+<callout arearefs="CO1-6">
+<para>Optional.</para>
+</callout>
+<callout arearefs="CO1-7">
+<para>At least one kernel item is required.</para>
+</callout>
+<callout arearefs="CO1-8">
+<para>For each node running a kernel matching the regular expression, KMM creates a <literal>DaemonSet</literal> resource running the image specified in <literal>containerImage</literal> with <literal>${KERNEL_FULL_VERSION}</literal> replaced with the kernel version.</para>
+</callout>
+<callout arearefs="CO1-9">
+<para>For any other kernel, build the image using the Dockerfile in the <literal>my-kmod</literal> ConfigMap.</para>
+</callout>
+<callout arearefs="CO1-10">
+<para>Optional.</para>
+</callout>
+<callout arearefs="CO1-11">
+<para>Optional: A value for <literal>some-kubernetes-secret</literal> can be obtained from the build environment at <literal>/run/secrets/some-kubernetes-secret</literal>.</para>
+</callout>
+<callout arearefs="CO1-12">
+<para>Optional: Avoid using this parameter. If set to <literal>true</literal>, the build is allowed to pull the image in the Dockerfile <literal>FROM</literal> instruction using plain HTTP.</para>
+</callout>
+<callout arearefs="CO1-13">
+<para>Optional: Avoid using this parameter. If set to <literal>true</literal>, the build will skip any TLS server certificate validation when pulling the image in the Dockerfile <literal>FROM</literal> instruction using plain HTTP.</para>
+</callout>
+<callout arearefs="CO1-14">
+<para>Required.</para>
+</callout>
+<callout arearefs="CO1-15">
+<para>Required: A secret holding the public secureboot key with the key 'cert'.</para>
+</callout>
+<callout arearefs="CO1-16">
+<para>Required: A secret holding the private secureboot key with the key 'key'.</para>
+</callout>
+<callout arearefs="CO1-17">
+<para>Optional: Avoid using this parameter. If set to <literal>true</literal>, KMM will be allowed to check if the container image already exists using plain HTTP.</para>
+</callout>
+<callout arearefs="CO1-18">
+<para>Optional: Avoid using this parameter. If set to <literal>true</literal>, KMM will skip any TLS server certificate validation when checking if the container image already exists.</para>
+</callout>
+<callout arearefs="CO1-19">
+<para>Optional.</para>
+</callout>
+<callout arearefs="CO1-20">
+<para>Optional.</para>
+</callout>
+<callout arearefs="CO1-21">
+<para>Required: If the device plugin section is present.</para>
+</callout>
+<callout arearefs="CO1-22">
+<para>Optional.</para>
+</callout>
+<callout arearefs="CO1-23">
+<para>Optional.</para>
+</callout>
+<callout arearefs="CO1-24">
+<para>Optional.</para>
+</callout>
+<callout arearefs="CO1-25">
+<para>Optional: Used to pull module loader and device plugin images.</para>
+</callout>
+</calloutlist>
+</section>
+</section>
+<section xml:id="kmm-creating-moduleloader-image_kernel-module-management-operator">
+<title>Using a ModuleLoader image</title>
+<simpara>Kernel Module Management (KMM) works with purpose-built module loader images.
+These are standard OCI images that must satisfy the following requirements:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>.ko</literal> files must be located in <literal>/opt/lib/modules/${KERNEL_VERSION}</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>modprobe</literal> and <literal>sleep</literal> binaries must be defined in the <literal>$PATH</literal> variable.</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="kmm-running-depmod_kernel-module-management-operator">
+<title>Running depmod</title>
+<simpara>If your module loader image contains several kernel modules and if one of the modules depends on another module, it is best practice to run <literal>depmod</literal> at the end of the build process to generate dependencies and map files.</simpara>
+<note>
+<simpara>You must have a Red Hat subscription to download the <literal>kernel-devel</literal> package.</simpara>
+</note>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>To generate <literal>modules.dep</literal> and <literal>.map</literal> files for a specific kernel version, run <literal>depmod -b /opt ${KERNEL_VERSION}</literal>.</simpara>
+</listitem>
+</orderedlist>
+<section xml:id="example-dockerfile_kernel-module-management-operator">
+<title>Example Dockerfile</title>
+<simpara>If you are building your image on {product-title}, consider using the Driver Tool Kit (DTK).</simpara>
+<simpara>For further information, see <link xl:href="https://cloud.redhat.com/blog/how-to-use-entitled-image-builds-to-build-drivercontainers-with-ubi-on-openshift">using an entitled build</link>.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kmm-ci-dockerfile
+data:
+  dockerfile: |
+    ARG DTK_AUTO
+    FROM ${DTK_AUTO} as builder
+    ARG KERNEL_VERSION
+    WORKDIR /usr/src
+    RUN ["git", "clone", "https://github.com/rh-ecosystem-edge/kernel-module-management.git"]
+    WORKDIR /usr/src/kernel-module-management/ci/kmm-kmod
+    RUN KERNEL_SRC_DIR=/lib/modules/${KERNEL_VERSION}/build make all
+    FROM registry.redhat.io/ubi9/ubi-minimal
+    ARG KERNEL_VERSION
+    RUN microdnf install kmod
+    COPY --from=builder /usr/src/kernel-module-management/ci/kmm-kmod/kmm_ci_a.ko /opt/lib/modules/${KERNEL_VERSION}/
+    COPY --from=builder /usr/src/kernel-module-management/ci/kmm-kmod/kmm_ci_b.ko /opt/lib/modules/${KERNEL_VERSION}/
+    RUN depmod -b /opt ${KERNEL_VERSION}</programlisting>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../hardware_enablement/psap-driver-toolkit.xml#driver-toolkit">Driver Toolkit</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="kmm-building-in-cluster_kernel-module-management-operator">
+<title>Building in the cluster</title>
+<simpara>KMM can build module loader images in the cluster. Follow these guidelines:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Provide build instructions using the <literal>build</literal> section of a kernel mapping.</simpara>
+</listitem>
+<listitem>
+<simpara>Copy the <literal>Dockerfile</literal> for your container image into a <literal>ConfigMap</literal> resource, under the <literal>dockerfile</literal> key.</simpara>
+</listitem>
+<listitem>
+<simpara>Ensure that the <literal>ConfigMap</literal> is located in the same namespace as the <literal>Module</literal>.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>KMM checks if the image name specified in the <literal>containerImage</literal> field exists. If it does, the build is skipped.</simpara>
+<simpara>Otherwise, KMM creates a <literal>Build</literal> resource to build your image. After the image is built, KMM proceeds with the <literal>Module</literal> reconciliation. See the following example.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered"># ...
+- regexp: '^.+$'
+  containerImage: "some.registry/org/&lt;my_kmod&gt;:${KERNEL_FULL_VERSION}"
+  build:
+    buildArgs:  <co xml:id="CO2-1"/>
+      - name: ARG_NAME
+        value: &lt;some_value&gt;
+    secrets: <co xml:id="CO2-2"/>
+      - name: &lt;some_kubernetes_secret&gt; <co xml:id="CO2-3"/>
+    baseImageRegistryTLS:
+      insecure: false <co xml:id="CO2-4"/>
+      insecureSkipTLSVerify: false <co xml:id="CO2-5"/>
+    dockerfileConfigMap:  <co xml:id="CO2-6"/>
+      name: &lt;my_kmod_dockerfile&gt;
+  registryTLS:
+    insecure: false <co xml:id="CO2-7"/>
+    insecureSkipTLSVerify: false <co xml:id="CO2-8"/></programlisting>
+<calloutlist>
+<callout arearefs="CO2-1">
+<para>Optional.</para>
+</callout>
+<callout arearefs="CO2-2">
+<para>Optional.</para>
+</callout>
+<callout arearefs="CO2-3">
+<para>Will be mounted in the build pod as <literal>/run/secrets/some-kubernetes-secret</literal>.</para>
+</callout>
+<callout arearefs="CO2-4">
+<para>Optional: Avoid using this parameter. If set to <literal>true</literal>, the build will be allowed to pull the image in the Dockerfile <literal>FROM</literal> instruction using plain HTTP.</para>
+</callout>
+<callout arearefs="CO2-5">
+<para>Optional: Avoid using this parameter. If set to <literal>true</literal>, the build will skip any TLS server certificate validation when pulling the image in the Dockerfile <literal>FROM</literal> instruction using plain HTTP.</para>
+</callout>
+<callout arearefs="CO2-6">
+<para>Required.</para>
+</callout>
+<callout arearefs="CO2-7">
+<para>Optional: Avoid using this parameter. If set to <literal>true</literal>, KMM will be allowed to check if the container image already exists using plain HTTP.</para>
+</callout>
+<callout arearefs="CO2-8">
+<para>Optional: Avoid using this parameter. If set to <literal>true</literal>, KMM will skip any TLS server certificate validation when checking if the container image already exists.</para>
+</callout>
+</calloutlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../cicd/builds/build-configuration.xml#build-configuration">Build configuration resources</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="kmm-using-driver-toolkit_kernel-module-management-operator">
+<title>Using the Driver Toolkit</title>
+<simpara>The Driver Toolkit (DTK) is a convenient base image for building build module loader images.
+It contains tools and libraries for the OpenShift version currently running in the cluster.</simpara>
+<formalpara>
+<title>Procedure</title>
+<para>Use DTK as the first stage of a multi-stage <literal>Dockerfile</literal>.</para>
+</formalpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Build the kernel modules.</simpara>
+</listitem>
+<listitem>
+<simpara>Copy the <literal>.ko</literal> files into a smaller end-user image such as <link xl:href="https://catalog.redhat.com/software/containers/ubi9/ubi-minimal"><literal>ubi-minimal</literal></link>.</simpara>
+</listitem>
+<listitem>
+<simpara>To leverage DTK in your in-cluster build, use the <literal>DTK_AUTO</literal> build argument.
+The value is automatically set by KMM when creating the <literal>Build</literal> resource. See the following example.</simpara>
+<programlisting language="dockerfile" linenumbering="unnumbered">ARG DTK_AUTO
+FROM ${DTK_AUTO} as builder
+ARG KERNEL_VERSION
+WORKDIR /usr/src
+RUN ["git", "clone", "https://github.com/rh-ecosystem-edge/kernel-module-management.git"]
+WORKDIR /usr/src/kernel-module-management/ci/kmm-kmod
+RUN KERNEL_SRC_DIR=/lib/modules/${KERNEL_VERSION}/build make all
+FROM registry.redhat.io/ubi9/ubi-minimal
+ARG KERNEL_VERSION
+RUN microdnf install kmod
+COPY --from=builder /usr/src/kernel-module-management/ci/kmm-kmod/kmm_ci_a.ko /opt/lib/modules/${KERNEL_VERSION}/
+COPY --from=builder /usr/src/kernel-module-management/ci/kmm-kmod/kmm_ci_b.ko /opt/lib/modules/${KERNEL_VERSION}/
+RUN depmod -b /opt ${KERNEL_VERSION}</programlisting>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../hardware_enablement/psap-driver-toolkit.xml#driver-toolkit">Driver Toolkit</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="kmm-using-signing-with-kmm_kernel-module-management-operator">
+<title>Using signing with Kernel Module Management (KMM)</title>
+<simpara>On a Secure Boot enabled system, all kernel modules (kmods) must be signed with a public/private key-pair enrolled into the Machine Owner&#8217;s Key (MOK) database. Drivers distributed as part of a distribution should already be signed by the distribution&#8217;s private key, but for kernel modules build out-of-tree, KMM supports signing kernel modules using the <literal>sign</literal> section of the kernel mapping.</simpara>
+<simpara>For more details on using Secure Boot, see <link xl:href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_monitoring_and_updating_the_kernel/signing-a-kernel-and-modules-for-secure-boot_managing-monitoring-and-updating-the-kernel#generating-a-public-and-private-key-pair_signing-a-kernel-and-modules-for-secure-boot">Generating a public and private key pair</link></simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>A public private key pair in the correct (DER) format.</simpara>
+</listitem>
+<listitem>
+<simpara>At least one secure-boot enabled node with the public key enrolled in its MOK database.</simpara>
+</listitem>
+<listitem>
+<simpara>Either a pre-built driver container image, or the source code and <literal>Dockerfile</literal> needed to build one in-cluster.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="kmm-adding-the-keys-for-secureboot_kernel-module-management-operator">
+<title>Adding the keys for secureboot</title>
+<simpara>To use KMM Kernel Module Management (KMM) to sign kernel modules, a certificate and private key are required. For details on how to create these, see <link xl:href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_monitoring_and_updating_the_kernel/signing-a-kernel-and-modules-for-secure-boot_managing-monitoring-and-updating-the-kernel#generating-a-public-and-private-key-pair_signing-a-kernel-and-modules-for-secure-boot">Generating a public and private key pair</link>.</simpara>
+<simpara>For details on how to extract the public and private key pair, see <link xl:href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_monitoring_and_updating_the_kernel/signing-a-kernel-and-modules-for-secure-boot_managing-monitoring-and-updating-the-kernel#signing-kernel-modules-with-the-private-key_signing-a-kernel-and-modules-for-secure-boot">Signing kernel modules with the private key</link>. Use steps 1 through 4 to extract the keys into files.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create the <literal>sb_cert.cer</literal> file that contains the certificate and the <literal>sb_cert.priv</literal> file that contains the private key:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ openssl req -x509 -new -nodes -utf8 -sha256 -days 36500 -batch -config configuration_file.config -outform DER -out my_signing_key_pub.der -keyout my_signing_key.priv</programlisting>
+</listitem>
+<listitem>
+<simpara>Add the files by using one of the following methods:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Add the files as <link xl:href="https://kubernetes.io/docs/concepts/configuration/secret/">secrets</link> directly:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create secret generic my-signing-key --from-file=key=&lt;my_signing_key.priv&gt;</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create secret generic my-signing-key-pub --from-file=key=&lt;my_signing_key_pub.der&gt;</programlisting>
+</listitem>
+<listitem>
+<simpara>Add the files by base64 encoding them:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ cat sb_cert.priv | base64 -w 0 &gt; my_signing_key2.base64</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ cat sb_cert.cer | base64 -w 0 &gt; my_signing_key_pub.base64</programlisting>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>Add the encoded text to a YAML file:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: Secret
+metadata:
+  name: my-signing-key-pub
+  namespace: default <co xml:id="CO3-1"/>
+type: Opaque
+data:
+  cert: &lt;base64_encoded_secureboot_public_key&gt;
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-signing-key
+  namespace: default <co xml:id="CO3-2"/>
+type: Opaque
+data:
+  key: &lt;base64_encoded_secureboot_private_key&gt;</programlisting>
+<calloutlist>
+<callout arearefs="CO3-1 CO3-2">
+<para><literal>namespace</literal> - Replace <literal>default</literal> with a valid namespace.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Apply the YAML file:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc apply -f &lt;yaml_filename&gt;</programlisting>
+</listitem>
+</orderedlist>
+<section xml:id="kmm-checking-the-keys_kernel-module-management-operator">
+<title>Checking the keys</title>
+<simpara>After you have added the keys, you must check them to ensure they are set correctly.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Check to ensure the public key secret is set correctly:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get secret -o yaml &lt;certificate secret name&gt; | awk '/cert/{print $2; exit}' | base64 -d  | openssl x509 -inform der -text</programlisting>
+<simpara>This should display a certificate with a Serial Number, Issuer, Subject, and more.</simpara>
+</listitem>
+<listitem>
+<simpara>Check to ensure the private key secret is set correctly:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get secret -o yaml &lt;private key secret name&gt; | awk '/key/{print $2; exit}' | base64 -d</programlisting>
+<simpara>This should display the key enclosed in the <literal>-----BEGIN PRIVATE KEY-----</literal> and <literal>-----END PRIVATE KEY-----</literal> lines.</simpara>
+</listitem>
+</orderedlist>
+</section>
+</section>
+<section xml:id="kmm-signing-a-prebuilt-driver-container_kernel-module-management-operator">
+<title>Signing a pre-built driver container</title>
+<simpara>Use this procedure if you have a pre-built image, such as an image either distributed by a hardware vendor or built elsewhere.</simpara>
+<simpara>The following YAML file adds the public/private key-pair as secrets with the required key names - <literal>key</literal> for the private key, <literal>cert</literal> for the public key. The cluster then pulls down the <literal>unsignedImage</literal> image, opens it, signs the kernel modules listed in <literal>filesToSign</literal>, adds them back, and pushes the resulting image as <literal>containerImage</literal>.</simpara>
+<simpara>Kernel Module Management (KMM) should then deploy the DaemonSet that loads the signed kmods onto all the nodes that match the selector. The driver containers should run successfully on any nodes that have the public key in their MOK database, and any nodes that are not secure-boot enabled, which ignore the signature. They should fail to load on any that have secure-boot enabled but do not have that key in their MOK database.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>The <literal>keySecret</literal> and <literal>certSecret</literal> secrets have been created.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Apply the YAML file:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">---
+apiVersion: kmm.sigs.x-k8s.io/v1beta1
+kind: Module
+metadata:
+  name: example-module
+spec:
+  moduleLoader:
+    serviceAccountName: default
+    container:
+      modprobe: <co xml:id="CO4-1"/>
+        moduleName: '&lt;your module name&gt;'
+      kernelMappings:
+        # the kmods will be deployed on all nodes in the cluster with a kernel that matches the regexp
+        - regexp: '^.*\.x86_64$'
+          # the container to produce containing the signed kmods
+          containerImage: &lt;image name e.g. quay.io/myuser/my-driver:&lt;kernelversion&gt;-signed&gt;
+          sign:
+            # the image containing the unsigned kmods (we need this because we are not building the kmods within the cluster)
+            unsignedImage: &lt;image name e.g. quay.io/myuser/my-driver:&lt;kernelversion&gt; &gt;
+            keySecret: # a secret holding the private secureboot key with the key 'key'
+              name: &lt;private key secret name&gt;
+            certSecret: # a secret holding the public secureboot key with the key 'cert'
+              name: &lt;certificate secret name&gt;
+            filesToSign: # full path within the unsignedImage container to the kmod(s) to sign
+              - /opt/lib/modules/4.18.0-348.2.1.el8_5.x86_64/kmm_ci_a.ko
+  imageRepoSecret:
+    # the name of a secret containing credentials to pull unsignedImage and push containerImage to the registry
+    name: repo-pull-secret
+  selector:
+    kubernetes.io/arch: amd64</programlisting>
+</listitem>
+</orderedlist>
+<calloutlist>
+<callout arearefs="CO4-1">
+<para><literal>modprobe</literal> - The name of the kmod to load.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="kmm-building-and-signing-a-moduleloader-container-image_kernel-module-management-operator">
+<title>Building and signing a ModuleLoader container image</title>
+<simpara>Use this procedure if you have source code and must build your image first.</simpara>
+<simpara>The following YAML file builds a new container image using the source code from the repository. The image produced is saved back in the registry with a temporary name, and this temporary image is then signed using the parameters in the <literal>sign</literal> section.</simpara>
+<simpara>The temporary image name is based on the final image name and is set to be <literal>&lt;containerImage&gt;:&lt;tag&gt;-&lt;namespace&gt;_&lt;module name&gt;_kmm_unsigned</literal>.</simpara>
+<simpara>For example, using the following YAML file, Kernel Module Management (KMM) builds an image named <literal>example.org/repository/minimal-driver:final-default_example-module_kmm_unsigned</literal> containing the build with unsigned kmods and push it to the registry. Then it creates a second image named <literal>example.org/repository/minimal-driver:final</literal> that contains the signed kmods. It is this second image that is loaded by the <literal>DaemonSet</literal> object and deploys the kmods to the cluster nodes.</simpara>
+<simpara>After it is signed, the temporary image can be safely deleted from the registry. It will be rebuilt, if needed.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>The <literal>keySecret</literal> and <literal>certSecret</literal> secrets have been created.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Apply the YAML file:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-module-dockerfile
+  namespace: default <co xml:id="CO5-1"/>
+data:
+  Dockerfile: |
+    ARG DTK_AUTO
+    ARG KERNEL_VERSION
+    FROM ${DTK_AUTO} as builder
+    WORKDIR /build/
+    RUN git clone -b main --single-branch https://github.com/rh-ecosystem-edge/kernel-module-management.git
+    WORKDIR kernel-module-management/ci/kmm-kmod/
+    RUN make
+    FROM registry.access.redhat.com/ubi9/ubi:latest
+    ARG KERNEL_VERSION
+    RUN yum -y install kmod &amp;&amp; yum clean all
+    RUN mkdir -p /opt/lib/modules/${KERNEL_VERSION}
+    COPY --from=builder /build/kernel-module-management/ci/kmm-kmod/*.ko /opt/lib/modules/${KERNEL_VERSION}/
+    RUN /usr/sbin/depmod -b /opt
+---
+apiVersion: kmm.sigs.x-k8s.io/v1beta1
+kind: Module
+metadata:
+  name: example-module
+  namespace: default <co xml:id="CO5-2"/>
+spec:
+  moduleLoader:
+    serviceAccountName: default <co xml:id="CO5-3"/>
+    container:
+      modprobe:
+        moduleName: simple_kmod
+      kernelMappings:
+        - regexp: '^.*\.x86_64$'
+          containerImage: &lt; the name of the final driver container to produce&gt;
+          build:
+            dockerfileConfigMap:
+              name: example-module-dockerfile
+          sign:
+            keySecret:
+              name: &lt;private key secret name&gt;
+            certSecret:
+              name: &lt;certificate secret name&gt;
+            filesToSign:
+              - /opt/lib/modules/4.18.0-348.2.1.el8_5.x86_64/kmm_ci_a.ko
+  imageRepoSecret: <co xml:id="CO5-4"/>
+    name: repo-pull-secret
+  selector: # top-level selector
+    kubernetes.io/arch: amd64</programlisting>
+</listitem>
+</orderedlist>
+<calloutlist>
+<callout arearefs="CO5-1 CO5-2">
+<para><literal>namespace</literal> - Replace <literal>default</literal> with a valid namespace.</para>
+</callout>
+<callout arearefs="CO5-3">
+<para><literal>serviceAccountName</literal> - The default <literal>serviceAccountName</literal> does not have the required permissions to run a module that is privileged. For information on creating a service account, see "Creating service accounts" in the "Additional resources" of this section.</para>
+</callout>
+<callout arearefs="CO5-4">
+<para><literal>imageRepoSecret</literal> - Used as <literal>imagePullSecrets</literal> in the <literal>DaemonSet</literal> object and to pull and push for the build and sign features.</para>
+</callout>
+</calloutlist>
+<formalpara role="_additional-resources">
+<title>Additional resources</title>
+<para>For information on creating a service account, see <link xl:href="https://docs.openshift.com/container-platform/4.12/authentication/understanding-and-creating-service-accounts.html#service-accounts-managing_understanding-service-accounts">Creating service accounts</link>.</para>
+</formalpara>
+</section>
+<section xml:id="kmm-hub-hub-and-spoke_kernel-module-management-operator">
+<title>KMM hub and spoke</title>
+<simpara>In hub and spoke scenarios, many spoke clusters are connected to a central, powerful hub cluster. Kernel Module Management (KMM) depends on Red&#160;Hat Advanced Cluster Management (RHACM) to operate in hub and spoke environments.</simpara>
+<simpara>KMM is compatible with hub and spoke environments through decoupling KMM features. A <literal>ManagedClusterModule</literal> Custom Resource Definition (CRD) is provided to wrap the existing <literal>Module</literal> CRD and extend it to select Spoke clusters. Also provided is KMM-Hub, a new standalone controller that builds images and signs modules on the hub cluster.</simpara>
+<simpara>In hub and spoke setups, spokes are focused, resource-constrained clusters that are centrally managed by a hub cluster. Spokes run the single-cluster edition of KMM, with those resource-intensive features disabled. To adapt KMM to this environment, you should reduce the workload running on the spokes to the minimum, while the hub takes care of the expensive tasks.</simpara>
+<simpara>Building kernel module images and signing the <literal>.ko</literal> files, should run on the hub. The scheduling of the Module Loader and Device Plugin <literal>DaemonSets</literal> can only happen on the spokes.</simpara>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="https://www.redhat.com/en/technologies/management/advanced-cluster-management">Red&#160;Hat Advanced Cluster Management (RHACM)</link></simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="kmm-hub-kmm-hub_kernel-module-management-operator">
+<title>KMM-Hub</title>
+<simpara>The KMM project provides KMM-Hub, an edition of KMM dedicated to hub clusters. KMM-Hub monitors all kernel versions running on the spokes and determines the nodes on the cluster that should receive a kernel module.</simpara>
+<simpara>KMM-Hub runs all compute-intensive tasks such as image builds and kmod signing, and prepares the trimmed-down <literal>Module</literal> to be transferred to the spokes through RHACM.</simpara>
+<note>
+<simpara>KMM-Hub cannot be used to load kernel modules on the hub cluster. Install the regular edition of KMM to load kernel modules.</simpara>
+</note>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="https://openshift-kmm.netlify.app/documentation/install/">Installing KMM</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="kmm-hub-installing-kmm-hub_kernel-module-management-operator">
+<title>Installing KMM-Hub</title>
+<simpara>You can use one of the following methods to install KMM-Hub:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Using the Operator Lifecycle Manager (OLM)</simpara>
+</listitem>
+<listitem>
+<simpara>Creating KMM resources</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="https://catalog.redhat.com/software/containers/kmm/kernel-module-management-hub-operator-bundle/63d84cc33862da54bb19b8c6?architecture=amd64&amp;image=654273ac86f7e537ae452f6ehttps://catalog.redhat.com/software/containers/kmm/kernel-module-management-hub-operator-bundle/63d84cc33862da54bb19b8c6?architecture=amd64&amp;image=654273ac86f7e537ae452f6e">KMM Operator bundle</link></simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="kmm-hub-installing-kmm-hub-olm_kernel-module-management-operator">
+<title>Installing KMM-Hub using the Operator Lifecycle Manager</title>
+<simpara>Use the <emphasis role="strong">Operators</emphasis> section of the OpenShift console to install KMM-Hub.</simpara>
+</section>
+<section xml:id="kmm-hub-installing-kmm-hub-creating-resources_kernel-module-management-operator">
+<title>Installing KMM-Hub by creating KMM resources</title>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>If you want to install KMM-Hub programmatically, you can use the following resources to create
+the <literal>Namespace</literal>, <literal>OperatorGroup</literal> and <literal>Subscription</literal> resources:</simpara>
+</listitem>
+</itemizedlist>
+<programlisting language="yaml" linenumbering="unnumbered">---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-kmm-hub
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: kernel-module-management-hub
+  namespace: openshift-kmm-hub
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: kernel-module-management-hub
+  namespace: openshift-kmm-hub
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: kernel-module-management-hub
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace</programlisting>
+</section>
+</section>
+<section xml:id="kmm-hub-using-the-managedclustermodule_kernel-module-management-operator">
+<title>Using the <literal>ManagedClusterModule</literal> CRD</title>
+<simpara>Use the <literal>ManagedClusterModule</literal> Custom Resource Definition (CRD) to configure the deployment of kernel modules on spoke clusters.
+This CRD is cluster-scoped, wraps a <literal>Module</literal> spec and adds the following additional fields:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: hub.kmm.sigs.x-k8s.io/v1beta1
+kind: ManagedClusterModule
+metadata:
+  name: &lt;my-mcm&gt;
+  # No namespace, because this resource is cluster-scoped.
+spec:
+  moduleSpec: <co xml:id="CO6-1"/>
+    selector: <co xml:id="CO6-2"/>
+      node-wants-my-mcm: 'true'
+
+  spokeNamespace: &lt;some-namespace&gt; <co xml:id="CO6-3"/>
+
+  selector: <co xml:id="CO6-4"/>
+    wants-my-mcm: 'true'</programlisting>
+<calloutlist>
+<callout arearefs="CO6-1">
+<para><literal>moduleSpec</literal>: Contains <literal>moduleLoader</literal> and <literal>devicePlugin</literal> sections, similar to a <literal>Module</literal> resource.</para>
+</callout>
+<callout arearefs="CO6-2">
+<para>Selects nodes within the <literal>ManagedCluster</literal>.</para>
+</callout>
+<callout arearefs="CO6-3">
+<para>Specifies in which namespace the <literal>Module</literal> should be created.</para>
+</callout>
+<callout arearefs="CO6-4">
+<para>Selects <literal>ManagedCluster</literal> objects.</para>
+</callout>
+</calloutlist>
+<simpara>If build or signing instructions are present in <literal>.spec.moduleSpec</literal>, those pods are run on the hub cluster in the operator&#8217;s namespace.</simpara>
+<simpara>When the <literal>.spec.selector matches</literal> one or more <literal>ManagedCluster</literal> resources, then KMM-Hub creates a <literal>ManifestWork</literal> resource in the corresponding namespace(s). <literal>ManifestWork</literal> contains a trimmed-down <literal>Module</literal> resource, with kernel mappings preserved but all <literal>build</literal> and <literal>sign</literal> subsections are removed. <literal>containerImage</literal> fields that contain image names ending with a tag are replaced with their digest equivalent.</simpara>
+</section>
+<section xml:id="kmm-hub-running-kmm-on-the-spoke_kernel-module-management-operator">
+<title>Running KMM on the spoke</title>
+<simpara>After installing KMM on the spoke, no further action is required. Create a <literal>ManagedClusterModule</literal> object from the hub to deploy kernel modules on spoke clusters.</simpara>
+<formalpara>
+<title>Procedure</title>
+<para>You can install KMM on the spokes cluster through a RHACM <literal>Policy</literal> object.
+In addition to installing KMM from the Operator hub and running it in a lightweight spoke mode,
+the <literal>Policy</literal> configures additional RBAC required for the RHACM agent to be able to manage <literal>Module</literal> resources.</para>
+</formalpara>
+<itemizedlist>
+<listitem>
+<simpara>Use the following RHACM policy to install KMM on spoke clusters:</simpara>
+<screen role="yaml" linenumbering="unnumbered">---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: install-kmm
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: install-kmm
+        spec:
+          severity: high
+          object-templates:
+          - complianceType: mustonlyhave
+            objectDefinition:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: openshift-kmm
+          - complianceType: mustonlyhave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1
+              kind: OperatorGroup
+              metadata:
+                name: kmm
+                namespace: openshift-kmm
+              spec:
+                upgradeStrategy: Default
+          - complianceType: mustonlyhave
+            objectDefinition:
+              apiVersion: operators.coreos.com/v1alpha1
+              kind: Subscription
+              metadata:
+                name: kernel-module-management
+                namespace: openshift-kmm
+              spec:
+                channel: stable
+                config:
+                  env:
+                    - name: KMM_MANAGED
+                      value: "1"
+                installPlanApproval: Automatic
+                name: kernel-module-management
+                source: redhat-operators
+                sourceNamespace: openshift-marketplace
+          - complianceType: mustonlyhave
+            objectDefinition:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: ClusterRole
+              metadata:
+                name: kmm-module-manager
+              rules:
+                - apiGroups: [kmm.sigs.x-k8s.io]
+                  resources: [modules]
+                  verbs: [create, delete, get, list, patch, update, watch]
+          - complianceType: mustonlyhave
+            objectDefinition:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: ClusterRoleBinding
+              metadata:
+                name: klusterlet-kmm
+              subjects:
+              - kind: ServiceAccount
+                name: klusterlet-work-sa
+                namespace: open-cluster-management-agent
+              roleRef:
+                kind: ClusterRole
+                name: kmm-module-manager
+                apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: all-managed-clusters
+spec:
+  clusterSelector: <co xml:id="CO7-1"/>
+    matchExpressions: []
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: install-kmm
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: all-managed-clusters
+subjects:
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: install-kmm</screen>
+<calloutlist>
+<callout arearefs="CO7-1">
+<para>The <literal>spec.clusterSelector</literal> field can be customized to target select clusters only.</para>
+</callout>
+</calloutlist>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="kmm-customizing-upgrades-for-kernel-modules_kernel-module-management-operator">
+<title>Customizing upgrades for kernel modules</title>
+<simpara>Use this procedure to upgrade the kernel module while running maintenance operations on the node, including rebooting the node, if needed. To minimize the impact on the workloads running in the cluster, run the kernel upgrade process sequentially, one node at a time.</simpara>
+<note>
+<simpara>This procedure requires knowledge of the workload utilizing the kernel module and must be managed by the cluster administrator.</simpara>
+</note>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>Before upgrading, set the <literal>kmm.node.kubernetes.io/version-module.&lt;module_namespace&gt;.&lt;module_name&gt;=$moduleVersion</literal> label on all the nodes that are used by the kernel module.</simpara>
+</listitem>
+<listitem>
+<simpara>Terminate all user application workloads on the node or move them to another node.</simpara>
+</listitem>
+<listitem>
+<simpara>Unload the currently loaded kernel module.</simpara>
+</listitem>
+<listitem>
+<simpara>Ensure that the user workload (the application running in the cluster that is accessing kernel module) is not running on the node prior to kernel module unloading and that the workload is back running on the node after the new kernel module version has been loaded.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Ensure that the device plugin managed by KMM on the node is unloaded.</simpara>
+</listitem>
+<listitem>
+<simpara>Update the following fields in the <literal>Module</literal> custom resource (CR):</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>containerImage</literal> (to the appropriate kernel version)</simpara>
+</listitem>
+<listitem>
+<simpara><literal>version</literal></simpara>
+<simpara>The update should be atomic; that is, both the <literal>containerImage</literal> and <literal>version</literal> fields must be updated simultaneously.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>Terminate any workload using the kernel module on the node being upgraded.</simpara>
+</listitem>
+<listitem>
+<simpara>Remove the <literal>kmm.node.kubernetes.io/version-module.&lt;module_namespace&gt;.&lt;module_name&gt;</literal> label on the node.
+Run the following command to unload the kernel module from the node:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc label node/&lt;node_name&gt; kmm.node.kubernetes.io/version-module.&lt;module_namespace&gt;.&lt;module_name&gt;-</programlisting>
+</listitem>
+<listitem>
+<simpara>If required, as the cluster administrator, perform any additional maintenance required on the node for the kernel module upgrade.</simpara>
+<simpara>If no additional upgrading is needed, you can skip Steps 3 through 6 by updating the <literal>kmm.node.kubernetes.io/version-module.&lt;module-namespace&gt;.&lt;module-name&gt;</literal> label value to the new <literal>$moduleVersion</literal> as set in the <literal>Module</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>Run the following command to add the <literal>kmm.node.kubernetes.io/version-module.&lt;module_namespace&gt;.&lt;module_name&gt;=$moduleVersion</literal> label to the node. The <literal>$moduleVersion</literal> must be equal to the new value of the <literal>version</literal> field in the <literal>Module</literal> CR.</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc label node/&lt;node_name&gt; kmm.node.kubernetes.io/version-module.&lt;module_namespace&gt;.&lt;module_name&gt;=&lt;desired_version&gt;</programlisting>
+<note>
+<simpara>Because of Kubernetes limitations in label names, the combined length of <literal>Module</literal> name and namespace must not exceed 39 characters.</simpara>
+</note>
+</listitem>
+<listitem>
+<simpara>Restore any workload that leverages the kernel module on the node.</simpara>
+</listitem>
+<listitem>
+<simpara>Reload the device plugin managed by KMM on the node.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="kmm-day1-kernel-module-loading_kernel-module-management-operator">
+<title>Day 1 kernel module loading</title>
+<simpara>Kernel Module Management (KMM) is typically a Day 2 Operator. Kernel modules are loaded only after the complete initialization of a Linux (RHCOS) server. However, in some scenarios the kernel module must be loaded at an earlier stage. Day 1 functionality allows you to use the Machine Config Operator (MCO) to load kernel modules during the Linux <literal>systemd</literal> initialization stage.</simpara>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="https://docs.openshift.com/container-platform/4.13/post_installation_configuration/machine-configuration-tasks.html#machine-config-operator_post-install-machine-configuration-tasks">Machine Config Operator</link></simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="kmm-day1-supported-use-cases_kernel-module-management-operator">
+<title>Day 1 supported use cases</title>
+<simpara>The Day 1 functionality supports a limited number of use cases. The main use case is to allow loading out-of-tree (OOT) kernel modules prior to NetworkManager service initialization. It does not support loading kernel module at the <literal>initramfs</literal> stage.</simpara>
+<simpara>The following are the conditions needed for Day 1 functionality:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>The kernel module is not loaded in the kernel.</simpara>
+</listitem>
+<listitem>
+<simpara>The in-tree kernel module is loaded into the kernel, but can be unloaded and replaced by the OOT kernel module. This means that the in-tree module is not referenced by any other kernel modules.</simpara>
+</listitem>
+<listitem>
+<simpara>In order for Day 1 functionlity to work, the node must have a functional network interface, that is, an in-tree kernel driver for that interface. The OOT kernel module can be a network driver that will replace the functional network driver.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="kmm-day1-oot-kernel-module-loading-flow_kernel-module-management-operator">
+<title>OOT kernel module loading flow</title>
+<simpara>The loading of the out-of-tree (OOT) kernel module leverages the Machine Config Operator (MCO). The flow sequence is as follows:</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Apply a <literal>MachineConfig</literal> resource to the existing running cluster. In order to identify the necessary nodes that need to be updated,
+you must create an appropriate <literal>MachineConfigPool</literal> resource.</simpara>
+</listitem>
+<listitem>
+<simpara>MCO applies the reboots node by node. On any rebooted node, two new <literal>systemd</literal> services are deployed: <literal>pull</literal> service and <literal>load</literal> service.</simpara>
+</listitem>
+<listitem>
+<simpara>The <literal>load</literal> service is configured to run prior to the <literal>NetworkConfiguration</literal> service. The service tries to pull a predefined kernel module image and then, using that image, to unload an in-tree module and load an OOT kernel module.</simpara>
+</listitem>
+<listitem>
+<simpara>The <literal>pull</literal> service is configured to run after NetworkManager service. The service checks if the preconfigured kernel module image is located on the node&#8217;s filesystem. If it is, the service exists normally, and the server continues with the boot process. If not, it pulls the image onto the node and reboots the node afterwards.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="kmm-day1-kernel-module-image_kernel-module-management-operator">
+<title>The kernel module image</title>
+<simpara>The Day 1 functionality uses the same DTK based image leveraged by Day 2 KMM builds. The out-of-tree kernel module should be located under <literal>/opt/lib/modules/${kernelVersion}</literal>.</simpara>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="https://docs.openshift.com/container-platform/4.13/hardware_enablement/psap-driver-toolkit.html">Driver Toolkit</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="kmm-day1-in-tree-module-replacement_kernel-module-management-operator">
+<title>In-tree module replacement</title>
+<simpara>The Day 1 functionality always tries to replace the in-tree kernel module with the OOT version. If the in-tree kernel module is not loaded, the flow is not affected; the service proceeds and loads the OOT kernel module.</simpara>
+</section>
+<section xml:id="kmm-day1-mco-yaml-creation_kernel-module-management-operator">
+<title>MCO yaml creation</title>
+<simpara>KMM provides an API to create an MCO YAML manifest for the Day 1 functionality:</simpara>
+<programlisting language="console" linenumbering="unnumbered">ProduceMachineConfig(machineConfigName, machineConfigPoolRef, kernelModuleImage, kernelModuleName string) (string, error)</programlisting>
+<simpara>The returned output is a string representation of the MCO YAML manifest to be applied. It is up to the customer to apply this YAML.</simpara>
+<simpara>The parameters are:</simpara>
+<variablelist>
+<varlistentry>
+<term><literal>machineConfigName</literal></term>
+<listitem>
+<simpara>The name of the MCO YAML manifest. This parameter is set as the <literal>name</literal> parameter of the metadata of the MCO YAML manifest.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>machineConfigPoolRef</literal></term>
+<listitem>
+<simpara>The <literal>MachineConfigPool</literal> name used to identify the targeted nodes.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>kernelModuleImage</literal></term>
+<listitem>
+<simpara>The name of the container image that includes the OOT kernel module.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>kernelModuleName</literal></term>
+<listitem>
+<simpara>The name of the OOT kernel module. This parameter is used both to unload the in-tree kernel module (if loaded into the kernel) and to load the OOT kernel module.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>The API is located under <literal>pkg/mcproducer</literal> package of the KMM source code. The KMM operator does not need to be running to use the Day 1 functionality. You only need to import the <literal>pkg/mcproducer</literal> package into their operator/utility code, call the API, and apply the produced MCO YAML to the cluster.</simpara>
+</section>
+<section xml:id="kmm-day1-machineconfigpool_kernel-module-management-operator">
+<title>The MachineConfigPool</title>
+<simpara>The <literal>MachineConfigPool</literal> identifies a collection of nodes that are affected by the applied MCO.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">kind: MachineConfigPool
+metadata:
+  name: sfc
+spec:
+  machineConfigSelector: <co xml:id="CO8-1"/>
+    matchExpressions:
+      - {key: machineconfiguration.openshift.io/role, operator: In, values: [worker, sfc]}
+  nodeSelector: <co xml:id="CO8-2"/>
+    matchLabels:
+      node-role.kubernetes.io/sfc: ""
+  paused: false
+  maxUnavailable: 1</programlisting>
+<calloutlist>
+<callout arearefs="CO8-1">
+<para>Matches the labels in the MachineConfig.</para>
+</callout>
+<callout arearefs="CO8-2">
+<para>Matches the labels on the node.</para>
+</callout>
+</calloutlist>
+<simpara>There are predefined <literal>MachineConfigPools</literal> in the OCP cluster:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>worker</literal>: Targets all worker nodes in the cluster</simpara>
+</listitem>
+<listitem>
+<simpara><literal>master</literal>: Targets all master nodes in the cluster</simpara>
+</listitem>
+</itemizedlist>
+<simpara>Define the following <literal>MachineConfig</literal> to target the master <literal>MachineConfigPool</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">metadata:
+  labels:
+    machineconfiguration.opensfhit.io/role: master</programlisting>
+<simpara>Define the following <literal>MachineConfig</literal> to target the worker <literal>MachineConfigPool</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">metadata:
+  labels:
+    machineconfiguration.opensfhit.io/role: worker</programlisting>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="https://www.redhat.com/en/blog/openshift-container-platform-4-how-does-machine-config-pool-work">About MachineConfigPool</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="kmm-debugging-and-troubleshooting_kernel-module-management-operator">
+<title>Debugging and troubleshooting</title>
+<simpara>If the kmods in your driver container are not signed or are signed with the wrong key, then the container can enter a <literal>PostStartHookError</literal> or <literal>CrashLoopBackOff</literal> status. You can verify by running the <literal>oc describe</literal> command on your container, which displays the following message in this scenario:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">modprobe: ERROR: could not insert '&lt;your_kmod_name&gt;': Required key not available</programlisting>
+</section>
+<section xml:id="kmm-firmware-support_kernel-module-management-operator">
+<title>KMM firmware support</title>
+<simpara>Kernel modules sometimes need to load firmware files from the file system. KMM supports copying firmware files from the ModuleLoader image to the node&#8217;s file system.</simpara>
+<simpara>The contents of <literal>.spec.moduleLoader.container.modprobe.firmwarePath</literal> are copied into the <literal>/var/lib/firmware</literal> path on the node before running the <literal>modprobe</literal> command to insert the kernel module.</simpara>
+<simpara>All files and empty directories are removed from that location before running the <literal>modprobe -r</literal> command to unload the kernel module, when the pod is terminated.</simpara>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../hardware_enablement/kmm-kernel-module-management.xml#kmm-creating-moduleloader-image_kernel-module-management-operator">Creating a ModuleLoader image</link>.</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="kmm-configuring-the-lookup-path-on-nodes_kernel-module-management-operator">
+<title>Configuring the lookup path on nodes</title>
+<simpara>On {product-title} nodes, the set of default lookup paths for firmwares does not include the <literal>/var/lib/firmware</literal> path.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Use the Machine Config Operator to create a <literal>MachineConfig</literal> custom resource (CR) that contains the <literal>/var/lib/firmware</literal> path:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker <co xml:id="CO9-1"/>
+  name: 99-worker-kernel-args-firmware-path
+spec:
+  kernelArguments:
+    - 'firmware_class.path=/var/lib/firmware'</programlisting>
+<calloutlist>
+<callout arearefs="CO9-1">
+<para>You can configure the label based on your needs. In the case of single-node OpenShift, use either <literal>control-pane</literal> or <literal>master</literal> objects.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>By applying the <literal>MachineConfig</literal> CR, the nodes are automatically rebooted.</simpara>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../post_installation_configuration/machine-configuration-tasks.xml#understanding-the-machine-config-operator">Machine Config Operator</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="kmm-building-a-moduleloader-image_kernel-module-management-operator">
+<title>Building a ModuleLoader image</title>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>In addition to building the kernel module itself, include the binary firmware in the builder image:</simpara>
+<programlisting language="dockerfile" linenumbering="unnumbered">FROM registry.redhat.io/ubi9/ubi-minimal as builder
+
+# Build the kmod
+
+RUN ["mkdir", "/firmware"]
+RUN ["curl", "-o", "/firmware/firmware.bin", "https://artifacts.example.com/firmware.bin"]
+
+FROM registry.redhat.io/ubi9/ubi-minimal
+
+# Copy the kmod, install modprobe, run depmod
+
+COPY --from=builder /firmware /firmware</programlisting>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="kmm-tuning-the-module-resource_kernel-module-management-operator">
+<title>Tuning the Module resource</title>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>Set <literal>.spec.moduleLoader.container.modprobe.firmwarePath</literal> in the <literal>Module</literal> custom resource (CR):</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: kmm.sigs.x-k8s.io/v1beta1
+kind: Module
+metadata:
+  name: my-kmod
+spec:
+  moduleLoader:
+    container:
+      modprobe:
+        moduleName: my-kmod  # Required
+
+        firmwarePath: /firmware <co xml:id="CO10-1"/></programlisting>
+<calloutlist>
+<callout arearefs="CO10-1">
+<para>Optional: Copies <literal>/firmware/*</literal> into <literal>/var/lib/firmware/</literal> on the node.</para>
+</callout>
+</calloutlist>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="kmm-troubleshooting_kernel-module-management-operator">
+<title>Troubleshooting KMM</title>
+<simpara>When troubleshooting KMM installation issues, you can monitor logs to determine at which stage issues occur.
+Then, retrieve diagnostic data relevant to that stage.</simpara>
+<section xml:id="kmm-must-gather-tool_kernel-module-management-operator">
+<title>Using the must-gather tool</title>
+<simpara>The <literal>oc adm must-gather</literal> command is the preferred way to collect a support bundle and provide debugging information to Red Hat
+Support. Collect specific information by running the command with the appropriate arguments as described in the following sections.</simpara>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../support/gathering-cluster-data.xml#about-must-gather_gathering-cluster-data">About the must-gather tool</link></simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="kmm-gathering-data-for-kmm_kernel-module-management-operator">
+<title>Gathering data for KMM</title>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Gather the data for the KMM Operator controller manager:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Set the <literal>MUST_GATHER_IMAGE</literal> variable:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ export MUST_GATHER_IMAGE=$(oc get deployment -n openshift-kmm kmm-operator-controller-manager -ojsonpath='{.spec.template.spec.containers[?(@.name=="manager")].env[?(@.name=="RELATED_IMAGES_MUST_GATHER")].value}')</programlisting>
+<note>
+<simpara>Use the <literal>-n &lt;namespace&gt;</literal> switch to specify a namespace if you installed KMM in a custom namespace.</simpara>
+</note>
+</listitem>
+<listitem>
+<simpara>Run the <literal>must-gather</literal> tool:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc adm must-gather --image="${MUST_GATHER_IMAGE}" -- /usr/bin/gather</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>View the Operator logs:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc logs -fn openshift-kmm deployments/kmm-operator-controller-manager</programlisting>
+<example>
+<title>Example output</title>
+<programlisting language="terminal" linenumbering="unnumbered">I0228 09:36:37.352405       1 request.go:682] Waited for 1.001998746s due to client-side throttling, not priority and fairness, request: GET:https://172.30.0.1:443/apis/machine.openshift.io/v1beta1?timeout=32s
+I0228 09:36:40.767060       1 listener.go:44] kmm/controller-runtime/metrics "msg"="Metrics server is starting to listen" "addr"="127.0.0.1:8080"
+I0228 09:36:40.769483       1 main.go:234] kmm/setup "msg"="starting manager"
+I0228 09:36:40.769907       1 internal.go:366] kmm "msg"="Starting server" "addr"={"IP":"127.0.0.1","Port":8080,"Zone":""} "kind"="metrics" "path"="/metrics"
+I0228 09:36:40.770025       1 internal.go:366] kmm "msg"="Starting server" "addr"={"IP":"::","Port":8081,"Zone":""} "kind"="health probe"
+I0228 09:36:40.770128       1 leaderelection.go:248] attempting to acquire leader lease openshift-kmm/kmm.sigs.x-k8s.io...
+I0228 09:36:40.784396       1 leaderelection.go:258] successfully acquired lease openshift-kmm/kmm.sigs.x-k8s.io
+I0228 09:36:40.784876       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module" "source"="kind source: *v1beta1.Module"
+I0228 09:36:40.784925       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module" "source"="kind source: *v1.DaemonSet"
+I0228 09:36:40.784968       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module" "source"="kind source: *v1.Build"
+I0228 09:36:40.785001       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module" "source"="kind source: *v1.Job"
+I0228 09:36:40.785025       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module" "source"="kind source: *v1.Node"
+I0228 09:36:40.785039       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="Module" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="Module"
+I0228 09:36:40.785458       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="PodNodeModule" "controllerGroup"="" "controllerKind"="Pod" "source"="kind source: *v1.Pod"
+I0228 09:36:40.786947       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="PreflightValidation" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidation" "source"="kind source: *v1beta1.PreflightValidation"
+I0228 09:36:40.787406       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="PreflightValidation" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidation" "source"="kind source: *v1.Build"
+I0228 09:36:40.787474       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="PreflightValidation" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidation" "source"="kind source: *v1.Job"
+I0228 09:36:40.787488       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="PreflightValidation" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidation" "source"="kind source: *v1beta1.Module"
+I0228 09:36:40.787603       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="NodeKernel" "controllerGroup"="" "controllerKind"="Node" "source"="kind source: *v1.Node"
+I0228 09:36:40.787634       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="NodeKernel" "controllerGroup"="" "controllerKind"="Node"
+I0228 09:36:40.787680       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="PreflightValidation" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidation"
+I0228 09:36:40.785607       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream" "source"="kind source: *v1.ImageStream"
+I0228 09:36:40.787822       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="preflightvalidationocp" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidationOCP" "source"="kind source: *v1beta1.PreflightValidationOCP"
+I0228 09:36:40.787853       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream"
+I0228 09:36:40.787879       1 controller.go:185] kmm "msg"="Starting EventSource" "controller"="preflightvalidationocp" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidationOCP" "source"="kind source: *v1beta1.PreflightValidation"
+I0228 09:36:40.787905       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="preflightvalidationocp" "controllerGroup"="kmm.sigs.x-k8s.io" "controllerKind"="PreflightValidationOCP"
+I0228 09:36:40.786489       1 controller.go:193] kmm "msg"="Starting Controller" "controller"="PodNodeModule" "controllerGroup"="" "controllerKind"="Pod"</programlisting>
+</example>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="kmm-gathering-data-for-kmm-hub_kernel-module-management-operator">
+<title>Gathering data for KMM-Hub</title>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Gather the data for the KMM Operator hub controller manager:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Set the <literal>MUST_GATHER_IMAGE</literal> variable:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ export MUST_GATHER_IMAGE=$(oc get deployment -n openshift-kmm-hub kmm-operator-hub-controller-manager -ojsonpath='{.spec.template.spec.containers[?(@.name=="manager")].env[?(@.name=="RELATED_IMAGES_MUST_GATHER")].value}')</programlisting>
+<note>
+<simpara>Use the <literal>-n &lt;namespace&gt;</literal> switch to specify a namespace if you installed KMM in a custom namespace.</simpara>
+</note>
+</listitem>
+<listitem>
+<simpara>Run the <literal>must-gather</literal> tool:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc adm must-gather --image="${MUST_GATHER_IMAGE}" -- /usr/bin/gather -u</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>View the Operator logs:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc logs -fn openshift-kmm-hub deployments/kmm-operator-hub-controller-manager</programlisting>
+<example>
+<title>Example output</title>
+<programlisting language="terminal" linenumbering="unnumbered">I0417 11:34:08.807472       1 request.go:682] Waited for 1.023403273s due to client-side throttling, not priority and fairness, request: GET:https://172.30.0.1:443/apis/tuned.openshift.io/v1?timeout=32s
+I0417 11:34:12.373413       1 listener.go:44] kmm-hub/controller-runtime/metrics "msg"="Metrics server is starting to listen" "addr"="127.0.0.1:8080"
+I0417 11:34:12.376253       1 main.go:150] kmm-hub/setup "msg"="Adding controller" "name"="ManagedClusterModule"
+I0417 11:34:12.376621       1 main.go:186] kmm-hub/setup "msg"="starting manager"
+I0417 11:34:12.377690       1 leaderelection.go:248] attempting to acquire leader lease openshift-kmm-hub/kmm-hub.sigs.x-k8s.io...
+I0417 11:34:12.378078       1 internal.go:366] kmm-hub "msg"="Starting server" "addr"={"IP":"127.0.0.1","Port":8080,"Zone":""} "kind"="metrics" "path"="/metrics"
+I0417 11:34:12.378222       1 internal.go:366] kmm-hub "msg"="Starting server" "addr"={"IP":"::","Port":8081,"Zone":""} "kind"="health probe"
+I0417 11:34:12.395703       1 leaderelection.go:258] successfully acquired lease openshift-kmm-hub/kmm-hub.sigs.x-k8s.io
+I0417 11:34:12.396334       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "source"="kind source: *v1beta1.ManagedClusterModule"
+I0417 11:34:12.396403       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "source"="kind source: *v1.ManifestWork"
+I0417 11:34:12.396430       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "source"="kind source: *v1.Build"
+I0417 11:34:12.396469       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "source"="kind source: *v1.Job"
+I0417 11:34:12.396522       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "source"="kind source: *v1.ManagedCluster"
+I0417 11:34:12.396543       1 controller.go:193] kmm-hub "msg"="Starting Controller" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule"
+I0417 11:34:12.397175       1 controller.go:185] kmm-hub "msg"="Starting EventSource" "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream" "source"="kind source: *v1.ImageStream"
+I0417 11:34:12.397221       1 controller.go:193] kmm-hub "msg"="Starting Controller" "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream"
+I0417 11:34:12.498335       1 filter.go:196] kmm-hub "msg"="Listing all ManagedClusterModules" "managedcluster"="local-cluster"
+I0417 11:34:12.498570       1 filter.go:205] kmm-hub "msg"="Listed ManagedClusterModules" "count"=0 "managedcluster"="local-cluster"
+I0417 11:34:12.498629       1 filter.go:238] kmm-hub "msg"="Adding reconciliation requests" "count"=0 "managedcluster"="local-cluster"
+I0417 11:34:12.498687       1 filter.go:196] kmm-hub "msg"="Listing all ManagedClusterModules" "managedcluster"="sno1-0"
+I0417 11:34:12.498750       1 filter.go:205] kmm-hub "msg"="Listed ManagedClusterModules" "count"=0 "managedcluster"="sno1-0"
+I0417 11:34:12.498801       1 filter.go:238] kmm-hub "msg"="Adding reconciliation requests" "count"=0 "managedcluster"="sno1-0"
+I0417 11:34:12.501947       1 controller.go:227] kmm-hub "msg"="Starting workers" "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream" "worker count"=1
+I0417 11:34:12.501948       1 controller.go:227] kmm-hub "msg"="Starting workers" "controller"="ManagedClusterModule" "controllerGroup"="hub.kmm.sigs.x-k8s.io" "controllerKind"="ManagedClusterModule" "worker count"=1
+I0417 11:34:12.502285       1 imagestream_reconciler.go:50] kmm-hub "msg"="registered imagestream info mapping" "ImageStream"={"name":"driver-toolkit","namespace":"openshift"} "controller"="imagestream" "controllerGroup"="image.openshift.io" "controllerKind"="ImageStream" "dtkImage"="quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:df42b4785a7a662b30da53bdb0d206120cf4d24b45674227b16051ba4b7c3934" "name"="driver-toolkit" "namespace"="openshift" "osImageVersion"="412.86.202302211547-0" "reconcileID"="e709ff0a-5664-4007-8270-49b5dff8bae9"</programlisting>
+</example>
+</listitem>
+</orderedlist>
+</section>
+</section>
+</section>
+</chapter>
+</book>

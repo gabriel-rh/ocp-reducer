@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?asciidoc-toc?>
+<?asciidoc-numbered?>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
+<info>
+<title>Power monitoring</title>
+<date>2024-02-13</date>
+</info>
+<chapter xml:id="power-monitoring-release-notes">
+<title>Power monitoring for Red Hat OpenShift release notes</title>
+
+<important>
+<simpara>Power monitoring is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xl:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<simpara>Power monitoring for Red Hat OpenShift enables you to monitor the power usage of workloads and identify the most power-consuming namespaces running in an {product-title} cluster with key power consumption metrics, such as CPU or DRAM, measured at container level.</simpara>
+<simpara>These release notes track the development of power monitoring for Red Hat OpenShift in the {product-title}.</simpara>
+<simpara>For an overview of the Power monitoring Operator, see <link xl:href="../power_monitoring/power-monitoring-overview.xml#power-monitoring-about-power-monitoring_power-monitoring-overview">About power monitoring</link>.</simpara>
+<section xml:id="power-monitoring-release-notes-0-1">
+<title>Power monitoring 0.1 (Technology Preview)</title>
+<simpara>This release introduces a Technology Preview version of power monitoring for Red Hat OpenShift. The following advisory is available for power monitoring 0.1:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><link xl:href="https://access.redhat.com/errata/RHEA-2024:0078">RHEA-2024:0078</link></simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="power-monitoring-release-notes-0-1-features">
+<title>Features</title>
+<itemizedlist>
+<listitem>
+<simpara>Deployment and deletion of Kepler</simpara>
+</listitem>
+<listitem>
+<simpara>Power usage metrics from Intel-based bare-metal deployments</simpara>
+</listitem>
+<listitem>
+<simpara>Dashboards for plotting power usage</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+</chapter>
+<chapter xml:id="power-monitoring-overview">
+<title>Power monitoring overview</title>
+
+<important>
+<simpara>Power monitoring is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xl:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<section xml:id="power-monitoring-about-power-monitoring_power-monitoring-overview">
+<title>About power monitoring</title>
+<simpara>You can use power monitoring for Red Hat OpenShift to monitor the power usage and identify power-consuming containers running in an {product-title} cluster. Power monitoring collects and exports energy-related system statistics from various components, such as CPU and DRAM. It provides granular power consumption data for Kubernetes pods, namespaces, and nodes.</simpara>
+</section>
+<section xml:id="power-monitoring-kepler-architecture_power-monitoring-overview">
+<title>Power monitoring architecture</title>
+<simpara>Power monitoring is made up of the following major components:</simpara>
+<variablelist>
+<varlistentry>
+<term>The Power monitoring Operator</term>
+<listitem>
+<simpara>For administrators, the Power monitoring Operator streamlines the monitoring of power usage for workloads by simplifying the deployment and management of Kepler in an {product-title} cluster. The setup and configuration for the Power monitoring Operator are simplified by adding a Kepler custom resource definition (CRD). The Operator also manages operations, such as upgrading, removing, configuring, and redeploying Kepler.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Kepler</term>
+<listitem>
+<simpara>Kepler is a key component of power monitoring. It is responsible for monitoring the power usage of containers running in {product-title}. It generates metrics related to the power usage of both nodes and containers.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</section>
+<section xml:id="power-monitoring-hardware-virtualization-support_power-monitoring-overview">
+<title>Kepler hardware and virtualization support</title>
+<simpara>Kepler is the key component of power monitoring that collects real-time power consumption data from a node through one of the following methods:</simpara>
+<variablelist>
+<varlistentry>
+<term>Kernel Power Management Subsystem (preferred)</term>
+<listitem>
+<itemizedlist>
+<listitem>
+<simpara><literal>rapl-sysfs</literal>: This requires access to the <literal>/sys/class/powercap/intel-rapl</literal> host file.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>rapl-msr</literal>: This requires access to the <literal>/dev/cpu/*/msr</literal> host file.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>The <literal>estimator</literal> power source</term>
+<listitem>
+<simpara>Without access to the kernel&#8217;s power cap subsystem, Kepler uses a machine learning model to estimate the power usage of the CPU on the node.</simpara>
+<warning>
+<simpara>The <literal>estimator</literal> feature is experimental, not supported, and should not be relied upon.</simpara>
+</warning>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>You can identify the power estimation method for a node by using the <emphasis role="strong">Power Monitoring / Overview</emphasis> dashboard.</simpara>
+<warning>
+<simpara>Power monitoring Technology Preview works only in bare-metal deployments. Most public cloud vendors do not expose Kernel Power Management Subsystems to virtual machines.</simpara>
+</warning>
+</section>
+<section xml:id="additional-resources_power-monitoring-overview" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xl:href="../power_monitoring/visualizing-power-monitoring-metrics.xml#power-monitoring-dashboards-overview_visualizing-power-monitoring-metrics">Power monitoring dashboards overview</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="installing-power-monitoring">
+<title>Installing power monitoring for Red Hat OpenShift</title>
+
+<important>
+<simpara>Power monitoring is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xl:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<simpara>You can install power monitoring for Red Hat OpenShift by deploying the Power monitoring Operator in the {product-title} web console.</simpara>
+<section xml:id="power-monitoring-installing-pmo_installing-power-monitoring">
+<title>Installing the Power monitoring Operator</title>
+<simpara>As a cluster administrator, you can install the Power monitoring Operator from OperatorHub by using the {product-title} web console.</simpara>
+<warning>
+<simpara>You must remove any previously installed versions of the Power monitoring Operator before installation.</simpara>
+</warning>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You have access to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are logged in as a user with the <literal>cluster-admin</literal> role.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>In the <emphasis role="strong">Administrator</emphasis> perspective of the web console, go to <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">OperatorHub</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Search for <literal>power monitoring</literal>, click the <emphasis role="strong">Power monitoring for Red Hat OpenShift</emphasis> tile, and then click <emphasis role="strong">Install</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Install</emphasis> again to install the Power monitoring Operator.</simpara>
+<simpara>Power monitoring for Red Hat OpenShift is now available in all namespaces of the {product-title} cluster.</simpara>
+</listitem>
+</orderedlist>
+<orderedlist numeration="arabic">
+<title>Verification</title>
+<listitem>
+<simpara>Verify that the Power monitoring Operator is listed in <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">Installed Operators</emphasis>. The <emphasis role="strong">Status</emphasis> should resolve to <emphasis role="strong">Succeeded</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="power-monitoring-deploying-kepler_installing-power-monitoring">
+<title>Deploying Kepler</title>
+<simpara>You can deploy Kepler by creating an instance of the <literal>Kepler</literal> custom resource definition (CRD) by using the Power monitoring Operator.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You have access to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are logged in as a user with the <literal>cluster-admin</literal> role.</simpara>
+</listitem>
+<listitem>
+<simpara>You have installed the Power monitoring Operator.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>In the <emphasis role="strong">Administrator</emphasis> perspective of the web console, go to <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">Installed Operators</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Power monitoring for Red Hat OpenShift</emphasis> from the <emphasis role="strong">Installed Operators</emphasis> list and go to the <emphasis role="strong">Kepler</emphasis> tab.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create Kepler</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>On the <emphasis role="strong">Create Kepler</emphasis> page, ensure the <emphasis role="strong">Name</emphasis> is set to <literal>kepler</literal>.</simpara>
+<important>
+<simpara>The name of your Kepler instance must be set to <literal>kepler</literal>. All other instances are ignored by the Power monitoring Operator.</simpara>
+</important>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create</emphasis> to deploy Kepler and power monitoring dashboards.</simpara>
+</listitem>
+</orderedlist>
+</section>
+</chapter>
+<chapter xml:id="configuring-power-monitoring">
+<title>Configuring power monitoring</title>
+
+<important>
+<simpara>Power monitoring is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xl:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<simpara>The <literal>Kepler</literal> resource is a Kubernetes custom resource definition (CRD) that enables you to configure the deployment and monitor the status of the Kepler resource.</simpara>
+<section xml:id="power-monitoring-kepler-configuration_configuring-power-monitoring">
+<title>The Kepler configuration</title>
+<simpara>You can configure Kepler with the <literal>spec</literal> field of the <literal>Kepler</literal> resource.</simpara>
+<important>
+<simpara>Ensure that the name of your Kepler instance is <literal>kepler</literal>. All other instances are ignored by the Power monitoring Operator.</simpara>
+</important>
+<simpara>The following is the list of configuration options:</simpara>
+<table frame="all" rowsep="1" colsep="1">
+<title>Kepler configuration options</title>
+<tgroup cols="4">
+<colspec colname="col_1" colwidth="25*"/>
+<colspec colname="col_2" colwidth="25*"/>
+<colspec colname="col_3" colwidth="25*"/>
+<colspec colname="col_4" colwidth="25*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Name</entry>
+<entry align="left" valign="top">Spec</entry>
+<entry align="left" valign="top">Description</entry>
+<entry align="left" valign="top">Default</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara><literal>port</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>exporter.deployment</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The port on the node where the Prometheus metrics are exposed.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>9103</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>nodeSelector</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>exporter.deployment</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The nodes on which Kepler exporter pods are scheduled.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>kubernetes.io/os: linux</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>tolerations</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>exporter.deployment</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The tolerations for Kepler exporter that allow the pods to be scheduled on nodes with specific characteristics.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>- operator: "Exists"</literal></simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<formalpara>
+<title>Example <literal>Kepler</literal> resource with default configuration</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: kepler.system.sustainable.computing.io/v1alpha1
+kind: Kepler
+metadata:
+  name: kepler
+spec:
+  exporter:
+    deployment:
+      port: 9103 <co xml:id="CO1-1"/>
+      nodeSelector:
+        kubernetes.io/os: linux <co xml:id="CO1-2"/>
+      Tolerations: <co xml:id="CO1-3"/>
+      - key: ""
+        operator: "Exists"
+        value: ""
+        effect: ""</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO1-1">
+<para>The Prometheus metrics are exposed on port 9103.</para>
+</callout>
+<callout arearefs="CO1-2">
+<para>Kepler pods are scheduled on Linux nodes.</para>
+</callout>
+<callout arearefs="CO1-3">
+<para>The default tolerations allow Kepler to be scheduled on any node.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="power-monitoring-monitoring-kepler-status_configuring-power-monitoring">
+<title>Monitoring the Kepler status</title>
+<simpara>You can monitor the state of the Kepler exporter with the <literal>status</literal> field of the <literal>Kepler</literal> resource.</simpara>
+<simpara>The <literal>status.exporter</literal> field includes information, such as the following:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>The number of nodes currently running the Kepler pods</simpara>
+</listitem>
+<listitem>
+<simpara>The number of nodes that should be running the Kepler pods</simpara>
+</listitem>
+<listitem>
+<simpara>Conditions representing the health of the Kepler resource</simpara>
+</listitem>
+</itemizedlist>
+<simpara>This provides you with valuable insights into the changes made through the <literal>spec</literal> field.</simpara>
+<formalpara>
+<title>Example state of the <literal>Kepler</literal> resource</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: kepler.system.sustainable.computing.io/v1alpha1
+kind: Kepler
+metadata:
+  name: kepler
+status:
+ exporter:
+   conditions: <co xml:id="CO2-1"/>
+     - lastTransitionTime: '2024-01-11T11:07:39Z'
+       message: Reconcile succeeded
+       observedGeneration: 1
+       reason: ReconcileSuccess
+       status: 'True'
+       type: Reconciled
+     - lastTransitionTime: '2024-01-11T11:07:39Z'
+       message: &gt;-
+         Kepler daemonset "kepler-operator/kepler" is deployed to all nodes and
+         available; ready 2/2
+       observedGeneration: 1
+       reason: DaemonSetReady
+       status: 'True'
+       type: Available
+   currentNumberScheduled: 2 <co xml:id="CO2-2"/>
+   desiredNumberScheduled: 2 <co xml:id="CO2-3"/></programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO2-1">
+<para>The health of the Kepler resource. In this example, Kepler is successfully reconciled and ready.</para>
+</callout>
+<callout arearefs="CO2-2">
+<para>The number of nodes currently running the Kepler pods is 2.</para>
+</callout>
+<callout arearefs="CO2-3">
+<para>The wanted number of nodes to run the Kepler pods is 2.</para>
+</callout>
+</calloutlist>
+</section>
+</chapter>
+<chapter xml:id="visualizing-power-monitoring-metrics">
+<title>Visualizing power monitoring metrics</title>
+
+<important>
+<simpara>Power monitoring is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xl:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<simpara>You can visualize power monitoring metrics in the {product-title} web console by accessing power monitoring dashboards or by exploring <emphasis role="strong">Metrics</emphasis> under the <emphasis role="strong">Observe</emphasis> tab.</simpara>
+<section xml:id="power-monitoring-dashboards-overview_visualizing-power-monitoring-metrics">
+<title>Power monitoring dashboards overview</title>
+<simpara>There are two types of power monitoring dashboards. Both provide different levels of details around power consumption metrics for a single cluster:</simpara>
+<bridgehead xml:id="_power_monitoring_overview_dashboard" renderas="sect3">Power Monitoring / Overview dashboard</bridgehead>
+<simpara>With this dashboard, you can observe the following information:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>An aggregated view of CPU architecture and its power source (<literal>rapl-sysfs</literal>, <literal>rapl-msr</literal>, or <literal>estimator</literal>) along with total nodes with this configuration</simpara>
+</listitem>
+<listitem>
+<simpara>Total energy consumption by a cluster in the last 24 hours (measured in kilowatt-hour)</simpara>
+</listitem>
+<listitem>
+<simpara>The amount of power consumed by the top 10 namespaces in a cluster in the last 24 hours</simpara>
+</listitem>
+<listitem>
+<simpara>Detailed node information, such as its CPU architecture and component power source</simpara>
+</listitem>
+</itemizedlist>
+<simpara>These features allow you to effectively monitor the energy consumption of the cluster without needing to investigate each namespace separately.</simpara>
+<warning>
+<simpara>Ensure that the <emphasis role="strong">Components Source</emphasis> column does not display <literal>estimator</literal> as the power source.</simpara>
+<figure>
+<title>The Detailed Node Information table with <literal>rapl-sysfs</literal> as the component power source</title>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/power-monitoring-component-power-source.png"/>
+</imageobject>
+<textobject><phrase>power monitoring component power source</phrase></textobject>
+</mediaobject>
+</figure>
+<simpara>If Kepler is unable to obtain hardware power consumption metrics, the <emphasis role="strong">Components Source</emphasis> column displays <literal>estimator</literal> as the power source, which is not supported in Technology Preview. If that happens, then the values from the nodes are not accurate.</simpara>
+</warning>
+<bridgehead xml:id="_power_monitoring_namespace_dashboard" renderas="sect3">Power Monitoring / Namespace dashboard</bridgehead>
+<simpara>This dashboard allows you to view metrics by namespace and pod. You can observe the following information:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>The power consumption metrics, such as consumption in DRAM and PKG</simpara>
+</listitem>
+<listitem>
+<simpara>The energy consumption metrics in the last hour, such as consumption in DRAM and PKG for core and uncore components</simpara>
+</listitem>
+</itemizedlist>
+<simpara>This feature allows you to investigate key peaks and easily identify the primary root causes of high consumption.</simpara>
+</section>
+<section xml:id="power-monitoring-accessing-dashboards_visualizing-power-monitoring-metrics">
+<title>Accessing power monitoring dashboards</title>
+<simpara>You can access power monitoring dashboards from the <emphasis role="strong">Administrator</emphasis> perspective of the {product-title} web console.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You have access to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are logged in as a user with the <literal>cluster-admin</literal> role.</simpara>
+</listitem>
+<listitem>
+<simpara>You have installed the Power monitoring Operator.</simpara>
+</listitem>
+<listitem>
+<simpara>You have deployed Kepler in your cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You have enabled monitoring for user-defined projects.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>In the <emphasis role="strong">Administrator</emphasis> perspective of the web console, go to <emphasis role="strong">Observe</emphasis> &#8594; <emphasis role="strong">Dashboards</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>From the <emphasis role="strong">Dashboard</emphasis> drop-down list, select the power monitoring dashboard you want to see:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><emphasis role="strong">Power Monitoring / Overview</emphasis></simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">Power Monitoring / Namespace</emphasis></simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="power-monitoring-metrics-overview_visualizing-power-monitoring-metrics">
+<title>Power monitoring metrics overview</title>
+<simpara>The Power monitoring Operator exposes the following metrics, which you can view by using the {product-title} web console under the <emphasis role="strong">Observe</emphasis> &#8594; <emphasis role="strong">Metrics</emphasis> tab.</simpara>
+<warning>
+<simpara>This list of exposed metrics is not definitive. Metrics might be added or removed in future releases.</simpara>
+</warning>
+<table frame="all" rowsep="1" colsep="1">
+<title>Power monitoring Operator metrics</title>
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Metric name</entry>
+<entry align="left" valign="top">Description</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The aggregated package or socket energy consumption of CPU, DRAM, and other host components by a container.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_core_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total energy consumption across CPU cores used by a container. If the system has access to <literal>RAPL_</literal> metrics, this metric reflects the proportional container energy consumption of the RAPL Power Plan 0 (PP0), which is the energy consumed by all CPU cores in the socket.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_dram_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total energy consumption of DRAM by a container.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_uncore_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The cumulative energy consumption by uncore components used by a container. The number of components might vary depending on the system. The uncore metric is processor model-specific and might not be available on some server CPUs.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_package_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The cumulative energy consumed by the CPU socket used by a container. It includes all core and uncore components.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_other_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The cumulative energy consumption of host components, excluding CPU and DRAM, used by a container.
+Generally, this metric is the energy consumption of ACPI hosts.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_bpf_cpu_time_us_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total CPU time used by the container that utilizes the BPF tracing.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_cpu_cycles_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total CPU cycles used by the container that utilizes hardware counters. CPU cycles is a metric directly related to CPU frequency. On systems where processors run at a fixed frequency, CPU cycles and total CPU time are roughly equivalent. On systems where processors run at varying frequencies, CPU cycles and total CPU time have different values.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_cpu_instructions_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total CPU instructions used by the container that utilizes hardware counters. CPU instructions is a metric that accounts how the CPU is used.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_cache_miss_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total cache miss that occurs for a container that uses hardware counters.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_cgroupfs_cpu_usage_us_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total CPU time used by a container reading from control group statistics.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_cgroupfs_memory_usage_bytes_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total memory in bytes used by a container reading from control group statistics.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_cgroupfs_system_cpu_usage_us_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total CPU time in kernel space used by the container reading from control group statistics.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_cgroupfs_user_cpu_usage_us_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total CPU time in user space used by a container reading from control group statistics.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_bpf_net_tx_irq_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total number of packets transmitted to network cards of a container that uses the BPF tracing.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_bpf_net_rx_irq_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total number of packets received from network cards of a container that uses the BPF tracing.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_container_bpf_block_irq_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total number of block I/O calls of a container that uses the BPF tracing.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_node_info</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The node metadata, such as the node CPU architecture.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_node_core_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total energy consumption across CPU cores used by all containers running on a node and operating system.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_node_uncore_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The cumulative energy consumption by uncore components used by all containers running on the node and operating system. The number of components might vary depending on the system.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_node_dram_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total energy consumption of DRAM by all containers running on the node and operating system.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_node_package_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The cumulative energy consumed by the CPU socket used by all containers running on the node and operating system. It includes all core and uncore components.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_node_other_host_components_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The cumulative energy consumption of host components, excluding CPU and DRAM, used by all containers running on the node and operating system. Generally, this metric is the energy consumption of ACPI hosts.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_node_platform_joules_total</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The total energy consumption of the host. Generally, this metric is the host energy consumption from Redfish BMC or ACPI.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_node_energy_stat</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>Multiple metrics from nodes labeled with container resource utilization control group metrics that are used in the model server.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kepler_node_accelerator_intel_qat</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The utilization of the accelerator Intel QAT on a certain node. If the system contains Intel QATs, Kepler can calculate the utilization of the node&#8217;s QATs through telemetry.</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</section>
+<section xml:id="additional-resources_visualizing-power-monitoring-metrics" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xl:href="../monitoring/enabling-monitoring-for-user-defined-projects.xml#enabling-monitoring-for-user-defined-projects_enabling-monitoring-for-user-defined-projects">Enabling monitoring for user-defined projects</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="uninstalling-power-monitoring">
+<title>Uninstalling power monitoring</title>
+
+<important>
+<simpara>Power monitoring is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xl:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<simpara>You can uninstall power monitoring by deleting the Kepler instance and then the Power monitoring Operator in the {product-title} web console.</simpara>
+<section xml:id="power-monitoring-deleting-kepler_uninstalling-power-monitoring">
+<title>Deleting Kepler</title>
+<simpara>You can delete Kepler by removing the Kepler instance of the <literal>Kepler</literal> custom resource definition (CRD) from the {product-title} web console.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You have access to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are logged in as a user with the <literal>cluster-admin</literal> role.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>In the <emphasis role="strong">Administrator</emphasis> perspective of the web console, go to <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">Installed Operators</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Power monitoring for Red Hat OpenShift</emphasis> from the <emphasis role="strong">Installed Operators</emphasis> list and go to the <emphasis role="strong">Kepler</emphasis> tab.</simpara>
+</listitem>
+<listitem>
+<simpara>Locate the Kepler instance entry in the list.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <inlinemediaobject>
+<imageobject>
+<imagedata fileref="images/kebab.png"/>
+</imageobject>
+<textobject><phrase>kebab</phrase></textobject>
+</inlinemediaobject> for this entry and select <emphasis role="strong">Delete Kepler</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Delete Kepler?</emphasis> dialog, click <emphasis role="strong">Delete</emphasis> to delete the Kepler instance.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="power-monitoring-uninstalling-pmo_uninstalling-power-monitoring">
+<title>Uninstalling the Power monitoring Operator</title>
+<simpara>If you installed the Power monitoring Operator by using OperatorHub, you can uninstall it from the {product-title} web console.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You have access to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are logged in as a user with the <literal>cluster-admin</literal> role.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Delete the Kepler instance.</simpara>
+<warning>
+<simpara>Ensure that you have deleted the Kepler instance before uninstalling the Power monitoring Operator.</simpara>
+</warning>
+</listitem>
+<listitem>
+<simpara>Go to <emphasis role="strong">Operators</emphasis> → <emphasis role="strong">Installed Operators</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Locate the <emphasis role="strong">Power monitoring for Red Hat OpenShift</emphasis> entry in the list.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <inlinemediaobject>
+<imageobject>
+<imagedata fileref="images/kebab.png"/>
+</imageobject>
+<textobject><phrase>kebab</phrase></textobject>
+</inlinemediaobject> for this entry and select <emphasis role="strong">Uninstall Operator</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Uninstall Operator?</emphasis> dialog, click <emphasis role="strong">Uninstall</emphasis> to uninstall the Power monitoring Operator.</simpara>
+</listitem>
+</orderedlist>
+</section>
+</chapter>
+</book>

@@ -1,0 +1,3823 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?asciidoc-toc?>
+<?asciidoc-numbered?>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
+<info>
+<title>Red Hat build of OpenTelemetry</title>
+<date>2024-02-13</date>
+</info>
+<chapter xml:id="otel-release-notes">
+<title>Release notes for Red Hat build of OpenTelemetry</title>
+
+<section xml:id="otel-product-overview">
+<title>Red Hat build of OpenTelemetry overview</title>
+<simpara>Red Hat build of OpenTelemetry is based on the open source <link xl:href="https://opentelemetry.io/">OpenTelemetry project</link>, which aims to provide unified, standardized, and vendor-neutral telemetry data collection for cloud-native software. Red Hat build of OpenTelemetry product provides support for deploying and managing the OpenTelemetry Collector and simplifying the workload instrumentation.</simpara>
+<simpara>The <link xl:href="https://opentelemetry.io/docs/collector/">OpenTelemetry Collector</link> can receive, process, and forward telemetry data in multiple formats, making it the ideal component for telemetry processing and interoperability between telemetry systems. The Collector provides a unified solution for collecting and processing metrics, traces, and logs.</simpara>
+<simpara>The OpenTelemetry Collector has a number of features including the following:</simpara>
+<variablelist>
+<varlistentry>
+<term>Data Collection and Processing Hub</term>
+<listitem>
+<simpara>It acts as a central component that gathers telemetry data like metrics and traces from various sources. This data can be created from instrumented applications and infrastructure.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Customizable telemetry data pipeline</term>
+<listitem>
+<simpara>The OpenTelemetry Collector is designed to be customizable. It supports various processors, exporters, and receivers.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Auto-instrumentation features</term>
+<listitem>
+<simpara>Automatic instrumentation simplifies the process of adding observability to applications. Developers don&#8217;t need to manually instrument their code for basic telemetry data.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>Here are some of the use cases for the OpenTelemetry Collector:</simpara>
+<variablelist>
+<varlistentry>
+<term>Centralized data collection</term>
+<listitem>
+<simpara>In a microservices architecture, the Collector can be deployed to aggregate data from multiple services.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Data enrichment and processing</term>
+<listitem>
+<simpara>Before forwarding data to analysis tools, the Collector can enrich, filter, and process this data.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Multi-backend receiving and exporting</term>
+<listitem>
+<simpara>The Collector can receive and send data to multiple monitoring and analysis platforms simultaneously.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</section>
+<section xml:id="otel-3-0-rn">
+<title>Red Hat build of OpenTelemetry 3.0</title>
+<simpara>Red Hat build of OpenTelemetry 3.0 is based on <link xl:href="https://opentelemetry.io/">OpenTelemetry</link> 0.89.0.</simpara>
+<section xml:id="new-features-and-enhancements_otel-3-0-rn">
+<title>New features and enhancements</title>
+<simpara>This update introduces the following enhancements:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>The <emphasis role="strong">OpenShift distributed tracing data collection Operator</emphasis> is renamed as the <emphasis role="strong">Red Hat build of OpenTelemetry Operator</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Support for the ARM architecture.</simpara>
+</listitem>
+<listitem>
+<simpara>Support for the Prometheus receiver for metrics collection.</simpara>
+</listitem>
+<listitem>
+<simpara>Support for the Kafka receiver and exporter for sending traces and metrics to Kafka.</simpara>
+</listitem>
+<listitem>
+<simpara>Support for cluster-wide proxy environments.</simpara>
+</listitem>
+<listitem>
+<simpara>The Red Hat build of OpenTelemetry Operator creates the Prometheus <literal>ServiceMonitor</literal> custom resource if the Prometheus exporter is enabled.</simpara>
+</listitem>
+<listitem>
+<simpara>The Operator enables the <literal>Instrumentation</literal> custom resource that allows injecting upstream OpenTelemetry auto-instrumentation libraries.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="removal-notice_otel-3-0-rn">
+<title>Removal notice</title>
+<itemizedlist>
+<listitem>
+<simpara>In Red Hat build of OpenTelemetry 3.0, the Jaeger exporter has been removed. Bug fixes and support are provided only through the end of the 2.9 lifecycle. As an alternative to the Jaeger exporter for sending data to the Jaeger collector, you can use the OTLP exporter instead.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="bug-fixes_otel-3-0-rn">
+<title>Bug fixes</title>
+<simpara>This update introduces the following bug fixes:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Fixed support for disconnected environments when using the <literal>oc adm catalog mirror</literal> CLI command.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="known-issues_otel-3-0-rn">
+<title>Known issues</title>
+<simpara>Curently, the cluster monitoring of the Red Hat build of OpenTelemetry Operator is disabled due to a bug (<link xl:href="https://issues.redhat.com/browse/TRACING-3761">TRACING-3761</link>). The bug is preventing the cluster monitoring from scraping metrics from the Red Hat build of OpenTelemetry Operator due to a missing label <literal>openshift.io/cluster-monitoring=true</literal>
+ that is required for the cluster monitoring and service monitor object.</simpara>
+<formalpara>
+<title>Workaround</title>
+<para>You can enable the cluster monitoring as follows:</para>
+</formalpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Add the following label in the Operator namespace: <literal>oc label namespace openshift-opentelemetry-operator openshift.io/cluster-monitoring=true</literal></simpara>
+</listitem>
+<listitem>
+<simpara>Create a service monitor, role, and role binding:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: opentelemetry-operator-controller-manager-metrics-service
+  namespace: openshift-opentelemetry-operator
+spec:
+  endpoints:
+  - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    path: /metrics
+    port: https
+    scheme: https
+    tlsConfig:
+      insecureSkipVerify: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opentelemetry-operator
+      control-plane: controller-manager
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: otel-operator-prometheus
+  namespace: openshift-opentelemetry-operator
+  annotations:
+    include.release.openshift.io/self-managed-high-availability: "true"
+    include.release.openshift.io/single-node-developer: "true"
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - endpoints
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: otel-operator-prometheus
+  namespace: openshift-opentelemetry-operator
+  annotations:
+    include.release.openshift.io/self-managed-high-availability: "true"
+    include.release.openshift.io/single-node-developer: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: otel-operator-prometheus
+subjects:
+- kind: ServiceAccount
+  name: prometheus-k8s
+  namespace: openshift-monitoring</programlisting>
+</listitem>
+</orderedlist>
+</section>
+</section>
+<section xml:id="support_otel-release-notes">
+<title>Getting support</title>
+<simpara>If you experience difficulty with a procedure described in this documentation, or with {product-title} in general, visit the <link xl:href="http://access.redhat.com">Red Hat Customer Portal</link>.</simpara>
+<simpara>From the Customer Portal, you can:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Search or browse through the Red Hat Knowledgebase of articles and solutions relating to Red Hat products.</simpara>
+</listitem>
+<listitem>
+<simpara>Submit a support case to Red Hat Support.</simpara>
+</listitem>
+<listitem>
+<simpara>Access other product documentation.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>To identify issues with your cluster, you can use Insights in <link xl:href="https://console.redhat.com/openshift">OpenShift Cluster Manager Hybrid Cloud Console</link>. Insights provides details about issues and, if available, information on how to solve a problem.</simpara>
+<simpara>If you have a suggestion for improving this documentation or have found an
+error, submit a <link xl:href="https://issues.redhat.com/secure/CreateIssueDetails!init.jspa?pid=12332330&amp;summary=Documentation_issue&amp;issuetype=1&amp;components=12367614&amp;priority=10200&amp;versions=12385624">Jira issue</link> for the most relevant documentation component. Please provide specific details, such as the section name and {product-title} version.</simpara>
+</section>
+<section xml:id="making-open-source-more-inclusive_otel-release-notes">
+<title>Making open source more inclusive</title>
+<simpara>Red Hat is committed to replacing problematic language in our code, documentation, and web properties. We are beginning with these four terms: master, slave, blacklist, and whitelist. Because of the enormity of this endeavor, these changes will be implemented gradually over several upcoming releases. For more details, see <link xl:href="https://www.redhat.com/en/blog/making-open-source-more-inclusive-eradicating-problematic-language">our CTO Chris Wright&#8217;s message</link>.</simpara>
+</section>
+</chapter>
+<chapter xml:id="install-otel">
+<title>Installing the Red Hat build of OpenTelemetry</title>
+
+<simpara>Installing the Red Hat build of OpenTelemetry involves the following steps:</simpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Installing the Red Hat build of OpenTelemetry Operator.</simpara>
+</listitem>
+<listitem>
+<simpara>Creating a namespace for an OpenTelemetry Collector instance.</simpara>
+</listitem>
+<listitem>
+<simpara>Creating an <literal>OpenTelemetryCollector</literal> custom resource to deploy the OpenTelemetry Collector instance.</simpara>
+</listitem>
+</orderedlist>
+<section xml:id="installing-otel-by-using-the-web-console_install-otel">
+<title>Installing the Red Hat build of OpenTelemetry from the web console</title>
+<simpara>You can install the Red Hat build of OpenTelemetry from the <emphasis role="strong">Administrator</emphasis> view of the web console.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You are logged in to the web console as a cluster administrator with the <literal>cluster-admin</literal> role.</simpara>
+</listitem>
+<listitem>
+<simpara>For Red Hat OpenShift Dedicated, you must be logged in using an account with the <literal>dedicated-admin</literal> role.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Install the Red Hat build of OpenTelemetry Operator:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Go to <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">OperatorHub</emphasis> and search for <literal>Red Hat build of OpenTelemetry Operator</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>Select the <emphasis role="strong">Red Hat build of OpenTelemetry Operator</emphasis> that is <emphasis role="strong">provided by Red Hat</emphasis> &#8594; <emphasis role="strong">Install</emphasis> &#8594; <emphasis role="strong">Install</emphasis> &#8594; <emphasis role="strong">View Operator</emphasis>.</simpara>
+<important>
+<simpara>This installs the Operator with the default presets:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><emphasis role="strong">Update channel</emphasis> &#8594; <emphasis role="strong">stable</emphasis></simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">Installation mode</emphasis> &#8594; <emphasis role="strong">All namespaces on the cluster</emphasis></simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">Installed Namespace</emphasis> &#8594; <emphasis role="strong">openshift-operators</emphasis></simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">Update approval</emphasis> &#8594; <emphasis role="strong">Automatic</emphasis></simpara>
+</listitem>
+</itemizedlist>
+</important>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Details</emphasis> tab of the installed Operator page, under <emphasis role="strong">ClusterServiceVersion details</emphasis>, verify that the installation <emphasis role="strong">Status</emphasis> is <emphasis role="strong">Succeeded</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Create a project of your choice for the <emphasis role="strong">OpenTelemetry Collector</emphasis> instance that you will create in the next step by going to <emphasis role="strong">Home</emphasis> &#8594; <emphasis role="strong">Projects</emphasis> &#8594; <emphasis role="strong">Create Project</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Create an <emphasis role="strong">OpenTelemetry Collector</emphasis> instance.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Go to <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">Installed Operators</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Select <emphasis role="strong">OpenTelemetry Collector</emphasis> &#8594; <emphasis role="strong">Create OpenTelemetry Collector</emphasis> &#8594; <emphasis role="strong">YAML view</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">YAML view</emphasis>, customize the <literal>OpenTelemetryCollector</literal> custom resource (CR) with the OTLP, Jaeger, Zipkin receivers and the debug exporter.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel
+  namespace: &lt;project_of_opentelemetry_collector_instance&gt;
+spec:
+  mode: deployment
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+      jaeger:
+        protocols:
+          grpc:
+          thrift_binary:
+          thrift_compact:
+          thrift_http:
+      zipkin:
+    processors:
+      batch:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 50
+        spike_limit_percentage: 30
+    exporters:
+      debug:
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp,jaeger,zipkin]
+          processors: [memory_limiter,batch]
+          exporters: [debug]</programlisting>
+</listitem>
+<listitem>
+<simpara>Select <emphasis role="strong">Create</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+<orderedlist numeration="arabic">
+<title>Verification</title>
+<listitem>
+<simpara>Use the <emphasis role="strong">Project:</emphasis> dropdown list to select the project of the <emphasis role="strong">OpenTelemetry Collector</emphasis> instance.</simpara>
+</listitem>
+<listitem>
+<simpara>Go to <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">Installed Operators</emphasis> to verify that the <emphasis role="strong">Status</emphasis> of the <emphasis role="strong">OpenTelemetry Collector</emphasis> instance is <emphasis role="strong">Condition: Ready</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Go to <emphasis role="strong">Workloads</emphasis> &#8594; <emphasis role="strong">Pods</emphasis> to verify that all the component pods of the <emphasis role="strong">OpenTelemetry Collector</emphasis> instance are running.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="installing-otel-by-using-the-cli_install-otel">
+<title>Installing the Red Hat build of OpenTelemetry by using the CLI</title>
+<simpara>You can install the Red Hat build of OpenTelemetry from the command line.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>An active OpenShift CLI (<literal>oc</literal>) session by a cluster administrator with the <literal>cluster-admin</literal> role.</simpara>
+<tip>
+<itemizedlist>
+<listitem>
+<simpara>Ensure that your OpenShift CLI (<literal>oc</literal>) version is up to date and matches your {product-title} version.</simpara>
+</listitem>
+<listitem>
+<simpara>Run <literal>oc login</literal>:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc login --username=&lt;your_username&gt;</programlisting>
+</listitem>
+</itemizedlist>
+</tip>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Install the Red Hat build of OpenTelemetry Operator:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Create a project for the Red Hat build of OpenTelemetry Operator by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc apply -f - &lt;&lt; EOF
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  labels:
+    kubernetes.io/metadata.name: openshift-opentelemetry-operator
+    openshift.io/cluster-monitoring: "true"
+  name: openshift-opentelemetry-operator
+EOF</programlisting>
+</listitem>
+<listitem>
+<simpara>Create an Operator group by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc apply -f - &lt;&lt; EOF
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: openshift-opentelemetry-operator
+  namespace: openshift-opentelemetry-operator
+spec:
+  upgradeStrategy: Default
+EOF</programlisting>
+</listitem>
+<listitem>
+<simpara>Create a subscription by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc apply -f - &lt;&lt; EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: opentelemetry-product
+  namespace: openshift-opentelemetry-operator
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: opentelemetry-product
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+EOF</programlisting>
+</listitem>
+<listitem>
+<simpara>Check the Operator status by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get csv -n openshift-opentelemetry-operator</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Create a project of your choice for the OpenTelemetry Collector instance that you will create in a subsequent step:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>To create a project without metadata, run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc new-project &lt;project_of_opentelemetry_collector_instance&gt;</programlisting>
+</listitem>
+<listitem>
+<simpara>To create a project with metadata, run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc apply -f - &lt;&lt; EOF
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: &lt;project_of_opentelemetry_collector_instance&gt;
+EOF</programlisting>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>Create an OpenTelemetry Collector instance in the project that you created for it.</simpara>
+<note>
+<simpara>You can create multiple OpenTelemetry Collector instances in separate projects on the same cluster.</simpara>
+</note>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Customize the <literal>OpenTelemetry Collector</literal> custom resource (CR)  with the OTLP, Jaeger, and Zipkin receivers and the debug exporter:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel
+  namespace: &lt;project_of_opentelemetry_collector_instance&gt;
+spec:
+  mode: deployment
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+      jaeger:
+        protocols:
+          grpc:
+          thrift_binary:
+          thrift_compact:
+          thrift_http:
+      zipkin:
+    processors:
+      batch:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 50
+        spike_limit_percentage: 30
+    exporters:
+      debug:
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp,jaeger,zipkin]
+          processors: [memory_limiter,batch]
+          exporters: [debug]</programlisting>
+</listitem>
+<listitem>
+<simpara>Apply the customized CR by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc apply -f - &lt;&lt; EOF
+&lt;OpenTelemetryCollector_custom_resource&gt;
+EOF</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+<orderedlist numeration="arabic">
+<title>Verification</title>
+<listitem>
+<simpara>Verify that the <literal>status.phase</literal> of the OpenTelemetry Collector pod is <literal>Running</literal> and the <literal>conditions</literal> are <literal>type: Ready</literal> by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get pod -l app.kubernetes.io/managed-by=opentelemetry-operator,app.kubernetes.io/instance=&lt;namespace&gt;.&lt;instance_name&gt; -o yaml</programlisting>
+</listitem>
+<listitem>
+<simpara>Get the OpenTelemetry Collector service by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get service -l app.kubernetes.io/managed-by=opentelemetry-operator,app.kubernetes.io/instance=&lt;namespace&gt;.&lt;instance_name&gt;</programlisting>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="additional-resources_otel-installing" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xl:href="../post_installation_configuration/preparing-for-users.xml#creating-cluster-admin_post-install-preparing-for-users">Creating a cluster admin</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="https://operatorhub.io/">OperatorHub.io</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../web_console/web-console.xml#web-console">Accessing the web console</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../operators/admin/olm-adding-operators-to-cluster.xml#olm-installing-from-operatorhub-using-web-console_olm-adding-operators-to-a-cluster">Installing from OperatorHub using the web console</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../operators/user/olm-creating-apps-from-installed-operators.xml#olm-creating-apps-from-installed-operators">Creating applications from installed Operators</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/getting-started-cli.xml#getting-started-cli">Getting started with the OpenShift CLI</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="otel-configuring">
+<title>Configuring and deploying the Red Hat build of OpenTelemetry</title>
+
+<simpara>The Red Hat build of OpenTelemetry Operator uses a custom resource definition (CRD) file that defines the architecture and configuration settings to be used when creating and deploying the Red Hat build of OpenTelemetry resources. You can install the default configuration or modify the file.</simpara>
+<section xml:id="otel-collector-config-options_otel-configuring">
+<title>OpenTelemetry Collector configuration options</title>
+<simpara>The OpenTelemetry Collector consists of five types of components that access telemetry data:</simpara>
+<variablelist>
+<varlistentry>
+<term>Receivers</term>
+<listitem>
+<simpara>A receiver, which can be push or pull based, is how data gets into the Collector. Generally, a receiver accepts data in a specified format, translates it into the internal format, and passes it to processors and exporters defined in the applicable pipelines. By default, no receivers are configured. One or more receivers must be configured. Receivers may support one or more data sources.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Processors</term>
+<listitem>
+<simpara>Optional. Processors process the data between it is received and exported. By default, no processors are enabled. Processors must be enabled for every data source. Not all processors support all data sources. Depending on the data source, multiple processors might be enabled. Note that the order of processors matters.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Exporters</term>
+<listitem>
+<simpara>An exporter, which can be push or pull based, is how you send data to one or more back ends or destinations. By default, no exporters are configured. One or more exporters must be configured. Exporters can support one or more data sources. Exporters might be used with their default settings, but many exporters require configuration to specify at least the destination and security settings.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Connectors</term>
+<listitem>
+<simpara>A connector connects two pipelines. It consumes data as an exporter at the end of one pipeline and emits data as a receiver at the start of another pipeline. It can consume and emit data of the same or different data type. It can generate and emit data to summarize the consumed data, or it can merely replicate or route data.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Extensions</term>
+<listitem>
+<simpara>An extension adds capabilities to the Collector. For example, authentication can be added to the receivers and exporters automatically.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>You can define multiple instances of components in a custom resource YAML file. When configured, these components must be enabled through pipelines defined in the <literal>spec.config.service</literal> section of the YAML file. As a best practice, only enable the components that you need.</simpara>
+<formalpara>
+<title>Example of the OpenTelemetry Collector custom resource file</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: cluster-collector
+  namespace: tracing-system
+spec:
+  mode: deployment
+  observability:
+    metrics:
+      enableMetrics: true
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+    processors:
+    exporters:
+      otlp:
+        endpoint: jaeger-production-collector-headless.tracing-system.svc:4317
+        tls:
+          ca_file: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+      prometheus:
+        endpoint: 0.0.0.0:8889
+        resource_to_telemetry_conversion:
+          enabled: true # by default resource attributes are dropped
+    service: <co xml:id="CO1-1"/>
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: []
+          exporters: [jaeger]
+        metrics:
+          receivers: [otlp]
+          processors: []
+          exporters: [prometheus]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO1-1">
+<para>If a component is configured but not defined in the <literal>service</literal> section, the component is not enabled.</para>
+</callout>
+</calloutlist>
+<table frame="all" rowsep="1" colsep="1">
+<title>Parameters used by the Operator to define the OpenTelemetry Collector</title>
+<tgroup cols="4">
+<colspec colname="col_1" colwidth="25*"/>
+<colspec colname="col_2" colwidth="25*"/>
+<colspec colname="col_3" colwidth="25*"/>
+<colspec colname="col_4" colwidth="25*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Parameter</entry>
+<entry align="left" valign="top">Description</entry>
+<entry align="left" valign="top">Values</entry>
+<entry align="left" valign="top">Default</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">receivers:</literallayout></entry>
+<entry align="left" valign="top"><simpara>A receiver is how data gets into the Collector. By default, no receivers are configured. There must be at least one enabled receiver for a configuration to be considered valid. Receivers are enabled by being added to a pipeline.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>otlp</literal>, <literal>jaeger</literal>, <literal>prometheus</literal>, <literal>zipkin</literal>, <literal>kafka</literal>, <literal>opencensus</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>None</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">processors:</literallayout></entry>
+<entry align="left" valign="top"><simpara>Processors run through the data between it is received and exported. By default, no processors are enabled.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>batch</literal>, <literal>memory_limiter</literal>, <literal>resourcedetection</literal>, <literal>attributes</literal>, <literal>span</literal>, <literal>k8sattributes</literal>, <literal>filter</literal>, <literal>routing</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>None</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">exporters:</literallayout></entry>
+<entry align="left" valign="top"><simpara>An exporter sends data to one or more back ends or destinations. By default, no exporters are configured. There must be at least one enabled exporter for a configuration to be considered valid. Exporters are enabled by being added to a pipeline. Exporters might be used with their default settings, but many require configuration to specify at least the destination and security settings.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>otlp</literal>, <literal>otlphttp</literal>, <literal>debug</literal>, <literal>prometheus</literal>, <literal>kafka</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>None</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">connectors:</literallayout></entry>
+<entry align="left" valign="top"><simpara>Connectors join pairs of pipelines, that is by consuming data as end-of-pipeline exporters and emitting data as start-of-pipeline receivers, and can be used to summarize, replicate, or route consumed data.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>spanmetrics</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>None</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">extensions:</literallayout></entry>
+<entry align="left" valign="top"><simpara>Optional components for tasks that do not involve processing telemetry data.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>bearertokenauth</literal>, <literal>oauth2client</literal>, <literal>jaegerremotesamplin</literal>, <literal>pprof</literal>, <literal>health_check</literal>, <literal>memory_ballast</literal>, <literal>zpages</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>None</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">service:
+  pipelines:</literallayout></entry>
+<entry align="left" valign="top"><simpara>Components are enabled by adding them to a pipeline under <literal>services.pipeline</literal>.</simpara></entry>
+<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">service:
+  pipelines:
+    traces:
+      receivers:</literallayout></entry>
+<entry align="left" valign="top"><simpara>You enable receivers for tracing by adding them under <literal>service.pipelines.traces</literal>.</simpara></entry>
+<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>None</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">service:
+  pipelines:
+    traces:
+      processors:</literallayout></entry>
+<entry align="left" valign="top"><simpara>You enable processors for tracing by adding them under <literal>service.pipelines.traces</literal>.</simpara></entry>
+<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>None</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">service:
+  pipelines:
+    traces:
+      exporters:</literallayout></entry>
+<entry align="left" valign="top"><simpara>You enable exporters for tracing by adding them under <literal>service.pipelines.traces</literal>.</simpara></entry>
+<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>None</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">service:
+  pipelines:
+    metrics:
+      receivers:</literallayout></entry>
+<entry align="left" valign="top"><simpara>You enable receivers for metrics by adding them under <literal>service.pipelines.metrics</literal>.</simpara></entry>
+<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>None</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">service:
+  pipelines:
+    metrics:
+      processors:</literallayout></entry>
+<entry align="left" valign="top"><simpara>You enable processors for metircs by adding them under <literal>service.pipelines.metrics</literal>.</simpara></entry>
+<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>None</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">service:
+  pipelines:
+    metrics:
+      exporters:</literallayout></entry>
+<entry align="left" valign="top"><simpara>You enable exporters for metrics by adding them under <literal>service.pipelines.metrics</literal>.</simpara></entry>
+<entry align="left" valign="top"></entry>
+<entry align="left" valign="top"><simpara>None</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<section xml:id="otel-collector-components_otel-configuring">
+<title>OpenTelemetry Collector components</title>
+<section xml:id="receivers_otel-configuring">
+<title>Receivers</title>
+<simpara>Receivers get data into the Collector.</simpara>
+<section xml:id="otlp-receiver_otel-configuring">
+<title>OTLP Receiver</title>
+<simpara>The OTLP receiver ingests traces and metrics using the OpenTelemetry protocol (OTLP).</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with an enabled OTLP receiver</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317 <co xml:id="CO2-1"/>
+            tls: <co xml:id="CO2-2"/>
+              ca_file: ca.pem
+              cert_file: cert.pem
+              key_file: key.pem
+              client_ca_file: client.pem <co xml:id="CO2-3"/>
+              reload_interval: 1h <co xml:id="CO2-4"/>
+          http:
+            endpoint: 0.0.0.0:4318 <co xml:id="CO2-5"/>
+            tls: <co xml:id="CO2-6"/>
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+        metrics:
+          receivers: [otlp]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO2-1">
+<para>The OTLP gRPC endpoint. If omitted, the default <literal>0.0.0.0:4317</literal> is used.</para>
+</callout>
+<callout arearefs="CO2-2">
+<para>The server-side TLS configuration. Defines paths to TLS certificates. If omitted, TLS is disabled.</para>
+</callout>
+<callout arearefs="CO2-3">
+<para>The path to the TLS certificate at which the server verifies a client certificate. This sets the value of <literal>ClientCAs</literal> and <literal>ClientAuth</literal> to <literal>RequireAndVerifyClientCert</literal> in the <literal>TLSConfig</literal>. For more information, see the <link xl:href="https://godoc.org/crypto/tls#Config"><literal>Config</literal> of the Golang TLS package</link>.</para>
+</callout>
+<callout arearefs="CO2-4">
+<para>Specifies the time interval at which the certificate is reloaded. If the value is not set, the certificate is never reloaded. The <literal>reload_interval</literal> accepts a string containing valid units of time such as <literal>ns</literal>, <literal>us</literal> (or <literal>µs</literal>), <literal>ms</literal>, <literal>s</literal>, <literal>m</literal>, <literal>h</literal>.</para>
+</callout>
+<callout arearefs="CO2-5">
+<para>The OTLP HTTP endpoint. The default value is <literal>0.0.0.0:4318</literal>.</para>
+</callout>
+<callout arearefs="CO2-6">
+<para>The server-side TLS configuration. For more information, see the <literal>grpc</literal> protocol configuration section.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="jaeger-receiver_otel-configuring">
+<title>Jaeger Receiver</title>
+<simpara>The Jaeger receiver ingests traces in the Jaeger formats.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with an enabled Jaeger receiver</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    receivers:
+      jaeger:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:14250 <co xml:id="CO3-1"/>
+          thrift_http:
+            endpoint: 0.0.0.0:14268 <co xml:id="CO3-2"/>
+          thrift_compact:
+            endpoint: 0.0.0.0:6831 <co xml:id="CO3-3"/>
+          thrift_binary:
+            endpoint: 0.0.0.0:6832 <co xml:id="CO3-4"/>
+          tls: <co xml:id="CO3-5"/>
+
+    service:
+      pipelines:
+        traces:
+          receivers: [jaeger]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO3-1">
+<para>The Jaeger gRPC endpoint. If omitted, the default <literal>0.0.0.0:14250</literal> is used.</para>
+</callout>
+<callout arearefs="CO3-2">
+<para>The Jaeger Thrift HTTP endpoint. If omitted, the default <literal>0.0.0.0:14268</literal> is used.</para>
+</callout>
+<callout arearefs="CO3-3">
+<para>The Jaeger Thrift Compact endpoint. If omitted, the default <literal>0.0.0.0:6831</literal> is used.</para>
+</callout>
+<callout arearefs="CO3-4">
+<para>The Jaeger Thrift Binary endpoint. If omitted, the default <literal>0.0.0.0:6832</literal> is used.</para>
+</callout>
+<callout arearefs="CO3-5">
+<para>The  server-side TLS configuration. See the OTLP receiver configuration section for more details.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="prometheus-receiver_otel-configuring">
+<title>Prometheus Receiver</title>
+<simpara>The Prometheus receiver is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Prometheus receiver scrapes the metrics endpoints.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with an enabled Prometheus receiver</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    receivers:
+        prometheus:
+          config:
+            scrape_configs: <co xml:id="CO4-1"/>
+              - job_name: 'my-app'  <co xml:id="CO4-2"/>
+                scrape_interval: 5s <co xml:id="CO4-3"/>
+                static_configs:
+                  - targets: ['my-app.example.svc.cluster.local:8888'] <co xml:id="CO4-4"/>
+    service:
+      pipelines:
+        metrics:
+          receivers: [prometheus]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO4-1">
+<para>Scrapes configurations using the Prometheus format.</para>
+</callout>
+<callout arearefs="CO4-2">
+<para>The Prometheus job name.</para>
+</callout>
+<callout arearefs="CO4-3">
+<para>The lnterval for scraping the metrics data. Accepts time units. The default value is <literal>1m</literal>.</para>
+</callout>
+<callout arearefs="CO4-4">
+<para>The targets at which the metrics are exposed. This example scrapes the metrics from a <literal>my-app</literal> application in the <literal>example</literal> project.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="zipkin-receiver_otel-configuring">
+<title>Zipkin Receiver</title>
+<simpara>The Zipkin receiver ingests traces in the Zipkin v1 and v2 formats.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with the enabled Zipkin receiver</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    receivers:
+      zipkin:
+        endpoint: 0.0.0.0:9411 <co xml:id="CO5-1"/>
+        tls: <co xml:id="CO5-2"/>
+
+    service:
+      pipelines:
+        traces:
+          receivers: [zipkin]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO5-1">
+<para>The Zipkin HTTP endpoint. If omitted, the default <literal>0.0.0.0:9411</literal> is used.</para>
+</callout>
+<callout arearefs="CO5-2">
+<para>The server-side TLS configuration. See the OTLP receiver configuration section for more details.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="kafka-receiver_otel-configuring">
+<title>Kafka Receiver</title>
+<simpara>The Kafka receiver is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Kafka receiver receives traces, metrics, and logs from Kafka in the OTLP format.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with the enabled Kafka receiver</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    receivers:
+      kafka:
+        brokers: ["localhost:9092"] <co xml:id="CO6-1"/>
+        protocol_version: 2.0.0 <co xml:id="CO6-2"/>
+        topic: otlp_spans <co xml:id="CO6-3"/>
+        auth:
+          plain_text: <co xml:id="CO6-4"/>
+            username: example
+            password: example
+          tls: <co xml:id="CO6-5"/>
+            ca_file: ca.pem
+            cert_file: cert.pem
+            key_file: key.pem
+            insecure: false <co xml:id="CO6-6"/>
+            server_name_override: kafka.example.corp <co xml:id="CO6-7"/>
+    service:
+      pipelines:
+        traces:
+          receivers: [kafka]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO6-1">
+<para>The list of Kafka brokers. The default is <literal>localhost:9092</literal>.</para>
+</callout>
+<callout arearefs="CO6-2">
+<para>The Kafka protocol version. For example, <literal>2.0.0</literal>. This is a required field.</para>
+</callout>
+<callout arearefs="CO6-3">
+<para>The name of the Kafka topic to read from. The default is <literal>otlp_spans</literal>.</para>
+</callout>
+<callout arearefs="CO6-4">
+<para>The plaintext authentication configuration. If omitted, plaintext authentication is disabled.</para>
+</callout>
+<callout arearefs="CO6-5">
+<para>The client-side TLS configuration. Defines paths to the TLS certificates. If omitted, TLS authentication is disabled.</para>
+</callout>
+<callout arearefs="CO6-6">
+<para>Disables verifying the server&#8217;s certificate chain and host name. The default is <literal>false</literal>.</para>
+</callout>
+<callout arearefs="CO6-7">
+<para>ServerName indicates the name of the server requested by the client to support virtual hosting.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="opencensus-receiver_otel-configuring">
+<title>OpenCensus receiver</title>
+<simpara>The OpenCensus receiver provides backwards compatibility with the OpenCensus project for easier migration of instrumented codebases. It receives metrics and traces in the OpenCensus format via gRPC or HTTP and Json.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with the enabled OpenCensus receiver</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    receivers:
+      opencensus:
+        endpoint: 0.0.0.0:9411 <co xml:id="CO7-1"/>
+        tls: <co xml:id="CO7-2"/>
+        cors_allowed_origins: <co xml:id="CO7-3"/>
+          - https://*.&lt;example&gt;.com
+    service:
+      pipelines:
+        traces:
+          receivers: [opencensus]
+          ...</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO7-1">
+<para>The OpenCensus endpoint. If omitted, the default is <literal>0.0.0.0:55678</literal>.</para>
+</callout>
+<callout arearefs="CO7-2">
+<para>The server-side TLS configuration. See the OTLP receiver configuration section for more details.</para>
+</callout>
+<callout arearefs="CO7-3">
+<para>You can also use the HTTP JSON endpoint to optionally configure CORS, which is enabled by specifying a list of allowed CORS origins in this field.
+Wildcards with <literal>*</literal> are accepted under the <literal>cors_allowed_origins</literal>.
+To match any origin, enter only <literal>*</literal>.</para>
+</callout>
+</calloutlist>
+</section>
+</section>
+<section xml:id="processors_otel-configuring">
+<title>Processors</title>
+<simpara>Processors run through the data between it is received and exported.</simpara>
+<section xml:id="batch-processor_otel-configuring">
+<title>Batch processor</title>
+<simpara>The Batch processor batches traces and metrics to reduce the number of outgoing connections needed to transfer the telemetry information.</simpara>
+<formalpara>
+<title>Example of the OpenTelemetry Collector custom resource when using the Batch processor</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    processor:
+      batch:
+        timeout: 5s
+        send_batch_max_size: 10000
+    service:
+      pipelines:
+        traces:
+          processors: [batch]
+        metrics:
+          processors: [batch]</programlisting>
+</para>
+</formalpara>
+<table frame="all" rowsep="1" colsep="1">
+<title>Parameters used by the Batch processor</title>
+<tgroup cols="3">
+<colspec colname="col_1" colwidth="33.3333*"/>
+<colspec colname="col_2" colwidth="33.3333*"/>
+<colspec colname="col_3" colwidth="33.3334*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Parameter</entry>
+<entry align="left" valign="top">Description</entry>
+<entry align="left" valign="top">Default</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">timeout</literallayout></entry>
+<entry align="left" valign="top"><simpara>Sends the batch after a specific time duration and irrespective of the batch size.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>200ms</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">send_batch_size</literallayout></entry>
+<entry align="left" valign="top"><simpara>Sends the batch of telemetry data after the specified number of spans or metrics.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>8192</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">send_batch_max_size</literallayout></entry>
+<entry align="left" valign="top"><simpara>The maximum allowable size of the batch. Must be equal or greater than the <literal>send_batch_size</literal>.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>0</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">metadata_keys</literallayout></entry>
+<entry align="left" valign="top"><simpara>When activated, a batcher instance is created for each unique set of values found in the <literal>client.Metadata</literal>.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>[]</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">metadata_cardinality_limit</literallayout></entry>
+<entry align="left" valign="top"><simpara>When the <literal>metadata_keys</literal> are populated, this configuration restricts the number of distinct metadata key-value combinations processed throughout the duration of the process.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>1000</literal></simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</section>
+<section xml:id="memorylimiter-processor_otel-configuring">
+<title>Memory Limiter processor</title>
+<simpara>The Memory Limiter processor periodically checks the Collector&#8217;s memory usage and pauses data processing when the soft memory limit is reached. This processor supports traces, metrics, and logs. The preceding component, which is typically a receiver, is expected to retry sending the same data and may apply a backpressure to the incoming data. When memory usage exceeds the hard limit, the Memory Limiter processor forces garbage collection to run.</simpara>
+<formalpara>
+<title>Example of the OpenTelemetry Collector custom resource when using the Memory Limiter processor</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    processor:
+      memory_limiter:
+        check_interval: 1s
+        limit_mib: 4000
+        spike_limit_mib: 800
+    service:
+      pipelines:
+        traces:
+          processors: [batch]
+        metrics:
+          processors: [batch]</programlisting>
+</para>
+</formalpara>
+<table frame="all" rowsep="1" colsep="1">
+<title>Parameters used by the Memory Limiter processor</title>
+<tgroup cols="3">
+<colspec colname="col_1" colwidth="33.3333*"/>
+<colspec colname="col_2" colwidth="33.3333*"/>
+<colspec colname="col_3" colwidth="33.3334*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Parameter</entry>
+<entry align="left" valign="top">Description</entry>
+<entry align="left" valign="top">Default</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">check_interval</literallayout></entry>
+<entry align="left" valign="top"><simpara>Time between memory usage measurements. The optimal value is <literal>1s</literal>. For spiky traffic patterns, you can decrease the <literal>check_interval</literal> or increase the <literal>spike_limit_mib</literal>.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>0s</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">limit_mib</literallayout></entry>
+<entry align="left" valign="top"><simpara>The hard limit, which is the maximum amount of memory in MiB allocated on the heap. Typically, the total memory usage of the OpenTelemetry Collector is about 50 MiB greater than this value.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>0</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">spike_limit_mib</literallayout></entry>
+<entry align="left" valign="top"><simpara>Spike limit, which is the maximum expected spike of memory usage in MiB. The optimal value is approximately 20% of <literal>limit_mib</literal>. To calculate the soft limit, subtract the <literal>spike_limit_mib</literal> from the <literal>limit_mib</literal>.</simpara></entry>
+<entry align="left" valign="top"><simpara>20% of <literal>limit_mib</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">limit_percentage</literallayout></entry>
+<entry align="left" valign="top"><simpara>Same as the <literal>limit_mib</literal> but expressed as a percentage of the total available memory. The <literal>limit_mib</literal> setting takes precedence over this setting.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>0</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">spike_limit_percentage</literallayout></entry>
+<entry align="left" valign="top"><simpara>Same as the <literal>spike_limit_mib</literal> but expressed as a percentage of the total available memory. Intended to be used with the <literal>limit_percentage</literal> setting.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>0</literal></simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</section>
+<section xml:id="resource-detection-processor_otel-configuring">
+<title>Resource Detection processor</title>
+<simpara>The Resource Detection processor is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Resource Detection processor identifies host resource details in alignment with OpenTelemetry&#8217;s resource semantic standards. Using the detected information, it can add or replace the resource values in telemetry data. This processor supports traces, metrics, and can be used with multiple detectors such as the Docket metadata detector or the <literal>OTEL_RESOURCE_ATTRIBUTES</literal> environment variable detector.</simpara>
+<formalpara>
+<title>{product-title} permissions required for the Resource Detection processor</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">kind: ClusterRole
+metadata:
+  name: otel-collector
+rules:
+- apiGroups: ["config.openshift.io"]
+  resources: ["infrastructures", "infrastructures/status"]
+  verbs: ["get", "watch", "list"]</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>OpenTelemetry Collector using the Resource Detection processor</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    processor:
+      resourcedetection:
+        detectors: [openshift]
+        override: true
+    service:
+      pipelines:
+        traces:
+          processors: [resourcedetection]
+        metrics:
+          processors: [resourcedetection]</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>OpenTelemetry Collector using the Resource Detection Processor with an environment variable detector</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    processors:
+      resourcedetection/env:
+        detectors: [env] <co xml:id="CO8-1"/>
+        timeout: 2s
+        override: false</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO8-1">
+<para>Specifies which detector to use. In this example, the environment detector is specified.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="attributes-processor_otel-configuring">
+<title>Attributes processor</title>
+<simpara>The Attributes processor is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Attributes processor can modify attributes of a span, log, or metric. You can configure this processor to filter and match input data and include or exclude such data for specific actions.</simpara>
+<simpara>The processor operates on a list of actions, executing them in the order specified in the configuration. The following actions are supported:</simpara>
+<variablelist>
+<varlistentry>
+<term>Insert</term>
+<listitem>
+<simpara>Inserts a new attribute into the input data when the specified key does not already exist.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Update</term>
+<listitem>
+<simpara>Updates an attribute in the input data if the key already exists.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Upsert</term>
+<listitem>
+<simpara>Combines the insert and update actions: Inserts a new attribute if the key does not exist yet. Updates the attribute if the key already exists.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Delete</term>
+<listitem>
+<simpara>Removes an attribute from the input data.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Hash</term>
+<listitem>
+<simpara>Hashes an existing attribute value as SHA1.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Extract</term>
+<listitem>
+<simpara>Extracts values by using a regular expression rule from the input key to the target keys defined in the rule. If a target key already exists, it will be overridden similarly to the Span processor&#8217;s <literal>to_attributes</literal> setting with the existing attribute as the source.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Convert</term>
+<listitem>
+<simpara>Converts an existing attribute to a specified type.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<formalpara>
+<title>OpenTelemetry Collector using the Attributes processor</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    processors:
+      attributes/example:
+        actions:
+          - key: db.table
+            action: delete
+          - key: redacted_span
+            value: true
+            action: upsert
+          - key: copy_key
+            from_attribute: key_original
+            action: update
+          - key: account_id
+            value: 2245
+            action: insert
+          - key: account_password
+            action: delete
+          - key: account_email
+            action: hash
+          - key: http.status_code
+            action: convert
+            converted_type: int</programlisting>
+</para>
+</formalpara>
+</section>
+<section xml:id="resource-processor_otel-configuring">
+<title>Resource processor</title>
+<simpara>The Resource processor is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Resource processor applies changes to the resource attributes. This processor supports traces, metrics, and logs.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector using the Resource Detection processor</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    processor:
+      attributes:
+      - key: cloud.availability_zone
+        value: "zone-1"
+        action: upsert
+      - key: k8s.cluster.name
+        from_attribute: k8s-cluster
+        action: insert
+      - key: redundant-attribute
+        action: delete</programlisting>
+</para>
+</formalpara>
+<simpara>Attributes represent the actions that are applied to the resource attributes, such as delete the attribute, insert the attribute, or upsert the attribute.</simpara>
+</section>
+<section xml:id="span-processor_otel-configuring">
+<title>Span processor</title>
+<simpara>The Span processor is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Span processor modifies the span name based on its attributes or extracts the span attributes from the span name. It can also change the span status. It can also include or exclude spans. This processor supports traces.</simpara>
+<simpara>Span renaming requires specifying attributes for the new name by using the <literal>from_attributes</literal> configuration.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector using the Span processor for renaming a span</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    processor:
+      span:
+        name:
+          from_attributes: [&lt;key1&gt;, &lt;key2&gt;, ...] <co xml:id="CO9-1"/>
+          separator: &lt;value&gt; <co xml:id="CO9-2"/></programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO9-1">
+<para>Defines the keys to form the new span name.</para>
+</callout>
+<callout arearefs="CO9-2">
+<para>An optional separator.</para>
+</callout>
+</calloutlist>
+<simpara>You can use the processor to extract attributes from the span name.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector using the Span processor for extracting attributes from a span name</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    processor:
+      span/to_attributes:
+        name:
+          to_attributes:
+            rules:
+              - ^\/api\/v1\/document\/(?P&lt;documentId&gt;.*)\/update$ <co xml:id="CO10-1"/></programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO10-1">
+<para>This rule defines how the extraction is to be executed. You can define more rules: for example, in this case, if the regular expression matches the name, a <literal>documentID</literal> attibute is created. In this example, if the input span name is <literal>/api/v1/document/12345678/update</literal>, this results in the <literal>/api/v1/document/{documentId}/update</literal> output span name, and a new <literal>"documentId"="12345678"</literal> attribute is added to the span.</para>
+</callout>
+</calloutlist>
+<simpara>You can have the span status modified.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector using the Span Processor for status change</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    processor:
+      span/set_status:
+        status:
+          code: Error
+          description: "&lt;error_description&gt;"</programlisting>
+</para>
+</formalpara>
+</section>
+<section xml:id="kubernetes-attributes-processor_otel-configuring">
+<title>Kubernetes Attributes processor</title>
+<simpara>The Kubernetes Attributes processor is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Kubernetes Attributes processor enables automatic configuration of spans, metrics, and log resource attributes by using the Kubernetes metadata.
+This processor supports traces, metrics, and logs.
+This processor automatically identifies the Kubernetes resources, extracts the metadata from them, and incorporates this extracted metadata as resource attributes into relevant spans, metrics, and logs. It utilizes the Kubernetes API to discover all pods operating within a cluster, maintaining records of their IP addresses, pod UIDs, and other relevant metadata.</simpara>
+<formalpara>
+<title>Minimum {product-title} permissions required for the Kubernetes Attributes processor</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">kind: ClusterRole
+metadata:
+  name: otel-collector
+rules:
+  - apiGroups: ['']
+    resources: ['pods', 'namespaces']
+    verbs: ['get', 'watch', 'list']</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>OpenTelemetry Collector using the Kubernetes Attributes processor</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    processors:
+         k8sattributes:
+             filter:
+                 node_from_env_var: KUBE_NODE_NAME</programlisting>
+</para>
+</formalpara>
+</section>
+</section>
+<section xml:id="filter-processor_otel-configuring">
+<title>Filter processor</title>
+<simpara>The Filter processor is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Filter processor leverages the OpenTelemetry Transformation Language to establish criteria for discarding telemetry data. If any of these conditions are satisfied, the telemetry data are discarded. The conditions can be combined by using the logical OR operator. This processor supports traces, metrics, and logs.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with an enabled OTLP exporter</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">config: |
+  processors:
+    filter/ottl:
+      error_mode: ignore <co xml:id="CO11-1"/>
+      traces:
+        span:
+          - 'attributes["container.name"] == "app_container_1"' <co xml:id="CO11-2"/>
+          - 'resource.attributes["host.name"] == "localhost"' <co xml:id="CO11-3"/></programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO11-1">
+<para>Defines the error mode. When set to <literal>ignore</literal>, ignores errors returned by conditions. When set to <literal>propagate</literal>, returns the error up the pipeline. An error causes the payload to be dropped from the Collector.</para>
+</callout>
+<callout arearefs="CO11-2">
+<para>Filters the spans that have the <literal>container.name == app_container_1</literal> attribute.</para>
+</callout>
+<callout arearefs="CO11-3">
+<para>Filters the spans that have the <literal>host.name == localhost</literal> resource attribute.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="routing-processor_otel-configuring">
+<title>Routing processor</title>
+<simpara>The Routing processor is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Routing processor routes logs, metrics, or traces to specific exporters. This processor can read a header from an incoming HTTP request (gRPC or plain HTTP) or can read a resource attribute, and then directs the trace information to relevant exporters according to the read value.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with an enabled OTLP exporter</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">config: |
+  processors:
+    routing:
+      from_attribute: X-Tenant <co xml:id="CO12-1"/>
+      default_exporters: <co xml:id="CO12-2"/>
+      - jaeger
+      table: <co xml:id="CO12-3"/>
+      - value: acme
+        exporters: [jaeger/acme]
+  exporters:
+    jaeger:
+      endpoint: localhost:14250
+    jaeger/acme:
+      endpoint: localhost:24250</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO12-1">
+<para>The HTTP header name for the lookup value when performing the route.</para>
+</callout>
+<callout arearefs="CO12-2">
+<para>The default exporter when the attribute value is not present in the table in the next section.</para>
+</callout>
+<callout arearefs="CO12-3">
+<para>The table that defines which values are to be routed to which exporters.</para>
+</callout>
+</calloutlist>
+<simpara>You can optionally create an <literal>attribute_source</literal> configuratiion, which defines where to look for the attribute in <literal>from_attribute</literal>. The allowed value is <literal>context</literal> to search the context, which includes the HTTP headers, or <literal>resource</literal> to search the resource attributes.</simpara>
+</section>
+<section xml:id="exporters_otel-configuring">
+<title>Exporters</title>
+<simpara>Exporters send data to one or more back ends or destinations.</simpara>
+<section xml:id="otlp-exporter_otel-configuring">
+<title>OTLP exporter</title>
+<simpara>The OTLP gRPC exporter exports traces and metrics using the OpenTelemetry protocol (OTLP).</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with an enabled OTLP exporter</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    exporters:
+      otlp:
+        endpoint: tempo-ingester:4317 <co xml:id="CO13-1"/>
+        tls: <co xml:id="CO13-2"/>
+          ca_file: ca.pem
+          cert_file: cert.pem
+          key_file: key.pem
+          insecure: false <co xml:id="CO13-3"/>
+          insecure_skip_verify: false # <co xml:id="CO13-4"/>
+          reload_interval: 1h <co xml:id="CO13-5"/>
+          server_name_override: &lt;name&gt; <co xml:id="CO13-6"/>
+        headers: <co xml:id="CO13-7"/>
+          X-Scope-OrgID: "dev"
+    service:
+      pipelines:
+        traces:
+          exporters: [otlp]
+        metrics:
+          exporters: [otlp]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO13-1">
+<para>The OTLP gRPC endpoint. If the <literal>https://</literal> scheme is used, then client transport security is enabled and overrides the <literal>insecure</literal> setting in the <literal>tls</literal>.</para>
+</callout>
+<callout arearefs="CO13-2">
+<para>The client-side TLS configuration. Defines paths to TLS certificates.</para>
+</callout>
+<callout arearefs="CO13-3">
+<para>Disables client transport security when set to <literal>true</literal>. The default value is <literal>false</literal> by default.</para>
+</callout>
+<callout arearefs="CO13-4">
+<para>Skips verifying the certificate when set to <literal>true</literal>. The default value is <literal>false</literal>.</para>
+</callout>
+<callout arearefs="CO13-5">
+<para>Specifies the time interval at which the certificate is reloaded. If the value is not set, the certificate is never reloaded. The <literal>reload_interval</literal> accepts a string containing valid units of time such as <literal>ns</literal>, <literal>us</literal> (or <literal>µs</literal>), <literal>ms</literal>, <literal>s</literal>, <literal>m</literal>, <literal>h</literal>.</para>
+</callout>
+<callout arearefs="CO13-6">
+<para>Overrides the virtual host name of authority such as the authority header field in requests. You can use this for testing.</para>
+</callout>
+<callout arearefs="CO13-7">
+<para>Headers are sent for every request performed during an established connection.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="otlp-http-exporter_otel-configuring">
+<title>OTLP HTTP exporter</title>
+<simpara>The OTLP HTTP exporter exports traces and metrics using the OpenTelemetry protocol (OTLP).</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with an enabled OTLP exporter</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    exporters:
+      otlphttp:
+        endpoint: http://tempo-ingester:4318 <co xml:id="CO14-1"/>
+        tls: <co xml:id="CO14-2"/>
+        headers: <co xml:id="CO14-3"/>
+          X-Scope-OrgID: "dev"
+        disable_keep_alives: false <co xml:id="CO14-4"/>
+
+    service:
+      pipelines:
+        traces:
+          exporters: [otlphttp]
+        metrics:
+          exporters: [otlphttp]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO14-1">
+<para>The OTLP HTTP endpoint. If the <literal>https://</literal> scheme is used, then client transport security is enabled and overrides the <literal>insecure</literal> setting in the <literal>tls</literal>.</para>
+</callout>
+<callout arearefs="CO14-2">
+<para>The client side TLS configuration. Defines paths to TLS certificates.</para>
+</callout>
+<callout arearefs="CO14-3">
+<para>Headers are sent in every HTTP request.</para>
+</callout>
+<callout arearefs="CO14-4">
+<para>If true, disables HTTP keep-alives. It will only use the connection to the server for a single HTTP request.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="debug-exporter_otel-configuring">
+<title>Debug exporter</title>
+<simpara>The Debug exporter prints traces and metrics to the standard output.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with an enabled Debug exporter</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    exporters:
+      debug:
+        verbosity: detailed <co xml:id="CO15-1"/>
+    service:
+      pipelines:
+        traces:
+          exporters: [logging]
+        metrics:
+          exporters: [logging]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO15-1">
+<para>Verbosity of the debug export: <literal>detailed</literal> or <literal>normal</literal> or <literal>basic</literal>. When set to <literal>detailed</literal>, pipeline data is verbosely logged. Defaults to <literal>normal</literal>.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="prometheus-exporter_otel-configuring">
+<title>Prometheus exporter</title>
+<simpara>The Prometheus exporter is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Prometheus exporter exports metrics in the Prometheus or OpenMetrics formats.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with an enabled Prometheus exporter</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  ports:
+  - name: promexporter <co xml:id="CO16-1"/>
+    port: 8889
+    protocol: TCP
+  config: |
+    exporters:
+      prometheus:
+        endpoint: 0.0.0.0:8889 <co xml:id="CO16-2"/>
+        tls: <co xml:id="CO16-3"/>
+          ca_file: ca.pem
+          cert_file: cert.pem
+          key_file: key.pem
+        namespace: prefix <co xml:id="CO16-4"/>
+        const_labels: <co xml:id="CO16-5"/>
+          label1: value1
+        enable_open_metrics: true <co xml:id="CO16-6"/>
+        resource_to_telemetry_conversion: <co xml:id="CO16-7"/>
+          enabled: true
+        metric_expiration: 180m <co xml:id="CO16-8"/>
+        add_metric_suffixes: false <co xml:id="CO16-9"/>
+    service:
+      pipelines:
+        metrics:
+          exporters: [prometheus]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO16-1">
+<para>Exposes the Prometheus port from the Collector pod and service. You can enable scraping of metrics by Prometheus by using the port name in <literal>ServiceMonitor</literal> or <literal>PodMonitor</literal> custom resource.</para>
+</callout>
+<callout arearefs="CO16-2">
+<para>The network endpoint where the metrics are exposed.</para>
+</callout>
+<callout arearefs="CO16-3">
+<para>The server-side TLS configuration. Defines paths to TLS certificates.</para>
+</callout>
+<callout arearefs="CO16-4">
+<para>If set, exports metrics under the provided value. No default.</para>
+</callout>
+<callout arearefs="CO16-5">
+<para>Key-value pair labels that are applied for every exported metric. No default.</para>
+</callout>
+<callout arearefs="CO16-6">
+<para>If <literal>true</literal>, metrics are exported using the OpenMetrics format. Exemplars are only exported in the OpenMetrics format and only for histogram and monotonic sum metrics such as <literal>counter</literal>. Disabled by default.</para>
+</callout>
+<callout arearefs="CO16-7">
+<para>If <literal>enabled</literal> is <literal>true</literal>, all the resource attributes are converted to metric labels by default. Disabled by default.</para>
+</callout>
+<callout arearefs="CO16-8">
+<para>Defines how long metrics are exposed without updates. The default is <literal>5m</literal>.</para>
+</callout>
+<callout arearefs="CO16-9">
+<para>Adds the metrics types and units suffixes. Must be disabled if the monitor tab in Jaeger console is enabled. The default is <literal>true</literal>.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="kafka-exporter_otel-configuring">
+<title>Kafka exporter</title>
+<simpara>The Kafka exporter is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Kafka exporter exports logs, metrics, and traces to Kafka. This exporter uses a synchronous producer that blocks and does not batch messages. It must be used with batch and queued retry processors for higher throughput and resiliency.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with an enabled Kafka exporter</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    exporters:
+      kafka:
+        brokers: ["localhost:9092"] <co xml:id="CO17-1"/>
+        protocol_version: 2.0.0 <co xml:id="CO17-2"/>
+        topic: otlp_spans <co xml:id="CO17-3"/>
+        auth:
+          plain_text: <co xml:id="CO17-4"/>
+            username: example
+            password: example
+          tls: <co xml:id="CO17-5"/>
+            ca_file: ca.pem
+            cert_file: cert.pem
+            key_file: key.pem
+            insecure: false <co xml:id="CO17-6"/>
+            server_name_override: kafka.example.corp <co xml:id="CO17-7"/>
+    service:
+      pipelines:
+        traces:
+          exporters: [kafka]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO17-1">
+<para>The list of Kafka brokers. The default is <literal>localhost:9092</literal>.</para>
+</callout>
+<callout arearefs="CO17-2">
+<para>The Kafka protocol version. For example, <literal>2.0.0</literal>. This is a required field.</para>
+</callout>
+<callout arearefs="CO17-3">
+<para>The name of the Kafka topic to read from. The following are the defaults: <literal>otlp_spans</literal> for traces, <literal>otlp_metrics</literal> for metrics, <literal>otlp_logs</literal> for logs.</para>
+</callout>
+<callout arearefs="CO17-4">
+<para>The plaintext authentication configuration. If omitted, plaintext authentication is disabled.</para>
+</callout>
+<callout arearefs="CO17-5">
+<para>The client-side TLS configuration. Defines paths to the TLS certificates. If omitted, TLS authentication is disabled.</para>
+</callout>
+<callout arearefs="CO17-6">
+<para>Disables verifying the server&#8217;s certificate chain and host name. The default is <literal>false</literal>.</para>
+</callout>
+<callout arearefs="CO17-7">
+<para>ServerName indicates the name of the server requested by the client to support virtual hosting.</para>
+</callout>
+</calloutlist>
+</section>
+</section>
+<section xml:id="connectors_otel-configuring">
+<title>Connectors</title>
+<simpara>Connectors connect two pipelines.</simpara>
+<section xml:id="spanmetrics-connector_otel-configuring">
+<title>Spanmetrics connector</title>
+<simpara>The Spanmetrics connector is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Spanmetrics connector aggregates Request, Error, and Duration (R.E.D) OpenTelemetry metrics from span data.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with an enabled spanmetrics connector</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    connectors:
+      spanmetrics:
+        metrics_flush_interval: 15s <co xml:id="CO18-1"/>
+    service:
+      pipelines:
+        traces:
+          exporters: [spanmetrics]
+        metrics:
+          receivers: [spanmetrics]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO18-1">
+<para>Defines the flush interval of the generated metrics. Defaults to <literal>15s</literal>.</para>
+</callout>
+</calloutlist>
+</section>
+</section>
+<section xml:id="extensions_otel-configuring">
+<title>Extensions</title>
+<simpara>Extensions add capabilities to the Collector.</simpara>
+<section xml:id="bearertokenauth-extension_otel-configuring">
+<title>BearerTokenAuth extension</title>
+<simpara>The BearerTokenAuth extension is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The BearerTokenAuth extension is an authenticator for receivers and exporters that are based on the HTTP and the gRPC protocol.
+You can use the OpenTelemetry Collector custom resource to configure client authentication and server authentication for the BearerTokenAuth extension on the receiver and exporter side.
+This extension supports traces, metrics, and logs.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with client and server authentication configured for the BearerTokenAuth extension</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    extensions:
+      bearertokenauth:
+        scheme: "Bearer" <co xml:id="CO19-1"/>
+        token: "&lt;token&gt;" <co xml:id="CO19-2"/>
+        filename: "&lt;token_file&gt;" <co xml:id="CO19-3"/>
+
+    receivers:
+      otlp:
+        protocols:
+          http:
+            auth:
+              authenticator: bearertokenauth <co xml:id="CO19-4"/>
+    exporters:
+      otlp:
+        auth:
+          authenticator: bearertokenauth <co xml:id="CO19-5"/>
+
+    service:
+      extensions: [bearertokenauth]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [otlp]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO19-1">
+<para>You can configure the BearerTokenAuth extension to send a custom <literal>scheme</literal>. The default is <literal>Bearer</literal>.</para>
+</callout>
+<callout arearefs="CO19-2">
+<para>You can add the BearerTokenAuth extension token as metadata to identify a message.</para>
+</callout>
+<callout arearefs="CO19-3">
+<para>Path to a file that contains an authorization token that is transmitted with every message.</para>
+</callout>
+<callout arearefs="CO19-4">
+<para>You can assign the authenticator configuration to an OTLP receiver.</para>
+</callout>
+<callout arearefs="CO19-5">
+<para>You can assign the authenticator configuration to an OTLP exporter.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="oauth2client-extension_otel-configuring">
+<title>OAuth2Client extension</title>
+<simpara>The OAuth2Client extension is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The OAuth2Client extension is an authenticator for exporters that are based on the HTTP and the gRPC protocol.
+Client authentication for the OAuth2Client extension is configured in a separate section in the OpenTelemetry Collector custom resource.
+This extension supports traces, metrics, and logs.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with client authentication configured for the OAuth2Client extension</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    extensions:
+      oauth2client:
+        client_id: &lt;client_id&gt; <co xml:id="CO20-1"/>
+        client_secret: &lt;client_secret&gt; <co xml:id="CO20-2"/>
+        endpoint_params: <co xml:id="CO20-3"/>
+          audience: &lt;audience&gt;
+        token_url: https://example.com/oauth2/default/v1/token <co xml:id="CO20-4"/>
+        scopes: ["api.metrics"] <co xml:id="CO20-5"/>
+        # tls settings for the token client
+        tls: <co xml:id="CO20-6"/>
+          insecure: true <co xml:id="CO20-7"/>
+          ca_file: /var/lib/mycert.pem <co xml:id="CO20-8"/>
+          cert_file: &lt;cert_file&gt; <co xml:id="CO20-9"/>
+          key_file: &lt;key_file&gt; <co xml:id="CO20-10"/>
+        timeout: 2s <co xml:id="CO20-11"/>
+
+    receivers:
+      otlp:
+        protocols:
+          http:
+
+    exporters:
+      otlp:
+        auth:
+          authenticator: oauth2client <co xml:id="CO20-12"/>
+
+    service:
+      extensions: [oauth2client]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [otlp]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO20-1">
+<para>Client identifier, which is provided by the identity provider.</para>
+</callout>
+<callout arearefs="CO20-2">
+<para>Confidential key used to authenticate the client to the identity provider.</para>
+</callout>
+<callout arearefs="CO20-3">
+<para>Further metadata, in the key-value pair format, which is transferred during authentication. For example, <literal>audience</literal> specifies the intended audience for the access token, indicating the recipient of the token.</para>
+</callout>
+<callout arearefs="CO20-4">
+<para>The URL of the OAuth2 token endpoint, where the Collector requests access tokens.</para>
+</callout>
+<callout arearefs="CO20-5">
+<para>The scopes define the specific permissions or access levels requested by the client.</para>
+</callout>
+<callout arearefs="CO20-6">
+<para>The Transport Layer Security (TLS) settings for the token client, which is used to establish a secure connection when requesting tokens.</para>
+</callout>
+<callout arearefs="CO20-7">
+<para>When set to <literal>true</literal>, configures the Collector to use an insecure or non-verified TLS connection to call the configured token endpoint.</para>
+</callout>
+<callout arearefs="CO20-8">
+<para>The path to a Certificate Authority (CA) file that is used to verify the server&#8217;s certificate during the TLS handshake.</para>
+</callout>
+<callout arearefs="CO20-9">
+<para>The path to the client certificate file that the client must use to authenticate itself to the OAuth2 server if required.</para>
+</callout>
+<callout arearefs="CO20-10">
+<para>The path to the client&#8217;s private key file that is used with the client certificate if needed for authentication.</para>
+</callout>
+<callout arearefs="CO20-11">
+<para>Sets a timeout for the token client&#8217;s request.</para>
+</callout>
+<callout arearefs="CO20-12">
+<para>You can assign the authenticator configuration to an OTLP exporter.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="jaegerremotesampling-extension_otel-configuring">
+<title>Jaeger Remote Sampling extension</title>
+<simpara>The Jaeger Remote Sampling extension is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Jaeger Remote Sampling extension allows serving sampling strategies after Jaeger&#8217;s remote sampling API. You can configure this extension to proxy requests to a backing remote sampling server such as a Jaeger collector down the pipeline or to a static JSON file from the local file system.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with a configured Jaeger Remote Sampling extension</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    extensions:
+      jaegerremotesampling:
+        source:
+          reload_interval: 30s <co xml:id="CO21-1"/>
+          remote:
+            endpoint: jaeger-collector:14250 <co xml:id="CO21-2"/>
+          file: /etc/otelcol/sampling_strategies.json <co xml:id="CO21-3"/>
+
+    receivers:
+      otlp:
+        protocols:
+          http:
+
+    exporters:
+      otlp:
+
+    service:
+      extensions: [jaegerremotesampling]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [otlp]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO21-1">
+<para>The time interval at which the sampling configuration is updated.</para>
+</callout>
+<callout arearefs="CO21-2">
+<para>The endpoint for reaching the Jaeger remote sampling strategy provider.</para>
+</callout>
+<callout arearefs="CO21-3">
+<para>The path to a local file that contains a sampling strategy configuration in the JSON format.</para>
+</callout>
+</calloutlist>
+<formalpara>
+<title>Example of a Jaeger Remote Sampling strategy file</title>
+<para>
+<programlisting language="json" linenumbering="unnumbered">{
+  "service_strategies": [
+    {
+      "service": "foo",
+      "type": "probabilistic",
+      "param": 0.8,
+      "operation_strategies": [
+        {
+          "operation": "op1",
+          "type": "probabilistic",
+          "param": 0.2
+        },
+        {
+          "operation": "op2",
+          "type": "probabilistic",
+          "param": 0.4
+        }
+      ]
+    },
+    {
+      "service": "bar",
+      "type": "ratelimiting",
+      "param": 5
+    }
+  ],
+  "default_strategy": {
+    "type": "probabilistic",
+    "param": 0.5,
+    "operation_strategies": [
+      {
+        "operation": "/health",
+        "type": "probabilistic",
+        "param": 0.0
+      },
+      {
+        "operation": "/metrics",
+        "type": "probabilistic",
+        "param": 0.0
+      }
+    ]
+  }
+}</programlisting>
+</para>
+</formalpara>
+</section>
+<section xml:id="pprof-extension_otel-configuring">
+<title>Performance Profiler extension</title>
+<simpara>The Performance Profiler extension is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Performance Profiler extension enables the Go <literal>net/http/pprof</literal> endpoint. This is typically used by developers to collect performance profiles and investigate issues with the service.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with the configured Performance Profiler extension</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    extensions:
+      pprof:
+        endpoint: localhost:1777 <co xml:id="CO22-1"/>
+        block_profile_fraction: 0 <co xml:id="CO22-2"/>
+        mutex_profile_fraction: 0 <co xml:id="CO22-3"/>
+        save_to_file: test.pprof <co xml:id="CO22-4"/>
+
+    receivers:
+      otlp:
+        protocols:
+          http:
+
+    exporters:
+      otlp:
+
+    service:
+      extensions: [pprof]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [otlp]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO22-1">
+<para>The endpoint at which this extension listens. Use <literal>localhost:</literal> to make it available only locally or <literal>":"</literal> to make it available on all network interfaces. The default value is <literal>localhost:1777</literal>.</para>
+</callout>
+<callout arearefs="CO22-2">
+<para>Sets a fraction of blocking events to be profiled. To disable profiling, set this to <literal>0</literal> or a negative integer. See the <link xl:href="https://golang.org/pkg/runtime/#SetBlockProfileRate">documentation</link> for the <literal>runtime</literal> package. The default value is <literal>0</literal>.</para>
+</callout>
+<callout arearefs="CO22-3">
+<para>Set a fraction of mutex contention events to be profiled. To disable profiling, set this to <literal>0</literal> or a negative integer. See the <link xl:href="https://golang.org/pkg/runtime/#SetMutexProfileFraction">documentation</link> for the <literal>runtime</literal> package. The default value is <literal>0</literal>.</para>
+</callout>
+<callout arearefs="CO22-4">
+<para>The name of the file in which the CPU profile is to be saved. Profiling starts when the Collector starts. Profiling is saved to the file when the Collector is terminated.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="healthcheck-extension_otel-configuring">
+<title>Health Check extension</title>
+<simpara>The Health Check extension is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Health Check extension provides an HTTP URL for checking the status of the OpenTelemetry Collector. You can use this extension as a liveness and readiness probe on OpenShift.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with the configured Health Check extension</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    extensions:
+      health_check:
+        endpoint: "0.0.0.0:13133" <co xml:id="CO23-1"/>
+        tls: <co xml:id="CO23-2"/>
+          ca_file: "/path/to/ca.crt"
+          cert_file: "/path/to/cert.crt"
+          key_file: "/path/to/key.key"
+        path: "/health/status" <co xml:id="CO23-3"/>
+        check_collector_pipeline: <co xml:id="CO23-4"/>
+          enabled: true <co xml:id="CO23-5"/>
+          interval: "5m" <co xml:id="CO23-6"/>
+          exporter_failure_threshold: 5 <co xml:id="CO23-7"/>
+
+    receivers:
+      otlp:
+        protocols:
+          http:
+
+    exporters:
+      otlp:
+
+    service:
+      extensions: [health_check]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [otlp]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO23-1">
+<para>The target IP address for publishing the health check status. The default is <literal>0.0.0.0:13133</literal>.</para>
+</callout>
+<callout arearefs="CO23-2">
+<para>The TLS server-side configuration. Defines paths to TLS certificates. If omitted, the TLS is disabled.</para>
+</callout>
+<callout arearefs="CO23-3">
+<para>The path for the health check server. The default is <literal>/</literal>.</para>
+</callout>
+<callout arearefs="CO23-4">
+<para>Settings for the Collector pipeline health check.</para>
+</callout>
+<callout arearefs="CO23-5">
+<para>Enables the Collector pipeline health check. The default is <literal>false</literal>.</para>
+</callout>
+<callout arearefs="CO23-6">
+<para>The time interval for checking the number of failures. The default is <literal>5m</literal>.</para>
+</callout>
+<callout arearefs="CO23-7">
+<para>The threshold of a number of failures until which a container is still marked as healthy. The default is <literal>5</literal>.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="memory-ballast-extension_otel-configuring">
+<title>Memory Ballast extension</title>
+<simpara>The Memory Ballast extension is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The Memory Ballast extension enables applications to configure memory ballast for the process.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with the configured Memory Ballast extension</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    extensions:
+      memory_ballast:
+        size_mib: 64 <co xml:id="CO24-1"/>
+        size_in_percentage: 20 <co xml:id="CO24-2"/>
+
+    receivers:
+      otlp:
+        protocols:
+          http:
+
+    exporters:
+      otlp:
+
+    service:
+      extensions: [memory_ballast]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [otlp]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO24-1">
+<para>Sets the memory ballast size in MiB. Takes priority over the <literal>size_in_percentage</literal> if both are specified.</para>
+</callout>
+<callout arearefs="CO24-2">
+<para>Sets the memory ballast as a percentage, <literal>1</literal>-<literal>100</literal>, of the total memory. Supports containerized and physical host environments.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="zpages-extension_otel-configuring">
+<title>zPages extension</title>
+<simpara>The zPages extension is currently a <link xl:href="https://access.redhat.com/support/offerings/techpreview">Technology Preview</link> feature only.</simpara>
+<simpara>The zPages extension provides an HTTP endpoint for extensions that serve zPages. At the endpoint, this extension serves live data for debugging instrumented components. All core exporters and receivers provide some zPages instrumentation.</simpara>
+<simpara>zPages are useful for in-process diagnostics without having to depend on a back end to examine traces or metrics.</simpara>
+<formalpara>
+<title>OpenTelemetry Collector custom resource with the configured zPages extension</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    extensions:
+      zpages:
+        endpoint: "localhost:55679" <co xml:id="CO25-1"/>
+
+    receivers:
+      otlp:
+        protocols:
+          http:
+    exporters:
+      otlp:
+
+    service:
+      extensions: [zpages]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [otlp]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO25-1">
+<para>Specifies the HTTP endpoint that serves zPages. Use <literal>localhost:</literal> to make it available only locally, or <literal>":"</literal> to make it available on all network interfaces. The default is <literal>localhost:55679</literal>.</para>
+</callout>
+</calloutlist>
+</section>
+</section>
+</section>
+</section>
+<section xml:id="gathering-observability-data-from-different-clusters_otel-configuring">
+<title>Gathering the observability data from different clusters with the OpenTelemetry Collector</title>
+<simpara>For a multicluster configuration, you can create one OpenTelemetry Collector instance in each one of the remote clusters and then forward all the telemetry data to one OpenTelemetry Collector instance.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>The Red Hat build of OpenTelemetry Operator is installed.</simpara>
+</listitem>
+<listitem>
+<simpara>The Tempo Operator is installed.</simpara>
+</listitem>
+<listitem>
+<simpara>A TempoStack instance is deployed on the cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>The following mounted certificates: Issuer, self-signed certificate, CA issuer, client and server certificates. To create any of these certificates, see step 1.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Mount the following certificates in the OpenTelemetry Collector instance, skipping already mounted certificates.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>An Issuer to generate the certificates by using the cert-manager Operator for Red Hat OpenShift.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}</programlisting>
+</listitem>
+<listitem>
+<simpara>A self-signed certificate.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ca
+spec:
+  isCA: true
+  commonName: ca
+  subject:
+    organizations:
+      - Organization # &lt;your_organization_name&gt;
+    organizationalUnits:
+      - Widgets
+  secretName: ca-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io</programlisting>
+</listitem>
+<listitem>
+<simpara>A CA issuer.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: test-ca-issuer
+spec:
+  ca:
+    secretName: ca-secret</programlisting>
+</listitem>
+<listitem>
+<simpara>The client and server certificates.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: server
+spec:
+  secretName: server-tls
+  isCA: false
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+  - "otel.observability.svc.cluster.local" <co xml:id="CO26-1"/>
+  issuerRef:
+    name: ca-issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: client
+spec:
+  secretName: client-tls
+  isCA: false
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+  - "otel.observability.svc.cluster.local" <co xml:id="CO26-2"/>
+  issuerRef:
+    name: ca-issuer</programlisting>
+<calloutlist>
+<callout arearefs="CO26-1">
+<para>List of exact DNS names to be mapped to a solver in the server OpenTelemetry Collector instance.</para>
+</callout>
+<callout arearefs="CO26-2">
+<para>List of exact DNS names to be mapped to a solver in the client OpenTelemetry Collector instance.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Create a service account for the OpenTelemetry Collector instance.</simpara>
+<formalpara>
+<title>Example ServiceAccount</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otel-collector-deployment</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>Create a cluster role for the service account.</simpara>
+<formalpara>
+<title>Example ClusterRole</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-collector
+rules:
+  <co xml:id="CO27-1"/>
+  <co xml:id="CO27-2"/>
+- apiGroups: ["", "config.openshift.io"]
+  resources: ["pods", "namespaces", "infrastructures", "infrastructures/status"]
+  verbs: ["get", "watch", "list"]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO27-1">
+<para>The <literal>k8sattributesprocessor</literal> requires permissions for pods and namespace resources.</para>
+</callout>
+<callout arearefs="CO27-2">
+<para>The <literal>resourcedetectionprocessor</literal> requires permissions for infrastructures and status.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Bind the cluster role to the service account.</simpara>
+<formalpara>
+<title>Example ClusterRoleBinding</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: otel-collector
+subjects:
+- kind: ServiceAccount
+  name: otel-collector-deployment
+  namespace: otel-collector-&lt;example&gt;
+roleRef:
+  kind: ClusterRole
+  name: otel-collector
+  apiGroup: rbac.authorization.k8s.io</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>Create the YAML file to define the <literal>OpenTelemetryCollector</literal> custom resource (CR) in the edge clusters.</simpara>
+<formalpara>
+<title>Example <literal>OpenTelemetryCollector</literal> custom resource for the edge clusters</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel
+  namespace: otel-collector-&lt;example&gt;
+spec:
+  mode: daemonset
+  serviceAccount: otel-collector-deployment
+  config: |
+    receivers:
+      jaeger:
+        protocols:
+          grpc:
+          thrift_binary:
+          thrift_compact:
+          thrift_http:
+      opencensus:
+      otlp:
+        protocols:
+          grpc:
+          http:
+      zipkin:
+    processors:
+      batch:
+      k8sattributes:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 50
+        spike_limit_percentage: 30
+      resourcedetection:
+        detectors: [openshift]
+    exporters:
+      otlphttp:
+        endpoint: https://observability-cluster.com:443 <co xml:id="CO28-1"/>
+        tls:
+          insecure: false
+          cert_file: /certs/server.crt
+          key_file: /certs/server.key
+          ca_file: /certs/ca.crt
+    service:
+      pipelines:
+        traces:
+          receivers: [jaeger, opencensus, otlp, zipkin]
+          processors: [memory_limiter, k8sattributes, resourcedetection, batch]
+          exporters: [otlp]
+  volumes:
+    - name: otel-certs
+      secret:
+        name: otel-certs
+  volumeMounts:
+    - name: otel-certs
+      mountPath: /certs</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO28-1">
+<para>The Collector exporter is configured to export OTLP HTTP and points to the OpenTelemetry Collector from the central cluster.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Create the YAML file to define the <literal>OpenTelemetryCollector</literal> custom resource (CR) in the central cluster.</simpara>
+<formalpara>
+<title>Example <literal>OpenTelemetryCollector</literal> custom resource for the central cluster</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otlp-receiver
+  namespace: observability
+spec:
+  mode: "deployment"
+  ingress:
+    type: route
+    route:
+      termination: "passthrough"
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          http:
+            tls: <co xml:id="CO29-1"/>
+              cert_file: /certs/server.crt
+              key_file: /certs/server.key
+              client_ca_file: /certs/ca.crt
+    exporters:
+      logging:
+      otlp:
+        endpoint: "tempo-&lt;simplest&gt;-distributor:4317" <co xml:id="CO29-2"/>
+        tls:
+          insecure: true
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: []
+          exporters: [otlp]
+  volumes:
+    - name: otel-certs
+      secret:
+        name: otel-certs
+  volumeMounts:
+    - name: otel-certs
+      mountPath: /certs</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO29-1">
+<para>The Collector receiver requires the certificates listed in the first step.</para>
+</callout>
+<callout arearefs="CO29-2">
+<para>The Collector exporter is configured to export OTLP and points to the Tempo distributor endpoint, which in this example is <literal>"tempo-simplest-distributor:4317"</literal> and already created.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="configuration-for-sending-metrics-to-the-monitoring-stack_otel-configuring">
+<title>Configuration for sending metrics to the monitoring stack</title>
+<simpara>The OpenTelemetry Collector custom resource (CR) can be configured to create a Prometheus <literal>ServiceMonitor</literal> CR for scraping the Collector&#8217;s pipeline metrics and the enabled Prometheus exporters.</simpara>
+<formalpara>
+<title>Example of the OpenTelemetry Collector custom resource with the Prometheus exporter</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">spec:
+  mode: deployment
+  observability:
+    metrics:
+      enableMetrics: true <co xml:id="CO30-1"/>
+  config: |
+    exporters:
+      prometheus:
+        endpoint: 0.0.0.0:8889
+        resource_to_telemetry_conversion:
+          enabled: true # by default resource attributes are dropped
+    service:
+      telemetry:
+        metrics:
+          address: ":8888"
+      pipelines:
+        metrics:
+          receivers: [otlp]
+          exporters: [prometheus]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO30-1">
+<para>Configures the operator to create the Prometheus <literal>ServiceMonitor</literal> CR to scrape the collector&#8217;s internal metrics endpoint and Prometheus exporter metric endpoints. The metrics will be stored in the OpenShift monitoring stack.</para>
+</callout>
+</calloutlist>
+<simpara>Alternatively, a manually created Prometheus <literal>PodMonitor</literal> can provide fine control, for example removing duplicated labels added during Prometheus scraping.</simpara>
+<formalpara>
+<title>Example of the <literal>PodMonitor</literal> custom resource that configures the monitoring stack to scrape the Collector metrics</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: otel-collector
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: `&lt;cr_name&gt;-collector` <co xml:id="CO31-1"/>
+  podMetricsEndpoints:
+  - port: metrics <co xml:id="CO31-2"/>
+  - port: promexporter <co xml:id="CO31-3"/>
+    relabelings:
+    - action: labeldrop
+      regex: pod
+    - action: labeldrop
+      regex: container
+    - action: labeldrop
+      regex: endpoint
+    metricRelabelings:
+    - action: labeldrop
+      regex: instance
+    - action: labeldrop
+      regex: job</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO31-1">
+<para>The name of the OpenTelemetry Collector custom resource.</para>
+</callout>
+<callout arearefs="CO31-2">
+<para>The name of the internal metrics port for the OpenTelemetry Collector. This port name is always <literal>metrics</literal>.</para>
+</callout>
+<callout arearefs="CO31-3">
+<para>The name of the Prometheus exporter port for the OpenTelemetry Collector.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="setting-up-monitoring-for-otel">
+<title>Setting up monitoring for the Red Hat build of OpenTelemetry</title>
+<simpara>The Red Hat build of OpenTelemetry Operator supports monitoring and alerting of each OpenTelemtry Collector instance and exposes upgrade and operational metrics about the Operator itself.</simpara>
+<section xml:id="configuring-otelcol-metrics_otel-configuring">
+<title>Configuring the OpenTelemetry Collector metrics</title>
+<simpara>You can enable metrics and alerts of OpenTelemetry Collector instances.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>Monitoring for user-defined projects is enabled in the cluster.</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>To enable metrics of a OpenTelemetry Collector instance, set the <literal>spec.observability.metrics.enableMetrics</literal> field to <literal>true</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: &lt;name&gt;
+spec:
+  observability:
+    metrics:
+      enableMetrics: true</programlisting>
+</listitem>
+</itemizedlist>
+<formalpara>
+<title>Verification</title>
+<para>You can use the <emphasis role="strong">Administrator</emphasis> view of the web console to verify successful configuration:</para>
+</formalpara>
+<itemizedlist>
+<listitem>
+<simpara>Go to <emphasis role="strong">Observe</emphasis> &#8594; <emphasis role="strong">Targets</emphasis>, filter by <emphasis role="strong">Source: User</emphasis>, and check that the <emphasis role="strong">ServiceMonitors</emphasis> in the <literal>opentelemetry-collector-&lt;instance_name&gt;</literal> format have the <emphasis role="strong">Up</emphasis> status.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="additional-resources_deploy-otel" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xl:href="../monitoring/enabling-monitoring-for-user-defined-projects.xml#enabling-monitoring-for-user-defined-projects">Enabling monitoring for user-defined projects</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="otel-instrumentation">
+<title>Configuring and deploying the OpenTelemetry instrumentation injection</title>
+
+<important>
+<simpara>OpenTelemetry instrumentation injection is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xl:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<simpara>The Red Hat build of OpenTelemetry Operator uses a custom resource definition (CRD) file that defines the configuration of the instrumentation.</simpara>
+<section xml:id="otel-instrumentation-config_otel-instrumentation">
+<title>OpenTelemetry instrumentation configuration options</title>
+<simpara>The Red Hat build of OpenTelemetry can inject and configure the OpenTelemetry auto-instrumentation libraries into your workloads. Currently, the project supports injection of the instrumentation libraries from Go, Java, Node.js, Python, .NET, and the Apache HTTP Server (<literal>httpd</literal>).</simpara>
+<simpara>Auto-instrumentation in OpenTelemetry refers to the capability where the framework automatically instruments an application without manual code changes. This enables developers and administrators to get observability into their applications with minimal effort and changes to the existing codebase.</simpara>
+<important>
+<simpara>The Red Hat build of OpenTelemetry Operator only supports the injection mechanism of the instrumentation libraries but does not support instrumentation libraries or upstream images. Customers can build their own instrumentation images or use community images.</simpara>
+</important>
+<section xml:id="_instrumentation_options">
+<title>Instrumentation options</title>
+<simpara>Instrumentation options are specified in the <literal>OpenTelemetryCollector</literal> custom resource.</simpara>
+<formalpara>
+<title>Sample <literal>OpenTelemetryCollector</literal> custom resource file</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: java-instrumentation
+spec:
+  env:
+    - name: OTEL_EXPORTER_OTLP_TIMEOUT
+      value: "20"
+  exporter:
+    endpoint: http://production-collector.observability.svc.cluster.local:4317
+  propagators:
+    - w3c
+  sampler:
+    type: parentbased_traceidratio
+    argument: "0.25"
+  java:
+    env:
+    - name: OTEL_JAVAAGENT_DEBUG
+      value: "true"</programlisting>
+</para>
+</formalpara>
+<table frame="all" rowsep="1" colsep="1">
+<title>Parameters used by the Operator to define the Instrumentation</title>
+<tgroup cols="3">
+<colspec colname="col_1" colwidth="33.3333*"/>
+<colspec colname="col_2" colwidth="33.3333*"/>
+<colspec colname="col_3" colwidth="33.3334*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Parameter</entry>
+<entry align="left" valign="top">Description</entry>
+<entry align="left" valign="top">Values</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">env</literallayout></entry>
+<entry align="left" valign="top"><simpara>Common environment variables to define across all the instrumentations.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">exporter</literallayout></entry>
+<entry align="left" valign="top"><simpara>Exporter configuration.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">propagators</literallayout></entry>
+<entry align="left" valign="top"><simpara>Propagators defines inter-process context propagation configuration.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>tracecontext</literal>, <literal>baggage</literal>, <literal>b3</literal>, <literal>b3multi</literal>, <literal>jaeger</literal>, <literal>ottrace</literal>, <literal>none</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">resource</literallayout></entry>
+<entry align="left" valign="top"><simpara>Resource attributes configuration.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">sampler</literallayout></entry>
+<entry align="left" valign="top"><simpara>Sampling configuration.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">apacheHttpd</literallayout></entry>
+<entry align="left" valign="top"><simpara>Configuration for the Apache HTTP Server instrumentation.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">dotnet</literallayout></entry>
+<entry align="left" valign="top"><simpara>Configuration for the .NET instrumentation.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">go</literallayout></entry>
+<entry align="left" valign="top"><simpara>Configuration for the Go instrumentation.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">java</literallayout></entry>
+<entry align="left" valign="top"><simpara>Configuration for the Java instrumentation.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">nodejs</literallayout></entry>
+<entry align="left" valign="top"><simpara>Configuration for the Node.js instrumentation.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">python</literallayout></entry>
+<entry align="left" valign="top"><simpara>Configuration for the Python instrumentation.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</section>
+<section xml:id="_using_the_instrumentation_cr_with_service_mesh">
+<title>Using the instrumentation CR with Service Mesh</title>
+<simpara>When using the instrumentation custom resource (CR) with Red Hat OpenShift Service Mesh, you must use the <literal>b3multi</literal> propagator.</simpara>
+<section xml:id="_configuration_of_the_apache_http_server_auto_instrumentation">
+<title>Configuration of the Apache HTTP Server auto-instrumentation</title>
+<table frame="all" rowsep="1" colsep="1">
+<title>Prameters for the <literal>.spec.apacheHttpd</literal> field</title>
+<tgroup cols="3">
+<colspec colname="col_1" colwidth="33.3333*"/>
+<colspec colname="col_2" colwidth="33.3333*"/>
+<colspec colname="col_3" colwidth="33.3334*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Name</entry>
+<entry align="left" valign="top">Description</entry>
+<entry align="left" valign="top">Default</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">attrs</literallayout></entry>
+<entry align="left" valign="top"><simpara>Attributes specific to the Apache HTTP Server.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">configPath</literallayout></entry>
+<entry align="left" valign="top"><simpara>Location of the Apache HTTP Server configuration.</simpara></entry>
+<entry align="left" valign="top"><simpara>/usr/local/apache2/conf</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">env</literallayout></entry>
+<entry align="left" valign="top"><simpara>Environment variables specific to the Apache HTTP Server.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">image</literallayout></entry>
+<entry align="left" valign="top"><simpara>Container image with the Apache SDK and auto-instrumentation.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">resourceRequirements</literallayout></entry>
+<entry align="left" valign="top"><simpara>The compute resource requirements.</simpara></entry>
+<entry align="left" valign="top"></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">version</literallayout></entry>
+<entry align="left" valign="top"><simpara>Apache HTTP Server version.</simpara></entry>
+<entry align="left" valign="top"><simpara>2.4</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<formalpara>
+<title>The <literal>PodSpec</literal> annotation to enable injection</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">instrumentation.opentelemetry.io/inject-apache-httpd: "true"</programlisting>
+</para>
+</formalpara>
+</section>
+<section xml:id="_configuration_of_the_net_auto_instrumentation">
+<title>Configuration of the .NET auto-instrumentation</title>
+<informaltable frame="all" rowsep="1" colsep="1">
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Name</entry>
+<entry align="left" valign="top">Description</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">env</literallayout></entry>
+<entry align="left" valign="top"><simpara>Environment variables specific to .NET.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">image</literallayout></entry>
+<entry align="left" valign="top"><simpara>Container image with the .NET SDK and auto-instrumentation.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">resourceRequirements</literallayout></entry>
+<entry align="left" valign="top"><simpara>The compute resource requirements.</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+<simpara>For the .NET auto-instrumentation, the required <literal>OTEL_EXPORTER_OTLP_ENDPOINT</literal> environment variable must be set if the endpoint of the exporters is set to <literal>4317</literal>. The .NET autoinstrumentation uses <literal>http/proto</literal> by default, and the telemetry data must be set to the <literal>4318</literal> port.</simpara>
+<formalpara>
+<title>The <literal>PodSpec</literal> annotation to enable injection</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">instrumentation.opentelemetry.io/inject-dotnet: "true"</programlisting>
+</para>
+</formalpara>
+</section>
+<section xml:id="_configuration_of_the_go_auto_instrumentation">
+<title>Configuration of the Go auto-instrumentation</title>
+<informaltable frame="all" rowsep="1" colsep="1">
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Name</entry>
+<entry align="left" valign="top">Description</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">env</literallayout></entry>
+<entry align="left" valign="top"><simpara>Environment variables specific to Go.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">image</literallayout></entry>
+<entry align="left" valign="top"><simpara>Container image with the Go SDK and auto-instrumentation.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">resourceRequirements</literallayout></entry>
+<entry align="left" valign="top"><simpara>The compute resource requirements.</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+<formalpara>
+<title>The <literal>PodSpec</literal> annotation to enable injection</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">instrumentation.opentelemetry.io/inject-go: "true"</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>Additional permissions required for the Go auto-instrumentation in the OpenShift cluster</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: otel-go-instrumentation-scc
+allowHostDirVolumePlugin: true
+allowPrivilegeEscalation: true
+allowPrivilegedContainer: true
+allowedCapabilities:
+- "SYS_PTRACE"
+fsGroup:
+  type: RunAsAny
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+seccompProfiles:
+- '*'
+supplementalGroups:
+  type: RunAsAny</programlisting>
+</para>
+</formalpara>
+<tip>
+<simpara>The CLI command for applying the permissions for the Go auto-instrumentation in the OpenShift cluster is as follows:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc adm policy add-scc-to-user otel-go-instrumentation-scc -z &lt;service_account&gt;</programlisting>
+</tip>
+</section>
+<section xml:id="_configuration_of_the_java_auto_instrumentation">
+<title>Configuration of the Java auto-instrumentation</title>
+<informaltable frame="all" rowsep="1" colsep="1">
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Name</entry>
+<entry align="left" valign="top">Description</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">env</literallayout></entry>
+<entry align="left" valign="top"><simpara>Environment variables specific to Java.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">image</literallayout></entry>
+<entry align="left" valign="top"><simpara>Container image with the Java SDK and auto-instrumentation.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">resourceRequirements</literallayout></entry>
+<entry align="left" valign="top"><simpara>The compute resource requirements.</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+<formalpara>
+<title>The <literal>PodSpec</literal> annotation to enable injection</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">instrumentation.opentelemetry.io/inject-java: "true"</programlisting>
+</para>
+</formalpara>
+</section>
+<section xml:id="_configuration_of_the_node_js_auto_instrumentation">
+<title>Configuration of the Node.js auto-instrumentation</title>
+<informaltable frame="all" rowsep="1" colsep="1">
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Name</entry>
+<entry align="left" valign="top">Description</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">env</literallayout></entry>
+<entry align="left" valign="top"><simpara>Environment variables specific to Node.js.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">image</literallayout></entry>
+<entry align="left" valign="top"><simpara>Container image with the Node.js SDK and auto-instrumentation.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">resourceRequirements</literallayout></entry>
+<entry align="left" valign="top"><simpara>The compute resource requirements.</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+<formalpara>
+<title>The <literal>PodSpec</literal> annotations to enable injection</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">instrumentation.opentelemetry.io/inject-nodejs: "true"
+instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/path/to/container/executable"</programlisting>
+</para>
+</formalpara>
+<simpara>The <literal>instrumentation.opentelemetry.io/otel-go-auto-target-exe</literal> annotation sets the value for the required <literal>OTEL_GO_AUTO_TARGET_EXE</literal> environment variable.</simpara>
+</section>
+<section xml:id="_configuration_of_the_python_auto_instrumentation">
+<title>Configuration of the Python auto-instrumentation</title>
+<informaltable frame="all" rowsep="1" colsep="1">
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Name</entry>
+<entry align="left" valign="top">Description</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">env</literallayout></entry>
+<entry align="left" valign="top"><simpara>Environment variables specific to Python.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">image</literallayout></entry>
+<entry align="left" valign="top"><simpara>Container image with the Python SDK and auto-instrumentation.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">resourceRequirements</literallayout></entry>
+<entry align="left" valign="top"><simpara>The compute resource requirements.</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+<simpara>For Python auto-instrumentation, the <literal>OTEL_EXPORTER_OTLP_ENDPOINT</literal> environment variable must be set if the endpoint of the exporters is set to <literal>4317</literal>. Python auto-instrumentation uses <literal>http/proto</literal> by default, and the telemetry data must be set to the <literal>4318</literal> port.</simpara>
+<formalpara>
+<title>The <literal>PodSpec</literal> annotation to enable injection</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">instrumentation.opentelemetry.io/inject-python: "true"</programlisting>
+</para>
+</formalpara>
+</section>
+<section xml:id="_configuration_of_the_opentelemetry_sdk_variables">
+<title>Configuration of the OpenTelemetry SDK variables</title>
+<simpara>The OpenTelemetry SDK variables in your pod are configurable by using the following annotation:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">instrumentation.opentelemetry.io/inject-sdk: "true"</programlisting>
+<simpara>Note that all the annotations accept the following values:</simpara>
+<variablelist>
+<varlistentry>
+<term><literal>true</literal></term>
+<listitem>
+<simpara>Injects the <literal>Instrumentation</literal> resource from the namespace.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>false</literal></term>
+<listitem>
+<simpara>Does not inject any instrumentation.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>instrumentation-name</literal></term>
+<listitem>
+<simpara>The name of the instrumentation resource to inject from the current namespace.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>other-namespace/instrumentation-name</literal></term>
+<listitem>
+<simpara>The name of the instrumentation resource to inject from another namespace.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</section>
+<section xml:id="_multi_container_pods">
+<title>Multi-container pods</title>
+<simpara>The instrumentation is run on the first container that is available by default according to the pod specification. In some cases, you can also specify target containers for injection.</simpara>
+<formalpara>
+<title>Pod annotation</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">instrumentation.opentelemetry.io/container-names: "&lt;container_1&gt;,&lt;container_2&gt;"</programlisting>
+</para>
+</formalpara>
+<note>
+<simpara>The Go auto-instrumentation does not support multi-container auto-instrumentation injection.</simpara>
+</note>
+</section>
+</section>
+</section>
+</chapter>
+<chapter xml:id="otel-temp">
+<title>Using the Red Hat build of OpenTelemetry</title>
+
+<simpara>You can set up and use the Red Hat build of OpenTelemetry to send traces to the OpenTelemetry Collector or the TempoStack.</simpara>
+<section xml:id="forwarding-traces_otel-temp">
+<title>Forwarding traces to a TempoStack by using the OpenTelemetry Collector</title>
+<simpara>To configure forwarding traces to a TempoStack, you can deploy and configure the OpenTelemetry Collector. You can deploy the OpenTelemetry Collector in the deployment mode by using the specified processors, receivers, and exporters. For other modes, see the OpenTelemetry Collector documentation linked in <emphasis>Additional resources</emphasis>.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>The Red Hat build of OpenTelemetry Operator is installed.</simpara>
+</listitem>
+<listitem>
+<simpara>The Tempo Operator is installed.</simpara>
+</listitem>
+<listitem>
+<simpara>A TempoStack is deployed on the cluster.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a service account for the OpenTelemetry Collector.</simpara>
+<formalpara>
+<title>Example ServiceAccount</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otel-collector-deployment</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>Create a cluster role for the service account.</simpara>
+<formalpara>
+<title>Example ClusterRole</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-collector
+rules:
+  <co xml:id="CO32-1"/>
+  <co xml:id="CO32-2"/>
+- apiGroups: ["", "config.openshift.io"]
+  resources: ["pods", "namespaces", "infrastructures", "infrastructures/status"]
+  verbs: ["get", "watch", "list"]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO32-1">
+<para>The <literal>k8sattributesprocessor</literal> requires permissions for pods and namespaces resources.</para>
+</callout>
+<callout arearefs="CO32-2">
+<para>The <literal>resourcedetectionprocessor</literal> requires permissions for infrastructures and status.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Bind the cluster role to the service account.</simpara>
+<formalpara>
+<title>Example ClusterRoleBinding</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: otel-collector
+subjects:
+- kind: ServiceAccount
+  name: otel-collector-deployment
+  namespace: otel-collector-example
+roleRef:
+  kind: ClusterRole
+  name: otel-collector
+  apiGroup: rbac.authorization.k8s.io</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>Create the YAML file to define the <literal>OpenTelemetryCollector</literal> custom resource (CR).</simpara>
+<formalpara>
+<title>Example OpenTelemetryCollector</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel
+spec:
+  mode: deployment
+  serviceAccount: otel-collector-deployment
+  config: |
+    receivers:
+      jaeger:
+        protocols:
+          grpc:
+          thrift_binary:
+          thrift_compact:
+          thrift_http:
+      opencensus:
+      otlp:
+        protocols:
+          grpc:
+          http:
+      zipkin:
+    processors:
+      batch:
+      k8sattributes:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 50
+        spike_limit_percentage: 30
+      resourcedetection:
+        detectors: [openshift]
+    exporters:
+      otlp:
+        endpoint: "tempo-simplest-distributor:4317" <co xml:id="CO33-1"/>
+        tls:
+          insecure: true
+    service:
+      pipelines:
+        traces:
+          receivers: [jaeger, opencensus, otlp, zipkin] <co xml:id="CO33-2"/>
+          processors: [memory_limiter, k8sattributes, resourcedetection, batch]
+          exporters: [otlp]</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO33-1">
+<para>The Collector exporter is configured to export OTLP and points to the Tempo distributor endpoint, <literal>"tempo-simplest-distributor:4317"</literal> in this example, which is already created.</para>
+</callout>
+<callout arearefs="CO33-2">
+<para>The Collector is configured with a receiver for Jaeger traces, OpenCensus traces over the OpenCensus protocol, Zipkin traces over the Zipkin protocol, and OTLP traces over the GRPC protocol.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+<tip>
+<simpara>You can deploy <literal>tracegen</literal> as a test:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tracegen
+spec:
+  template:
+    spec:
+      containers:
+        - name: tracegen
+          image: ghcr.io/open-telemetry/opentelemetry-collector-contrib/tracegen:latest
+          command:
+            - "./tracegen"
+          args:
+            - -otlp-endpoint=otel-collector:4317
+            - -otlp-insecure
+            - -duration=30s
+            - -workers=1
+      restartPolicy: Never
+  backoffLimit: 4</programlisting>
+</tip>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="https://opentelemetry.io/docs/collector/">OpenTelemetry Collector documentation</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="https://github.com/os-observability/redhat-rhosdt-samples">Deployment examples on GitHub</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="otel-send-traces-and-metrics-to-otel-collector_otel-temp">
+<title>Sending traces and metrics to the OpenTelemetry Collector</title>
+<simpara>Sending traces and metrics to the OpenTelemetry Collector is possible with or without sidecar injection.</simpara>
+<section xml:id="sending-traces-and-metrics-to-otel-collector-with-sidecar_otel-temp">
+<title>Sending traces and metrics to the OpenTelemetry Collector with sidecar injection</title>
+<simpara>You can set up sending telemetry data to an OpenTelemetry Collector instance with sidecar injection.</simpara>
+<simpara>The Red Hat build of OpenTelemetry Operator allows sidecar injection into deployment workloads and automatic configuration of your instrumentation to send telemetry data to the OpenTelemetry Collector.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>The Red Hat OpenShift distributed tracing platform (Tempo) is installed, and a TempoStack instance is deployed.</simpara>
+</listitem>
+<listitem>
+<simpara>You have access to the cluster through the web console or the OpenShift CLI (<literal>oc</literal>):</simpara>
+<itemizedlist>
+<listitem>
+<simpara>You are logged in to the web console as a cluster administrator with the <literal>cluster-admin</literal> role.</simpara>
+</listitem>
+<listitem>
+<simpara>An active OpenShift CLI (<literal>oc</literal>) session by a cluster administrator with the <literal>cluster-admin</literal> role.</simpara>
+</listitem>
+<listitem>
+<simpara>For Red Hat OpenShift Dedicated, you must have an account with the <literal>dedicated-admin</literal> role.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a project for an OpenTelemetry Collector instance.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: observability</programlisting>
+</listitem>
+<listitem>
+<simpara>Create a service account.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otel-collector-sidecar
+  namespace: observability</programlisting>
+</listitem>
+<listitem>
+<simpara>Grant the permissions to the service account for the <literal>k8sattributes</literal> and <literal>resourcedetection</literal> processors.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-collector
+rules:
+- apiGroups: ["", "config.openshift.io"]
+  resources: ["pods", "namespaces", "infrastructures", "infrastructures/status"]
+  verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: otel-collector
+subjects:
+- kind: ServiceAccount
+  name: otel-collector-sidecar
+  namespace: observability
+roleRef:
+  kind: ClusterRole
+  name: otel-collector
+  apiGroup: rbac.authorization.k8s.io</programlisting>
+</listitem>
+<listitem>
+<simpara>Deploy the OpenTelemetry Collector as a sidecar.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel
+  namespace: observability
+spec:
+  serviceAccount: otel-collector-sidecar
+  mode: sidecar
+  config: |
+    serviceAccount: otel-collector-sidecar
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+    processors:
+      batch:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 50
+        spike_limit_percentage: 30
+      resourcedetection:
+        detectors: [openshift]
+        timeout: 2s
+    exporters:
+      otlp:
+        endpoint: "tempo-&lt;example&gt;-gateway:8090" <co xml:id="CO34-1"/>
+        tls:
+          insecure: true
+    service:
+      pipelines:
+        traces:
+          receivers: [jaeger]
+          processors: [memory_limiter, resourcedetection, batch]
+          exporters: [otlp]</programlisting>
+<calloutlist>
+<callout arearefs="CO34-1">
+<para>This points to the Gateway of the TempoStack instance deployed by using the <literal>&lt;example&gt;</literal> Tempo Operator.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Create your deployment using the <literal>otel-collector-sidecar</literal> service account.</simpara>
+</listitem>
+<listitem>
+<simpara>Add the <literal>sidecar.opentelemetry.io/inject: "true"</literal> annotation to your <literal>Deployment</literal> object. This will inject all the needed environment variables to send data from your workloads to the OpenTelemetry Collector instance.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="sending-traces-and-metrics-to-otel-collector-without-sidecar_otel-temp">
+<title>Sending traces and metrics to the OpenTelemetry Collector without sidecar injection</title>
+<simpara>You can set up sending telemetry data to an OpenTelemetry Collector instance without sidecar injection, which involves manually setting several environment variables.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>The Red Hat OpenShift distributed tracing platform (Tempo) is installed, and a TempoStack instance is deployed.</simpara>
+</listitem>
+<listitem>
+<simpara>You have access to the cluster through the web console or the OpenShift CLI (<literal>oc</literal>):</simpara>
+<itemizedlist>
+<listitem>
+<simpara>You are logged in to the web console as a cluster administrator with the <literal>cluster-admin</literal> role.</simpara>
+</listitem>
+<listitem>
+<simpara>An active OpenShift CLI (<literal>oc</literal>) session by a cluster administrator with the <literal>cluster-admin</literal> role.</simpara>
+</listitem>
+<listitem>
+<simpara>For Red Hat OpenShift Dedicated, you must have an account with the <literal>dedicated-admin</literal> role.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a project for an OpenTelemetry Collector instance.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: observability</programlisting>
+</listitem>
+<listitem>
+<simpara>Create a service account.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otel-collector-deployment
+  namespace: observability</programlisting>
+</listitem>
+<listitem>
+<simpara>Grant the permissions to the service account for the <literal>k8sattributes</literal> and <literal>resourcedetection</literal> processors.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-collector
+rules:
+- apiGroups: ["", "config.openshift.io"]
+  resources: ["pods", "namespaces", "infrastructures", "infrastructures/status"]
+  verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: otel-collector
+subjects:
+- kind: ServiceAccount
+  name: otel-collector
+  namespace: observability
+roleRef:
+  kind: ClusterRole
+  name: otel-collector
+  apiGroup: rbac.authorization.k8s.io</programlisting>
+</listitem>
+<listitem>
+<simpara>Deploy the OpenTelemetry Collector instance with the <literal>OpenTelemetryCollector</literal> custom resource.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel
+  namespace: observability
+spec:
+  mode: deployment
+  serviceAccount: otel-collector-deployment
+  config: |
+    receivers:
+      jaeger:
+        protocols:
+          grpc:
+          thrift_binary:
+          thrift_compact:
+          thrift_http:
+      opencensus:
+      otlp:
+        protocols:
+          grpc:
+          http:
+      zipkin:
+    processors:
+      batch:
+      k8sattributes:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 50
+        spike_limit_percentage: 30
+      resourcedetection:
+        detectors: [openshift]
+    exporters:
+      otlp:
+        endpoint: "tempo-&lt;example&gt;-distributor:4317" <co xml:id="CO35-1"/>
+        tls:
+          insecure: true
+    service:
+      pipelines:
+        traces:
+          receivers: [jaeger, opencensus, otlp, zipkin]
+          processors: [memory_limiter, k8sattributes, resourcedetection, batch]
+          exporters: [otlp]</programlisting>
+<calloutlist>
+<callout arearefs="CO35-1">
+<para>This points to the Gateway of the TempoStack instance deployed by using the <literal>&lt;example&gt;</literal> Tempo Operator.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Set the environment variables in the container with your instrumented application.</simpara>
+<informaltable frame="all" rowsep="1" colsep="1">
+<tgroup cols="3">
+<colspec colname="col_1" colwidth="33.3333*"/>
+<colspec colname="col_2" colwidth="33.3333*"/>
+<colspec colname="col_3" colwidth="33.3334*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Name</entry>
+<entry align="left" valign="top">Description</entry>
+<entry align="left" valign="top">Default value</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">OTEL_SERVICE_NAME</literallayout></entry>
+<entry align="left" valign="top"><simpara>Sets the value of the <literal>service.name</literal> resource attribute.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>""</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">OTEL_EXPORTER_OTLP_ENDPOINT</literallayout></entry>
+<entry align="left" valign="top"><simpara>Base endpoint URL for any signal type with an optionally specified port number.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>https://localhost:4317</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">OTEL_EXPORTER_OTLP_CERTIFICATE</literallayout></entry>
+<entry align="left" valign="top"><simpara>Path to the certificate file for the TLS credentials of the gRPC client.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>https://localhost:4317</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">OTEL_TRACES_SAMPLER</literallayout></entry>
+<entry align="left" valign="top"><simpara>Sampler to be used for traces.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>parentbased_always_on</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">OTEL_EXPORTER_OTLP_PROTOCOL</literallayout></entry>
+<entry align="left" valign="top"><simpara>Transport protocol for the OTLP exporter.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>grpc</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">OTEL_EXPORTER_OTLP_TIMEOUT</literallayout></entry>
+<entry align="left" valign="top"><simpara>Maximum time interval for the OTLP exporter to wait for each batch export.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>10s</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><literallayout class="monospaced">OTEL_EXPORTER_OTLP_INSECURE</literallayout></entry>
+<entry align="left" valign="top"><simpara>Disables client transport security for gRPC requests. An HTTPS schema overrides it.</simpara></entry>
+<entry align="left" valign="top"><simpara><literal>False</literal></simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</listitem>
+</orderedlist>
+</section>
+</section>
+</chapter>
+<chapter xml:id="otel-troubleshoot">
+<title>Troubleshooting the Red Hat build of OpenTelemetry</title>
+
+<simpara>The OpenTelemetry Collector offers multiple ways to measure its health as well as investigate data ingestion issues.</simpara>
+<section xml:id="getting-otel-collector-logs_otel-troubleshoot">
+<title>Getting the OpenTelemetry Collector logs</title>
+<simpara>You can get the logs for the OpenTelemetry Collector as follows.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Set the relevant log level in the <literal>OpenTelemetryCollector</literal> custom resource (CR):</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    service:
+      telemetry:
+        logs:
+          level: debug <co xml:id="CO36-1"/></programlisting>
+<calloutlist>
+<callout arearefs="CO36-1">
+<para>Collector&#8217;s log level. Supported values include <literal>info</literal>, <literal>warn</literal>, <literal>error</literal>, or <literal>debug</literal>. Defaults to <literal>info</literal>.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Use the <literal>oc logs</literal> command or the web console to retrieve the logs.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="exposing-metrics_otel-troubleshoot">
+<title>Exposing the metrics</title>
+<simpara>The OpenTelemetry Collector exposes the metrics about the data volumes it has processed. The following metrics are for spans, although similar metrics are exposed for metrics and logs signals:</simpara>
+<variablelist>
+<varlistentry>
+<term><literal>otelcol_receiver_accepted_spans</literal></term>
+<listitem>
+<simpara>The number of spans successfully pushed into the pipeline.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>otelcol_receiver_refused_spans</literal></term>
+<listitem>
+<simpara>The number of spans that could not be pushed into the pipeline.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>otelcol_exporter_sent_spans</literal></term>
+<listitem>
+<simpara>The number of spans successfully sent to the destination.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>otelcol_exporter_enqueue_failed_spans</literal></term>
+<listitem>
+<simpara>The number of spans failed to be added to the sending queue.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>The operator creates a <literal>&lt;cr_name&gt;-collector-monitoring</literal> telemetry service that you can use to scrape the metrics endpoint.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Enable the telemetry service by adding the following lines in the <literal>OpenTelemetryCollector</literal> custom resource:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    service:
+      telemetry:
+        metrics:
+          address: ":8888" <co xml:id="CO37-1"/></programlisting>
+<calloutlist>
+<callout arearefs="CO37-1">
+<para>The address at which the internal collector metrics are exposed. Defaults to <literal>:8888</literal>.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Retrieve the metrics by running the following command, which uses the port-forwarding Collector pod:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc port-forward &lt;collector_pod&gt;</programlisting>
+</listitem>
+<listitem>
+<simpara>Access the metrics endpoint at <literal>http://localhost:8888/metrics</literal>.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="debug-exporter-to-stdout_otel-troubleshoot">
+<title>Debug exporter</title>
+<simpara>You can configure the debug exporter to export the collected data to the standard output.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Configure the <literal>OpenTelemetryCollector</literal> custom resource as follows:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">  config: |
+    exporters:
+      debug:
+        verbosity: detailed
+    service:
+      pipelines:
+        traces:
+          exporters: [debug]
+        metrics:
+          exporters: [debug]
+        logs:
+          exporters: [debug]</programlisting>
+</listitem>
+<listitem>
+<simpara>Use the <literal>oc logs</literal> command or the web console to export the logs to the standard output.</simpara>
+</listitem>
+</orderedlist>
+</section>
+</chapter>
+<chapter xml:id="dist-tracing-otel-migrating">
+<title>Migrating from the distributed tracing platform (Jaeger) to the Red Hat build of OpenTelemetry</title>
+
+<simpara>If you are already using the Red Hat OpenShift distributed tracing platform (Jaeger) for your applications, you can migrate to the Red Hat build of OpenTelemetry, which is based on the <link xl:href="https://opentelemetry.io/">OpenTelemetry</link> open-source project.</simpara>
+<simpara>The Red Hat build of OpenTelemetry provides a set of APIs, libraries, agents, and instrumentation to facilitate observability in distributed systems. The OpenTelemetry Collector in the Red Hat build of OpenTelemetry can ingest the Jaeger protocol, so you do not need to change the SDKs in your applications.</simpara>
+<simpara>Migration from the distributed tracing platform (Jaeger) to the Red Hat build of OpenTelemetry requires configuring the OpenTelemetry Collector and your applications to report traces seamlessly. You can migrate sidecar and sidecarless deployments.</simpara>
+<section xml:id="migrating-to-otel-from-jaeger-with-sidecars_dist-tracing-otel-migrating">
+<title>Migrating from the distributed tracing platform (Jaeger) to the Red Hat build of OpenTelemetry with sidecars</title>
+<simpara>The Red Hat build of OpenTelemetry Operator supports sidecar injection into deployment workloads, so you can migrate from a distributed tracing platform (Jaeger) sidecar to a Red Hat build of OpenTelemetry sidecar.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>The Red Hat OpenShift distributed tracing platform (Jaeger) is used on the cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>The Red Hat build of OpenTelemetry is installed.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Configure the OpenTelemetry Collector as a sidecar.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel
+  namespace: &lt;otel-collector-namespace&gt;
+spec:
+  mode: sidecar
+  config: |
+    receivers:
+      jaeger:
+        protocols:
+          grpc:
+          thrift_binary:
+          thrift_compact:
+          thrift_http:
+    processors:
+      batch:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 50
+        spike_limit_percentage: 30
+      resourcedetection:
+        detectors: [openshift]
+        timeout: 2s
+    exporters:
+      otlp:
+        endpoint: "tempo-&lt;example&gt;-gateway:8090" <co xml:id="CO38-1"/>
+        tls:
+          insecure: true
+    service:
+      pipelines:
+        traces:
+          receivers: [jaeger]
+          processors: [memory_limiter, resourcedetection, batch]
+          exporters: [otlp]</programlisting>
+<calloutlist>
+<callout arearefs="CO38-1">
+<para>This endpoint points to the Gateway of a TempoStack instance deployed by using the <literal>&lt;example&gt;</literal> Tempo Operator.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Create a service account for running your application.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otel-collector-sidecar</programlisting>
+</listitem>
+<listitem>
+<simpara>Create a cluster role for the permissions needed by some processors.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-collector-sidecar
+rules:
+  <co xml:id="CO39-1"/>
+- apiGroups: ["config.openshift.io"]
+  resources: ["infrastructures", "infrastructures/status"]
+  verbs: ["get", "watch", "list"]</programlisting>
+<calloutlist>
+<callout arearefs="CO39-1">
+<para>The <literal>resourcedetectionprocessor</literal> requires permissions for infrastructures and infrastructures/status.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Create a <literal>ClusterRoleBinding</literal> to set the permissions for the service account.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: otel-collector-sidecar
+subjects:
+- kind: ServiceAccount
+  name: otel-collector-deployment
+  namespace: otel-collector-example
+roleRef:
+  kind: ClusterRole
+  name: otel-collector
+  apiGroup: rbac.authorization.k8s.io</programlisting>
+</listitem>
+<listitem>
+<simpara>Deploy the OpenTelemetry Collector as a sidecar.</simpara>
+</listitem>
+<listitem>
+<simpara>Remove the injected Jaeger Agent from your application by removing the <literal>"sidecar.jaegertracing.io/inject": "true"</literal> annotation from your <literal>Deployment</literal> object.</simpara>
+</listitem>
+<listitem>
+<simpara>Enable automatic injection of the OpenTelemetry sidecar by adding the <literal>sidecar.opentelemetry.io/inject: "true"</literal> annotation to the <literal>.spec.template.metadata.annotations</literal> field of your <literal>Deployment</literal> object.</simpara>
+</listitem>
+<listitem>
+<simpara>Use the created service account for the deployment of your application to allow the processors to get the correct information and add it to your traces.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="migrating-to-otel-from-jaeger-without-sidecars_dist-tracing-otel-migrating">
+<title>Migrating from the distributed tracing platform (Jaeger) to the Red Hat build of OpenTelemetry without sidecars</title>
+<simpara>You can migrate from the distributed tracing platform (Jaeger) to the Red Hat build of OpenTelemetry without sidecar deployment.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>The Red Hat OpenShift distributed tracing platform (Jaeger) is used on the cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>The Red Hat build of OpenTelemetry is installed.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Configure OpenTelemetry Collector deployment.</simpara>
+</listitem>
+<listitem>
+<simpara>Create the project where the OpenTelemetry Collector will be deployed.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: observability</programlisting>
+</listitem>
+<listitem>
+<simpara>Create a service account for running the OpenTelemetry Collector instance.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otel-collector-deployment
+  namespace: observability</programlisting>
+</listitem>
+<listitem>
+<simpara>Create a cluster role for setting the required permissions for the processors.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-collector
+rules:
+  <co xml:id="CO40-1"/>
+  <co xml:id="CO40-2"/>
+- apiGroups: ["", "config.openshift.io"]
+  resources: ["pods", "namespaces", "infrastructures", "infrastructures/status"]
+  verbs: ["get", "watch", "list"]</programlisting>
+<calloutlist>
+<callout arearefs="CO40-1">
+<para>Permissions for the <literal>pods</literal> and <literal>namespaces</literal> resources are required for the <literal>k8sattributesprocessor</literal>.</para>
+</callout>
+<callout arearefs="CO40-2">
+<para>Permissions for <literal>infrastructures</literal> and <literal>infrastructures/status</literal> are required for <literal>resourcedetectionprocessor</literal>.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Create a ClusterRoleBinding to set the permissions for the service account.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: otel-collector
+subjects:
+- kind: ServiceAccount
+  name: otel-collector-deployment
+  namespace: observability
+roleRef:
+  kind: ClusterRole
+  name: otel-collector
+  apiGroup: rbac.authorization.k8s.io</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the OpenTelemetry Collector instance.</simpara>
+<note>
+<simpara>This collector will export traces to a TempoStack instance. You must create your TempoStack instance by using the Red Hat Tempo Operator and place here the correct endpoint.</simpara>
+</note>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel
+  namespace: observability
+spec:
+  mode: deployment
+  serviceAccount: otel-collector-deployment
+  config: |
+    receivers:
+      jaeger:
+        protocols:
+          grpc:
+          thrift_binary:
+          thrift_compact:
+          thrift_http:
+    processors:
+      batch:
+      k8sattributes:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 50
+        spike_limit_percentage: 30
+      resourcedetection:
+        detectors: [openshift]
+    exporters:
+      otlp:
+        endpoint: "tempo-example-gateway:8090"
+        tls:
+          insecure: true
+    service:
+      pipelines:
+        traces:
+          receivers: [jaeger]
+          processors: [memory_limiter, k8sattributes, resourcedetection, batch]
+          exporters: [otlp]</programlisting>
+</listitem>
+<listitem>
+<simpara>Point your tracing endpoint to the OpenTelemetry Operator.</simpara>
+</listitem>
+<listitem>
+<simpara>If you are exporting your traces directly from your application to Jaeger, change the API endpoint from the Jaeger endpoint to the OpenTelemetry Collector endpoint.</simpara>
+<formalpara>
+<title>Example of exporting traces by using the <literal>jaegerexporter</literal> with Golang</title>
+<para>
+<programlisting language="golang" linenumbering="unnumbered">exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url))) <co xml:id="CO41-1"/></programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO41-1">
+<para>The URL points to the OpenTelemetry Collector API endpoint.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+</section>
+</chapter>
+<chapter xml:id="dist-tracing-otel-updating">
+<title>Updating the Red Hat build of OpenTelemetry</title>
+
+<simpara>For version upgrades, the Red Hat build of OpenTelemetry Operator uses the Operator Lifecycle Manager (OLM), which controls installation, upgrade, and role-based access control (RBAC) of Operators in a cluster.</simpara>
+<simpara>The OLM runs in the {product-title} by default. The OLM queries for available Operators as well as upgrades for installed Operators.</simpara>
+<simpara>When the Red Hat build of OpenTelemetry Operator is upgraded to the new version, it scans for running OpenTelemetry Collector instances that it manages and upgrades them to the version corresponding to the Operator&#8217;s new version.</simpara>
+<section xml:id="additional-resources_dist-tracing-otel-updating" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xl:href="../operators/understanding/olm/olm-understanding-olm.xml#olm-understanding-olm">Operator Lifecycle Manager concepts and resources</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../operators/admin/olm-upgrading-operators.xml#olm-upgrading-operators">Updating installed Operators</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="dist-tracing-otel-removing">
+<title>Removing the Red Hat build of OpenTelemetry</title>
+
+<simpara>The steps for removing the Red Hat build of OpenTelemetry from an {product-title} cluster are as follows:</simpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Shut down all Red Hat build of OpenTelemetry pods.</simpara>
+</listitem>
+<listitem>
+<simpara>Remove any OpenTelemetryCollector instances.</simpara>
+</listitem>
+<listitem>
+<simpara>Remove the Red Hat build of OpenTelemetry Operator.</simpara>
+</listitem>
+</orderedlist>
+<section xml:id="removing-otel-instance_dist-tracing-otel-removing">
+<title>Removing an OpenTelemetry Collector instance by using the web console</title>
+<simpara>You can remove an OpenTelemetry Collector instance in the <emphasis role="strong">Administrator</emphasis> view of the web console.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You are logged in to the web console as a cluster administrator with the <literal>cluster-admin</literal> role.</simpara>
+</listitem>
+<listitem>
+<simpara>For Red Hat OpenShift Dedicated, you must be logged in using an account with the <literal>dedicated-admin</literal> role.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Go to <emphasis role="strong">Operators</emphasis> &#8594; <emphasis role="strong">Installed Operators</emphasis> &#8594; <emphasis role="strong">Red Hat build of OpenTelemetry Operator</emphasis> &#8594; <emphasis role="strong">OpenTelemetryInstrumentation</emphasis> or <emphasis role="strong">OpenTelemetryCollector</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>To remove the relevant instance, select <inlinemediaobject>
+<imageobject>
+<imagedata fileref="images/kebab.png"/>
+</imageobject>
+<textobject><phrase>kebab</phrase></textobject>
+</inlinemediaobject> &#8594; <emphasis role="strong">Delete</emphasis> &#8230;&#8203; &#8594; <emphasis role="strong">Delete</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Optional: Remove the Red Hat build of OpenTelemetry Operator.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="removing-otel-instance-cli_dist-tracing-otel-removing">
+<title>Removing an OpenTelemetry Collector instance by using the CLI</title>
+<simpara>You can remove an OpenTelemetry Collector instance on the command line.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>An active OpenShift CLI (<literal>oc</literal>) session by a cluster administrator with the <literal>cluster-admin</literal> role.</simpara>
+<tip>
+<itemizedlist>
+<listitem>
+<simpara>Ensure that your OpenShift CLI (<literal>oc</literal>) version is up to date and matches your {product-title} version.</simpara>
+</listitem>
+<listitem>
+<simpara>Run <literal>oc login</literal>:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc login --username=&lt;your_username&gt;</programlisting>
+</listitem>
+</itemizedlist>
+</tip>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Get the name of the OpenTelemetry Collector instance by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get deployments -n &lt;project_of_opentelemetry_instance&gt;</programlisting>
+</listitem>
+<listitem>
+<simpara>Remove the OpenTelemetry Collector instance by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc delete opentelemetrycollectors &lt;opentelemetry_instance_name&gt; -n &lt;project_of_opentelemetry_instance&gt;</programlisting>
+</listitem>
+<listitem>
+<simpara>Optional: Remove the Red Hat build of OpenTelemetry Operator.</simpara>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>To verify successful removal of the OpenTelemetry Collector instance, run <literal>oc get deployments</literal> again:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get deployments -n &lt;project_of_opentelemetry_instance&gt;</programlisting>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="additional-resources_dist-tracing-otel-removing" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xl:href="../operators/admin/olm-deleting-operators-from-cluster.xml#olm-deleting-operators-from-a-cluster">Deleting Operators from a cluster</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/getting-started-cli.xml#getting-started-cli">Getting started with the OpenShift CLI</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+</book>

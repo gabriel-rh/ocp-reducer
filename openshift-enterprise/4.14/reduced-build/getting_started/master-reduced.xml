@@ -1,0 +1,1868 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?asciidoc-toc?>
+<?asciidoc-numbered?>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
+<info>
+<title>Getting started</title>
+<date>2024-02-13</date>
+</info>
+<chapter xml:id="kubernetes-overview">
+<title>Kubernetes overview</title>
+
+<simpara>Kubernetes is an open source container orchestration tool developed by Google. You can run and manage container-based workloads by using Kubernetes. The most common Kubernetes use case is to deploy an array of interconnected microservices, building an application in a cloud native way. You can create Kubernetes clusters that can span hosts across on-premise, public, private, or hybrid clouds.</simpara>
+<simpara>Traditionally, applications were deployed on top of a single operating system. With virtualization, you can split the physical host into several virtual hosts. Working on virtual instances on shared resources is not optimal for efficiency and scalability. Because a virtual machine (VM) consumes as many resources as a physical machine, providing resources to a VM such as CPU, RAM, and storage can be expensive. Also, you might see your application degrading in performance due to virtual instance usage on shared resources.</simpara>
+<figure>
+<title>Evolution of container technologies for classical deployments</title>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/247-OpenShift-Kubernetes-Overview.png"/>
+</imageobject>
+<textobject><phrase>247 OpenShift Kubernetes Overview</phrase></textobject>
+</mediaobject>
+</figure>
+<simpara>To solve this problem, you can use containerization technologies that segregate applications in a containerized environment. Similar to a VM, a container has its own filesystem, vCPU, memory, process space, dependencies, and more. Containers are decoupled from the underlying infrastructure, and are portable across clouds and OS distributions. Containers are inherently much lighter than a fully-featured OS, and are lightweight isolated processes that run on the operating system kernel. VMs are slower to boot, and are an abstraction of physical hardware. VMs run on a single machine with the help of a hypervisor.</simpara>
+<simpara>You can perform the following actions by using Kubernetes:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Sharing resources</simpara>
+</listitem>
+<listitem>
+<simpara>Orchestrating containers across multiple hosts</simpara>
+</listitem>
+<listitem>
+<simpara>Installing new hardware configurations</simpara>
+</listitem>
+<listitem>
+<simpara>Running health checks and self-healing applications</simpara>
+</listitem>
+<listitem>
+<simpara>Scaling containerized applications</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="kubernetes-components_kubernetes-overview">
+<title>Kubernetes components</title>
+<table frame="all" rowsep="1" colsep="1">
+<title>Kubernetes components</title>
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="33.3333*"/>
+<colspec colname="col_2" colwidth="66.6667*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Component</entry>
+<entry align="left" valign="top">Purpose</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara><literal>kube-proxy</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>Runs on every node in the cluster and maintains the network traffic between the Kubernetes resources.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kube-controller-manager</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>Governs the state of the cluster.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kube-scheduler</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>Allocates pods to nodes.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>etcd</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>Stores cluster data.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kube-apiserver</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>Validates and configures data for the API objects.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kubelet</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>Runs on nodes and reads the container manifests. Ensures that the defined containers have started and are running.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>kubectl</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>Allows you to define how you want to run workloads. Use the <literal>kubectl</literal> command to interact with the <literal>kube-apiserver</literal>.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Node</simpara></entry>
+<entry align="left" valign="top"><simpara>Node is a physical machine or a VM in a Kubernetes cluster. The control plane manages every node and schedules pods across the nodes in the Kubernetes cluster.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>container runtime</simpara></entry>
+<entry align="left" valign="top"><simpara>container runtime runs containers on a host operating system. You must install a container runtime on each node so that pods can run on the node.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Persistent storage</simpara></entry>
+<entry align="left" valign="top"><simpara>Stores the data even after the device is shut down. Kubernetes uses persistent volumes to store the application data.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>container-registry</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>Stores and accesses the container images.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Pod</simpara></entry>
+<entry align="left" valign="top"><simpara>The pod is the smallest logical unit in Kubernetes. A pod contains one or more containers to run in a worker node.</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</section>
+<section xml:id="kubernetes-resources_kubernetes-overview">
+<title>Kubernetes resources</title>
+<simpara>A custom resource is an extension of the Kubernetes API. You can customize Kubernetes clusters by using custom resources. Operators are software extensions which manage applications and their components with the help of custom resources. Kubernetes uses a declarative model when you want a fixed desired result while dealing with cluster resources. By using Operators, Kubernetes defines its states in a declarative way. You can modify the Kubernetes cluster resources by using imperative commands.
+An Operator acts as a control loop which continuously compares the desired state of resources with the actual state of resources and puts actions in place to bring reality in line with the desired state.</simpara>
+<figure>
+<title>Kubernetes cluster overview</title>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/247_OpenShift_Kubernetes_Overview-1.png"/>
+</imageobject>
+<textobject><phrase>247 OpenShift Kubernetes Overview 1</phrase></textobject>
+</mediaobject>
+</figure>
+<table frame="all" rowsep="1" colsep="1">
+<title>Kubernetes Resources</title>
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="33.3333*"/>
+<colspec colname="col_2" colwidth="66.6667*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Resource</entry>
+<entry align="left" valign="top">Purpose</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara>Service</simpara></entry>
+<entry align="left" valign="top"><simpara>Kubernetes uses services to expose a running application on a set of pods.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>ReplicaSets</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>Kubernetes uses the <literal>ReplicaSets</literal> to maintain the constant pod number.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Deployment</simpara></entry>
+<entry align="left" valign="top"><simpara>A resource object that maintains the life cycle of an application.</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<simpara>Kubernetes is a core component of an {product-title}. You can use {product-title} for developing and running containerized applications. With its foundation in Kubernetes, the {product-title} incorporates the same technology that serves as the engine for massive telecommunications, streaming video, gaming, banking, and other applications. You can extend your containerized applications beyond a single cloud to on-premise and multi-cloud environments by using the {product-title}.</simpara>
+<figure>
+<title>Architecture of Kubernetes</title>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/247_OpenShift_Kubernetes_Overview-2.png"/>
+</imageobject>
+<textobject><phrase>247 OpenShift Kubernetes Overview 2</phrase></textobject>
+</mediaobject>
+</figure>
+<simpara>A cluster is a single computational unit consisting of multiple nodes in a cloud environment. A Kubernetes cluster includes a control plane and worker nodes. You can run Kubernetes containers across various machines and environments. The control plane node controls and maintains the state of a cluster. You can run the Kubernetes application by using worker nodes. You can use the Kubernetes namespace to differentiate cluster resources in a cluster. Namespace scoping is applicable for resource objects, such as deployment, service, and pods. You cannot use namespace for cluster-wide resource objects such as storage class, nodes, and persistent volumes.</simpara>
+</section>
+<section xml:id="kubernetes-conceptual-guidelines_kubernetes-overview">
+<title>Kubernetes conceptual guidelines</title>
+<simpara>Before getting started with the {product-title}, consider these conceptual guidelines of Kubernetes:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Start with one or more worker nodes to run the container workloads.</simpara>
+</listitem>
+<listitem>
+<simpara>Manage the deployment of those workloads from one or more control plane nodes.</simpara>
+</listitem>
+<listitem>
+<simpara>Wrap containers in a deployment unit called a pod. By using pods provides extra metadata with the container and offers the ability to group several containers in a single deployment entity.</simpara>
+</listitem>
+<listitem>
+<simpara>Create special kinds of assets. For example, services are represented by a set of pods and a policy that defines how they are accessed. This policy allows containers to connect to the services that they need even if they do not have the specific IP addresses for the services. Replication controllers are another special asset that indicates how many pod replicas are required to run at a time. You can use this capability to automatically scale your application to adapt to its current demand.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>The API to {product-title} cluster is 100% Kubernetes. Nothing changes between a container running on any other Kubernetes and running on {product-title}. No changes to the application.
+{product-title} brings added-value features to provide enterprise-ready enhancements to Kubernetes. {product-title} CLI tool  (<literal>oc</literal>) is compatible with <literal>kubectl</literal>. While the Kubernetes API is 100% accessible within {product-title}, the <literal>kubectl</literal> command-line lacks many features that could make it more user-friendly. {product-title} offers a set of features and command-line tool like <literal>oc</literal>.
+Although Kubernetes excels at managing your applications, it does not specify or manage platform-level requirements or deployment processes. Powerful and flexible platform management tools and processes are important benefits that {product-title} offers. You must add authentication, networking, security, monitoring, and logs management to your containerization platform.</simpara>
+</section>
+</chapter>
+<chapter xml:id="openshift-overview">
+<title>{product-title} overview</title>
+
+<simpara>{product-title} is a cloud-based Kubernetes container platform. The foundation of {product-title} is based on Kubernetes and therefore shares the same technology. It is designed to allow applications and the data centers that support them to expand from just a few machines and applications to thousands of machines that serve millions of clients.</simpara>
+<simpara>{product-title} enables you to do the following:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Provide developers and IT organizations with cloud application platforms that can be used for deploying applications on secure and scalable resources.</simpara>
+</listitem>
+<listitem>
+<simpara>Require minimal configuration and management overhead.</simpara>
+</listitem>
+<listitem>
+<simpara>Bring the Kubernetes platform to customer data centers and cloud.</simpara>
+</listitem>
+<listitem>
+<simpara>Meet security, privacy, compliance, and governance requirements.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>With its foundation in Kubernetes, {product-title} incorporates the same technology that serves as the engine for massive telecommunications, streaming video, gaming, banking, and other applications. Its implementation in open Red Hat technologies lets you extend your containerized applications beyond a single cloud to on-premise and multi-cloud environments.</simpara>
+<section xml:id="getting-started-openshift-common-terms_openshift-overview">
+<title>Glossary of common terms for {product-title}</title>
+<simpara>This glossary defines common Kubernetes and {product-title} terms.</simpara>
+<variablelist>
+<varlistentry>
+<term>Kubernetes</term>
+<listitem>
+<simpara>Kubernetes is an open source container orchestration engine for automating deployment, scaling, and management of containerized applications.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Containers</term>
+<listitem>
+<simpara>Containers are application instances and components that run in OCI-compliant containers on the worker nodes. A container is the runtime of an Open Container Initiative (OCI)-compliant image. An image is a binary application. A worker node can run many containers. A node capacity is related to memory and CPU capabilities of the underlying resources whether they are cloud, hardware, or virtualized.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Pod</term>
+<listitem>
+<simpara>A pod is one or more containers deployed together on one host. It consists of a colocated group of containers with shared resources such as volumes and IP addresses. A pod is also the smallest compute unit defined, deployed, and managed.</simpara>
+<simpara>In {product-title}, pods replace individual application containers as the smallest deployable unit.</simpara>
+<simpara>Pods are the orchestrated unit in {product-title}. {product-title} schedules and runs all containers in a pod on the same node. Complex applications are made up of many pods, each with their own containers. They interact externally and also with another inside the {product-title} environment.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Replica set and replication controller</term>
+<listitem>
+<simpara>The Kubernetes replica set and the {product-title} replication controller are both available. The job of this component is to ensure the specified number of pod replicas are running at all times. If pods exit or are deleted, the replica set or replication controller starts more. If more pods are running than needed, the replica set deletes as many as necessary to match the specified number of replicas.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Deployment and DeploymentConfig</term>
+<listitem>
+<simpara>{product-title} implements both Kubernetes <literal>Deployment</literal> objects and {product-title} <literal>DeploymentConfigs</literal> objects. Users may select either.</simpara>
+<simpara><literal>Deployment</literal> objects control how an application is rolled out as pods. They identify the name of the container image to be taken from the registry and deployed as a pod on a node. They set the number of replicas of the pod to deploy, creating a replica set to manage the process. The labels indicated instruct the scheduler onto which nodes to deploy the pod. The set of labels is included in the pod definition that the replica set instantiates.</simpara>
+<simpara><literal>Deployment</literal> objects are able to update the pods deployed onto the worker nodes based on the version of the <literal>Deployment</literal> objects and the various rollout strategies for managing acceptable application availability. {product-title} <literal>DeploymentConfig</literal> objects add the additional features of change triggers, which are able to automatically create new versions of the <literal>Deployment</literal> objects as new versions of the container image are available, or other changes.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Service</term>
+<listitem>
+<simpara>A service defines a logical set of pods and access policies. It provides permanent internal IP addresses and hostnames for other applications to use as pods are created and destroyed.</simpara>
+<simpara>Service layers connect application components together. For example, a front-end web service connects to a database instance by communicating with its service. Services allow for simple internal load balancing across application components. {product-title} automatically injects service information into running containers for ease of discovery.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Route</term>
+<listitem>
+<simpara>A route is a way to expose a service by giving it an externally reachable hostname, such as www.example.com. Each route consists of a route name, a service selector, and optionally a security configuration. A router can consume a defined route and the endpoints identified by its service to provide a name that lets external clients reach your applications.  While it is easy to deploy a complete multi-tier application, traffic from anywhere outside the {product-title} environment cannot reach the application without the routing layer.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Build</term>
+<listitem>
+<simpara>A build is the process of transforming input parameters into a resulting object. Most often, the process is used to transform input parameters or source code into a runnable image. A <literal>BuildConfig</literal> object is the definition of the entire build process. {product-title} leverages Kubernetes by creating containers from build images and pushing them to the integrated registry.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Project</term>
+<listitem>
+<simpara>{product-title} uses projects to allow groups of users or developers to work together, serving as the unit of isolation and collaboration. It defines the scope of resources, allows project administrators and collaborators to manage resources, and restricts and tracks the user’s resources with quotas and limits.</simpara>
+<simpara>A project is a Kubernetes namespace with additional annotations. It is the central vehicle for managing access to resources for regular users. A project lets a community of users organize and manage their content in isolation from other communities. Users must receive access to projects from administrators. But cluster administrators can allow developers to create their own projects, in which case users automatically have access to their own projects.</simpara>
+<simpara>Each project has its own set of objects, policies, constraints, and service accounts.</simpara>
+<simpara>Projects are also known as namespaces.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Operators</term>
+<listitem>
+<simpara>An Operator is a Kubernetes-native application. The goal of an Operator is to put operational knowledge into software. Previously this knowledge only resided in the minds of administrators, various combinations or shell scripts or automation software such as Ansible. It was outside your Kubernetes cluster and hard to integrate. With Operators, all of this changes.</simpara>
+<simpara>Operators are purpose-built for your applications. They implement and automate common Day 1 activities such as installation and configuration as well as Day 2 activities such as scaling up and down, reconfiguration, updates, backups, fail overs, and restores in a piece of software running inside your Kubernetes cluster by integrating natively with Kubernetes concepts and APIs. This is called a Kubernetes-native application.</simpara>
+<simpara>With Operators, applications must not be treated as a collection of primitives, such as pods, deployments, services, or config maps. Instead, Operators should be treated as a single object that exposes the options that make sense for the application.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</section>
+<section xml:id="understanding-openshift_openshift-overview">
+<title>Understanding {product-title}</title>
+<simpara>{product-title} is a Kubernetes environment for managing the lifecycle of container-based applications and their dependencies on various computing platforms, such as bare metal, virtualized, on-premise, and in cloud. {product-title} deploys, configures and manages containers. {product-title} offers usability, stability, and customization of its components.</simpara>
+<simpara>{product-title} utilises a number of computing resources, known as nodes. A node has a lightweight, secure operating system based on Red Hat Enterprise Linux (RHEL), known as Red Hat Enterprise Linux CoreOS (RHCOS).</simpara>
+<simpara>After a node is booted and configured, it obtains a container runtime, such as CRI-O or Docker, for managing and running the images of container workloads scheduled to it. The Kubernetes agent, or kubelet schedules container workloads on the node. The kubelet is responsible for registering the node with the cluster and receiving the details of container workloads.</simpara>
+<simpara>{product-title} configures and manages the networking, load balancing and routing of the cluster. {product-title} adds cluster services for monitoring the cluster health and performance, logging, and for managing upgrades.</simpara>
+<simpara>The container image registry and OperatorHub provide Red Hat certified products and community built softwares for providing various application services within the cluster. These applications and services manage the applications deployed in the cluster, databases, frontends and user interfaces, application runtimes and business automation, and developer services for development and testing of container applications.</simpara>
+<simpara>You can manage applications within the cluster either manually by configuring deployments of containers running from pre-built images or through resources known as Operators. You can build custom images from pre-build images and source code, and store these custom images locally in an internal, private or public registry.</simpara>
+<simpara>The Multicluster Management layer can manage multiple clusters including their deployment, configuration, compliance and distribution of workloads in a single console.</simpara>
+<informalfigure>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/oke-about-ocp-stack-image.png"/>
+</imageobject>
+<textobject><phrase>Red Hat OpenShift Kubernetes Engine</phrase></textobject>
+</mediaobject>
+</informalfigure>
+</section>
+<section xml:id="openshift-overview-install-openshift">
+<title>Installing {product-title}</title>
+<simpara>The {product-title} installation program offers you flexibility. You can use the installation program to deploy a cluster on infrastructure that the installation program provisions and the cluster maintains or deploy a cluster on infrastructure that you prepare and maintain.</simpara>
+<simpara>For more information about the installation process, the supported platforms, and choosing a method of installing and preparing your cluster, see the following:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><link xl:href="../installing/index.xml#installation-overview_ocp-installation-overview">OpenShift Container Platform installation overview</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../installing/index.xml#installation-process_ocp-installation-overview">Installation process</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../installing/index.xml#supported-platforms-for-openshift-clusters_ocp-installation-overview">Supported platforms for OpenShift Container Platform clusters</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../installing/installing-preparing.xml#installing-preparing-selecting-cluster-type">Selecting a cluster installation type</link></simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="installation-openshift-local_openshift-overview">
+<title>OpenShift Local overview</title>
+<simpara>OpenShift Local supports rapid application development to get started building {product-title} clusters. OpenShift Local is designed to run on a local computer to simplify setup and testing, and to emulate the cloud development environment locally with all of the tools needed to develop container-based applications.</simpara>
+<simpara>Regardless of the programming language you use, OpenShift Local hosts your application and brings a minimal, preconfigured Red Hat {product-title} cluster to your local PC without the need for a server-based infrastructure.</simpara>
+<simpara>On a hosted environment, OpenShift Local can create microservices, convert them into images, and run them in Kubernetes-hosted containers directly on your laptop or desktop running Linux, macOS, or Windows 10 or later.</simpara>
+<simpara>For more information about OpenShift Local, see <link xl:href="https://developers.redhat.com/products/openshift-local/overview">Red Hat OpenShift Local Overview</link>.</simpara>
+</section>
+</section>
+<section xml:id="openshift-next-steps">
+<title>Next Steps</title>
+<section xml:id="_for_developers">
+<title>For developers</title>
+<simpara>Develop and deploy containerized applications with {product-title}. {product-title} is a platform for developing and deploying containerized applications. {product-title} documentation helps you:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../architecture/understanding-development.xml#understanding-development">Understand {product-title} development</link></emphasis>: Learn the different types of containerized applications, from simple containers to advanced Kubernetes deployments and Operators.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../applications/projects/working-with-projects.xml#working-with-projects">Work with projects</link></emphasis>: Create projects from the {product-title} web console or OpenShift CLI (<literal>oc</literal>) to organize and share the software you develop.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../applications/creating_applications/odc-creating-applications-using-developer-perspective.xml#odc-creating-applications-using-developer-perspective">Work with applications</link></emphasis>:</simpara>
+</listitem>
+</itemizedlist>
+<simpara>Use <link xl:href="../web_console/web-console-overview.xml#about-developer-perspective_web-console-overview">the <emphasis role="strong">Developer</emphasis> perspective</link> in the {product-title} web console to
+<link xl:href="../applications/creating_applications/odc-creating-applications-using-developer-perspective.xml#odc-creating-applications-using-developer-perspective">create and deploy applications</link>.</simpara>
+<simpara>Use the
+<link xl:href="../applications/odc-viewing-application-composition-using-topology-view.xml#odc-viewing-application-composition-using-topology-view"><emphasis role="strong">Topology</emphasis> view</link>
+to see your applications, monitor status, connect and group components, and modify your code base.</simpara>
+<itemizedlist>
+<listitem>
+<simpara><emphasis role="strong"> <link xl:href="../cli_reference/odo-important-update.xml#odo-important_update">Use the developer CLI tool (<literal>odo</literal>)</link></emphasis>:
+The <literal>odo</literal> CLI tool lets developers create single or multi-component applications and automates deployment, build, and service route configurations. It abstracts complex Kubernetes and {product-title} concepts, allowing you to focus on developing your applications.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="https://docs.openshift.com/pipelines/latest/about/understanding-openshift-pipelines.html#op-key-features">Create CI/CD Pipelines</link></emphasis>: Pipelines are serverless, cloud-native, continuous integration, and continuous deployment systems that run in isolated containers.
+They use standard Tekton custom resources to automate deployments and are designed for decentralized teams working on microservices-based architecture.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">Deploy Helm charts</emphasis>:
+<link xl:href="../applications/working_with_helm_charts/understanding-helm.xml#understanding-helm">Helm 3</link>
+is a package manager that helps developers define, install, and update
+application packages on Kubernetes. A Helm chart is a packaging format that
+describes an application that can be deployed using the Helm CLI.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../cicd/builds/understanding-image-builds.xml#understanding-image-builds">Understand image builds</link></emphasis>: Choose from different build strategies (Docker, S2I, custom, and pipeline) that can include different kinds of source materials (Git repositories, local binary inputs, and external artifacts). Then, follow examples of build types from basic builds to advanced builds.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../openshift_images/create-images.xml#create-images">Create container images</link></emphasis>: A container image is the most basic building block in {product-title} (and Kubernetes) applications. Defining image streams lets you gather multiple versions of an image in one place as you continue its development. S2I containers let you insert your source code into a base container that is set up to run code of a particular type, such as Ruby, Node.js, or Python.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../applications/deployments/what-deployments-are.xml#what-deployments-are">Create deployments</link></emphasis>:  Use <literal>Deployment</literal> and <literal>DeploymentConfig</literal> objects to exert fine-grained management over applications.
+<link xl:href="../applications/deployments/managing-deployment-processes.xml#deployment-operations">Manage deployments</link> using the <emphasis role="strong">Workloads</emphasis> page or OpenShift CLI (<literal>oc</literal>). Learn <link xl:href="../applications/deployments/deployment-strategies.xml#deployment-strategies">rolling, recreate, and custom</link> deployment strategies.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../openshift_images/using-templates.xml#using-templates">Create templates</link></emphasis>: Use existing templates or create your own templates that describe how an application is built or deployed. A template can combine images with descriptions, parameters, replicas, exposed ports and other content that defines how an application can be run or built.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../operators/understanding/olm-what-operators-are.xml#olm-what-operators-are">Understand Operators</link></emphasis>: Operators are the preferred method for creating on-cluster applications for {product-title} {product-version}. Learn about the Operator Framework and how to deploy applications using installed Operators into your projects.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../operators/operator_sdk/osdk-about.xml#osdk-about">Develop Operators</link></emphasis>: Operators are the preferred method for creating on-cluster applications for {product-title} {product-version}. Learn the workflow for building, testing, and deploying Operators. Then, create your own Operators based on <link xl:href="../operators/operator_sdk/ansible/osdk-ansible-support.xml#osdk-ansible-support">Ansible</link> or
+<link xl:href="../operators/operator_sdk/helm/osdk-helm-support.xml#osdk-helm-support">Helm</link>, or configure <link xl:href="../operators/operator_sdk/osdk-monitoring-prometheus.xml#osdk-monitoring-prometheus">built-in Prometheus monitoring</link> using the Operator SDK.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../rest_api/index.xml#api-index">REST API reference</link></emphasis>: Learn about {product-title} application programming interface endpoints.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="_for_administrators">
+<title>For administrators</title>
+<itemizedlist>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../architecture/architecture.xml#architecture-overview-architecture">Understand {product-title} management</link></emphasis>: Learn about components
+of the {product-title} {product-version} control plane. See how {product-title} control plane and worker nodes are managed and updated through the <link xl:href="../machine_management/creating_machinesets/creating-machineset-aws.xml#machine-api-overview_creating-machineset-aws">Machine API</link> and <link xl:href="../architecture/control-plane.xml#operators-overview_control-plane">Operators</link>.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../authentication/understanding-authentication.xml#understanding-authentication">Manage users and groups</link></emphasis>: Add users and groups with different levels of permissions to use or modify clusters.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../authentication/understanding-authentication.xml#understanding-authentication">Manage authentication</link></emphasis>: Learn how user, group, and API authentication
+works in {product-title}. {product-title} supports multiple identity providers.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../networking/understanding-networking.xml#understanding-networking">Manage networking</link></emphasis>: The cluster network in {product-title} is managed by the <link xl:href="../networking/cluster-network-operator.xml#cluster-network-operator">Cluster Network Operator</link> (CNO). The CNO uses iptables rules in <link xl:href="../networking/openshift_sdn/configuring-kube-proxy.xml#configuring-kube-proxy">kube-proxy</link> to direct traffic between nodes and pods running on those nodes. The Multus Container Network Interface adds the capability to attach <link xl:href="../networking/multiple_networks/understanding-multiple-networks.xml#understanding-multiple-networks">multiple network interfaces</link> to a pod. Using
+<link xl:href="../networking/network_policy/about-network-policy.xml#about-network-policy">network policy</link> features, you can isolate your pods or permit selected traffic.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../storage/understanding-persistent-storage.xml#understanding-persistent-storage">Manage storage</link></emphasis>: {product-title} allows cluster administrators to configure persistent storage.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../operators/understanding/olm-understanding-operatorhub.xml#olm-understanding-operatorhub">Manage Operators</link></emphasis>: Lists of Red Hat, ISV, and community Operators can
+be reviewed by cluster administrators and <link xl:href="../operators/admin/olm-adding-operators-to-cluster.xml#olm-adding-operators-to-a-cluster">installed on their clusters</link>. After you install them, you can <link xl:href="../operators/user/olm-creating-apps-from-installed-operators.xml#olm-creating-apps-from-installed-operators">run</link>, <link xl:href="../operators/admin/olm-upgrading-operators.xml#olm-upgrading-operators">upgrade</link>, back up, or otherwise manage the Operator on your cluster.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../operators/understanding/crds/crd-extending-api-with-crds.xml#crd-extending-api-with-crds">Use custom resource definitions (CRDs) to modify the cluster</link></emphasis>: Cluster features implemented with Operators can be modified with CRDs. Learn to <link xl:href="../operators/understanding/crds/crd-extending-api-with-crds.xml#crd-creating-custom-resources-definition_crd-extending-api-with-crds">create a CRD</link> and <link xl:href="../operators/understanding/crds/crd-managing-resources-from-crds.xml#crd-managing-resources-from-crds">manage resources from CRDs</link>.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../applications/quotas/quotas-setting-per-project.xml#quotas-setting-per-project">Set resource quotas</link></emphasis>: Choose from CPU, memory, and other system resources to <link xl:href="../applications/quotas/quotas-setting-per-project.xml#quotas-setting-per-project">set quotas</link>.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../applications/pruning-objects.xml#pruning-objects">Prune and reclaim resources</link></emphasis>: Reclaim space by pruning unneeded Operators, groups, deployments, builds, images, registries, and cron jobs.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../scalability_and_performance/recommended-performance-scale-practices/recommended-infrastructure-practices.xml#scaling-cluster-monitoring-operator">Scale</link> and <link xl:href="../scalability_and_performance/using-node-tuning-operator.xml#using-node-tuning-operator">tune</link> clusters</emphasis>: Set cluster limits, tune nodes, scale cluster monitoring, and optimize networking, storage, and routes for your environment.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../updating/updating_a_cluster/updating_disconnected_cluster/disconnected-update-osus.xml#update-service-overview_updating-restricted-network-cluster-osus">Using the OpenShift Update Service in a disconnected environement</link></emphasis>: Learn about installing and managing a local OpenShift Update Service for recommending {product-title} updates in disconnected environments.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../monitoring/monitoring-overview.xml#monitoring-overview">Monitor clusters</link></emphasis>:
+Learn to  <link xl:href="../monitoring/configuring-the-monitoring-stack.xml#configuring-the-monitoring-stack">configure the monitoring stack</link>.
+After configuring monitoring, use the web console to access <link xl:href="../monitoring/reviewing-monitoring-dashboards.xml#reviewing-monitoring-dashboards">monitoring dashboards</link>. In addition to infrastructure metrics, you can also scrape and view metrics for your own services.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong"><link xl:href="../support/remote_health_monitoring/about-remote-health-monitoring.xml#about-remote-health-monitoring_about-remote-health-monitoring">Remote health monitoring</link></emphasis>: {product-title} collects anonymized aggregated information about your cluster. Using Telemetry and the Insights Operator, this data is received by Red Hat and used to improve {product-title}. You can view the <link xl:href="../support/remote_health_monitoring/showing-data-collected-by-remote-health-monitoring.xml#showing-data-collected-by-remote-health-monitoring_showing-data-collected-by-remote-health-monitoring">data collected by remote health monitoring</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+</chapter>
+<chapter xml:id="openshift-web-console">
+<title>Creating and building an application using the web console</title>
+
+<section xml:id="openshift-web-console-before-you-begin">
+<title>Before you begin</title>
+<itemizedlist>
+<listitem>
+<simpara>Review <link xl:href="../web_console/web-console.xml#web-console-overview">Accessing the web console</link>.</simpara>
+</listitem>
+<listitem>
+<simpara>You must be able to access a running instance of {product-title}. If you do not have access, contact your cluster administrator.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-web-console-login_openshift-web-console">
+<title>Logging in to the web console</title>
+<simpara>You can log in to the {product-title} web console to access and manage your cluster.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>Log in to the {product-title} web console using your login credentials.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>You are redirected to the <emphasis role="strong">Projects</emphasis> page. For non-administrative users, the default view is the <emphasis role="strong">Developer</emphasis> perspective. For cluster administrators, the default view is the <emphasis role="strong">Administrator</emphasis> perspective. If you do not have <literal>cluster-admin</literal> privileges, you will not see the <emphasis role="strong">Administrator</emphasis> perspective in your web console.</simpara>
+<simpara>The web console provides two perspectives: the <emphasis role="strong">Administrator</emphasis> perspective and <emphasis role="strong">Developer</emphasis> perspective. The <emphasis role="strong">Developer</emphasis> perspective provides workflows specific to the developer use cases.</simpara>
+<figure>
+<title>Perspective switcher</title>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/web_console_perspectives.png" contentwidth="300"/>
+</imageobject>
+<textobject><phrase>500</phrase></textobject>
+</mediaobject>
+</figure>
+<simpara>Use the perspective switcher to switch to the <emphasis role="strong">Developer</emphasis> perspective. The <emphasis role="strong">Topology</emphasis> view with options to create an application is displayed.</simpara>
+</section>
+<section xml:id="getting-started-web-console-creating-new-project_openshift-web-console">
+<title>Creating a new project</title>
+<simpara>A project enables a community of users to organize and manage their content in isolation. Projects are {product-title} extensions to Kubernetes namespaces. Projects have additional features that enable user self-provisioning.</simpara>
+<simpara>Users must receive access to projects from administrators. Cluster administrators can allow developers to create their own projects. In most cases, users automatically have access to their own projects.</simpara>
+<simpara>Each project has its own set of objects, policies, constraints, and service accounts.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You are logged in to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are in the <emphasis role="strong">Developer</emphasis> perspective.</simpara>
+</listitem>
+<listitem>
+<simpara>You have the appropriate roles and permissions in a project to create applications and other workloads in {product-title}.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>In the <emphasis role="strong">+Add</emphasis> view, select <emphasis role="strong">Project</emphasis> &#8594; <emphasis role="strong">Create Project</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Name</emphasis> field, enter <literal>user-getting-started</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>Optional: In the <emphasis role="strong">Display name</emphasis> field, enter <literal>Getting Started with OpenShift</literal>.</simpara>
+<note>
+<simpara><emphasis role="strong">Display name</emphasis> and <emphasis role="strong">Description</emphasis> fields are optional.</simpara>
+</note>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+<simpara>You have created your first project on {product-title}.</simpara>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../authentication/using-rbac.xml#default-roles_using-rbac">Default cluster roles</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/projects/working-with-projects.xml#viewing-a-project-using-the-web-console_projects">Viewing a project using the web console</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/projects/working-with-projects.xml#odc-providing-project-permissions-using-developer-perspective_projects">Providing access permissions to your project using the Developer perspective</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/projects/working-with-projects.xml#deleting-a-project-using-the-web-console_projects">Deleting a project using the web console</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-web-console-granting-permissions_openshift-web-console">
+<title>Granting view permissions</title>
+<simpara>{product-title} automatically creates a few special service accounts in every project. The default service account takes responsibility for running the pods. {product-title} uses and injects this service account into every pod that launches.</simpara>
+<simpara>The following procedure creates a <literal>RoleBinding</literal> object for the default <literal>ServiceAccount</literal> object. The service account communicates with the {product-title} API to learn about pods, services, and resources within the project.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You are logged in to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+<listitem>
+<simpara>You are in the <emphasis role="strong">Administrator</emphasis> perspective.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Navigate to <emphasis role="strong">User Management</emphasis> and then click <emphasis role="strong">RoleBindings</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create binding</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Select <literal>Namespace role binding (RoleBinding)</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Name</emphasis> field, enter <literal>sa-user-account</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Namespace</emphasis> field, search for and select <literal>user-getting-started</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Role name</emphasis> field, search for <literal>view</literal> and select <literal>view</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Subject</emphasis> field, select <literal>ServiceAccount</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Subject namespace</emphasis> field, search for and select <literal>user-getting-started</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Subject name</emphasis> field, enter <literal>default</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../authentication/understanding-authentication.xml#rbac-users_understanding-authentication">Understanding authentication</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../authentication/using-rbac.xml#authorization-overview_using-rbac">RBAC overview</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-web-console-deploying-first-image_openshift-web-console">
+<title>Deploying your first image</title>
+<simpara>The simplest way to deploy an application in {product-title} is to run an existing container image. The following procedure deploys a front end component of an application called <literal>national-parks-app</literal>. The web application displays an interactive map. The map displays the location of major national parks across the world.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You are logged in to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are in the <emphasis role="strong">Developer</emphasis> perspective.</simpara>
+</listitem>
+<listitem>
+<simpara>You have the appropriate roles and permissions in a project to create applications and other workloads in {product-title}.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>From the <emphasis role="strong">+Add</emphasis> view in the <emphasis role="strong">Developer</emphasis> perspective, click <emphasis role="strong">Container images</emphasis> to open a dialog.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Image Name</emphasis> field, enter the following: <literal>quay.io/openshiftroadshow/parksmap:latest</literal></simpara>
+</listitem>
+<listitem>
+<simpara>Ensure that you have the current values for the following:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Application: <literal>national-parks-app</literal></simpara>
+</listitem>
+<listitem>
+<simpara>Name: <literal>parksmap</literal></simpara>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Select <emphasis role="strong">Deployment</emphasis> as the <emphasis role="strong">Resource</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Select <emphasis role="strong">Create route to the application</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Advanced Options</emphasis> section, click <emphasis role="strong">Labels</emphasis> and add labels to better identify this deployment later. Labels help identify and filter components in the web console and in the command line. Add the following labels:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>app=national-parks-app</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>component=parksmap</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>role=frontend</literal></simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+<simpara>You are redirected to the <emphasis role="strong">Topology</emphasis> page where you can see the <literal>parksmap</literal> deployment in the <literal>national-parks-app</literal> application.</simpara>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../applications/creating_applications/odc-creating-applications-using-developer-perspective.xml">Creating applications using the Developer perspective</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/projects/working-with-projects.xml#viewing-a-project-using-the-web-console_projects">Viewing a project using the web console</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/odc-viewing-application-composition-using-topology-view.xml#odc-viewing-application-topology_viewing-application-composition-using-topology-view">Viewing the topology of your application</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/projects/working-with-projects.xml#deleting-a-project-using-the-web-console_projects">Deleting a project using the web console</link></simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="getting-started-web-console-examining-pod_openshift-web-console">
+<title>Examining the pod</title>
+<simpara>{product-title} leverages the Kubernetes concept of a pod, which is one or more containers deployed together on one host, and the smallest compute unit that can be defined, deployed, and managed.
+Pods are the rough equivalent of a machine instance, physical or virtual, to a container.</simpara>
+<simpara>The <emphasis role="strong">Overview</emphasis> panel enables you to access many features of the <literal>parksmap</literal> deployment. The <emphasis role="strong">Details</emphasis> and <emphasis role="strong">Resources</emphasis> tabs enable you to scale application pods, check build status, services, and routes.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You are logged in to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are in the <emphasis role="strong">Developer</emphasis> perspective.</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>Click <literal>D parksmap</literal> in the <emphasis role="strong">Topology</emphasis> view to open the <emphasis role="strong">Overview</emphasis> panel.</simpara>
+<figure>
+<title>Parksmap deployment</title>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/getting-started-examine-pod.png"/>
+</imageobject>
+<textobject><phrase>getting started examine pod</phrase></textobject>
+</mediaobject>
+</figure>
+<simpara>The <emphasis role="strong">Overview</emphasis> panel includes tabs for <emphasis role="strong">Details</emphasis>, <emphasis role="strong">Resources</emphasis>, and <emphasis role="strong">Observe</emphasis>. The <emphasis role="strong">Details</emphasis> tab might be displayed by default.</simpara>
+<table frame="all" rowsep="1" colsep="1">
+<title>Overview panel tab definitions</title>
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="40*"/>
+<colspec colname="col_2" colwidth="60*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Tab</entry>
+<entry align="left" valign="top">Defintion</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara><emphasis role="strong">Details</emphasis></simpara></entry>
+<entry align="left" valign="top"><simpara>Enables you to scale your application and view pod configuration such as labels, annotations, and the status of the application.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top" morerows="3"><simpara><emphasis role="strong">Resources</emphasis></simpara></entry>
+<entry align="left" valign="top"><simpara>Displays the resources that are associated with the deployment.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Pods are the basic units of {product-title} applications. You can see how many pods are being used, what their status is, and you can view the logs.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><emphasis role="strong">Services</emphasis> that are created for your pod and assigned ports are listed under the <emphasis role="strong">Services</emphasis> heading.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><emphasis role="strong">Routes</emphasis> enable external access to the pods and a URL is used to access them.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><emphasis role="strong">Observe</emphasis></simpara></entry>
+<entry align="left" valign="top"><simpara>View various <emphasis role="strong">Events</emphasis> and <emphasis role="strong">Metrics</emphasis> information as it relates to your pod.</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</listitem>
+</itemizedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../applications/odc-viewing-application-composition-using-topology-view.xml#odc-interacting-with-applications-and-components_viewing-application-composition-using-topology-view">Interacting with applications and components</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/odc-viewing-application-composition-using-topology-view.xml#odc-scaling-application-pods-and-checking-builds-and-routes_viewing-application-composition-using-topology-view">Scaling application pods and checking builds and routes</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/odc-viewing-application-composition-using-topology-view.xml#odc-labels-and-annotations-used-for-topology-view_viewing-application-composition-using-topology-view">Labels and annotations used for the Topology view</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-web-console-scaling-app_openshift-web-console">
+<title>Scaling the application</title>
+<simpara>In Kubernetes, a <literal>Deployment</literal> object defines how an application deploys. In most cases, users use <literal>Pod</literal>, <literal>Service</literal>, <literal>ReplicaSets</literal>, and <literal>Deployment</literal> resources together. In most cases, {product-title} creates the resources for you.</simpara>
+<simpara>When you deploy the <literal>national-parks-app</literal> image, a deployment resource is created.  In this example, only one <literal>Pod</literal> is deployed.</simpara>
+<simpara>The following procedure scales the <literal>national-parks-image</literal> to use two instances.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You are logged in to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are in the <emphasis role="strong">Developer</emphasis> perspective.</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>In the <emphasis role="strong">Topology</emphasis> view, click the <literal>national-parks-app</literal> application.</simpara>
+</listitem>
+<listitem>
+<simpara>Click the <emphasis role="strong">Details</emphasis> tab.</simpara>
+</listitem>
+<listitem>
+<simpara>Use the up arrow to scale the pod to two instances.</simpara>
+<figure>
+<title>Scaling application</title>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/getting-started-scaling-pod.png" contentwidth="300"/>
+</imageobject>
+<textobject><phrase>500</phrase></textobject>
+</mediaobject>
+</figure>
+<note>
+<simpara>Application scaling can happen quickly because {product-title} is launching a new instance of an existing image.</simpara>
+</note>
+</listitem>
+<listitem>
+<simpara>Use the down arrow to scale the pod down to one instance.</simpara>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../scalability_and_performance/recommended-performance-scale-practices/recommended-control-plane-practices.xml#recommended-scale-practices_cluster-scaling">Recommended practices for scaling the cluster</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../nodes/pods/nodes-pods-autoscaling.xml#nodes-pods-autoscaling-about_nodes-pods-autoscaling">Understanding horizontal pod autoscalers</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../nodes/pods/nodes-pods-vertical-autoscaler.xml#nodes-pods-vertical-autoscaler-about_nodes-pods-vertical-autoscaler">About the Vertical Pod Autoscaler Operator</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="getting-started-web-console-deploying-python-app_openshift-web-console">
+<title>Deploying a Python application</title>
+<simpara>The following procedure deploys a back-end service for the <literal>parksmap</literal> application. The Python application performs 2D geo-spatial queries against a MongoDB database to locate and return map coordinates of all national parks in the world.</simpara>
+<simpara>The deployed back-end service that is <literal>nationalparks</literal>.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You are logged in to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are in the <emphasis role="strong">Developer</emphasis> perspective.</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>From the <emphasis role="strong">+Add</emphasis> view in the <emphasis role="strong">Developer</emphasis> perspective, click <emphasis role="strong">Import from Git</emphasis> to open a dialog.</simpara>
+</listitem>
+<listitem>
+<simpara>Enter the following URL in the Git Repo URL field:
+<literal>https://github.com/openshift-roadshow/nationalparks-py.git</literal></simpara>
+<simpara>A builder image is automatically detected.</simpara>
+<note>
+<simpara>If the detected builder image is Dockerfile, select <emphasis role="strong">Edit Import Strategy</emphasis>. Select <emphasis role="strong">Builder Image</emphasis> and then click <emphasis role="strong">Python</emphasis>.</simpara>
+</note>
+</listitem>
+<listitem>
+<simpara>Scroll to the <emphasis role="strong">General</emphasis> section.</simpara>
+</listitem>
+<listitem>
+<simpara>Ensure that you have the current values for the following:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Application: <literal>national-parks-app</literal></simpara>
+</listitem>
+<listitem>
+<simpara>Name: <literal>nationalparks</literal></simpara>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Select <emphasis role="strong">Deployment</emphasis> as the <emphasis role="strong">Resource</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Select <emphasis role="strong">Create route to the application</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Advanced Options</emphasis> section, click <emphasis role="strong">Labels</emphasis> and add labels to better identify this deployment later. Labels help identify and filter components in the web console and in the command line. Add the following labels:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara><literal>app=national-parks-app</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>component=nationalparks</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>role=backend</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>type=parksmap-backend</literal></simpara>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>From the <emphasis role="strong">Topology</emphasis> view, select the <literal>nationalparks</literal> application.</simpara>
+<note>
+<simpara>Click the <emphasis role="strong">Resources</emphasis> tab. In the <emphasis role="strong">Builds</emphasis> section, you can see your build running.</simpara>
+</note>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../applications/odc-viewing-application-composition-using-topology-view.xml#odc-adding-services-to-your-application_viewing-application-composition-using-topology-view">Adding services to your application</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/creating_applications/odc-creating-applications-using-developer-perspective.xml#odc-importing-codebase-from-git-to-create-application_odc-creating-applications-using-developer-perspective">Importing a codebase from Git to create an application</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/odc-viewing-application-composition-using-topology-view.xml#odc-viewing-application-topology_viewing-application-composition-using-topology-view">Viewing the topology of your application</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/projects/working-with-projects.xml#odc-providing-project-permissions-using-developer-perspective_projects">Providing access permissions to your project using the Developer perspective</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/projects/working-with-projects.xml#deleting-a-project-using-the-web-console_projects">Deleting a project using the web console</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-web-console-connecting-database_openshift-web-console">
+<title>Connecting to a database</title>
+<simpara>Deploy and connect a MongoDB database where the <literal>national-parks-app</literal> application stores location information.
+Once you mark the <literal>national-parks-app</literal> application as a backend for the map visualization tool, <literal>parksmap</literal> deployment uses the {product-title} discover mechanism to display the map automatically.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You are logged in to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are in the <emphasis role="strong">Developer</emphasis> perspective.</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>From the <emphasis role="strong">+Add</emphasis> view in the <emphasis role="strong">Developer</emphasis> perspective, click <emphasis role="strong">Container images</emphasis> to open a dialog.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Image Name</emphasis> field, enter <literal>quay.io/centos7/mongodb-36-centos7</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Runtime icon</emphasis> field, search for <literal>mongodb</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>Scroll down to the <emphasis role="strong">General</emphasis> section.</simpara>
+</listitem>
+<listitem>
+<simpara>Ensure that you have the current values for the following:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Application: <literal>national-parks-app</literal></simpara>
+</listitem>
+<listitem>
+<simpara>Name: <literal>mongodb-nationalparks</literal></simpara>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Select <emphasis role="strong">Deployment</emphasis> as the <emphasis role="strong">Resource</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Unselect the checkbox next to <emphasis role="strong">Create route to the application</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Advanced Options</emphasis> section, click <emphasis role="strong">Deployment</emphasis> to add environment variables to add the following environment variables:</simpara>
+<table frame="all" rowsep="1" colsep="1">
+<title>Environment variable names and values</title>
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Name</entry>
+<entry align="left" valign="top">Value</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara><literal>MONGODB_USER</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>mongodb</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>MONGODB_PASSWORD</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>mongodb</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>MONGODB_DATABASE</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>mongodb</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>MONGODB_ADMIN_PASSWORD</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>mongodb</literal></simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../applications/odc-viewing-application-composition-using-topology-view.xml#odc-adding-services-to-your-application_viewing-application-composition-using-topology-view">Adding services to your application</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/projects/working-with-projects.xml#viewing-a-project-using-the-web-console_projects">Viewing a project using the web console</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/odc-viewing-application-composition-using-topology-view.xml#odc-viewing-application-topology_viewing-application-composition-using-topology-view">Viewing the topology of your application</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/projects/working-with-projects.xml#odc-providing-project-permissions-using-developer-perspective_projects">Providing access permissions to your project using the Developer perspective</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/projects/working-with-projects.xml#deleting-a-project-using-the-web-console_projects">Deleting a project using the web console</link></simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="getting-started-web-console-creating-secret_openshift-web-console">
+<title>Creating a secret</title>
+<simpara>The <literal>Secret</literal> object provides a mechanism to hold sensitive information such as passwords, {product-title} client configuration files, private source repository credentials, and so on.
+Secrets decouple sensitive content from the pods. You can mount secrets into containers using a volume plugin or the system can use secrets to perform actions on behalf of a pod.
+The following procedure adds the secret <literal>nationalparks-mongodb-parameters</literal> and mounts it to the <literal>nationalparks</literal> workload.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You are logged in to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are in the <emphasis role="strong">Developer</emphasis> perspective.</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>From the <emphasis role="strong">Developer</emphasis> perspective, navigate to <emphasis role="strong">Secrets</emphasis> on the left hand navigation and click <emphasis role="strong">Secrets</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create</emphasis> &#8594; <emphasis role="strong">Key/value secret</emphasis>.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>In the <emphasis role="strong">Secret name</emphasis> field, enter <literal>nationalparks-mongodb-parameters</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>Enter the following values for <emphasis role="strong">Key</emphasis> and <emphasis role="strong">Value</emphasis>:</simpara>
+<table frame="all" rowsep="1" colsep="1">
+<title>Secret keys and values</title>
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Key</entry>
+<entry align="left" valign="top">Value</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara><literal>MONGODB_USER</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>mongodb</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>DATABASE_SERVICE_NAME</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>mongodb-nationalparks</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>MONGODB_PASSWORD</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>mongodb</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>MONGODB_DATABASE</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>mongodb</literal></simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>MONGODB_ADMIN_PASSWORD</literal></simpara></entry>
+<entry align="left" valign="top"><simpara><literal>mongodb</literal></simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Create</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Add Secret to workload</emphasis>.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>From the drop down menu, select <literal>nationalparks</literal> as the workload to add.</simpara>
+</listitem>
+<listitem>
+<simpara>Click <emphasis role="strong">Save</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+<simpara>This change in configuration triggers a new rollout of the <literal>nationalparks</literal> deployment with the environment variables properly injected.</simpara>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../nodes/pods/nodes-pods-secrets.xml#nodes-pods-secrets-about_nodes-pods-secrets">Understanding secrets</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-web-console-load-data-output_openshift-web-console">
+<title>Loading data and displaying the national parks map</title>
+<simpara>You deployed the <literal>parksmap</literal> and <literal>nationalparks</literal> applications and then deployed the <literal>mongodb-nationalparks</literal> database. However, no data has been loaded <emphasis>into</emphasis> the database.
+Before loading the data, add the proper labels to the <literal>mongodb-nationalparks</literal> and <literal>nationalparks</literal> deployment.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You are logged in to the {product-title} web console.</simpara>
+</listitem>
+<listitem>
+<simpara>You are in the <emphasis role="strong">Developer</emphasis> perspective.</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>From the <emphasis role="strong">Topology</emphasis> view, navigate to <literal>nationalparks</literal> deployment and click <emphasis role="strong">Resources</emphasis> and retrieve your route information.</simpara>
+</listitem>
+<listitem>
+<simpara>Copy and paste the URL into your web browser and add the following at the end of the URL:</simpara>
+<programlisting language="text" linenumbering="unnumbered">/ws/data/load</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="text" linenumbering="unnumbered">Items inserted in database: 2893</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>From the <emphasis role="strong">Topology</emphasis> view, navigate to <literal>parksmap</literal> deployment and click <emphasis role="strong">Resources</emphasis> and retrieve your route information.</simpara>
+</listitem>
+<listitem>
+<simpara>Copy and paste the URL into your web browser to view your national parks across the world map.</simpara>
+</listitem>
+</orderedlist>
+<figure>
+<title>National parks across the world</title>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/getting-started-map-national-parks.png"/>
+</imageobject>
+<textobject><phrase>getting started map national parks</phrase></textobject>
+</mediaobject>
+</figure>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../applications/projects/working-with-projects.xml#odc-providing-project-permissions-using-developer-perspective_projects">Providing access permissions to your project using the Developer perspective</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../applications/odc-viewing-application-composition-using-topology-view.xml#odc-labels-and-annotations-used-for-topology-view_viewing-application-composition-using-topology-view">Labels and annotations used for the Topology view</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+</chapter>
+<chapter xml:id="openshift-cli">
+<title>Creating and building an application using the CLI</title>
+
+<section xml:id="openshift-cli-before-you-begin">
+<title>Before you begin</title>
+<itemizedlist>
+<listitem>
+<simpara>Review <link xl:href="../cli_reference/openshift_cli/getting-started-cli.xml#cli-about-cli_cli-developer-commands">About the OpenShift CLI</link>.</simpara>
+</listitem>
+<listitem>
+<simpara>You must be able to access a running instance of {product-title}. If you do not have access, contact your cluster administrator.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have the OpenShift CLI (<literal>oc</literal>) <link xl:href="../cli_reference/openshift_cli/getting-started-cli.xml#installing-openshift-cli">downloaded and installed</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-cli-login_openshift-cli">
+<title>Logging in to the CLI</title>
+<simpara>You can log in to the OpenShift CLI (<literal>oc</literal>) to access and manage your cluster.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>Log into {product-title} from the CLI using your username and password, with an OAuth token, or with a web browser:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>With username and password:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc login -u=&lt;username&gt; -p=&lt;password&gt; --server=&lt;your-openshift-server&gt; --insecure-skip-tls-verify</programlisting>
+</listitem>
+<listitem>
+<simpara>With an OAuth token:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc login &lt;https://api.your-openshift-server.com&gt; --token=&lt;tokenID&gt;</programlisting>
+</listitem>
+<listitem>
+<simpara>With a web browser:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc login &lt;cluster_url&gt; --web</programlisting>
+</listitem>
+</itemizedlist>
+</listitem>
+</itemizedlist>
+<simpara>You can now create a project or issue other commands for managing your cluster.</simpara>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-login">oc login</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-logout">oc logout</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-cli-creating-new-project_openshift-cli">
+<title>Creating a new project</title>
+<simpara>A project enables a community of users to organize and manage their content in isolation. Projects are {product-title} extensions to Kubernetes namespaces. Projects have additional features that enable user self-provisioning.</simpara>
+<simpara>Users must receive access to projects from administrators. Cluster administrators can allow developers to create their own projects. In most cases, users automatically have access to their own projects.</simpara>
+<simpara>Each project has its own set of objects, policies, constraints, and service accounts.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>To create a new project, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc new-project user-getting-started --display-name="Getting Started with OpenShift"</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">Now using project "user-getting-started" on server "https://openshift.example.com:6443".</programlisting>
+</para>
+</formalpara>
+</listitem>
+</itemizedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-new-project">oc new-project</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-cli-granting-permissions_openshift-cli">
+<title>Granting view permissions</title>
+<simpara>{product-title} automatically creates a few special service accounts in every project. The default service account takes responsibility for running the pods. {product-title} uses and injects this service account into every pod that launches.</simpara>
+<simpara>The following procedure creates a <literal>RoleBinding</literal> object for the default <literal>ServiceAccount</literal> object. The service account communicates with the {product-title} API to learn about pods, services, and resources within the project.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have <literal>cluster-admin</literal> or <literal>project-admin</literal> privileges.</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>To add the view role to the default service account in the <literal>user-getting-started project</literal>, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc adm policy add-role-to-user view -z default -n user-getting-started</programlisting>
+</listitem>
+</itemizedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../authentication/understanding-authentication.xml#understanding-authentication">Understanding authentication</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../authentication/using-rbac.xml#authorization-overview_using-rbac">RBAC overview</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-policy-add-role-to-user">oc policy add-role-to-user</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-cli-deploying-first-image_openshift-cli">
+<title>Deploying your first image</title>
+<simpara>The simplest way to deploy an application in {product-title} is to run an existing container image. The following procedure deploys a front-end component of an application called <literal>national-parks-app</literal>. The web application displays an interactive map. The map displays the location of major national parks across the world.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>Install the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>To deploy an application, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc new-app quay.io/openshiftroadshow/parksmap:latest --name=parksmap -l 'app=national-parks-app,component=parksmap,role=frontend,app.kubernetes.io/part-of=national-parks-app'</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="text" linenumbering="unnumbered">--&gt; Found container image 0c2f55f (12 months old) from quay.io for "quay.io/openshiftroadshow/parksmap:latest"
+
+    * An image stream tag will be created as "parksmap:latest" that will track this image
+
+--&gt; Creating resources with label app=national-parks-app,app.kubernetes.io/part-of=national-parks-app,component=parksmap,role=frontend ...
+    imagestream.image.openshift.io "parksmap" created
+    deployment.apps "parksmap" created
+    service "parksmap" created
+--&gt; Success</programlisting>
+</para>
+</formalpara>
+</listitem>
+</itemizedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-new-app">oc new-app</link></simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="getting-started-cli-creating-route_openshift-cli">
+<title>Creating a route</title>
+<simpara>External clients can access applications running on {product-title} through the routing layer and the data object behind that is a <emphasis>route</emphasis>. The default {product-title} router (HAProxy) uses the HTTP header of the incoming request to determine where to proxy the connection.</simpara>
+<simpara>Optionally, you can define security, such as TLS, for the route.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have <literal>cluster-admin</literal> or <literal>project-admin</literal> privileges.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>To retrieve the created application service, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get service</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME      TYPE       CLUSTER-IP         EXTERNAL-IP    PORT(S)   AGE
+parksmap  ClusterIP  &lt;your-cluster-IP&gt;  &lt;123.456.789&gt;  8080/TCP  8m29s</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To create a route, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create route edge parksmap --service=parksmap</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">route.route.openshift.io/parksmap created</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To retrieve the created application route, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get route</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME        HOST/PORT                                                   PATH   SERVICES   PORT       TERMINATION   WILDCARD
+parksmap    parksmap-user-getting-started.apps.cluster.example.com             parksmap   8080-tcp   edge          None</programlisting>
+</para>
+</formalpara>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-create-route-edge">oc create route edge</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-get">oc get</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-cli-examining-pod_openshift-cli">
+<title>Examining the pod</title>
+<simpara>{product-title} leverages the Kubernetes concept of a pod, which is one or more containers deployed together on one host, and the smallest compute unit that can be defined, deployed, and managed.
+Pods are the rough equivalent of a machine instance, physical or virtual, to a container.</simpara>
+<simpara>You can view the pods in your cluster and to determine the health of those pods and the cluster as a whole.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>To list all pods with node names, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get pods</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                       READY   STATUS    RESTARTS   AGE
+parksmap-5f9579955-6sng8   1/1     Running   0          77s</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To list all pod details, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc describe pods</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">Name:         parksmap-848bd4954b-5pvcc
+Namespace:    user-getting-started
+Priority:     0
+Node:         ci-ln-fr1rt92-72292-4fzf9-worker-a-g9g7c/10.0.128.4
+Start Time:   Sun, 13 Feb 2022 14:14:14 -0500
+Labels:       app=national-parks-app
+              app.kubernetes.io/part-of=national-parks-app
+              component=parksmap
+              deployment=parksmap
+              pod-template-hash=848bd4954b
+              role=frontend
+Annotations:  k8s.v1.cni.cncf.io/network-status:
+                [{
+                    "name": "openshift-sdn",
+                    "interface": "eth0",
+                    "ips": [
+                        "10.131.0.14"
+                    ],
+                    "default": true,
+                    "dns": {}
+                }]
+              k8s.v1.cni.cncf.io/network-status:
+                [{
+                    "name": "openshift-sdn",
+                    "interface": "eth0",
+                    "ips": [
+                        "10.131.0.14"
+                    ],
+                    "default": true,
+                    "dns": {}
+                }]
+              openshift.io/generated-by: OpenShiftNewApp
+              openshift.io/scc: restricted
+Status:       Running
+IP:           10.131.0.14
+IPs:
+  IP:           10.131.0.14
+Controlled By:  ReplicaSet/parksmap-848bd4954b
+Containers:
+  parksmap:
+    Container ID:   cri-o://4b2625d4f61861e33cc95ad6d455915ea8ff6b75e17650538cc33c1e3e26aeb8
+    Image:          quay.io/openshiftroadshow/parksmap@sha256:89d1e324846cb431df9039e1a7fd0ed2ba0c51aafbae73f2abd70a83d5fa173b
+    Image ID:       quay.io/openshiftroadshow/parksmap@sha256:89d1e324846cb431df9039e1a7fd0ed2ba0c51aafbae73f2abd70a83d5fa173b
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Sun, 13 Feb 2022 14:14:25 -0500
+    Ready:          True
+    Restart Count:  0
+    Environment:    &lt;none&gt;
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-6f844 (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  kube-api-access-6f844:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       &lt;nil&gt;
+    DownwardAPI:             true
+    ConfigMapName:           openshift-service-ca.crt
+    ConfigMapOptional:       &lt;nil&gt;
+QoS Class:                   BestEffort
+Node-Selectors:              &lt;none&gt;
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason          Age   From               Message
+  ----    ------          ----  ----               -------
+  Normal  Scheduled       46s   default-scheduler  Successfully assigned user-getting-started/parksmap-848bd4954b-5pvcc to ci-ln-fr1rt92-72292-4fzf9-worker-a-g9g7c
+  Normal  AddedInterface  44s   multus             Add eth0 [10.131.0.14/23] from openshift-sdn
+  Normal  Pulling         44s   kubelet            Pulling image "quay.io/openshiftroadshow/parksmap@sha256:89d1e324846cb431df9039e1a7fd0ed2ba0c51aafbae73f2abd70a83d5fa173b"
+  Normal  Pulled          35s   kubelet            Successfully pulled image "quay.io/openshiftroadshow/parksmap@sha256:89d1e324846cb431df9039e1a7fd0ed2ba0c51aafbae73f2abd70a83d5fa173b" in 9.49243308s
+  Normal  Created         35s   kubelet            Created container parksmap
+  Normal  Started         35s   kubelet            Started container parksmap</programlisting>
+</para>
+</formalpara>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-describe">oc describe</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-get">oc get</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-label">oc label</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/getting-started-cli.xml#viewing-pods">Viewing pods</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/getting-started-cli.xml#viewing-pod-logs">Viewing pod logs</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-cli-scaling-app_openshift-cli">
+<title>Scaling the application</title>
+<simpara>In Kubernetes, a <literal>Deployment</literal> object defines how an application deploys. In most cases, users use <literal>Pod</literal>, <literal>Service</literal>, <literal>ReplicaSets</literal>, and <literal>Deployment</literal> resources together. In most cases, {product-title} creates the resources for you.</simpara>
+<simpara>When you deploy the <literal>national-parks-app</literal> image, a deployment resource is created.  In this example, only one <literal>Pod</literal> is deployed.</simpara>
+<simpara>The following procedure scales the <literal>national-parks-image</literal> to use two instances.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>To scale your application from one pod instance to two pod instances, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale --current-replicas=1 --replicas=2 deployment/parksmap</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="text" linenumbering="unnumbered">deployment.apps/parksmap scaled</programlisting>
+</para>
+</formalpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Verification</title>
+<listitem>
+<simpara>To ensure that your application scaled properly, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get pods</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                       READY   STATUS    RESTARTS   AGE
+parksmap-5f9579955-6sng8   1/1     Running   0          7m39s
+parksmap-5f9579955-8tgft   1/1     Running   0          24s</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To scale your application back down to one pod instance, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale --current-replicas=2 --replicas=1 deployment/parksmap</programlisting>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-scale">oc scale</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="getting-started-cli-deploying-python-app_openshift-cli">
+<title>Deploying a Python application</title>
+<simpara>The following procedure deploys a back-end service for the <literal>parksmap</literal> application. The Python application performs 2D geo-spatial queries against a MongoDB database to locate and return map coordinates of all national parks in the world.</simpara>
+<simpara>The deployed back-end service is <literal>nationalparks</literal>.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>To create a new Python application, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc new-app python~https://github.com/openshift-roadshow/nationalparks-py.git --name nationalparks -l 'app=national-parks-app,component=nationalparks,role=backend,app.kubernetes.io/part-of=national-parks-app,app.kubernetes.io/name=python' --allow-missing-images=true</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="text" linenumbering="unnumbered">--&gt; Found image 0406f6c (13 days old) in image stream "openshift/python" under tag "3.9-ubi9" for "python"
+
+    Python 3.9
+    ----------
+    Python 3.9 available as container is a base platform for building and running various Python 3.9 applications and frameworks. Python is an easy to learn, powerful programming language. It has efficient high-level data structures and a simple but effective approach to object-oriented programming. Python's elegant syntax and dynamic typing, together with its interpreted nature, make it an ideal language for scripting and rapid application development in many areas on most platforms.
+
+    Tags: builder, python, python39, python-39, rh-python39
+
+    * A source build using source code from https://github.com/openshift-roadshow/nationalparks-py.git will be created
+      * The resulting image will be pushed to image stream tag "nationalparks:latest"
+      * Use 'oc start-build' to trigger a new build
+
+--&gt; Creating resources with label app=national-parks-app,app.kubernetes.io/name=python,app.kubernetes.io/part-of=national-parks-app,component=nationalparks,role=backend ...
+    imagestream.image.openshift.io "nationalparks" created
+    buildconfig.build.openshift.io "nationalparks" created
+    deployment.apps "nationalparks" created
+    service "nationalparks" created
+--&gt; Success</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To create a route to expose your application, <literal>nationalparks</literal>, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create route edge nationalparks --service=nationalparks</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">route.route.openshift.io/parksmap created</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To retrieve the created application route, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get route</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME             HOST/PORT                                                           PATH   SERVICES        PORT       TERMINATION   WILDCARD
+nationalparks    nationalparks-user-getting-started.apps.cluster.example.com                nationalparks   8080-tcp   edge          None
+parksmap         parksmap-user-getting-started.apps.cluster.example.com                     parksmap        8080-tcp   edge          None</programlisting>
+</para>
+</formalpara>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-new-app">oc new-app</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-cli-connecting-database_openshift-cli">
+<title>Connecting to a database</title>
+<simpara>Deploy and connect a MongoDB database where the <literal>national-parks-app</literal> application stores location information.
+Once you mark the <literal>national-parks-app</literal> application as a backend for the map visualization tool, <literal>parksmap</literal> deployment uses the {product-title} discover mechanism to display the map automatically.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>To connect to a database, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc new-app quay.io/centos7/mongodb-36-centos7 --name mongodb-nationalparks -e MONGODB_USER=mongodb -e MONGODB_PASSWORD=mongodb -e MONGODB_DATABASE=mongodb -e MONGODB_ADMIN_PASSWORD=mongodb -l 'app.kubernetes.io/part-of=national-parks-app,app.kubernetes.io/name=mongodb'</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">--&gt; Found container image dc18f52 (8 months old) from quay.io for "quay.io/centos7/mongodb-36-centos7"
+
+    MongoDB 3.6
+    -----------
+    MongoDB (from humongous) is a free and open-source cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with schemas. This container image contains programs to run mongod server.
+
+    Tags: database, mongodb, rh-mongodb36
+
+    * An image stream tag will be created as "mongodb-nationalparks:latest" that will track this image
+
+--&gt; Creating resources with label app.kubernetes.io/name=mongodb,app.kubernetes.io/part-of=national-parks-app ...
+    imagestream.image.openshift.io "mongodb-nationalparks" created
+    deployment.apps "mongodb-nationalparks" created
+    service "mongodb-nationalparks" created
+--&gt; Success</programlisting>
+</para>
+</formalpara>
+</listitem>
+</itemizedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-new-project">oc new-project</link></simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="getting-started-cli-creating-secret_openshift-cli">
+<title>Creating a secret</title>
+<simpara>The <literal>Secret</literal> object provides a mechanism to hold sensitive information such as passwords, {product-title} client configuration files, private source repository credentials, and so on.
+Secrets decouple sensitive content from the pods. You can mount secrets into containers using a volume plugin or the system can use secrets to perform actions on behalf of a pod.
+The following procedure adds the secret <literal>nationalparks-mongodb-parameters</literal> and mounts it to the <literal>nationalparks</literal> workload.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>To create a secret, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create secret generic nationalparks-mongodb-parameters --from-literal=DATABASE_SERVICE_NAME=mongodb-nationalparks --from-literal=MONGODB_USER=mongodb --from-literal=MONGODB_PASSWORD=mongodb --from-literal=MONGODB_DATABASE=mongodb --from-literal=MONGODB_ADMIN_PASSWORD=mongodb</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">secret/nationalparks-mongodb-parameters created</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To update the environment variable to attach the mongodb secret to the <literal>nationalpartks</literal> workload, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc set env --from=secret/nationalparks-mongodb-parameters deploy/nationalparks</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">deployment.apps/nationalparks updated</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To show the status of the <literal>nationalparks</literal> deployment, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc rollout status deployment nationalparks</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">deployment "nationalparks" successfully rolled out</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To show the status of the <literal>mongodb-nationalparks</literal> deployment, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc rollout status deployment mongodb-nationalparks</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">deployment "nationalparks" successfully rolled out
+deployment "mongodb-nationalparks" successfully rolled out</programlisting>
+</para>
+</formalpara>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-create-secret-generic">oc create secret generic</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-set-env">oc set env</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-rollout-status">oc rollout status</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="getting-started-cli-load-data-output_openshift-cli">
+<title>Loading data and displaying the national parks map</title>
+<simpara>You deployed the <literal>parksmap</literal> and <literal>nationalparks</literal> applications and then deployed the <literal>mongodb-nationalparks</literal> database. However, no data has been loaded <emphasis>into</emphasis> the database.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have access to an {product-title} cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You have a deployed image.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>To load national parks data, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc exec $(oc get pods -l component=nationalparks | tail -n 1 | awk '{print $1;}') -- curl -s http://localhost:8080/ws/data/load</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="text" linenumbering="unnumbered">"Items inserted in database: 2893"</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To verify that your data is loaded properly, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc exec $(oc get pods -l component=nationalparks | tail -n 1 | awk '{print $1;}') -- curl -s http://localhost:8080/ws/data/all</programlisting>
+<formalpara>
+<title>Example output (trimmed)</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">, {"id": "Great Zimbabwe", "latitude": "-20.2674635", "longitude": "30.9337986", "name": "Great Zimbabwe"}]</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To add labels to the route, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc label route nationalparks type=parksmap-backend</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">route.route.openshift.io/nationalparks labeled</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To retrieve your routes to view your map, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get routes</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME            HOST/PORT                                                      PATH   SERVICES        PORT       TERMINATION   WILDCARD
+nationalparks   nationalparks-user-getting-started.apps.cluster.example.com           nationalparks   8080-tcp   edge          None
+parksmap        parksmap-user-getting-started.apps.cluster.example.com                parksmap        8080-tcp   edge          None</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>Copy and paste the <literal>HOST/PORT</literal> path you retrieved above into your web browser. Your browser should display a map of the national parks across the world.</simpara>
+<figure>
+<title>National parks across the world</title>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/getting-started-map-national-parks.png"/>
+</imageobject>
+<textobject><phrase>A map of the national parks across the world is displayed with location tracking.</phrase></textobject>
+</mediaobject>
+</figure>
+</listitem>
+</orderedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-exec">oc exec</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-label">oc label</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xl:href="../cli_reference/openshift_cli/developer-cli-commands.xml#oc-get">oc get</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+</chapter>
+</book>

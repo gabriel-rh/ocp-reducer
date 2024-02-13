@@ -114,6 +114,7 @@ function processTopic(topic, dir) {
             cmd += outFile + " " + masterFilespec; 
 
 
+
             execSync(cmd, (error, stdout, stderr) => {
                 if (error) {
                     console.log(`error: ${error.message}`);
@@ -125,6 +126,23 @@ function processTopic(topic, dir) {
                 }
                 //console.log(`stdout: ${stdout}`);
             });
+
+
+            var outXMLFile = outDir + "/master-reduced.xml";
+            var cmd2 = "asciidoctor --attribute=doctype=book --attribute=data-uri! -o " + outXMLFile + ' -b docbook ' + outFile;
+
+            execSync(cmd2, (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    return;
+                }
+                if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                    return;
+                }
+                //console.log(`stdout: ${stdout}`);
+            });
+
         }
 
 
