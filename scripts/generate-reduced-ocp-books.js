@@ -110,7 +110,7 @@ function processTopic(topic, dir) {
             console.log('masterFilespec: ' + masterFilespec)
             console.log('outFile: ' + outFile)
         
-            var cmd = "asciidoctor-reducer --attribute=" +  process.env.DISTRO + " -r asciidoctor/reducer/include_mapper -o "
+            var cmd = "asciidoctor-reducer --attribute=" +  process.env.DISTRO + " --attribute=product-title='" +  process.env.PRODUCT_TITLE + "' --attribute=product-version=" +  process.env.PRODUCT_VERSION + " -r asciidoctor/reducer/include_mapper -o "
             cmd += outFile + " " + masterFilespec; 
 
 
@@ -129,7 +129,9 @@ function processTopic(topic, dir) {
 
 
             var outXMLFile = outDir + "/master-reduced.xml";
-            var cmd2 = "asciidoctor --attribute=doctype=book --attribute=data-uri! -o " + outXMLFile + ' -b docbook ' + outFile;
+            var cmd2 = "asciidoctor --attribute=doctype=book " + " --attribute=product-title='" +  process.env.PRODUCT_TITLE + "' --attribute=product-version=" +  process.env.PRODUCT_VERSION + " --attribute=data-uri! -o " + outXMLFile + ' -b docbook ' + outFile;
+
+            console.log('outXMLFile: ' + outXMLFile)
 
             execSync(cmd2, (error, stdout, stderr) => {
                 if (error) {
@@ -140,8 +142,36 @@ function processTopic(topic, dir) {
                     console.log(`stderr: ${stderr}`);
                     return;
                 }
-                //console.log(`stdout: ${stdout}`);
+
+
             });
+
+
+            console.log("got here")
+            // Read the content of the generated XML file
+            let xmlContent = fs.readFileSync(outXMLFile, 'utf-8');
+
+            //console.log(xmlContent)
+            // Replace xl:href= with xlink:href=
+            xmlContent = xmlContent.replace(/link\s+xl:href/g, 'link xlink:href');
+
+
+            //console.log("*****************" + xmlContent)
+
+            // Replace the initial <?xml version="1.0" encoding="UTF-8"?>
+            xmlContent = xmlContent.replace(
+'<?xml version="1.0" encoding="UTF-8"?>',
+`<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book [
+<!ENTITY % sgml.features "IGNORE">
+<!ENTITY % xml.features "INCLUDE">
+<!ENTITY % DOCBOOK_ENTS PUBLIC "-//OASIS//ENTITIES DocBook Character Entities V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/dbcentx.mod">
+%DOCBOOK_ENTS;
+]>`
+);
+
+            // Write the modified content back to the file
+            fs.writeFileSync(outXMLFile, xmlContent, 'utf-8');
 
         }
 
