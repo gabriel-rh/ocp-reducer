@@ -1,0 +1,78 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="applying-autoscaling"]
+= Applying autoscaling to an {product-title} cluster
+include::includes/common-attributes.adoc[]
+:context: applying-autoscaling
+
+
+Applying autoscaling to an {product-title} cluster involves deploying a cluster autoscaler and then deploying machine autoscalers for each machine type in your cluster.
+
+[IMPORTANT]
+====
+You can configure the cluster autoscaler only in clusters where the Machine API Operator is operational.
+====
+
+include::includes/cluster-autoscaler-about.adoc[leveloffset=+1]
+
+[id="configuring-clusterautoscaler_{context}"]
+== Configuring the cluster autoscaler
+
+First, deploy the cluster autoscaler to manage automatic resource scaling in your {product-title} cluster.
+
+[NOTE]
+====
+Because the cluster autoscaler is scoped to the entire cluster, you can make only one cluster autoscaler for the cluster.
+====
+
+include::includes/cluster-autoscaler-cr.adoc[leveloffset=+2]
+
+:FeatureName: cluster autoscaler
+:FeatureResourceName: ClusterAutoscaler
+include::includes/deploying-resource.adoc[leveloffset=+2]
+.Next steps
+* After you configure the cluster autoscaler, you must xref:configuring-machineautoscaler_applying-autoscaling[configure at least one machine autoscaler].
+
+include::includes/machine-autoscaler-about.adoc[leveloffset=+1]
+
+[id="configuring-machineautoscaler_{context}"]
+== Configuring machine autoscalers
+
+After you deploy the cluster autoscaler, deploy `MachineAutoscaler` resources that reference the compute machine sets that are used to scale the cluster.
+
+[IMPORTANT]
+====
+You must deploy at least one `MachineAutoscaler` resource after you deploy the `ClusterAutoscaler` resource.
+====
+
+[NOTE]
+====
+You must configure separate resources for each compute machine set. Remember that compute machine sets are different in each region, so consider whether you want to enable machine scaling in multiple regions. The compute machine set that you scale must have at least one machine in it.
+====
+
+include::includes/machine-autoscaler-cr.adoc[leveloffset=+2]
+
+:FeatureName: machine autoscaler
+:FeatureResourceName: MachineAutoscaler
+include::includes/deploying-resource.adoc[leveloffset=+2]
+
+[id="disabling-autoscaling_{context}"]
+== Disabling autoscaling
+
+You can disable an individual machine autoscaler in your cluster or disable autoscaling on the cluster entirely.
+
+include::includes/deleting-machine-autoscaler.adoc[leveloffset=+2]
+[role="_additional-resources"]
+.Additional resources
+* xref:deleting-cluster-autoscaler_applying-autoscaling[Disabling the cluster autoscaler]
+* xref:MachineAutoscaler-deploying_applying-autoscaling[Deploying a machine autoscaler]
+
+include::includes/deleting-cluster-autoscaler.adoc[leveloffset=+2]
+[role="_additional-resources"]
+.Additional resources
+* xref:deleting-machine-autoscaler_applying-autoscaling[Disabling the machine autoscaler]
+* xref:ClusterAutoscaler-deploying_applying-autoscaling[Deploying a cluster autoscaler]
+
+[role="_additional-resources"]
+== Additional resources
+
+* link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/nodes/#nodes-pods-priority[Including pod priority in pod scheduling decisions in {product-title}]

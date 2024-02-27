@@ -1,0 +1,1896 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book [
+<!ENTITY % sgml.features "IGNORE">
+<!ENTITY % xml.features "INCLUDE">
+<!ENTITY % DOCBOOK_ENTS PUBLIC "-//OASIS//ENTITIES DocBook Character Entities V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/dbcentx.mod">
+%DOCBOOK_ENTS;
+]>
+<?asciidoc-toc?>
+<?asciidoc-numbered?>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info>
+<title>Hosted control planes</title>
+<date>2024-02-23</date>
+<title>Hosted control planes</title>
+<productname>OpenShift Container Platform</productname>
+<productnumber>4.14</productnumber>
+<subtitle>Enter a short description here.</subtitle>
+<abstract>
+    <para>A short overview and summary of the book's subject and purpose, traditionally no more than one paragraph long.</para>
+</abstract>
+<authorgroup>
+    <orgname>Red Hat OpenShift Documentation Team</orgname>
+</authorgroup>
+<xi:include href="Common_Content/Legal_Notice.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+</info>
+<chapter xml:id="hcp-overview">
+<title>Hosted control planes overview</title>
+<simpara>You can deploy OpenShift Container Platform clusters by using two different control plane configurations: standalone or hosted control planes. The standalone configuration uses dedicated virtual machines or physical machines to host the control plane. With hosted control planes for OpenShift Container Platform, you create control planes as pods on a hosting cluster without the need for dedicated virtual or physical machines for each control plane.</simpara>
+<section xml:id="hosted-control-planes-overview_hcp-overview">
+<title>Introduction to hosted control planes</title>
+<simpara>You can use hosted control planes for Red Hat OpenShift Container Platform to reduce management costs, optimize cluster deployment time, and separate management and workload concerns so that you can focus on your applications.</simpara>
+<simpara>Hosted control planes is available by using the <link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#cluster_mce_overview">multicluster engine for Kubernetes operator version 2.0 or later</link> on the following platforms:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Bare metal by using the Agent provider</simpara>
+</listitem>
+<listitem>
+<simpara>OpenShift Virtualization</simpara>
+</listitem>
+<listitem>
+<simpara>Amazon Web Services, as a Technology Preview feature</simpara>
+</listitem>
+<listitem>
+<simpara>IBM Z, as a Technology Preview feature</simpara>
+</listitem>
+<listitem>
+<simpara>IBM Power, as a Technology Preview feature</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="hosted-control-planes-architecture_hcp-overview">
+<title>Architecture of hosted control planes</title>
+<simpara>OpenShift Container Platform is often deployed in a coupled, or standalone, model, where a cluster consists of a control plane and a data plane. The control plane includes an API endpoint, a storage endpoint, a workload scheduler, and an actuator that ensures state. The data plane includes compute, storage, and networking where workloads and applications run.</simpara>
+<simpara>The standalone control plane is hosted by a dedicated group of nodes, which can be physical or virtual, with a minimum number to ensure quorum. The network stack is shared. Administrator access to a cluster offers visibility into the cluster&#8217;s control plane, machine management APIs, and other components that contribute to the state of a cluster.</simpara>
+<simpara>Although the standalone model works well, some situations require an architecture where the control plane and data plane are decoupled. In those cases, the data plane is on a separate network domain with a dedicated physical hosting environment. The control plane is hosted by using high-level primitives such as deployments and stateful sets that are native to Kubernetes. The control plane is treated as any other workload.</simpara>
+<informalfigure>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/hosted-control-planes-diagram.png"/>
+</imageobject>
+<textobject><phrase>Diagram that compares the hosted control plane model against OpenShift with a coupled control plane and workers</phrase></textobject>
+</mediaobject>
+</informalfigure>
+</section>
+<section xml:id="hosted-control-planes-benefits_hcp-overview">
+<title>Benefits of hosted control planes</title>
+<simpara>With hosted control planes for OpenShift Container Platform, you can pave the way for a true hybrid-cloud approach and enjoy several other benefits.</simpara>
+<itemizedlist>
+<listitem>
+<simpara>The security boundaries between management and workloads are stronger because the control plane is decoupled and hosted on a dedicated hosting service cluster. As a result, you are less likely to leak credentials for clusters to other users. Because infrastructure secret account management is also decoupled, cluster infrastructure administrators cannot accidentally delete control plane infrastructure.</simpara>
+</listitem>
+<listitem>
+<simpara>With hosted control planes, you can run many control planes on fewer nodes. As a result, clusters are more affordable.</simpara>
+</listitem>
+<listitem>
+<simpara>Because the control planes consist of pods that are launched on OpenShift Container Platform, control planes start quickly. The same principles apply to control planes and workloads, such as monitoring, logging, and auto-scaling.</simpara>
+</listitem>
+<listitem>
+<simpara>From an infrastructure perspective, you can push registries, HAProxy, cluster monitoring, storage nodes, and other infrastructure components to the tenant&#8217;s cloud provider account, isolating usage to the tenant.</simpara>
+</listitem>
+<listitem>
+<simpara>From an operational perspective, multicluster management is more centralized, which results in fewer external factors that affect the cluster status and consistency. Site reliability engineers have a central place to debug issues and navigate to the cluster data plane, which can lead to shorter Time to Resolution (TTR) and greater productivity.</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosted-control-planes-intro">Hosted control planes</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="hosted-control-planes-concepts-personas_hcp-overview">
+<title>Glossary of common concepts and personas for hosted control planes</title>
+<simpara>When you use hosted control planes for OpenShift Container Platform, it is important to understand its key concepts and the personas that are involved.</simpara>
+<section xml:id="hosted-control-planes-concepts_hcp-overview">
+<title>Concepts</title>
+<variablelist>
+<varlistentry>
+<term>hosted cluster</term>
+<listitem>
+<simpara>An OpenShift Container Platform cluster with its control plane and API endpoint hosted on a management cluster. The hosted cluster includes the control plane and its corresponding data plane.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>hosted cluster infrastructure</term>
+<listitem>
+<simpara>Network, compute, and storage resources that exist in the tenant or end-user cloud account.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>hosted control plane</term>
+<listitem>
+<simpara>An OpenShift Container Platform control plane that runs on the management cluster, which is exposed by the API endpoint of a hosted cluster. The components of a control plane include etcd, the Kubernetes API server, the Kubernetes controller manager, and a VPN.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>hosting cluster</term>
+<listitem>
+<simpara>See <emphasis>management cluster</emphasis>.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>managed cluster</term>
+<listitem>
+<simpara>A cluster that the hub cluster manages. This term is specific to the cluster lifecycle that the multicluster engine for Kubernetes Operator manages in Red Hat Advanced Cluster Management. A managed cluster is not the same thing as a <emphasis>management cluster</emphasis>. For more information, see <link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/about/welcome-to-red-hat-advanced-cluster-management-for-kubernetes#managed-cluster">Managed cluster</link>.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>management cluster</term>
+<listitem>
+<simpara>An OpenShift Container Platform cluster where the HyperShift Operator is deployed and where the control planes for hosted clusters are hosted. The management cluster is synonymous with the <emphasis>hosting cluster</emphasis>.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>management cluster infrastructure</term>
+<listitem>
+<simpara>Network, compute, and storage resources of the management cluster.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</section>
+<section xml:id="hosted-control-planes-personas_hcp-overview">
+<title>Personas</title>
+<variablelist>
+<varlistentry>
+<term>cluster instance administrator</term>
+<listitem>
+<simpara>Users who assume this role are the equivalent of administrators in standalone OpenShift Container Platform. This user has the <literal>cluster-admin</literal> role in the provisioned cluster, but might not have power over when or how the cluster is updated or configured. This user might have read-only access to see some configuration projected into the cluster.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>cluster instance user</term>
+<listitem>
+<simpara>Users who assume this role are the equivalent of developers in standalone OpenShift Container Platform. This user does not have a view into OperatorHub or machines.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>cluster service consumer</term>
+<listitem>
+<simpara>Users who assume this role can request control planes and worker nodes, drive updates, or modify externalized configurations. Typically, this user does not manage or access cloud credentials or infrastructure encryption keys. The cluster service consumer persona can request hosted clusters and interact with node pools. Users who assume this role have RBAC to create, read, update, or delete hosted clusters and node pools within a logical boundary.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>cluster service provider</term>
+<listitem>
+<simpara>Users who assume this role typically have the <literal>cluster-admin</literal> role on the management cluster and have RBAC to monitor and own the availability of the HyperShift Operator as well as the control planes for the tenant&#8217;s hosted clusters. The cluster service provider persona is responsible for several activities, including the following examples:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Owning service-level objects for control plane availability, uptime, and stability</simpara>
+</listitem>
+<listitem>
+<simpara>Configuring the cloud account for the management cluster to host control planes</simpara>
+</listitem>
+<listitem>
+<simpara>Configuring the user-provisioned infrastructure, which includes the host awareness of available compute resources</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</varlistentry>
+</variablelist>
+</section>
+</section>
+<section xml:id="hosted-control-planes-version-support_hcp-overview">
+<title>Versioning for hosted control planes</title>
+<simpara>With each major, minor, or patch version release of OpenShift Container Platform, two components of hosted control planes are released:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>HyperShift Operator</simpara>
+</listitem>
+<listitem>
+<simpara>Command-line interface (CLI)</simpara>
+</listitem>
+</itemizedlist>
+<simpara>The HyperShift Operator manages the lifecycle of hosted clusters that are represented by <literal>HostedCluster</literal> API resources. The HyperShift Operator is released with each OpenShift Container Platform release. After the HyperShift Operator is installed, it creates a config map called <literal>supported-versions</literal> in the HyperShift namespace, as shown in the following example. The config map describes the HostedCluster versions that can be deployed.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">    apiVersion: v1
+    data:
+      supported-versions: '{"versions":["4.15"]}'
+    kind: ConfigMap
+    metadata:
+      labels:
+        hypershift.openshift.io/supported-versions: "true"
+      name: supported-versions
+      namespace: hypershift</programlisting>
+<simpara>The CLI is a helper utility for development purposes. The CLI is released as part of any HyperShift Operator release. No compatibility policies are guaranteed.</simpara>
+<simpara>The API, <literal>hypershift.openshift.io</literal>, provides a way to create and manage lightweight, flexible, heterogeneous OpenShift Container Platform clusters at scale. The API exposes two user-facing resources: <literal>HostedCluster</literal> and <literal>NodePool</literal>. A <literal>HostedCluster</literal> resource encapsulates the control plane and common data plane configuration. When you create a <literal>HostedCluster</literal> resource, you have a fully functional control plane with no attached nodes. A <literal>NodePool</literal> resource is a scalable set of worker nodes that is attached to a <literal>HostedCluster</literal> resource.</simpara>
+<simpara>The API version policy generally aligns with the policy for <link xlink:href="https://kubernetes.io/docs/reference/using-api/#api-versioning">Kubernetes API versioning</link>.</simpara>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/scalability_and_performance/#node-tuning-hosted-cluster_node-tuning-operator">Configuring node tuning in a hosted cluster</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/scalability_and_performance/#advanced-node-tuning-hosted-cluster_node-tuning-operator">Advanced node tuning for hosted clusters by setting kernel boot parameters</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="hcp-configuring">
+<title>Configuring hosted control planes</title>
+<simpara>To get started with hosted control planes for OpenShift Container Platform, you first configure your hosted cluster on the provider that you want to use. Then, you complete a few management tasks.</simpara>
+<simpara>You can view the procedures by selecting from one of the following providers:</simpara>
+<section xml:id="hcp-configuring-bm">
+<title>Bare metal</title>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosted-sizing-guidance">Hosted control plane sizing guidance</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosted-install-cli">Installing the hosted control plane command line interface</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosted-cluster-workload-distributing">Distributing hosted cluster workloads</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#firewall-port-reqs-bare-metal">Bare metal firewall and port requirements</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#infrastructure-reqs-bare-metal">Bare metal infrastructure requirements</link>: Review the infrastructure requirements to create a hosted cluster on bare metal.</simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#configuring-hosting-service-cluster-configure-bm">Configuring hosted control plane clusters on bare metal</link>:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Configure DNS</simpara>
+</listitem>
+<listitem>
+<simpara>Create a hosted cluster and verify cluster creation</simpara>
+</listitem>
+<listitem>
+<simpara>Scale the <literal>NodePool</literal> object for the hosted cluster</simpara>
+</listitem>
+<listitem>
+<simpara>Handle ingress traffic for the hosted cluster</simpara>
+</listitem>
+<listitem>
+<simpara>Enable node auto-scaling for the hosted cluster</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#configure-hosted-disconnected">Configuring hosted control planes in a disconnected environment</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="hcp-configuring-virt">
+<title>OpenShift Virtualization</title>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosted-sizing-guidance">Hosted control plane sizing guidance</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosted-install-cli">Installing the hosted control plane command line interface</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosted-cluster-workload-distributing">Distributing hosted cluster workloads</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosted-control-planes-manage-kubevirt">Managing hosted control plane clusters on OpenShift Virtualization</link>: Create OpenShift Container Platform clusters with worker nodes that are hosted by KubeVirt virtual machines.</simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#configure-hosted-disconnected">Configuring hosted control planes in a disconnected environment</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="hcp-configuring-aws">
+<title>Amazon Web Services</title>
+<important>
+<simpara>Hosted control planes on the AWS platform is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xlink:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosting-cluster-aws-infra-reqs">AWS infrastructure requirements</link>: Review the infrastructure requirements to create a hosted cluster on AWS.</simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosting-service-cluster-configure-aws">Configuring hosted control plane clusters on AWS</link>: The tasks to configure hosted control plane clusters on AWS include creating the AWS S3 OIDC secret, creating a routable public zone, enabling external DNS, enabling AWS PrivateLink, and deploying a hosted cluster.</simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/networking/#sriov-operator-hosted-control-planes_configuring-sriov-operator">Deploying the SR-IOV Operator for hosted control planes</link>: After you configure and deploy your hosting service cluster, you can create a subscription to the Single Root I/O Virtualization (SR-IOV) Operator on a hosted cluster. The SR-IOV pod runs on worker machines rather than the control plane.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="hcp-configuring-ibmz">
+<title>IBM Z</title>
+<important>
+<simpara>Hosted control planes on the IBM Z platform is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xlink:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosted-install-cli">Installing the hosted control plane command line interface</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#configuring-hosting-service-cluster-ibmz">Configuring the hosting cluster on x86 bare metal for IBM Z compute nodes (Technology Preview)</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="hcp-configuring-ibmpower">
+<title>IBM Power</title>
+<important>
+<simpara>Hosted control planes on the IBM Power platform is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xlink:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosted-install-cli">Installing the hosted control plane command line interface</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#config-hosted-service-ibmpower">Configuring the hosting cluster on a 64-bit x86 OpenShift Container Platform cluster to create hosted control planes for IBM Power compute nodes (Technology Preview)</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="hcp-managing">
+<title>Managing hosted control planes</title>
+<simpara>After you configure your environment for hosted control planes and create a hosted cluster, you can further manage your clusters and nodes.</simpara>
+<section xml:id="updates-for-hosted-control-planes_hcp-managing">
+<title>Updates for hosted control planes</title>
+<simpara>Updates for hosted control planes involve updating the hosted cluster and the node pools. For a cluster to remain fully operational during an update process, you must meet the requirements of the <link xlink:href="https://kubernetes.io/releases/version-skew-policy/">Kubernetes version skew policy</link> while completing the control plane and node updates.</simpara>
+<section xml:id="updates-for-hosted-control-planes-hostedcluster_hcp-managing">
+<title>Updates for the hosted cluster</title>
+<simpara>The <literal>spec.release</literal> value dictates the version of the control plane. The <literal>HostedCluster</literal> object transmits the intended <literal>spec.release</literal> value to the <literal>HostedControlPlane.spec.release</literal> value and runs the appropriate Control Plane Operator version.</simpara>
+<simpara>The hosted control plane manages the rollout of the new version of the control plane components along with any OpenShift Container Platform components through the new version of the Cluster Version Operator (CVO).</simpara>
+</section>
+<section xml:id="updates-for-hosted-control-planes-nodepools_hcp-managing">
+<title>Updates for node pools</title>
+<simpara>With node pools, you can configure the software that is running in the nodes by exposing the <literal>spec.release</literal> and <literal>spec.config</literal> values. You can start a rolling node pool update in the following ways:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Changing the <literal>spec.release</literal> or <literal>spec.config</literal> values.</simpara>
+</listitem>
+<listitem>
+<simpara>Changing any platform-specific field, such as the AWS instance type. The result is a set of new instances with the new type.</simpara>
+</listitem>
+<listitem>
+<simpara>Changing the cluster configuration, if the change propagates to the node.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>Node pools support replace updates and in-place updates. The <literal>nodepool.spec.release</literal> value dictates the version of any particular node pool. A <literal>NodePool</literal> object completes a replace or an in-place rolling update according to the <literal>.spec.management.upgradeType</literal> value.</simpara>
+<simpara>After you create a node pool, you cannot change the update type. If you want to change the update type, you must create a node pool and delete the other one.</simpara>
+<section xml:id="updates-for-nodepools-replace_hcp-managing">
+<title>Replace updates for node pools</title>
+<simpara>A <emphasis>replace</emphasis> update creates instances in the new version while it removes old instances from the previous version. This update type is effective in cloud environments where this level of immutability is cost effective.</simpara>
+<simpara>Replace updates do not preserve any manual changes because the node is entirely re-provisioned.</simpara>
+</section>
+<section xml:id="updates-for-nodepools-inplace_hcp-managing">
+<title>In place updates for node pools</title>
+<simpara>An <emphasis>in-place</emphasis> update directly updates the operating systems of the instances. This type is suitable for environments where the infrastructure constraints are higher, such as bare metal.</simpara>
+<simpara>In-place updates can preserve manual changes, but will report errors if you make manual changes to any file system or operating system configuration that the cluster directly manages, such as kubelet certificates.</simpara>
+</section>
+</section>
+</section>
+<section xml:id="updating-node-pools-for-hcp_hcp-managing">
+<title>Updating node pools for hosted control planes</title>
+<simpara>On hosted control planes, you update your version of OpenShift Container Platform by updating the node pools. The node pool version must not surpass the hosted control plane version.</simpara>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>To start the process to update to a new version of OpenShift Container Platform, change the <literal>spec.release.image</literal> value of the node pool by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc -n NAMESPACE patch HC HCNAME --patch '{"spec":{"release":{"image": "example"}}}' --type=merge</programlisting>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>To verify that the new version was rolled out, check the <literal>.status.version</literal> value and the status conditions.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="hosted-control-planes-pause-reconciliation_hcp-managing">
+<title>Pausing the reconciliation of a hosted cluster and hosted control plane</title>
+<simpara>If you are a cluster instance administrator, you can pause the reconciliation of a hosted cluster and hosted control plane. You might want to pause reconciliation when you back up and restore an etcd database or when you need to debug problems with a hosted cluster or hosted control plane.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>To pause reconciliation for a hosted cluster and hosted control plane, populate the <literal>pausedUntil</literal> field of the <literal>HostedCluster</literal> resource, as shown in the following examples. In the examples, the value for <literal>pausedUntil</literal> is defined in an environment variable prior to the command.</simpara>
+<itemizedlist>
+<listitem>
+<simpara>To pause the reconciliation until a specific time, specify an RFC339 timestamp:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">PAUSED_UNTIL="2022-03-03T03:28:48Z"
+oc patch -n &lt;hosted-cluster-namespace&gt; hostedclusters/&lt;hosted-cluster-name&gt; -p '{"spec":{"pausedUntil":"'${PAUSED_UNTIL}'"}}' --type=merge</programlisting>
+<simpara>The reconciliation is paused until the specified time is passed.</simpara>
+</listitem>
+<listitem>
+<simpara>To pause the reconciliation indefinitely, pass a Boolean value of <literal>true</literal>:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">PAUSED_UNTIL="true"
+oc patch -n &lt;hosted-cluster-namespace&gt; hostedclusters/&lt;hosted-cluster-name&gt; -p '{"spec":{"pausedUntil":"'${PAUSED_UNTIL}'"}}' --type=merge</programlisting>
+<simpara>The reconciliation is paused until you remove the field from the <literal>HostedCluster</literal> resource.</simpara>
+<simpara>When the pause reconciliation field is populated for the <literal>HostedCluster</literal> resource, the field is automatically added to the associated <literal>HostedControlPlane</literal> resource.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>To remove the <literal>pausedUntil</literal> field, enter the following patch command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">oc patch -n &lt;hosted-cluster-namespace&gt; hostedclusters/&lt;hosted-cluster-name&gt; -p '{"spec":{"pausedUntil":null}}' --type=merge</programlisting>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="hosted-control-planes-metrics-sets_hcp-managing">
+<title>Configuring metrics sets for hosted control planes</title>
+<simpara>Hosted control planes for Red Hat OpenShift Container Platform creates <literal>ServiceMonitor</literal> resources in each control plane namespace that allow a Prometheus stack to gather metrics from the control planes. The <literal>ServiceMonitor</literal> resources use metrics relabelings to define which metrics are included or excluded from a particular component, such as etcd or the Kubernetes API server. The number of metrics that are produced by control planes directly impacts the resource requirements of the monitoring stack that gathers them.</simpara>
+<simpara>Instead of producing a fixed number of metrics that apply to all situations, you can configure a metrics set that identifies a set of metrics to produce for each control plane. The following metrics sets are supported:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>Telemetry</literal>: These metrics are needed for telemetry. This set is the default set and is the smallest set of metrics.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>SRE</literal>: This set includes the necessary metrics to produce alerts and allow the troubleshooting of control plane components.</simpara>
+</listitem>
+<listitem>
+<simpara><literal>All</literal>: This set includes all of the metrics that are produced by standalone OpenShift Container Platform control plane components.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>To configure a metrics set, set the <literal>METRICS_SET</literal> environment variable in the HyperShift Operator deployment by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc set env -n hypershift deployment/operator METRICS_SET=All</programlisting>
+<section xml:id="hosted-control-planes-sre-metrics-set">
+<title>Configuring the SRE metrics set</title>
+<simpara>When you specify the <literal>SRE</literal> metrics set, the HyperShift Operator looks for a config map named <literal>sre-metric-set</literal> with a single key: <literal>config</literal>. The value of the <literal>config</literal> key must contain a set of <literal>RelabelConfigs</literal> that are organized by control plane component.</simpara>
+<simpara>You can specify the following components:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>etcd</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>kubeAPIServer</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>kubeControllerManager</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>openshiftAPIServer</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>openshiftControllerManager</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>openshiftRouteControllerManager</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>cvo</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>olm</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>catalogOperator</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>registryOperator</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>nodeTuningOperator</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>controlPlaneOperator</literal></simpara>
+</listitem>
+<listitem>
+<simpara><literal>hostedClusterConfigOperator</literal></simpara>
+</listitem>
+</itemizedlist>
+<simpara>A configuration of the <literal>SRE</literal> metrics set is illustrated in the following example:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">kubeAPIServer:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|server).*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_admission_controller_admission_latencies_seconds_.*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_admission_step_admission_latencies_seconds_.*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "scheduler_(e2e_scheduling_latency_microseconds|scheduling_algorithm_predicate_evaluation|scheduling_algorithm_priority_evaluation|scheduling_algorithm_preemption_evaluation|scheduling_algorithm_latency_microseconds|binding_latency_microseconds|scheduling_latency_seconds)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_(request_count|request_latencies|request_latencies_summary|dropped_requests|storage_data_key_generation_latencies_microseconds|storage_transformation_failures_total|storage_transformation_latencies_microseconds|proxy_tunnel_sync_latency_secs)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "docker_(operations|operations_latency_microseconds|operations_errors|operations_timeout)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "reflector_(items_per_list|items_per_watch|list_duration_seconds|lists_total|short_watches_total|watch_duration_seconds|watches_total)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "etcd_(helper_cache_hit_count|helper_cache_miss_count|helper_cache_entry_count|request_cache_get_latencies_summary|request_cache_add_latencies_summary|request_latencies_summary)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "transformation_(transformation_latencies_microseconds|failures_total)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "network_plugin_operations_latency_microseconds|sync_proxy_rules_latency_microseconds|rest_client_request_latency_seconds"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_request_duration_seconds_bucket;(0.15|0.25|0.3|0.35|0.4|0.45|0.6|0.7|0.8|0.9|1.25|1.5|1.75|2.5|3|3.5|4.5|6|7|8|9|15|25|30|50)"
+    sourceLabels: ["__name__", "le"]
+kubeControllerManager:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|request|server).*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "rest_client_request_latency_seconds_(bucket|count|sum)"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "root_ca_cert_publisher_sync_duration_seconds_(bucket|count|sum)"
+    sourceLabels: ["__name__"]
+openshiftAPIServer:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|server).*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_admission_controller_admission_latencies_seconds_.*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_admission_step_admission_latencies_seconds_.*"
+    sourceLabels: ["__name__"]
+  - action:       "drop"
+    regex:        "apiserver_request_duration_seconds_bucket;(0.15|0.25|0.3|0.35|0.4|0.45|0.6|0.7|0.8|0.9|1.25|1.5|1.75|2.5|3|3.5|4.5|6|7|8|9|15|25|30|50)"
+    sourceLabels: ["__name__", "le"]
+openshiftControllerManager:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|request|server).*"
+    sourceLabels: ["__name__"]
+openshiftRouteControllerManager:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|request|server).*"
+    sourceLabels: ["__name__"]
+olm:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|server).*"
+    sourceLabels: ["__name__"]
+catalogOperator:
+  - action:       "drop"
+    regex:        "etcd_(debugging|disk|server).*"
+    sourceLabels: ["__name__"]
+cvo:
+  - action: drop
+    regex: "etcd_(debugging|disk|server).*"
+    sourceLabels: ["__name__"]</programlisting>
+</section>
+</section>
+<section xml:id="hosted-control-planes-monitoring-dashboard_hcp-managing">
+<title>Creating monitoring dashboards for hosted clusters</title>
+<simpara>The HyperShift Operator can create or delete monitoring dashboards in the management cluster for each hosted cluster that it manages.</simpara>
+<section xml:id="hosted-control-planes-enable-dashboard">
+<title>Enabling monitoring dashboards</title>
+<simpara>To enable monitoring dashboards in a hosted cluster, complete the following steps:</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create the <literal>hypershift-operator-install-flags</literal> config map in the <literal>local-cluster</literal> namespace, being sure to specify the <literal>--monitoring-dashboards</literal> flag in the <literal>data.installFlagsToAdd</literal> section. For example:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: hypershift-operator-install-flags
+  namespace: local-cluster
+data:
+  installFlagsToAdd: "--monitoring-dashboards"
+  installFlagsToRemove: ""</programlisting>
+</listitem>
+<listitem>
+<simpara>Wait a couple of minutes for the HyperShift Operator deployment in the <literal>hypershift</literal> namespace to be updated to include the following environment variable:</simpara>
+<screen>    - name: MONITORING_DASHBOARDS
+      value: "1"</screen>
+<simpara>When monitoring dashboards are enabled, for each hosted cluster that the HyperShift Operator manages, the Operator creates a config map named <literal>cp-[NAMESPACE]-[NAME]</literal> in the <literal>openshift-config-managed</literal> namespace, where <literal>NAMESPACE</literal> is the namespace of the hosted cluster and <literal>NAME</literal> is the name of the hosted cluster. As a result, a new dashboard is added in the administrative console of the management cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>To view the dashboard, log in to the management cluster&#8217;s console and go to the dashboard for the hosted cluster by clicking <emphasis role="strong">Observe &#8594; Dashboards</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>Optional: To disable a monitoring dashboards in a hosted cluster, remove the <literal>--monitoring-dashboards</literal> flag from the <literal>hypershift-operator-install-flags</literal> config map. When you delete a hosted cluster, its corresponding dashboard is also deleted.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="hosted-control-planes-customize-dashboards">
+<title>Dashboard customization</title>
+<simpara>To generate dashboards for each hosted cluster, the HyperShift Operator uses a template that is stored in the <literal>monitoring-dashboard-template</literal> config map in the operator namespace (<literal>hypershift</literal>). This template contains a set of Grafana panels that contain the metrics for the dashboard. You can edit the content of the config map to customize the dashboards.</simpara>
+<simpara>When a dashboard is generated, the following strings are replaced with values that correspond to a specific hosted cluster:</simpara>
+<informaltable frame="all" rowsep="1" colsep="1">
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara>Name</simpara></entry>
+<entry align="left" valign="top"><simpara>Description</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>__NAME__</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The name of the hosted cluster</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>__NAMESPACE__</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The namespace of the hosted cluster</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>__CONTROL_PLANE_NAMESPACE__</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The namespace where the control plane pods of the hosted cluster are placed</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><literal>__CLUSTER_ID__</literal></simpara></entry>
+<entry align="left" valign="top"><simpara>The UUID of the hosted cluster, which matches the <literal>_id</literal> label of the hosted cluster metrics</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</section>
+</section>
+<section xml:id="scale-down-data-plane_hcp-managing">
+<title>Scaling down the data plane to zero</title>
+<simpara>If you are not using the hosted control plane, to save the resources and cost you can scale down a data plane to zero.</simpara>
+<note>
+<simpara>Ensure you are prepared to scale down the data plane to zero. Because the workload from the worker nodes disappears after scaling down.</simpara>
+</note>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Set the <literal>kubeconfig</literal> file to access the hosted cluster by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ export KUBECONFIG=&lt;install_directory&gt;/auth/kubeconfig</programlisting>
+</listitem>
+<listitem>
+<simpara>Get the name of the <literal>NodePool</literal> resource associated to your hosted cluster by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get nodepool --namespace &lt;HOSTED_CLUSTER_NAMESPACE&gt;</programlisting>
+</listitem>
+<listitem>
+<simpara>Optional: To prevent the pods from draining, add the <literal>nodeDrainTimeout</literal> field in the <literal>NodePool</literal> resource by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc edit NodePool &lt;nodepool&gt; -o yaml --namespace &lt;HOSTED_CLUSTER_NAMESPACE&gt;</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: hypershift.openshift.io/v1alpha1
+kind: NodePool
+metadata:
+# ...
+  name: nodepool-1
+  namespace: clusters
+# ...
+spec:
+  arch: amd64
+  clusterName: clustername <co xml:id="CO1-1"/>
+  management:
+    autoRepair: false
+    replace:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 0
+      strategy: RollingUpdate
+    upgradeType: Replace
+  nodeDrainTimeout: 0s <co xml:id="CO1-2"/>
+# ...</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO1-1">
+<para>Defines the name of your hosted cluster.</para>
+</callout>
+<callout arearefs="CO1-2">
+<para>Specifies the total amount of time that the controller spends to drain a node. By default, the <literal>nodeDrainTimeout: 0s</literal> setting blocks the node draining process.</para>
+</callout>
+</calloutlist>
+<note>
+<simpara>To allow the node draining process to continue for a certain period of time, you can set the value of the <literal>nodeDrainTimeout</literal> field accordingly, for example, <literal>nodeDrainTimeout: 1m</literal>.</simpara>
+</note>
+</listitem>
+<listitem>
+<simpara>Scale down the <literal>NodePool</literal> resource associated to your hosted cluster by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale nodepool/&lt;NODEPOOL_NAME&gt; --namespace &lt;HOSTED_CLUSTER_NAMESPACE&gt; --replicas=0</programlisting>
+<note>
+<simpara>After scaling down the data plan to zero, some pods in the control plane stay in the <literal>Pending</literal> status and the hosted control plane stays up and running. If necessary, you can scale up the <literal>NodePool</literal> resource.</simpara>
+</note>
+</listitem>
+<listitem>
+<simpara>Optional: Scale up the <literal>NodePool</literal> resource associated to your hosted cluster by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale nodepool/&lt;NODEPOOL_NAME&gt; --namespace &lt;HOSTED_CLUSTER_NAMESPACE&gt; --replicas=1</programlisting>
+<simpara>After rescaling the <literal>NodePool</literal> resource,  wait for couple of minutes for the <literal>NodePool</literal> resource to become available in a <literal>Ready</literal> state.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="delete-hosted-cluster_hcp-managing">
+<title>Deleting a hosted cluster</title>
+<simpara>The steps to delete a hosted cluster differ depending on which provider you use.</simpara>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>If the cluster is on AWS, follow the instructions in <link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hypershift-cluster-destroy-aws">Destroying a hosted cluster on AWS</link>.</simpara>
+</listitem>
+<listitem>
+<simpara>If the cluster is on bare metal, follow the instructions in <link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hypershift-cluster-destroy-bm">Destroying a hosted cluster on bare metal</link>.</simpara>
+</listitem>
+<listitem>
+<simpara>If the cluster is on OpenShift Virtualization, follow the instructions in <link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hypershift-cluster-destroy-kubevirt">Destroying a hosted cluster on OpenShift Virtualization</link>.</simpara>
+</listitem>
+</itemizedlist>
+<formalpara>
+<title>Next steps</title>
+<para>If you want to disable the hosted control plane feature, see <link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#disable-hosted-control-planes">Disabling the hosted control plane feature</link>.</para>
+</formalpara>
+</section>
+</chapter>
+<chapter xml:id="hcp-backup-restore-dr">
+<title>Backup, restore, and disaster recovery for hosted control planes</title>
+<simpara>If you need to back up and restore etcd on a hosted cluster or provide disaster recovery for a hosted cluster, see the following procedures.</simpara>
+<section xml:id="hosted-etcd-non-disruptive-recovery">
+<title>Recovering etcd pods for hosted clusters</title>
+<simpara>In hosted clusters, etcd pods run as part of a stateful set. The stateful set relies on persistent storage to store etcd data for each member. In a highly available control plane, the size of the stateful set is three pods, and each member has its own persistent volume claim.</simpara>
+<section xml:id="hosted-cluster-etcd-status_hcp-backup-restore-dr">
+<title>Checking the status of a hosted cluster</title>
+<simpara>To check the status of your hosted cluster, complete the following steps.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Enter the running etcd pod that you want to check by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc rsh -n &lt;control_plane_namespace&gt; -c etcd etcd-0</programlisting>
+</listitem>
+<listitem>
+<simpara>Set up the etcdctl environment by entering the following commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">sh-4.4$ export ETCDCTL_API=3</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">sh-4.4$ export ETCDCTL_CACERT=/etc/etcd/tls/etcd-ca/ca.crt</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">sh-4.4$ export ETCDCTL_CERT=/etc/etcd/tls/client/etcd-client.crt</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">sh-4.4$ export ETCDCTL_KEY=/etc/etcd/tls/client/etcd-client.key</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">sh-4.4$ export ETCDCTL_ENDPOINTS=https://etcd-client:2379</programlisting>
+</listitem>
+<listitem>
+<simpara>Print the endpoint status for each cluster member by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">sh-4.4$ etcdctl endpoint health --cluster -w table</programlisting>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="hosted-cluster-single-node-recovery_hcp-backup-restore-dr">
+<title>Recovering an etcd member for a hosted cluster</title>
+<simpara>An etcd member of a 3-node cluster might fail because of corrupted or missing data. To recover the etcd member, complete the following steps.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>If you need to confirm that the etcd member is failing, enter the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get pods -l app=etcd -n &lt;control_plane_namespace&gt;</programlisting>
+<simpara>The output resembles this example if the etcd member is failing:</simpara>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME     READY   STATUS             RESTARTS     AGE
+etcd-0   2/2     Running            0            64m
+etcd-1   2/2     Running            0            45m
+etcd-2   1/2     CrashLoopBackOff   1 (5s ago)   64m</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>Delete the persistent volume claim of the failing etcd member and the pod by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc delete pvc/data-etcd-2 pod/etcd-2 --wait=false</programlisting>
+</listitem>
+<listitem>
+<simpara>When the pod restarts, verify that the etcd member is added back to the etcd cluster and is correctly functioning by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get pods -l app=etcd -n $CONTROL_PLANE_NAMESPACE</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME     READY   STATUS    RESTARTS   AGE
+etcd-0   2/2     Running   0          67m
+etcd-1   2/2     Running   0          48m
+etcd-2   2/2     Running   0          2m2s</programlisting>
+</para>
+</formalpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="hosted-cluster-etcd-quorum-loss-recovery_hcp-backup-restore-dr">
+<title>Recovering an etcd cluster from a quorum loss</title>
+<simpara>If multiple members of the etcd cluster have lost data or return a <literal>CrashLoopBackOff</literal> status, it can cause an etcd quorum loss. You must restore your etcd cluster from a snapshot.</simpara>
+<important>
+<simpara>This procedure requires API downtime.</simpara>
+</important>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>The <literal>oc</literal> and <literal>jq</literal> binaries have been installed.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>First, set up your environment variables and scale down the API servers:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Set up environment variables for your hosted cluster by entering the following commands, replacing values as necessary:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ CLUSTER_NAME=my-cluster</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ HOSTED_CLUSTER_NAMESPACE=clusters</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ CONTROL_PLANE_NAMESPACE="${HOSTED_CLUSTER_NAMESPACE}-${CLUSTER_NAME}"</programlisting>
+</listitem>
+<listitem>
+<simpara>Pause reconciliation of the hosted cluster by entering the following command, replacing values as necessary:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc patch -n ${HOSTED_CLUSTER_NAMESPACE} hostedclusters/${CLUSTER_NAME} -p '{"spec":{"pausedUntil":"true"}}' --type=merge</programlisting>
+</listitem>
+<listitem>
+<simpara>Scale down the API servers by entering the following commands:</simpara>
+<orderedlist numeration="lowerroman">
+<listitem>
+<simpara>Scale down the <literal>kube-apiserver</literal>:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale -n ${CONTROL_PLANE_NAMESPACE} deployment/kube-apiserver --replicas=0</programlisting>
+</listitem>
+<listitem>
+<simpara>Scale down the <literal>openshift-apiserver</literal>:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale -n ${CONTROL_PLANE_NAMESPACE} deployment/openshift-apiserver --replicas=0</programlisting>
+</listitem>
+<listitem>
+<simpara>Scale down the <literal>openshift-oauth-apiserver</literal>:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale -n ${CONTROL_PLANE_NAMESPACE} deployment/openshift-oauth-apiserver --replicas=0</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Next, take a snapshot of etcd by using one of the following methods:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Use a previously backed-up snapshot of etcd.</simpara>
+</listitem>
+<listitem>
+<simpara>If you have an available etcd pod, take a snapshot from the active etcd pod by completing the following steps:</simpara>
+<orderedlist numeration="lowerroman">
+<listitem>
+<simpara>List etcd pods by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get -n ${CONTROL_PLANE_NAMESPACE} pods -l app=etcd</programlisting>
+</listitem>
+<listitem>
+<simpara>Take a snapshot of the pod database and save it locally to your machine by entering the following commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ ETCD_POD=etcd-0</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc exec -n ${CONTROL_PLANE_NAMESPACE} -c etcd -t ${ETCD_POD} -- env ETCDCTL_API=3 /usr/bin/etcdctl \
+--cacert /etc/etcd/tls/etcd-ca/ca.crt \
+--cert /etc/etcd/tls/client/etcd-client.crt \
+--key /etc/etcd/tls/client/etcd-client.key \
+--endpoints=https://localhost:2379 \
+snapshot save /var/lib/snapshot.db</programlisting>
+</listitem>
+<listitem>
+<simpara>Verify that the snapshot is successful by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc exec -n ${CONTROL_PLANE_NAMESPACE} -c etcd -t ${ETCD_POD} -- env ETCDCTL_API=3 /usr/bin/etcdctl -w table snapshot status /var/lib/snapshot.db</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Make a local copy of the snapshot by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc cp -c etcd ${CONTROL_PLANE_NAMESPACE}/${ETCD_POD}:/var/lib/snapshot.db /tmp/etcd.snapshot.db</programlisting>
+<orderedlist numeration="lowerroman">
+<listitem>
+<simpara>Make a copy of the snapshot database from etcd persistent storage:</simpara>
+<orderedlist numeration="upperalpha">
+<listitem>
+<simpara>List etcd pods by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get -n ${CONTROL_PLANE_NAMESPACE} pods -l app=etcd</programlisting>
+</listitem>
+<listitem>
+<simpara>Find a pod that is running and set its name as the value of <literal>ETCD_POD: ETCD_POD=etcd-0</literal>, and then copy its snapshot database by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc cp -c etcd ${CONTROL_PLANE_NAMESPACE}/${ETCD_POD}:/var/lib/data/member/snap/db /tmp/etcd.snapshot.db</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Next, scale down the etcd statefulset by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale -n ${CONTROL_PLANE_NAMESPACE} statefulset/etcd --replicas=0</programlisting>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Delete volumes for second and third members by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc delete -n ${CONTROL_PLANE_NAMESPACE} pvc/data-etcd-1 pvc/data-etcd-2</programlisting>
+</listitem>
+<listitem>
+<simpara>Create a pod to access the first etcd member&#8217;s data:</simpara>
+<orderedlist numeration="lowerroman">
+<listitem>
+<simpara>Get the etcd image by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ ETCD_IMAGE=$(oc get -n ${CONTROL_PLANE_NAMESPACE} statefulset/etcd -o jsonpath='{ .spec.template.spec.containers[0].image }')</programlisting>
+</listitem>
+<listitem>
+<simpara>Create a pod that allows access to etcd data:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">$ cat &lt;&lt; EOF | oc apply -n ${CONTROL_PLANE_NAMESPACE} -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: etcd-data
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: etcd-data
+  template:
+    metadata:
+      labels:
+        app: etcd-data
+    spec:
+      containers:
+      - name: access
+        image: $ETCD_IMAGE
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib
+        command:
+        - /usr/bin/bash
+        args:
+        - -c
+        - |-
+          while true; do
+            sleep 1000
+          done
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data-etcd-0
+EOF</programlisting>
+</listitem>
+<listitem>
+<simpara>Check the status of the <literal>etcd-data</literal> pod and wait for it to be running by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get -n ${CONTROL_PLANE_NAMESPACE} pods -l app=etcd-data</programlisting>
+</listitem>
+<listitem>
+<simpara>Get the name of the <literal>etcd-data</literal> pod by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ DATA_POD=$(oc get -n ${CONTROL_PLANE_NAMESPACE} pods --no-headers -l app=etcd-data -o name | cut -d/ -f2)</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Copy an etcd snapshot into the pod by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc cp /tmp/etcd.snapshot.db ${CONTROL_PLANE_NAMESPACE}/${DATA_POD}:/var/lib/restored.snap.db</programlisting>
+</listitem>
+<listitem>
+<simpara>Remove old data from the <literal>etcd-data</literal> pod by entering the following commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc exec -n ${CONTROL_PLANE_NAMESPACE} ${DATA_POD} -- rm -rf /var/lib/data</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc exec -n ${CONTROL_PLANE_NAMESPACE} ${DATA_POD} -- mkdir -p /var/lib/data</programlisting>
+</listitem>
+<listitem>
+<simpara>Restore the etcd snapshot by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc exec -n ${CONTROL_PLANE_NAMESPACE} ${DATA_POD} -- etcdutl snapshot restore /var/lib/restored.snap.db \
+     --data-dir=/var/lib/data --skip-hash-check \
+     --name etcd-0 \
+     --initial-cluster-token=etcd-cluster \
+     --initial-cluster etcd-0=https://etcd-0.etcd-discovery.${CONTROL_PLANE_NAMESPACE}.svc:2380,etcd-1=https://etcd-1.etcd-discovery.${CONTROL_PLANE_NAMESPACE}.svc:2380,etcd-2=https://etcd-2.etcd-discovery.${CONTROL_PLANE_NAMESPACE}.svc:2380 \
+     --initial-advertise-peer-urls https://etcd-0.etcd-discovery.${CONTROL_PLANE_NAMESPACE}.svc:2380</programlisting>
+</listitem>
+<listitem>
+<simpara>Remove the temporary etcd snapshot from the pod by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc exec -n ${CONTROL_PLANE_NAMESPACE} ${DATA_POD} -- rm /var/lib/restored.snap.db</programlisting>
+</listitem>
+<listitem>
+<simpara>Delete data access deployment by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc delete -n ${CONTROL_PLANE_NAMESPACE} deployment/etcd-data</programlisting>
+</listitem>
+<listitem>
+<simpara>Scale up the etcd cluster by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale -n ${CONTROL_PLANE_NAMESPACE} statefulset/etcd --replicas=3</programlisting>
+</listitem>
+<listitem>
+<simpara>Wait for the etcd member pods to return and report as available by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get -n ${CONTROL_PLANE_NAMESPACE} pods -l app=etcd -w</programlisting>
+</listitem>
+<listitem>
+<simpara>Scale up all etcd-writer deployments by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale deployment -n ${CONTROL_PLANE_NAMESPACE} --replicas=3 kube-apiserver openshift-apiserver openshift-oauth-apiserver</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Restore reconciliation of the hosted cluster by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc patch -n ${CLUSTER_NAMESPACE} hostedclusters/${CLUSTER_NAME} -p '{"spec":{"pausedUntil":""}}' --type=merge</programlisting>
+</listitem>
+</orderedlist>
+</section>
+</section>
+<section xml:id="hcp-backup-restore">
+<title>Backing up and restoring etcd on a hosted cluster on AWS</title>
+<simpara>If you use hosted control planes for OpenShift Container Platform, the process to back up and restore etcd is different from <link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/backup_and_restore/#backing-up-etcd-data_backup-etcd">the usual etcd backup process</link>.</simpara>
+<simpara>The following procedures are specific to hosted control planes on AWS.</simpara>
+<important>
+<simpara>Hosted control planes on the AWS platform is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xlink:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<section xml:id="backup-etcd-hosted-cluster_hcp-backup-restore-dr">
+<title>Taking a snapshot of etcd on a hosted cluster</title>
+<simpara>As part of the process to back up etcd for a hosted cluster, you take a snapshot of etcd. After you take the snapshot, you can restore it, for example, as part of a disaster recovery operation.</simpara>
+<important>
+<simpara>This procedure requires API downtime.</simpara>
+</important>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Pause reconciliation of the hosted cluster by entering this command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc patch -n clusters hostedclusters/${CLUSTER_NAME} -p '{"spec":{"pausedUntil":"'${PAUSED_UNTIL}'"}}' --type=merge</programlisting>
+</listitem>
+<listitem>
+<simpara>Stop all etcd-writer deployments by entering this command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale deployment -n ${HOSTED_CLUSTER_NAMESPACE} --replicas=0 kube-apiserver openshift-apiserver openshift-oauth-apiserver</programlisting>
+</listitem>
+<listitem>
+<simpara>Take an etcd snapshot by using the <literal>exec</literal> command in each etcd container:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc exec -it etcd-0 -n ${HOSTED_CLUSTER_NAMESPACE} -- env ETCDCTL_API=3 /usr/bin/etcdctl --cacert /etc/etcd/tls/client/etcd-client-ca.crt --cert /etc/etcd/tls/client/etcd-client.crt --key /etc/etcd/tls/client/etcd-client.key --endpoints=localhost:2379 snapshot save /var/lib/data/snapshot.db
+$ oc exec -it etcd-0 -n ${HOSTED_CLUSTER_NAMESPACE} -- env ETCDCTL_API=3 /usr/bin/etcdctl -w table snapshot status /var/lib/data/snapshot.db</programlisting>
+</listitem>
+<listitem>
+<simpara>Copy the snapshot data to a location where you can retrieve it later, such as an S3 bucket, as shown in the following example.</simpara>
+<note>
+<simpara>The following example uses signature version 2. If you are in a region that supports signature version 4, such as the us-east-2 region, use signature version 4. Otherwise, if you use signature version 2 to copy the snapshot to an S3 bucket, the upload fails and signature version 2 is deprecated.</simpara>
+</note>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">BUCKET_NAME=somebucket
+FILEPATH="/${BUCKET_NAME}/${CLUSTER_NAME}-snapshot.db"
+CONTENT_TYPE="application/x-compressed-tar"
+DATE_VALUE=`date -R`
+SIGNATURE_STRING="PUT\n\n${CONTENT_TYPE}\n${DATE_VALUE}\n${FILEPATH}"
+ACCESS_KEY=accesskey
+SECRET_KEY=secret
+SIGNATURE_HASH=`echo -en ${SIGNATURE_STRING} | openssl sha1 -hmac ${SECRET_KEY} -binary | base64`
+
+oc exec -it etcd-0 -n ${HOSTED_CLUSTER_NAMESPACE} -- curl -X PUT -T "/var/lib/data/snapshot.db" \
+  -H "Host: ${BUCKET_NAME}.s3.amazonaws.com" \
+  -H "Date: ${DATE_VALUE}" \
+  -H "Content-Type: ${CONTENT_TYPE}" \
+  -H "Authorization: AWS ${ACCESS_KEY}:${SIGNATURE_HASH}" \
+  https://${BUCKET_NAME}.s3.amazonaws.com/${CLUSTER_NAME}-snapshot.db</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>If you want to be able to restore the snapshot on a new cluster later, save the encryption secret that the hosted cluster references, as shown in this example:</simpara>
+<formalpara>
+<title>Example</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">oc get hostedcluster $CLUSTER_NAME -o=jsonpath='{.spec.secretEncryption.aescbc}'
+{"activeKey":{"name":"CLUSTER_NAME-etcd-encryption-key"}}
+
+# Save this secret, or the key it contains so the etcd data can later be decrypted
+oc get secret ${CLUSTER_NAME}-etcd-encryption-key -o=jsonpath='{.data.key}'</programlisting>
+</para>
+</formalpara>
+</listitem>
+</orderedlist>
+<formalpara>
+<title>Next steps</title>
+<para>Restore the etcd snapshot.</para>
+</formalpara>
+</section>
+<section xml:id="restoring-etcd-snapshot-hosted-cluster_hcp-backup-restore-dr">
+<title>Restoring an etcd snapshot on a hosted cluster</title>
+<simpara>If you have a snapshot of etcd from your hosted cluster, you can restore it. Currently, you can restore an etcd snapshot only during cluster creation.</simpara>
+<simpara>To restore an etcd snapshot, you modify the output from the <literal>create cluster --render</literal> command and define a <literal>restoreSnapshotURL</literal> value in the etcd section of the <literal>HostedCluster</literal> specification.</simpara>
+<formalpara>
+<title>Prerequisites</title>
+<para>You took an etcd snapshot on a hosted cluster.</para>
+</formalpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>On the <literal>aws</literal> command-line interface (CLI), create a pre-signed URL so that you can download your etcd snapshot from S3 without passing credentials to the etcd deployment:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">ETCD_SNAPSHOT=${ETCD_SNAPSHOT:-"s3://${BUCKET_NAME}/${CLUSTER_NAME}-snapshot.db"}
+ETCD_SNAPSHOT_URL=$(aws s3 presign ${ETCD_SNAPSHOT})</programlisting>
+</listitem>
+<listitem>
+<simpara>Modify the <literal>HostedCluster</literal> specification to refer to the URL:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">spec:
+  etcd:
+    managed:
+      storage:
+        persistentVolume:
+          size: 4Gi
+        type: PersistentVolume
+        restoreSnapshotURL:
+        - "${ETCD_SNAPSHOT_URL}"
+    managementType: Managed</programlisting>
+</listitem>
+<listitem>
+<simpara>Ensure that the secret that you referenced from the <literal>spec.secretEncryption.aescbc</literal> value contains the same AES key that you saved in the previous steps.</simpara>
+</listitem>
+</orderedlist>
+</section>
+</section>
+<section xml:id="hcp-dr-aws">
+<title>Disaster recovery for a hosted cluster within an AWS region</title>
+<simpara>In a situation where you need disaster recovery (DR) for a hosted cluster, you can recover a hosted cluster to the same region within AWS. For example, you need DR when the upgrade of a management cluster fails and the hosted cluster is in a read-only state.</simpara>
+<important>
+<simpara>Hosted control planes is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xlink:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<simpara>The DR process involves three main steps:</simpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Backing up the hosted cluster on the source management cluster</simpara>
+</listitem>
+<listitem>
+<simpara>Restoring the hosted cluster on a destination management cluster</simpara>
+</listitem>
+<listitem>
+<simpara>Deleting the hosted cluster from the source management cluster</simpara>
+</listitem>
+</orderedlist>
+<simpara>Your workloads remain running during the process. The Cluster API might be unavailable for a period, but that will not affect the services that are running on the worker nodes.</simpara>
+<important>
+<simpara>Both the source management cluster and the destination management cluster must have the <literal>--external-dns</literal> flags to maintain the API server URL, as shown in this example:</simpara>
+<formalpara>
+<title>Example: External DNS flags</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">--external-dns-provider=aws \
+--external-dns-credentials=&lt;AWS Credentials location&gt; \
+--external-dns-domain-filter=&lt;DNS Base Domain&gt;</programlisting>
+</para>
+</formalpara>
+<simpara>That way, the server URL ends with <literal><link xlink:href="https://api-sample-hosted.sample-hosted.aws.openshift.com">https://api-sample-hosted.sample-hosted.aws.openshift.com</link></literal>.</simpara>
+<simpara>If you do not include the <literal>--external-dns</literal> flags to maintain the API server URL, the hosted cluster cannot be migrated.</simpara>
+</important>
+<section xml:id="dr-hosted-cluster-env-context">
+<title>Example environment and context</title>
+<simpara>Consider an scenario where you have three clusters to restore. Two are management clusters, and one is a hosted cluster. You can restore either the control plane only or the control plane and the nodes. Before you begin, you need the following information:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Source MGMT Namespace: The source management namespace</simpara>
+</listitem>
+<listitem>
+<simpara>Source MGMT ClusterName: The source management cluster name</simpara>
+</listitem>
+<listitem>
+<simpara>Source MGMT Kubeconfig: The source management <literal>kubeconfig</literal> file</simpara>
+</listitem>
+<listitem>
+<simpara>Destination MGMT Kubeconfig: The destination management <literal>kubeconfig</literal> file</simpara>
+</listitem>
+<listitem>
+<simpara>HC Kubeconfig: The hosted cluster <literal>kubeconfig</literal> file</simpara>
+</listitem>
+<listitem>
+<simpara>SSH key file: The SSH public key</simpara>
+</listitem>
+<listitem>
+<simpara>Pull secret: The pull secret file to access the release images</simpara>
+</listitem>
+<listitem>
+<simpara>AWS credentials</simpara>
+</listitem>
+<listitem>
+<simpara>AWS region</simpara>
+</listitem>
+<listitem>
+<simpara>Base domain: The DNS base domain to use as an external DNS</simpara>
+</listitem>
+<listitem>
+<simpara>S3 bucket name: The bucket in the AWS region where you plan to upload the etcd backup</simpara>
+</listitem>
+</itemizedlist>
+<simpara>This information is shown in the following example environment variables.</simpara>
+<formalpara>
+<title>Example environment variables</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">SSH_KEY_FILE=${HOME}/.ssh/id_rsa.pub
+BASE_PATH=${HOME}/hypershift
+BASE_DOMAIN="aws.sample.com"
+PULL_SECRET_FILE="${HOME}/pull_secret.json"
+AWS_CREDS="${HOME}/.aws/credentials"
+AWS_ZONE_ID="Z02718293M33QHDEQBROL"
+
+CONTROL_PLANE_AVAILABILITY_POLICY=SingleReplica
+HYPERSHIFT_PATH=${BASE_PATH}/src/hypershift
+HYPERSHIFT_CLI=${HYPERSHIFT_PATH}/bin/hypershift
+HYPERSHIFT_IMAGE=${HYPERSHIFT_IMAGE:-"quay.io/${USER}/hypershift:latest"}
+NODE_POOL_REPLICAS=${NODE_POOL_REPLICAS:-2}
+
+# MGMT Context
+MGMT_REGION=us-west-1
+MGMT_CLUSTER_NAME="${USER}-dev"
+MGMT_CLUSTER_NS=${USER}
+MGMT_CLUSTER_DIR="${BASE_PATH}/hosted_clusters/${MGMT_CLUSTER_NS}-${MGMT_CLUSTER_NAME}"
+MGMT_KUBECONFIG="${MGMT_CLUSTER_DIR}/kubeconfig"
+
+# MGMT2 Context
+MGMT2_CLUSTER_NAME="${USER}-dest"
+MGMT2_CLUSTER_NS=${USER}
+MGMT2_CLUSTER_DIR="${BASE_PATH}/hosted_clusters/${MGMT2_CLUSTER_NS}-${MGMT2_CLUSTER_NAME}"
+MGMT2_KUBECONFIG="${MGMT2_CLUSTER_DIR}/kubeconfig"
+
+# Hosted Cluster Context
+HC_CLUSTER_NS=clusters
+HC_REGION=us-west-1
+HC_CLUSTER_NAME="${USER}-hosted"
+HC_CLUSTER_DIR="${BASE_PATH}/hosted_clusters/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}"
+HC_KUBECONFIG="${HC_CLUSTER_DIR}/kubeconfig"
+BACKUP_DIR=${HC_CLUSTER_DIR}/backup
+
+BUCKET_NAME="${USER}-hosted-${MGMT_REGION}"
+
+# DNS
+AWS_ZONE_ID="Z07342811SH9AA102K1AC"
+EXTERNAL_DNS_DOMAIN="hc.jpdv.aws.kerbeross.com"</programlisting>
+</para>
+</formalpara>
+</section>
+<section xml:id="dr-hosted-cluster-process">
+<title>Overview of the backup and restore process</title>
+<simpara>The backup and restore process works as follows:</simpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>On management cluster 1, which you can think of as the source management cluster, the control plane and workers interact by using the external DNS API. The external DNS API is accessible, and a load balancer sits between the management clusters.</simpara>
+<informalfigure>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/298_OpenShift_Backup_Restore_0123_00.png"/>
+</imageobject>
+<textobject><phrase>Diagram that shows the workers accessing the external DNS API and the external DNS API pointing to the control plane through a load balancer</phrase></textobject>
+</mediaobject>
+</informalfigure>
+</listitem>
+<listitem>
+<simpara>You take a snapshot of the hosted cluster, which includes etcd, the control plane, and the worker nodes. During this process, the worker nodes continue to try to access the external DNS API even if it is not accessible, the workloads are running, the control plane is saved in a local manifest file, and etcd is backed up to an S3 bucket. The data plane is active and the control plane is paused.</simpara>
+<informalfigure>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/298_OpenShift_Backup_Restore_0123_01.png"/>
+</imageobject>
+<textobject><phrase>298 OpenShift Backup Restore 0123 01</phrase></textobject>
+</mediaobject>
+</informalfigure>
+</listitem>
+<listitem>
+<simpara>On management cluster 2, which you can think of as the destination management cluster, you restore etcd from the S3 bucket and restore the control plane from the local manifest file. During this process, the external DNS API is stopped, the hosted cluster API becomes inaccessible, and any workers that use the API are unable to update their manifest files, but the workloads are still running.</simpara>
+<informalfigure>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/298_OpenShift_Backup_Restore_0123_02.png"/>
+</imageobject>
+<textobject><phrase>298 OpenShift Backup Restore 0123 02</phrase></textobject>
+</mediaobject>
+</informalfigure>
+</listitem>
+<listitem>
+<simpara>The external DNS API is accessible again, and the worker nodes use it to move to management cluster 2. The external DNS API can access the load balancer that points to the control plane.</simpara>
+<informalfigure>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/298_OpenShift_Backup_Restore_0123_03.png"/>
+</imageobject>
+<textobject><phrase>298 OpenShift Backup Restore 0123 03</phrase></textobject>
+</mediaobject>
+</informalfigure>
+</listitem>
+<listitem>
+<simpara>On management cluster 2, the control plane and worker nodes interact by using the external DNS API. The resources are deleted from management cluster 1, except for the S3 backup of etcd. If you try to set up the hosted cluster again on mangagement cluster 1, it will not work.</simpara>
+<informalfigure>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/298_OpenShift_Backup_Restore_0123_04.png"/>
+</imageobject>
+<textobject><phrase>298 OpenShift Backup Restore 0123 04</phrase></textobject>
+</mediaobject>
+</informalfigure>
+</listitem>
+</orderedlist>
+<simpara>You can manually back up and restore your hosted cluster, or you can run a script to complete the process. For more information about the script, see "Running a script to back up and restore a hosted cluster".</simpara>
+</section>
+<section xml:id="dr-hosted-cluster-within-aws-region-backup_hcp-backup-restore-dr">
+<title>Backing up a hosted cluster</title>
+<simpara>To recover your hosted cluster in your target management cluster, you first need to back up all of the relevant data.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a configmap file to declare the source management cluster by entering this command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create configmap mgmt-parent-cluster -n default --from-literal=from=${MGMT_CLUSTER_NAME}</programlisting>
+</listitem>
+<listitem>
+<simpara>Shut down the reconciliation in the hosted cluster and in the node pools by entering these commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">PAUSED_UNTIL="true"
+oc patch -n ${HC_CLUSTER_NS} hostedclusters/${HC_CLUSTER_NAME} -p '{"spec":{"pausedUntil":"'${PAUSED_UNTIL}'"}}' --type=merge
+oc scale deployment -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --replicas=0 kube-apiserver openshift-apiserver openshift-oauth-apiserver control-plane-operator</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">PAUSED_UNTIL="true"
+oc patch -n ${HC_CLUSTER_NS} hostedclusters/${HC_CLUSTER_NAME} -p '{"spec":{"pausedUntil":"'${PAUSED_UNTIL}'"}}' --type=merge
+oc patch -n ${HC_CLUSTER_NS} nodepools/${NODEPOOLS} -p '{"spec":{"pausedUntil":"'${PAUSED_UNTIL}'"}}' --type=merge
+oc scale deployment -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --replicas=0 kube-apiserver openshift-apiserver openshift-oauth-apiserver control-plane-operator</programlisting>
+</listitem>
+<listitem>
+<simpara>Back up etcd and upload the data to an S3 bucket by running this bash script:</simpara>
+<tip>
+<simpara>Wrap this script in a function and call it from the main function.</simpara>
+</tip>
+<programlisting language="terminal" linenumbering="unnumbered"># ETCD Backup
+ETCD_PODS="etcd-0"
+if [ "${CONTROL_PLANE_AVAILABILITY_POLICY}" = "HighlyAvailable" ]; then
+  ETCD_PODS="etcd-0 etcd-1 etcd-2"
+fi
+
+for POD in ${ETCD_PODS}; do
+  # Create an etcd snapshot
+  oc exec -it ${POD} -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -- env ETCDCTL_API=3 /usr/bin/etcdctl --cacert /etc/etcd/tls/client/etcd-client-ca.crt --cert /etc/etcd/tls/client/etcd-client.crt --key /etc/etcd/tls/client/etcd-client.key --endpoints=localhost:2379 snapshot save /var/lib/data/snapshot.db
+  oc exec -it ${POD} -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -- env ETCDCTL_API=3 /usr/bin/etcdctl -w table snapshot status /var/lib/data/snapshot.db
+
+  FILEPATH="/${BUCKET_NAME}/${HC_CLUSTER_NAME}-${POD}-snapshot.db"
+  CONTENT_TYPE="application/x-compressed-tar"
+  DATE_VALUE=`date -R`
+  SIGNATURE_STRING="PUT\n\n${CONTENT_TYPE}\n${DATE_VALUE}\n${FILEPATH}"
+
+  set +x
+  ACCESS_KEY=$(grep aws_access_key_id ${AWS_CREDS} | head -n1 | cut -d= -f2 | sed "s/ //g")
+  SECRET_KEY=$(grep aws_secret_access_key ${AWS_CREDS} | head -n1 | cut -d= -f2 | sed "s/ //g")
+  SIGNATURE_HASH=$(echo -en ${SIGNATURE_STRING} | openssl sha1 -hmac "${SECRET_KEY}" -binary | base64)
+  set -x
+
+  # FIXME: this is pushing to the OIDC bucket
+  oc exec -it etcd-0 -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -- curl -X PUT -T "/var/lib/data/snapshot.db" \
+    -H "Host: ${BUCKET_NAME}.s3.amazonaws.com" \
+    -H "Date: ${DATE_VALUE}" \
+    -H "Content-Type: ${CONTENT_TYPE}" \
+    -H "Authorization: AWS ${ACCESS_KEY}:${SIGNATURE_HASH}" \
+    https://${BUCKET_NAME}.s3.amazonaws.com/${HC_CLUSTER_NAME}-${POD}-snapshot.db
+done</programlisting>
+<simpara>For more information about backing up etcd, see "Backing up and restoring etcd on a hosted cluster".</simpara>
+</listitem>
+<listitem>
+<simpara>Back up Kubernetes and OpenShift Container Platform objects by entering the following commands. You need to back up the following objects:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><literal>HostedCluster</literal> and <literal>NodePool</literal> objects from the HostedCluster namespace</simpara>
+</listitem>
+<listitem>
+<simpara><literal>HostedCluster</literal> secrets from the HostedCluster namespace</simpara>
+</listitem>
+<listitem>
+<simpara><literal>HostedControlPlane</literal> from the Hosted Control Plane namespace</simpara>
+</listitem>
+<listitem>
+<simpara><literal>Cluster</literal> from the Hosted Control Plane namespace</simpara>
+</listitem>
+<listitem>
+<simpara><literal>AWSCluster</literal>, <literal>AWSMachineTemplate</literal>, and <literal>AWSMachine</literal> from the Hosted Control Plane namespace</simpara>
+</listitem>
+<listitem>
+<simpara><literal>MachineDeployments</literal>, <literal>MachineSets</literal>, and <literal>Machines</literal> from the Hosted Control Plane namespace</simpara>
+</listitem>
+<listitem>
+<simpara><literal>ControlPlane</literal> secrets from the Hosted Control Plane namespace</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">mkdir -p ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS} ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}
+chmod 700 ${BACKUP_DIR}/namespaces/
+
+# HostedCluster
+echo "Backing Up HostedCluster Objects:"
+oc get hc ${HC_CLUSTER_NAME} -n ${HC_CLUSTER_NS} -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}/hc-${HC_CLUSTER_NAME}.yaml
+echo "--&gt; HostedCluster"
+sed -i '' -e '/^status:$/,$d' ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}/hc-${HC_CLUSTER_NAME}.yaml
+
+# NodePool
+oc get np ${NODEPOOLS} -n ${HC_CLUSTER_NS} -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}/np-${NODEPOOLS}.yaml
+echo "--&gt; NodePool"
+sed -i '' -e '/^status:$/,$ d' ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}/np-${NODEPOOLS}.yaml
+
+# Secrets in the HC Namespace
+echo "--&gt; HostedCluster Secrets:"
+for s in $(oc get secret -n ${HC_CLUSTER_NS} | grep "^${HC_CLUSTER_NAME}" | awk '{print $1}'); do
+    oc get secret -n ${HC_CLUSTER_NS} $s -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}/secret-${s}.yaml
+done
+
+# Secrets in the HC Control Plane Namespace
+echo "--&gt; HostedCluster ControlPlane Secrets:"
+for s in $(oc get secret -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} | egrep -v "docker|service-account-token|oauth-openshift|NAME|token-${HC_CLUSTER_NAME}" | awk '{print $1}'); do
+    oc get secret -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} $s -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/secret-${s}.yaml
+done
+
+# Hosted Control Plane
+echo "--&gt; HostedControlPlane:"
+oc get hcp ${HC_CLUSTER_NAME} -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/hcp-${HC_CLUSTER_NAME}.yaml
+
+# Cluster
+echo "--&gt; Cluster:"
+CL_NAME=$(oc get hcp ${HC_CLUSTER_NAME} -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o jsonpath={.metadata.labels.\*} | grep ${HC_CLUSTER_NAME})
+oc get cluster ${CL_NAME} -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/cl-${HC_CLUSTER_NAME}.yaml
+
+# AWS Cluster
+echo "--&gt; AWS Cluster:"
+oc get awscluster ${HC_CLUSTER_NAME} -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/awscl-${HC_CLUSTER_NAME}.yaml
+
+# AWS MachineTemplate
+echo "--&gt; AWS Machine Template:"
+oc get awsmachinetemplate ${NODEPOOLS} -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/awsmt-${HC_CLUSTER_NAME}.yaml
+
+# AWS Machines
+echo "--&gt; AWS Machine:"
+CL_NAME=$(oc get hcp ${HC_CLUSTER_NAME} -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o jsonpath={.metadata.labels.\*} | grep ${HC_CLUSTER_NAME})
+for s in $(oc get awsmachines -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --no-headers | grep ${CL_NAME} | cut -f1 -d\ ); do
+    oc get -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} awsmachines $s -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/awsm-${s}.yaml
+done
+
+# MachineDeployments
+echo "--&gt; HostedCluster MachineDeployments:"
+for s in $(oc get machinedeployment -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o name); do
+    mdp_name=$(echo ${s} | cut -f 2 -d /)
+    oc get -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} $s -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/machinedeployment-${mdp_name}.yaml
+done
+
+# MachineSets
+echo "--&gt; HostedCluster MachineSets:"
+for s in $(oc get machineset -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o name); do
+    ms_name=$(echo ${s} | cut -f 2 -d /)
+    oc get -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} $s -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/machineset-${ms_name}.yaml
+done
+
+# Machines
+echo "--&gt; HostedCluster Machine:"
+for s in $(oc get machine -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o name); do
+    m_name=$(echo ${s} | cut -f 2 -d /)
+    oc get -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} $s -o yaml &gt; ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/machine-${m_name}.yaml
+done</programlisting>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>Clean up the <literal>ControlPlane</literal> routes by entering this command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc delete routes -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --all</programlisting>
+<simpara>By entering that command, you enable the ExternalDNS Operator to delete the Route53 entries.</simpara>
+</listitem>
+<listitem>
+<simpara>Verify that the Route53 entries are clean by running this script:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">function clean_routes() {
+
+    if [[ -z "${1}" ]];then
+        echo "Give me the NS where to clean the routes"
+        exit 1
+    fi
+
+    # Constants
+    if [[ -z "${2}" ]];then
+        echo "Give me the Route53 zone ID"
+        exit 1
+    fi
+
+    ZONE_ID=${2}
+    ROUTES=10
+    timeout=40
+    count=0
+
+    # This allows us to remove the ownership in the AWS for the API route
+    oc delete route -n ${1} --all
+
+    while [ ${ROUTES} -gt 2 ]
+    do
+        echo "Waiting for ExternalDNS Operator to clean the DNS Records in AWS Route53 where the zone id is: ${ZONE_ID}..."
+        echo "Try: (${count}/${timeout})"
+        sleep 10
+        if [[ $count -eq timeout ]];then
+            echo "Timeout waiting for cleaning the Route53 DNS records"
+            exit 1
+        fi
+        count=$((count+1))
+        ROUTES=$(aws route53 list-resource-record-sets --hosted-zone-id ${ZONE_ID} --max-items 10000 --output json | grep -c ${EXTERNAL_DNS_DOMAIN})
+    done
+}
+
+# SAMPLE: clean_routes "&lt;HC ControlPlane Namespace&gt;" "&lt;AWS_ZONE_ID&gt;"
+clean_routes "${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}" "${AWS_ZONE_ID}"</programlisting>
+</listitem>
+</orderedlist>
+<formalpara>
+<title>Verification</title>
+<para>Check all of the OpenShift Container Platform objects and the S3 bucket to verify that everything looks as expected.</para>
+</formalpara>
+<formalpara>
+<title>Next steps</title>
+<para>Restore your hosted cluster.</para>
+</formalpara>
+</section>
+<section xml:id="dr-hosted-cluster-within-aws-region-restore_hcp-backup-restore-dr">
+<title>Restoring a hosted cluster</title>
+<simpara>Gather all of the objects that you backed up and restore them in your destination management cluster.</simpara>
+<formalpara>
+<title>Prerequisites</title>
+<para>You backed up the data from your source management cluster.</para>
+</formalpara>
+<tip>
+<simpara>Ensure that the <literal>kubeconfig</literal> file of the destination management cluster is placed as it is set in the <literal>KUBECONFIG</literal> variable or, if you use the script, in the <literal>MGMT2_KUBECONFIG</literal> variable. Use <literal>export KUBECONFIG=&lt;Kubeconfig FilePath&gt;</literal> or, if you use the script, use <literal>export KUBECONFIG=${MGMT2_KUBECONFIG}</literal>.</simpara>
+</tip>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Verify that the new management cluster does not contain any namespaces from the cluster that you are restoring by entering these commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered"># Just in case
+export KUBECONFIG=${MGMT2_KUBECONFIG}
+BACKUP_DIR=${HC_CLUSTER_DIR}/backup
+
+# Namespace deletion in the destination Management cluster
+$ oc delete ns ${HC_CLUSTER_NS} || true
+$ oc delete ns ${HC_CLUSTER_NS}-{HC_CLUSTER_NAME} || true</programlisting>
+</listitem>
+<listitem>
+<simpara>Re-create the deleted namespaces by entering these commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered"># Namespace creation
+$ oc new-project ${HC_CLUSTER_NS}
+$ oc new-project ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}</programlisting>
+</listitem>
+<listitem>
+<simpara>Restore the secrets in the HC namespace by entering this command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc apply -f ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}/secret-*</programlisting>
+</listitem>
+<listitem>
+<simpara>Restore the objects in the <literal>HostedCluster</literal> control plane namespace by entering these commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered"># Secrets
+$ oc apply -f ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/secret-*
+
+# Cluster
+$ oc apply -f ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/hcp-*
+$ oc apply -f ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/cl-*</programlisting>
+</listitem>
+<listitem>
+<simpara>If you are recovering the nodes and the node pool to reuse AWS instances, restore the objects in the HC control plane namespace by entering these commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered"># AWS
+$ oc apply -f ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/awscl-*
+$ oc apply -f ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/awsmt-*
+$ oc apply -f ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/awsm-*
+
+# Machines
+$ oc apply -f ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/machinedeployment-*
+$ oc apply -f ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/machineset-*
+$ oc apply -f ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/machine-*</programlisting>
+</listitem>
+<listitem>
+<simpara>Restore the etcd data and the hosted cluster by running this bash script:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">ETCD_PODS="etcd-0"
+if [ "${CONTROL_PLANE_AVAILABILITY_POLICY}" = "HighlyAvailable" ]; then
+  ETCD_PODS="etcd-0 etcd-1 etcd-2"
+fi
+
+HC_RESTORE_FILE=${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}/hc-${HC_CLUSTER_NAME}-restore.yaml
+HC_BACKUP_FILE=${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}/hc-${HC_CLUSTER_NAME}.yaml
+HC_NEW_FILE=${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}/hc-${HC_CLUSTER_NAME}-new.yaml
+cat ${HC_BACKUP_FILE} &gt; ${HC_NEW_FILE}
+cat &gt; ${HC_RESTORE_FILE} &lt;&lt;EOF
+    restoreSnapshotURL:
+EOF
+
+for POD in ${ETCD_PODS}; do
+  # Create a pre-signed URL for the etcd snapshot
+  ETCD_SNAPSHOT="s3://${BUCKET_NAME}/${HC_CLUSTER_NAME}-${POD}-snapshot.db"
+  ETCD_SNAPSHOT_URL=$(AWS_DEFAULT_REGION=${MGMT2_REGION} aws s3 presign ${ETCD_SNAPSHOT})
+
+  # FIXME no CLI support for restoreSnapshotURL yet
+  cat &gt;&gt; ${HC_RESTORE_FILE} &lt;&lt;EOF
+    - "${ETCD_SNAPSHOT_URL}"
+EOF
+done
+
+cat ${HC_RESTORE_FILE}
+
+if ! grep ${HC_CLUSTER_NAME}-snapshot.db ${HC_NEW_FILE}; then
+  sed -i '' -e "/type: PersistentVolume/r ${HC_RESTORE_FILE}" ${HC_NEW_FILE}
+  sed -i '' -e '/pausedUntil:/d' ${HC_NEW_FILE}
+fi
+
+HC=$(oc get hc -n ${HC_CLUSTER_NS} ${HC_CLUSTER_NAME} -o name || true)
+if [[ ${HC} == "" ]];then
+    echo "Deploying HC Cluster: ${HC_CLUSTER_NAME} in ${HC_CLUSTER_NS} namespace"
+    oc apply -f ${HC_NEW_FILE}
+else
+    echo "HC Cluster ${HC_CLUSTER_NAME} already exists, avoiding step"
+fi</programlisting>
+</listitem>
+<listitem>
+<simpara>If you are recovering the nodes and the node pool to reuse AWS instances, restore the node pool by entering this command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">oc apply -f ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}/np-*</programlisting>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>To verify that the nodes are fully restored, use this function:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">timeout=40
+count=0
+NODE_STATUS=$(oc get nodes --kubeconfig=${HC_KUBECONFIG} | grep -v NotReady | grep -c "worker") || NODE_STATUS=0
+
+while [ ${NODE_POOL_REPLICAS} != ${NODE_STATUS} ]
+do
+    echo "Waiting for Nodes to be Ready in the destination MGMT Cluster: ${MGMT2_CLUSTER_NAME}"
+    echo "Try: (${count}/${timeout})"
+    sleep 30
+    if [[ $count -eq timeout ]];then
+        echo "Timeout waiting for Nodes in the destination MGMT Cluster"
+        exit 1
+    fi
+    count=$((count+1))
+    NODE_STATUS=$(oc get nodes --kubeconfig=${HC_KUBECONFIG} | grep -v NotReady | grep -c "worker") || NODE_STATUS=0
+done</programlisting>
+</listitem>
+</itemizedlist>
+<formalpara>
+<title>Next steps</title>
+<para>Shut down and delete your cluster.</para>
+</formalpara>
+</section>
+<section xml:id="dr-hosted-cluster-within-aws-region-delete_hcp-backup-restore-dr">
+<title>Deleting a hosted cluster from your source management cluster</title>
+<simpara>After you back up your hosted cluster and restore it to your destination management cluster, you shut down and delete the hosted cluster on your source management cluster.</simpara>
+<formalpara>
+<title>Prerequisites</title>
+<para>You backed up your data and restored it to your source management cluster.</para>
+</formalpara>
+<tip>
+<simpara>Ensure that the <literal>kubeconfig</literal> file of the destination management cluster is placed as it is set in the <literal>KUBECONFIG</literal> variable or, if you use the script, in the <literal>MGMT_KUBECONFIG</literal> variable. Use <literal>export KUBECONFIG=&lt;Kubeconfig FilePath&gt;</literal> or, if you use the script, use <literal>export KUBECONFIG=${MGMT_KUBECONFIG}</literal>.</simpara>
+</tip>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Scale the <literal>deployment</literal> and <literal>statefulset</literal> objects by entering these commands:</simpara>
+<important>
+<simpara>Do not scale the stateful set if the value of its <literal>spec.persistentVolumeClaimRetentionPolicy.whenScaled</literal> field is set to <literal>Delete</literal>, because this could lead to a loss of data.</simpara>
+<simpara>As a workaround, update the value of the <literal>spec.persistentVolumeClaimRetentionPolicy.whenScaled</literal> field to <literal>Retain</literal>. Ensure that no controllers exist that reconcile the stateful set and would return the value back to <literal>Delete</literal>, which could lead to a loss of data.</simpara>
+</important>
+<programlisting language="terminal" linenumbering="unnumbered"># Just in case
+export KUBECONFIG=${MGMT_KUBECONFIG}
+
+# Scale down deployments
+oc scale deployment -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --replicas=0 --all
+oc scale statefulset.apps -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --replicas=0 --all
+sleep 15</programlisting>
+</listitem>
+<listitem>
+<simpara>Delete the <literal>NodePool</literal> objects by entering these commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">NODEPOOLS=$(oc get nodepools -n ${HC_CLUSTER_NS} -o=jsonpath='{.items[?(@.spec.clusterName=="'${HC_CLUSTER_NAME}'")].metadata.name}')
+if [[ ! -z "${NODEPOOLS}" ]];then
+    oc patch -n "${HC_CLUSTER_NS}" nodepool ${NODEPOOLS} --type=json --patch='[ { "op":"remove", "path": "/metadata/finalizers" }]'
+    oc delete np -n ${HC_CLUSTER_NS} ${NODEPOOLS}
+fi</programlisting>
+</listitem>
+<listitem>
+<simpara>Delete the <literal>machine</literal> and <literal>machineset</literal> objects by entering these commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered"># Machines
+for m in $(oc get machines -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o name); do
+    oc patch -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${m} --type=json --patch='[ { "op":"remove", "path": "/metadata/finalizers" }]' || true
+    oc delete -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${m} || true
+done
+
+oc delete machineset -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --all || true</programlisting>
+</listitem>
+<listitem>
+<simpara>Delete the cluster object by entering these commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered"># Cluster
+C_NAME=$(oc get cluster -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o name)
+oc patch -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${C_NAME} --type=json --patch='[ { "op":"remove", "path": "/metadata/finalizers" }]'
+oc delete cluster.cluster.x-k8s.io -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --all</programlisting>
+</listitem>
+<listitem>
+<simpara>Delete the AWS machines (Kubernetes objects) by entering these commands. Do not worry about deleting the real AWS machines. The cloud instances will not be affected.</simpara>
+<programlisting language="terminal" linenumbering="unnumbered"># AWS Machines
+for m in $(oc get awsmachine.infrastructure.cluster.x-k8s.io -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o name)
+do
+    oc patch -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${m} --type=json --patch='[ { "op":"remove", "path": "/metadata/finalizers" }]' || true
+    oc delete -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${m} || true
+done</programlisting>
+</listitem>
+<listitem>
+<simpara>Delete the <literal>HostedControlPlane</literal> and <literal>ControlPlane</literal> HC namespace objects by entering these commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered"># Delete HCP and ControlPlane HC NS
+oc patch -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} hostedcontrolplane.hypershift.openshift.io ${HC_CLUSTER_NAME} --type=json --patch='[ { "op":"remove", "path": "/metadata/finalizers" }]'
+oc delete hostedcontrolplane.hypershift.openshift.io -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --all
+oc delete ns ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} || true</programlisting>
+</listitem>
+<listitem>
+<simpara>Delete the <literal>HostedCluster</literal> and HC namespace objects by entering these commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered"># Delete HC and HC Namespace
+oc -n ${HC_CLUSTER_NS} patch hostedclusters ${HC_CLUSTER_NAME} -p '{"metadata":{"finalizers":null}}' --type merge || true
+oc delete hc -n ${HC_CLUSTER_NS} ${HC_CLUSTER_NAME}  || true
+oc delete ns ${HC_CLUSTER_NS} || true</programlisting>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>To verify that everything works, enter these commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered"># Validations
+export KUBECONFIG=${MGMT2_KUBECONFIG}
+
+oc get hc -n ${HC_CLUSTER_NS}
+oc get np -n ${HC_CLUSTER_NS}
+oc get pod -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}
+oc get machines -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}
+
+# Inside the HostedCluster
+export KUBECONFIG=${HC_KUBECONFIG}
+oc get clusterversion
+oc get nodes</programlisting>
+</listitem>
+</itemizedlist>
+<formalpara>
+<title>Next steps</title>
+<para>Delete the OVN pods in the hosted cluster so that you can connect to the new OVN control plane that runs in the new management cluster:</para>
+</formalpara>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Load the <literal>KUBECONFIG</literal> environment variable with the hosted cluster&#8217;s kubeconfig path.</simpara>
+</listitem>
+<listitem>
+<simpara>Enter this command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc delete pod -n openshift-ovn-kubernetes --all</programlisting>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="dr-hosted-cluster-within-aws-region-script_hcp-backup-restore-dr">
+<title>Running a script to back up and restore a hosted cluster</title>
+<simpara>To expedite the process to back up a hosted cluster and restore it within the same region on AWS, you can modify and run a script.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Replace the variables in the following script with your information:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered"># Fill the Common variables to fit your environment, this is just a sample
+SSH_KEY_FILE=${HOME}/.ssh/id_rsa.pub
+BASE_PATH=${HOME}/hypershift
+BASE_DOMAIN="aws.sample.com"
+PULL_SECRET_FILE="${HOME}/pull_secret.json"
+AWS_CREDS="${HOME}/.aws/credentials"
+CONTROL_PLANE_AVAILABILITY_POLICY=SingleReplica
+HYPERSHIFT_PATH=${BASE_PATH}/src/hypershift
+HYPERSHIFT_CLI=${HYPERSHIFT_PATH}/bin/hypershift
+HYPERSHIFT_IMAGE=${HYPERSHIFT_IMAGE:-"quay.io/${USER}/hypershift:latest"}
+NODE_POOL_REPLICAS=${NODE_POOL_REPLICAS:-2}
+
+# MGMT Context
+MGMT_REGION=us-west-1
+MGMT_CLUSTER_NAME="${USER}-dev"
+MGMT_CLUSTER_NS=${USER}
+MGMT_CLUSTER_DIR="${BASE_PATH}/hosted_clusters/${MGMT_CLUSTER_NS}-${MGMT_CLUSTER_NAME}"
+MGMT_KUBECONFIG="${MGMT_CLUSTER_DIR}/kubeconfig"
+
+# MGMT2 Context
+MGMT2_CLUSTER_NAME="${USER}-dest"
+MGMT2_CLUSTER_NS=${USER}
+MGMT2_CLUSTER_DIR="${BASE_PATH}/hosted_clusters/${MGMT2_CLUSTER_NS}-${MGMT2_CLUSTER_NAME}"
+MGMT2_KUBECONFIG="${MGMT2_CLUSTER_DIR}/kubeconfig"
+
+# Hosted Cluster Context
+HC_CLUSTER_NS=clusters
+HC_REGION=us-west-1
+HC_CLUSTER_NAME="${USER}-hosted"
+HC_CLUSTER_DIR="${BASE_PATH}/hosted_clusters/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}"
+HC_KUBECONFIG="${HC_CLUSTER_DIR}/kubeconfig"
+BACKUP_DIR=${HC_CLUSTER_DIR}/backup
+
+BUCKET_NAME="${USER}-hosted-${MGMT_REGION}"
+
+# DNS
+AWS_ZONE_ID="Z026552815SS3YPH9H6MG"
+EXTERNAL_DNS_DOMAIN="guest.jpdv.aws.kerbeross.com"</programlisting>
+</listitem>
+<listitem>
+<simpara>Save the script to your local file system.</simpara>
+</listitem>
+<listitem>
+<simpara>Run the script by entering the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">source &lt;env_file&gt;</programlisting>
+<simpara>where: <literal>env_file</literal> is the name of the file where you saved the script.</simpara>
+<simpara>The migration script is maintained at the following repository: <link xlink:href="https://github.com/openshift/hypershift/blob/main/contrib/migration/migrate-hcp.sh">https://github.com/openshift/hypershift/blob/main/contrib/migration/migrate-hcp.sh</link>.</simpara>
+</listitem>
+</orderedlist>
+</section>
+</section>
+</chapter>
+<chapter xml:id="hcp-troubleshooting">
+<title>Troubleshooting hosted control planes</title>
+<simpara>If you encounter issues with hosted control planes, see the following information to guide you through troubleshooting.</simpara>
+<important>
+<simpara>Hosted control planes is a Technology Preview feature only. Technology Preview features are not supported with Red Hat production service level agreements (SLAs) and might not be functionally complete. Red Hat does not recommend using them in production. These features provide early access to upcoming product features, enabling customers to test functionality and provide feedback during the development process.</simpara>
+<simpara>For more information about the support scope of Red Hat Technology Preview features, see <link xlink:href="https://access.redhat.com/support/offerings/techpreview/">Technology Preview Features Support Scope</link>.</simpara>
+</important>
+<section xml:id="hosted-control-planes-troubleshooting_hcp-troubleshooting">
+<title>Gathering information to troubleshoot hosted control planes</title>
+<simpara>When you need to troubleshoot an issue with hosted control plane clusters, you can gather information by running the <literal>hypershift dump cluster</literal> command. The command generates output for the management cluster and the hosted cluster.</simpara>
+<simpara>The output for the management cluster contains the following content:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><emphasis role="strong">Cluster-scoped resources:</emphasis> These resources are node definitions of the management cluster.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">The <literal>hypershift-dump</literal> compressed file:</emphasis> This file is useful if you need to share the content with other people.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">Namespaced resources:</emphasis> These resources include all of the objects from the relevant namespaces, such as config maps, services, events, and logs.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">Network logs:</emphasis> These logs include the OVN northbound and southbound databases and the status for each one.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">Hosted clusters:</emphasis> This level of output involves all of the resources inside of the hosted cluster.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>The output for the hosted cluster contains the following content:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><emphasis role="strong">Cluster-scoped resources:</emphasis> These resources include all of the cluster-wide objects, such as nodes and CRDs.</simpara>
+</listitem>
+<listitem>
+<simpara><emphasis role="strong">Namespaced resources:</emphasis> These resources include all of the objects from the relevant namespaces, such as config maps, services, events, and logs.</simpara>
+</listitem>
+</itemizedlist>
+<simpara>Although the output does not contain any secret objects from the cluster, it can contain references to the names of secrets.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You must have <literal>cluster-admin</literal> access to the management cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>You need the <literal>name</literal> value for the <literal>HostedCluster</literal> resource and the namespace where the CR is deployed.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have the <literal>hcp</literal> command line interface installed. For more information, see <link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#hosted-install-cli">Installing the hosted control planes command line interface</link>.</simpara>
+</listitem>
+<listitem>
+<simpara>You must have the OpenShift CLI (<literal>oc</literal>) installed.</simpara>
+</listitem>
+<listitem>
+<simpara>You must ensure that the <literal>kubeconfig</literal> file is loaded and is pointing to the management cluster.</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>To gather output for troubleshooting, enter the following commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ CLUSTERNAME="samplecluster"</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ CLUSTERNS="clusters"</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ mkdir clusterDump-${CLUSTERNS}-${CLUSTERNAME}</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ hypershift dump cluster \
+    --name ${CLUSTERNAME} \
+    --namespace ${CLUSTERNS} \
+    --dump-guest-cluster \
+    --artifact-dir clusterDump-${CLUSTERNS}-${CLUSTERNAME}</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">2023-06-06T12:18:20+02:00   INFO    Archiving dump  {"command": "tar", "args": ["-cvzf", "hypershift-dump.tar.gz", "cluster-scoped-resources", "event-filter.html", "namespaces", "network_logs", "timestamp"]}
+2023-06-06T12:18:21+02:00   INFO    Successfully archived dump  {"duration": "1.519376292s"}</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To configure the command-line interface so that it impersonates all of the queries against the management cluster by using a username or service account, enter the <literal>hypershift dump cluster</literal> command with the <literal>--as</literal> flag.</simpara>
+<simpara>The service account must have enough permissions to query all of the objects from the namespaces, so the <literal>cluster-admin</literal> role is recommended to make sure you have enough permissions. The service account must be located in or have permissions to query the namespace of the <literal>HostedControlPlane</literal> resource.</simpara>
+<simpara>If your username or service account does not have enough permissions, the output contains only the objects that you have permissions to access. During that process, you might see <literal>forbidden</literal> errors.</simpara>
+<itemizedlist>
+<listitem>
+<simpara>To use impersonation by using a service account, enter the following commands. Replace values as necessary:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ CLUSTERNAME="samplecluster"</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ CLUSTERNS="clusters"</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ SA="samplesa"</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ SA_NAMESPACE="default"</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ mkdir clusterDump-${CLUSTERNS}-${CLUSTERNAME}</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ hypershift dump cluster \
+    --name ${CLUSTERNAME} \
+    --namespace ${CLUSTERNS} \
+    --dump-guest-cluster \
+    --as "system:serviceaccount:${SA_NAMESPACE}:${SA}" \
+    --artifact-dir clusterDump-${CLUSTERNS}-${CLUSTERNAME}</programlisting>
+</listitem>
+<listitem>
+<simpara>To use impersonation by using a username, enter the following commands. Replace values as necessary:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ CLUSTERNAME="samplecluster"</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ CLUSTERNS="clusters"</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ CLUSTERUSER="cloud-admin"</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ mkdir clusterDump-${CLUSTERNS}-${CLUSTERNAME}</programlisting>
+<programlisting language="terminal" linenumbering="unnumbered">$ hypershift dump cluster \
+    --name ${CLUSTERNAME} \
+    --namespace ${CLUSTERNS} \
+    --dump-guest-cluster \
+    --as "${CLUSTERUSER}" \
+    --artifact-dir clusterDump-${CLUSTERNS}-${CLUSTERNAME}</programlisting>
+</listitem>
+</itemizedlist>
+</listitem>
+</itemizedlist>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.9/html/clusters/cluster_mce_overview#trouble-hosted-cluster-backplane">Must-gather for a hosted cluster</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+</book>

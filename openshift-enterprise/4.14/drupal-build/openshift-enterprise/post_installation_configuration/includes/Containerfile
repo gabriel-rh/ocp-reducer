@@ -1,0 +1,12 @@
+# Get RHCOS base image of target cluster `oc adm release info --image-for rhel-coreos`
+# hadolint ignore=DL3006
+FROM quay.io/openshift-release/ocp-release@sha256...
+
+# Install our config file
+COPY my-host-to-host.conf /etc/ipsec.d/
+
+# RHEL entitled host is needed here to access RHEL packages
+# Install libreswan as extra RHEL package
+RUN rpm-ostree install libreswan && \
+    systemctl enable ipsec && \
+    ostree container commit

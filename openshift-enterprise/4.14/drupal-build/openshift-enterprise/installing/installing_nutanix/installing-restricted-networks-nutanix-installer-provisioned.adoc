@@ -1,0 +1,74 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="installing-restricted-networks-nutanix-installer-provisioned"]
+= Installing a cluster on Nutanix in a restricted network
+include::../includes/common-attributes.adoc[]
+:context: installing-restricted-networks-nutanix-installer-provisioned
+
+
+In {product-title} {product-version}, you can install a cluster on Nutanix infrastructure in a restricted network by creating an internal mirror of the installation release content.
+
+== Prerequisites
+
+* You have reviewed details about the link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/architecture/#architecture-installation[{product-title} installation and update] processes.
+* The installation program requires access to port 9440 on Prism Central and Prism Element. You verified that port 9440 is accessible.
+* If you use a firewall, you have met these prerequisites:
+** You confirmed that port 9440 is accessible. Control plane nodes must be able to reach Prism Central and Prism Element on port 9440 for the installation to succeed.
+** You configured the firewall to xref:configuring-firewall[grant access] to the sites that {product-title} requires. This includes the use of Telemetry.
+* If your Nutanix environment is using the default self-signed SSL/TLS certificate, replace it with a certificate that is signed by a CA. The installation program requires a valid CA-signed certificate to access to the Prism Central API. For more information about replacing the self-signed certificate, see the  https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Security-Guide-v6_1:mul-security-ssl-certificate-pc-t.html[Nutanix AOS Security Guide].
++
+If your Nutanix environment uses an internal CA to issue certificates, you must configure a cluster-wide proxy as part of the installation process. For more information, see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/networking/#configuring-a-custom-pki[Configuring a custom PKI].
++
+[IMPORTANT]
+====
+Use 2048-bit certificates. The installation fails if you use 4096-bit certificates with Prism Central 2022.x.
+====
+* You have a container image registry, such as Red Hat Quay. If you do not already have a registry, you can create a mirror registry using  xref:installing-mirroring-creating-registry[_mirror registry for Red Hat OpenShift_].
+* You have used the xref:installing-mirroring-disconnected[oc-mirror OpenShift CLI (oc) plugin] to mirror all of the required {product-title} content and other images, including the Nutanix CSI Operator, to your mirror registry.
++
+[IMPORTANT]
+====
+Because the installation media is on the mirror host, you can use that computer to complete all installation steps.
+====
+
+include::../includes/installation-about-restricted-network.adoc[leveloffset=+1]
+
+include::../includes/ssh-agent-using.adoc[leveloffset=+1]
+
+include::../includes/installation-adding-nutanix-root-certificates.adoc[leveloffset=+1]
+
+include::../includes/installation-nutanix-download-rhcos.adoc[leveloffset=+1]
+
+include::../includes/installation-initializing.adoc[leveloffset=+1]
+
+[role="_additional-resources"]
+.Additional resources
+* xref:installation-config-parameters-nutanix[Installation configuration parameters for Nutanix]
+
+include::../includes/installation-nutanix-config-yaml.adoc[leveloffset=+2]
+include::../includes/installation-configuring-nutanix-failure-domains.adoc[leveloffset=+2]
+include::../includes/installation-configure-proxy.adoc[leveloffset=+2]
+
+include::../includes/cli-installing-cli.adoc[leveloffset=+1]
+
+include::../includes/manually-configure-iam-nutanix.adoc[leveloffset=+1]
+
+include::../includes/installation-launching-installer.adoc[leveloffset=+1]
+
+== Post installation
+Complete the following steps to complete the configuration of your cluster.
+
+include::../includes/olm-restricted-networks-configuring-operatorhub.adoc[leveloffset=+2]
+include::../includes/oc-mirror-updating-restricted-cluster-manifests.adoc[leveloffset=+2]
+include::../includes/registry-configuring-storage-nutanix.adoc[leveloffset=+2]
+
+include::../includes/cluster-telemetry.adoc[leveloffset=+1]
+
+[role="_additional-resources"]
+== Additional resources
+
+* link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/support/#about-remote-health-monitoring[About remote health monitoring]
+
+== Next steps
+* If necessary, see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/support/#opting-out-remote-health-reporting_opting-out-remote-health-reporting[Opt out of remote health reporting]
+* If necessary, see link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/support/#insights-operator-register-disconnected-cluster_opting-out-remote-health-reporting[Registering your disconnected cluster]
+* link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/postinstallation_configuration/#available_cluster_customizations[Customize your cluster]

@@ -1,0 +1,2933 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book [
+<!ENTITY % sgml.features "IGNORE">
+<!ENTITY % xml.features "INCLUDE">
+<!ENTITY % DOCBOOK_ENTS PUBLIC "-//OASIS//ENTITIES DocBook Character Entities V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/dbcentx.mod">
+%DOCBOOK_ENTS;
+]>
+<?asciidoc-toc?>
+<?asciidoc-numbered?>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info>
+<title>Windows Container Support for OpenShift</title>
+<date>2024-02-23</date>
+<title>Windows Container Support for OpenShift</title>
+<productname>OpenShift Container Platform</productname>
+<productnumber>4.14</productnumber>
+<subtitle>Enter a short description here.</subtitle>
+<abstract>
+    <para>A short overview and summary of the book's subject and purpose, traditionally no more than one paragraph long.</para>
+</abstract>
+<authorgroup>
+    <orgname>Red Hat OpenShift Documentation Team</orgname>
+</authorgroup>
+<xi:include href="Common_Content/Legal_Notice.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+</info>
+<chapter xml:id="windows-container-overview">
+<title>Red Hat OpenShift support for Windows Containers overview</title>
+<simpara>Red Hat OpenShift support for Windows Containers is a feature providing the ability to run Windows compute nodes in an OpenShift Container Platform cluster. This is possible by using the Red Hat Windows Machine Config Operator (WMCO) to install and manage Windows nodes. With a Red Hat subscription, you can get support for running Windows workloads in OpenShift Container Platform. Windows instances deployed by the WMCO are configured with the containerd container runtime. For more information, see the <link linkend="windows-containers-release-notes-6-x">release notes</link>.</simpara>
+<simpara>You can add Windows nodes either by creating a <link linkend="creating-windows-machineset-aws">compute machine set</link> or by specifying existing Bring-Your-Own-Host (BYOH) Window instances through a <link linkend="byoh-windows-instance">configuration map</link>.</simpara>
+<note>
+<simpara>Compute machine sets are not supported for bare metal or provider agnostic clusters.</simpara>
+</note>
+<simpara>For workloads including both Linux and Windows, OpenShift Container Platform allows you to deploy Windows workloads running on Windows Server containers while also providing traditional Linux workloads hosted on Red Hat Enterprise Linux CoreOS (RHCOS) or Red Hat Enterprise Linux (RHEL). For more information, see <link linkend="understanding-windows-container-workloads">getting started with Windows container workloads</link>.</simpara>
+<simpara>You need the WMCO to run Windows workloads in your cluster. The WMCO orchestrates the process of deploying and managing Windows workloads on a cluster. For more information, see <link linkend="enabling-windows-container-workloads">how to enable Windows container workloads</link>.</simpara>
+<simpara>You can create a Windows <literal>MachineSet</literal> object to create infrastructure Windows machine sets and related machines so that you can move supported Windows workloads to the new Windows machines. You can create a Windows <literal>MachineSet</literal> object on multiple platforms.</simpara>
+<simpara>You can <link linkend="scheduling-windows-workloads">schedule Windows workloads</link> to Windows compute nodes.</simpara>
+<simpara>You can <link linkend="windows-node-upgrades">perform Windows Machine Config Operator upgrades</link> to ensure that your Windows nodes have the latest updates.</simpara>
+<simpara>You can <link linkend="removing-windows-nodes">remove a Windows node</link> by deleting a specific machine.</simpara>
+<simpara>You can <link linkend="byoh-windows-instance">use Bring-Your-Own-Host (BYOH) Windows instances</link> to repurpose Windows Server VMs and bring them to OpenShift Container Platform. BYOH Windows instances benefit users who are looking to mitigate major disruptions in the event that a Windows server goes offline. You can use BYOH Windows instances as nodes on OpenShift Container Platform 4.8 and later versions.</simpara>
+<simpara>You can <link linkend="disabling-windows-container-workloads">disable Windows container workloads</link> by performing the following:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Uninstalling the Windows Machine Config Operator</simpara>
+</listitem>
+<listitem>
+<simpara>Deleting the Windows Machine Config Operator namespace</simpara>
+</listitem>
+</itemizedlist>
+</chapter>
+<chapter xml:id="windows-containers-release-notes-6-x">
+<title>Red Hat OpenShift support for Windows Containers release notes</title>
+<section xml:id="about-windows-containers">
+<title>About Red Hat OpenShift support for Windows Containers</title>
+<simpara>Windows Container Support for Red Hat OpenShift enables running Windows compute nodes in an OpenShift Container Platform cluster. Running Windows workloads is possible by using the Red Hat Windows Machine Config Operator (WMCO) to install and manage Windows nodes. With Windows nodes available, you can run Windows container workloads in OpenShift Container Platform.</simpara>
+<simpara>The release notes for Red Hat OpenShift for Windows Containers tracks the development of the WMCO, which provides all Windows container workload capabilities in OpenShift Container Platform.</simpara>
+</section>
+<section xml:id="getting-support">
+<title>Getting support</title>
+<simpara>Windows Container Support for Red Hat OpenShift is provided and available as an optional, installable component. Windows Container Support for Red Hat OpenShift is not part of the OpenShift Container Platform subscription. It requires an additional Red Hat subscription and is supported according to the <link xlink:href="https://access.redhat.com/support/offerings/production/soc/">Scope of coverage</link> and <link xlink:href="https://access.redhat.com/support/offerings/production/sla">Service level agreements</link>.</simpara>
+<simpara>You must have this separate subscription to receive support for Windows Container Support for Red Hat OpenShift. Without this additional Red Hat subscription, deploying Windows container workloads in production clusters is not supported. You can request support through the <link xlink:href="http://access.redhat.com/">Red Hat Customer Portal</link>.</simpara>
+<simpara>For more information, see the Red Hat OpenShift Container Platform Life Cycle Policy document for <link xlink:href="https://access.redhat.com/support/policy/updates/openshift#windows">Red Hat OpenShift support for Windows Containers</link>.</simpara>
+<simpara>If you do not have this additional Red Hat subscription, you can use the Community Windows Machine Config Operator, a distribution that lacks official support.</simpara>
+</section>
+<section xml:id="wmco-6-0-0">
+<title>Release notes for Red Hat Windows Machine Config Operator 6.0.0</title>
+<simpara>This release of the WMCO provides bug fixes for running Windows compute nodes in an OpenShift Container Platform cluster. The components of the WMCO 6.0.0 were released in</simpara>
+<section xml:id="_new-features-and-improvements">
+<title>New features and improvements</title>
+<section xml:id="wmco-6.0.0-node-certificates">
+<title>Windows node certificates are updated</title>
+<simpara>With this release, the WMCO updates the Windows node certificates when the kubelet client certificate authority (CA) certificate is rotated.</simpara>
+</section>
+</section>
+<section xml:id="wmco-6-0-0-new-features">
+<title>New features</title>
+<section xml:id="wmco-6-0-0-containerd">
+<title>Containerd is the default container runtime</title>
+<simpara>Because the Docker runtime is deprecated in Kubernetes 1.24, containerD is now the default runtime for WMCO-supported Windows nodes. Upon the installation of or an upgrade to WMCO 6.0.0, containerd is installed as a Windows service. The kubelet now uses containerd for image pulls instead of the Docker runtime. Users no longer need to enable the Docker-formatted container runtime or install the Docker container runtime on Bring-Your-Own-Host (BYOH) instances. You can continue to use nodes based on VM images that use Docker. containerd can run along with the Docker service.</simpara>
+<simpara>The WMCO supports a Windows golden image with or without Docker for vSphere and Bring-Your-Own-Host (BYOH) Windows instances.</simpara>
+</section>
+</section>
+</section>
+<section xml:id="wmco-prerequisites_windows-containers-release-notes">
+<title>Windows Machine Config Operator prerequisites</title>
+<simpara>The following information details the supported platform versions, Windows Server versions, and networking configurations for the Windows Machine Config Operator. See the vSphere documentation for any information that is relevant to only that platform.</simpara>
+<section xml:id="wmco-prerequisites-supported-6.0.0_windows-containers-release-notes">
+<title>WMCO 6.0.0 supported platforms and Windows Server versions</title>
+<simpara>The following table lists the <link xlink:href="https://docs.microsoft.com/en-us/windows/release-health/windows-server-release-info">Windows Server versions</link> that are supported by WMCO 6.0.0, based on the applicable platform. Windows Server versions not listed are not supported and attempting to use them will cause errors. To prevent these errors, use only an appropriate version for your platform.</simpara>
+<informaltable frame="all" rowsep="1" colsep="1">
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="30*"/>
+<colspec colname="col_2" colwidth="70*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Platform</entry>
+<entry align="left" valign="top">Supported Windows Server version</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara>Amazon Web Services (AWS)</simpara></entry>
+<entry align="left" valign="top"><simpara>Windows Server 2019, version 1809</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Microsoft Azure</simpara></entry>
+<entry align="left" valign="top"><itemizedlist>
+<listitem>
+<simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara>
+</listitem>
+<listitem>
+<simpara>Windows Server 2019, version 1809</simpara>
+</listitem>
+</itemizedlist></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>VMware vSphere</simpara></entry>
+<entry align="left" valign="top"><simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Google Cloud Platform (GCP)</simpara></entry>
+<entry align="left" valign="top"><simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Nutanix</simpara></entry>
+<entry align="left" valign="top"><simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Bare metal or provider agnostic</simpara></entry>
+<entry align="left" valign="top"><itemizedlist>
+<listitem>
+<simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara>
+</listitem>
+<listitem>
+<simpara>Windows Server 2019, version 1809</simpara>
+</listitem>
+</itemizedlist></entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</section>
+<section xml:id="_supported-networking">
+<title>Supported networking</title>
+<simpara>Hybrid networking with OVN-Kubernetes is the only supported networking configuration. See the additional resources below for more information on this functionality. The following tables outline the type of networking configuration and Windows Server versions to use based on your platform. You must specify the network configuration when you install the cluster. Be aware that OpenShift SDN networking is the default network for OpenShift Container Platform clusters. However, OpenShift SDN is not supported by WMCO.</simpara>
+<table frame="all" rowsep="1" colsep="1">
+<title>Platform networking support</title>
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Platform</entry>
+<entry align="left" valign="top">Supported networking</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara>Amazon Web Services (AWS)</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Microsoft Azure</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>VMware vSphere</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes with a custom VXLAN port</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Google Cloud Platform (GCP)</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Nutanix</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Bare metal or provider agnostic</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<table frame="all" rowsep="1" colsep="1">
+<title>Hybrid OVN-Kubernetes Windows Server support</title>
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Hybrid networking with OVN-Kubernetes</entry>
+<entry align="left" valign="top">Supported Windows Server version</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara>Default VXLAN port</simpara></entry>
+<entry align="left" valign="top"><itemizedlist>
+<listitem>
+<simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara>
+</listitem>
+<listitem>
+<simpara>Windows Server 2019, version 1809</simpara>
+</listitem>
+</itemizedlist></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Custom VXLAN port</simpara></entry>
+<entry align="left" valign="top"><simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</section>
+</section>
+<section xml:id="windows-containers-release-notes-limitations_windows-containers-release-notes">
+<title>Known limitations</title>
+<simpara>Note the following limitations when working with Windows nodes managed by the WMCO (Windows nodes):</simpara>
+<itemizedlist>
+<listitem>
+<simpara>The following OpenShift Container Platform features are not supported on Windows nodes:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Image builds</simpara>
+</listitem>
+<listitem>
+<simpara>OpenShift Pipelines</simpara>
+</listitem>
+<listitem>
+<simpara>OpenShift Service Mesh</simpara>
+</listitem>
+<listitem>
+<simpara>OpenShift monitoring of user-defined projects</simpara>
+</listitem>
+<listitem>
+<simpara>OpenShift Serverless</simpara>
+</listitem>
+<listitem>
+<simpara>Horizontal Pod Autoscaling</simpara>
+</listitem>
+<listitem>
+<simpara>Vertical Pod Autoscaling</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>The following Red Hat features are not supported on Windows nodes:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/cost_management_service/2022/html/getting_started_with_cost_management/assembly-introduction-cost-management?extIdCarryOver=true&amp;sc_cid=701f2000001OH74AAG#about-cost-management_getting-started">Red Hat cost management</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://developers.redhat.com/products/openshift-local/overview">Red Hat OpenShift Local</link></simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>Windows nodes do not support pulling container images from private registries. You can use images from public registries or pre-pull the images.</simpara>
+</listitem>
+<listitem>
+<simpara>Windows nodes do not support workloads created by using deployment configs. You can use a deployment or other method to deploy workloads.</simpara>
+</listitem>
+<listitem>
+<simpara>Windows nodes are not supported in clusters that are in a disconnected environment.</simpara>
+</listitem>
+<listitem>
+<simpara>Red Hat OpenShift support for Windows Containers does not support adding Windows nodes to a cluster through a trunk port. The only supported networking configuration for adding Windows nodes is through an access port that carries traffic for the VLAN.</simpara>
+</listitem>
+<listitem>
+<simpara>Kubernetes has identified the following <link xlink:href="https://kubernetes.io/docs/concepts/windows/intro/#limitations">node feature limitations</link> :</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Huge pages are not supported for Windows containers.</simpara>
+</listitem>
+<listitem>
+<simpara>Privileged containers are not supported for Windows containers.</simpara>
+</listitem>
+<listitem>
+<simpara>Pod termination grace periods require the containerd container runtime to be installed on the Windows node.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>Kubernetes has identified <link xlink:href="https://kubernetes.io/docs/concepts/windows/intro/#api">several API compatibility issues</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="understanding-windows-container-workloads">
+<title>Understanding Windows container workloads</title>
+<simpara>Red Hat OpenShift support for Windows Containers provides built-in support for running Microsoft Windows Server containers on OpenShift Container Platform. For those that administer heterogeneous environments with a mix of Linux and Windows workloads, OpenShift Container Platform allows you to deploy Windows workloads running on Windows Server containers while also providing traditional Linux workloads hosted on Red Hat Enterprise Linux CoreOS (RHCOS) or Red Hat Enterprise Linux (RHEL).</simpara>
+<note>
+<simpara>Multi-tenancy for clusters that have Windows nodes is not supported. Hostile multi-tenant usage introduces security concerns in all Kubernetes environments. Additional security features like <link xlink:href="https://kubernetes.io/docs/concepts/policy/pod-security-policy/">pod security policies</link>, or more fine-grained role-based access control (RBAC) for nodes, make exploits more difficult. However, if you choose to run hostile multi-tenant workloads, a hypervisor is the only security option you should use. The security domain for Kubernetes encompasses the entire cluster, not an individual node. For these types of hostile multi-tenant workloads, you should use physically isolated clusters.</simpara>
+<simpara>Windows Server Containers provide resource isolation using a shared kernel but are not intended to be used in hostile multitenancy scenarios. Scenarios that involve hostile multitenancy should use Hyper-V Isolated Containers to strongly isolate tenants.</simpara>
+</note>
+<section xml:id="wmco-prerequisites_understanding-windows-container-workloads">
+<title>Windows Machine Config Operator prerequisites</title>
+<simpara>The following information details the supported platform versions, Windows Server versions, and networking configurations for the Windows Machine Config Operator. See the vSphere documentation for any information that is relevant to only that platform.</simpara>
+<section xml:id="wmco-prerequisites-supported-6.0.0_understanding-windows-container-workloads">
+<title>WMCO 6.0.0 supported platforms and Windows Server versions</title>
+<simpara>The following table lists the <link xlink:href="https://docs.microsoft.com/en-us/windows/release-health/windows-server-release-info">Windows Server versions</link> that are supported by WMCO 6.0.0, based on the applicable platform. Windows Server versions not listed are not supported and attempting to use them will cause errors. To prevent these errors, use only an appropriate version for your platform.</simpara>
+<informaltable frame="all" rowsep="1" colsep="1">
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="30*"/>
+<colspec colname="col_2" colwidth="70*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Platform</entry>
+<entry align="left" valign="top">Supported Windows Server version</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara>Amazon Web Services (AWS)</simpara></entry>
+<entry align="left" valign="top"><simpara>Windows Server 2019, version 1809</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Microsoft Azure</simpara></entry>
+<entry align="left" valign="top"><itemizedlist>
+<listitem>
+<simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara>
+</listitem>
+<listitem>
+<simpara>Windows Server 2019, version 1809</simpara>
+</listitem>
+</itemizedlist></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>VMware vSphere</simpara></entry>
+<entry align="left" valign="top"><simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Google Cloud Platform (GCP)</simpara></entry>
+<entry align="left" valign="top"><simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Nutanix</simpara></entry>
+<entry align="left" valign="top"><simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Bare metal or provider agnostic</simpara></entry>
+<entry align="left" valign="top"><itemizedlist>
+<listitem>
+<simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara>
+</listitem>
+<listitem>
+<simpara>Windows Server 2019, version 1809</simpara>
+</listitem>
+</itemizedlist></entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</section>
+<section xml:id="_supported-networking-2">
+<title>Supported networking</title>
+<simpara>Hybrid networking with OVN-Kubernetes is the only supported networking configuration. See the additional resources below for more information on this functionality. The following tables outline the type of networking configuration and Windows Server versions to use based on your platform. You must specify the network configuration when you install the cluster. Be aware that OpenShift SDN networking is the default network for OpenShift Container Platform clusters. However, OpenShift SDN is not supported by WMCO.</simpara>
+<table frame="all" rowsep="1" colsep="1">
+<title>Platform networking support</title>
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Platform</entry>
+<entry align="left" valign="top">Supported networking</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara>Amazon Web Services (AWS)</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Microsoft Azure</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>VMware vSphere</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes with a custom VXLAN port</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Google Cloud Platform (GCP)</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Nutanix</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Bare metal or provider agnostic</simpara></entry>
+<entry align="left" valign="top"><simpara>Hybrid networking with OVN-Kubernetes</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<table frame="all" rowsep="1" colsep="1">
+<title>Hybrid OVN-Kubernetes Windows Server support</title>
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="50*"/>
+<colspec colname="col_2" colwidth="50*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Hybrid networking with OVN-Kubernetes</entry>
+<entry align="left" valign="top">Supported Windows Server version</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara>Default VXLAN port</simpara></entry>
+<entry align="left" valign="top"><itemizedlist>
+<listitem>
+<simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara>
+</listitem>
+<listitem>
+<simpara>Windows Server 2019, version 1809</simpara>
+</listitem>
+</itemizedlist></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Custom VXLAN port</simpara></entry>
+<entry align="left" valign="top"><simpara>Windows Server 2022, OS Build <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">20348.681</link> or later</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara>See <link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/networking/#configuring-hybrid-ovnkubernetes_configuring-hybrid-networking">Configuring hybrid networking with OVN-Kubernetes</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="windows-workload-management_understanding-windows-container-workloads">
+<title>Windows workload management</title>
+<simpara>To run Windows workloads in your cluster, you must first install the Windows Machine Config Operator (WMCO). The WMCO is a Linux-based Operator that runs on Linux-based control plane and compute nodes. The WMCO orchestrates the process of deploying and managing Windows workloads on a cluster.</simpara>
+<figure>
+<title>WMCO design</title>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/wmco-design.png"/>
+</imageobject>
+<textobject><phrase>WMCO workflow</phrase></textobject>
+</mediaobject>
+</figure>
+<simpara>Before deploying Windows workloads, you must create a Windows compute node and have it join the cluster. The Windows node hosts the Windows workloads in a cluster, and can run alongside other Linux-based compute nodes. You can create a Windows compute node by creating a Windows compute machine set to host Windows Server compute machines. You must apply a Windows-specific label to the compute machine set that specifies a Windows OS image.</simpara>
+<simpara>The WMCO watches for machines with the Windows label. After a Windows compute machine set is detected and its respective machines are provisioned, the WMCO configures the underlying Windows virtual machine (VM) so that it can join the cluster as a compute node.</simpara>
+<figure>
+<title>Mixed Windows and Linux workloads</title>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/mixed-windows-linux-workloads.png"/>
+</imageobject>
+<textobject><phrase>Mixed Windows and Linux workloads</phrase></textobject>
+</mediaobject>
+</figure>
+<simpara>The WMCO expects a predetermined secret in its namespace containing a private key that is used to interact with the Windows instance. WMCO checks for this secret during boot up time and creates a user data secret which you must reference in the Windows <literal>MachineSet</literal> object that you created. Then the WMCO populates the user data secret with a public key that corresponds to the private key. With this data in place, the cluster can connect to the Windows VM using an SSH connection.</simpara>
+<simpara>After the cluster establishes a connection with the Windows VM, you can manage the Windows node using similar practices as you would a Linux-based node.</simpara>
+<note>
+<simpara>The OpenShift Container Platform web console provides most of the same monitoring capabilities for Windows nodes that are available for Linux nodes. However, the ability to monitor workload graphs for pods running on Windows nodes is not available at this time.</simpara>
+</note>
+<simpara>Scheduling Windows workloads to a Windows node can be done with typical pod scheduling practices like taints, tolerations, and node selectors; alternatively, you can differentiate your Windows workloads from Linux workloads and other Windows-versioned workloads by using a <literal>RuntimeClass</literal> object.</simpara>
+</section>
+<section xml:id="windows-node-services_understanding-windows-container-workloads">
+<title>Windows node services</title>
+<simpara>The following Windows-specific services are installed on each Windows node:</simpara>
+<informaltable frame="all" rowsep="1" colsep="1">
+<tgroup cols="2">
+<colspec colname="col_1" colwidth="33.3333*"/>
+<colspec colname="col_2" colwidth="66.6667*"/>
+<thead>
+<row>
+<entry align="left" valign="top">Service</entry>
+<entry align="left" valign="top">Description</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry align="left" valign="top"><simpara>kubelet</simpara></entry>
+<entry align="left" valign="top"><simpara>Registers the Windows node and manages its status.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Container Network Interface (CNI) plugins</simpara></entry>
+<entry align="left" valign="top"><simpara>Exposes <link xlink:href="https://kubernetes.io/docs/setup/production-environment/windows/intro-windows-in-kubernetes/#networking">networking</link> for Windows nodes.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>Windows Instance Config Daemon (WICD)</simpara></entry>
+<entry align="left" valign="top"><simpara>Maintains the state of all services running on the Windows instance to ensure the instance functions as a worker node.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><link xlink:href="https://github.com/openshift/prometheus-community-windows_exporter">Windows Exporter</link></simpara></entry>
+<entry align="left" valign="top"><simpara>Exports Prometheus metrics from Windows nodes</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara><link xlink:href="https://kubernetes.io/docs/concepts/architecture/cloud-controller/">Kubernetes Cloud Controller Manager (CCM)</link></simpara></entry>
+<entry align="left" valign="top"><simpara>Interacts with the underlying Azure cloud platform.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>hybrid-overlay</simpara></entry>
+<entry align="left" valign="top"><simpara>Creates the OpenShift Container Platform <link xlink:href="https://docs.microsoft.com/en-us/virtualization/windowscontainers/container-networking/architecture#container-network-management-with-host-network-service">Host Network Service (HNS)</link>.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>kube-proxy</simpara></entry>
+<entry align="left" valign="top"><simpara>Maintains network rules on nodes allowing outside communication.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>containerd container runtime</simpara></entry>
+<entry align="left" valign="top"><simpara>Manages the complete container lifecycle.</simpara></entry>
+</row>
+<row>
+<entry align="left" valign="top"><simpara>CSI Proxy</simpara></entry>
+<entry align="left" valign="top"><simpara>Enables CSI drivers to perform storage operations on the node, which allows containerized CSI drivers to run on Windows nodes.</simpara></entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</section>
+<section xml:id="windows-containers-release-notes-limitations_understanding-windows-container-workloads">
+<title>Known limitations</title>
+<simpara>Note the following limitations when working with Windows nodes managed by the WMCO (Windows nodes):</simpara>
+<itemizedlist>
+<listitem>
+<simpara>The following OpenShift Container Platform features are not supported on Windows nodes:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Image builds</simpara>
+</listitem>
+<listitem>
+<simpara>OpenShift Pipelines</simpara>
+</listitem>
+<listitem>
+<simpara>OpenShift Service Mesh</simpara>
+</listitem>
+<listitem>
+<simpara>OpenShift monitoring of user-defined projects</simpara>
+</listitem>
+<listitem>
+<simpara>OpenShift Serverless</simpara>
+</listitem>
+<listitem>
+<simpara>Horizontal Pod Autoscaling</simpara>
+</listitem>
+<listitem>
+<simpara>Vertical Pod Autoscaling</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>The following Red Hat features are not supported on Windows nodes:</simpara>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/cost_management_service/2022/html/getting_started_with_cost_management/assembly-introduction-cost-management?extIdCarryOver=true&amp;sc_cid=701f2000001OH74AAG#about-cost-management_getting-started">Red Hat cost management</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://developers.redhat.com/products/openshift-local/overview">Red Hat OpenShift Local</link></simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>Windows nodes do not support pulling container images from private registries. You can use images from public registries or pre-pull the images.</simpara>
+</listitem>
+<listitem>
+<simpara>Windows nodes do not support workloads created by using deployment configs. You can use a deployment or other method to deploy workloads.</simpara>
+</listitem>
+<listitem>
+<simpara>Windows nodes are not supported in clusters that are in a disconnected environment.</simpara>
+</listitem>
+<listitem>
+<simpara>Red Hat OpenShift support for Windows Containers does not support adding Windows nodes to a cluster through a trunk port. The only supported networking configuration for adding Windows nodes is through an access port that carries traffic for the VLAN.</simpara>
+</listitem>
+<listitem>
+<simpara>Kubernetes has identified the following <link xlink:href="https://kubernetes.io/docs/concepts/windows/intro/#limitations">node feature limitations</link> :</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Huge pages are not supported for Windows containers.</simpara>
+</listitem>
+<listitem>
+<simpara>Privileged containers are not supported for Windows containers.</simpara>
+</listitem>
+<listitem>
+<simpara>Pod termination grace periods require the containerd container runtime to be installed on the Windows node.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<simpara>Kubernetes has identified <link xlink:href="https://kubernetes.io/docs/concepts/windows/intro/#api">several API compatibility issues</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="enabling-windows-container-workloads">
+<title>Enabling Windows container workloads</title>
+<simpara>Before adding Windows workloads to your cluster, you must install the Windows Machine Config Operator (WMCO), which is available in the OpenShift Container Platform OperatorHub. The WMCO orchestrates the process of deploying and managing Windows workloads on a cluster.</simpara>
+<note>
+<simpara>Dual NIC is not supported on WMCO-managed Windows instances.</simpara>
+</note>
+<bridgehead xml:id="_prerequisites" renderas="sect2">Prerequisites</bridgehead>
+<itemizedlist>
+<listitem>
+<simpara>You have access to an OpenShift Container Platform cluster using an account with <literal>cluster-admin</literal> permissions.</simpara>
+</listitem>
+<listitem>
+<simpara>You have installed the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>You have installed your cluster using installer-provisioned infrastructure, or using user-provisioned infrastructure with the <literal>platform: none</literal> field set in your <literal>install-config.yaml</literal> file.</simpara>
+</listitem>
+<listitem>
+<simpara>You have configured hybrid networking with OVN-Kubernetes for your cluster. This must be completed during the installation of your cluster. For more information, see <link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/networking/#configuring-hybrid-ovnkubernetes">Configuring hybrid networking</link>.</simpara>
+</listitem>
+<listitem>
+<simpara>You are running an OpenShift Container Platform cluster version 4.6.8 or later.</simpara>
+</listitem>
+</itemizedlist>
+<note>
+<simpara>Windows instances deployed by the WMCO are configured with the containerd container runtime. Because WMCO installs and manages the runtime, it is recommanded that you do not manually install containerd on nodes.</simpara>
+</note>
+<itemizedlist role="_additional-resources">
+<title>Additional resources</title>
+<listitem>
+<simpara>For the comprehensive prerequisites for the Windows Machine Config Operator, see <link linkend="wmco-prerequisites_understanding-windows-container-workloads">Understanding Windows container workloads</link>.</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="installing-the-wmco">
+<title>Installing the Windows Machine Config Operator</title>
+<simpara>You can install the Windows Machine Config Operator using either the web console or OpenShift CLI (<literal>oc</literal>).</simpara>
+<section xml:id="installing-wmco-using-web-console_enabling-windows-container-workloads">
+<title>Installing the Windows Machine Config Operator using the web console</title>
+<simpara>You can use the OpenShift Container Platform web console to install the Windows Machine Config Operator (WMCO).</simpara>
+<note>
+<simpara>Dual NIC is not supported on WMCO-managed Windows instances.</simpara>
+</note>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>From the <emphasis role="strong">Administrator</emphasis> perspective in the OpenShift Container Platform web console, navigate to the <emphasis role="strong">Operators &#8594; OperatorHub</emphasis> page.</simpara>
+</listitem>
+<listitem>
+<simpara>Use the <emphasis role="strong">Filter by keyword</emphasis> box to search for <literal>Windows Machine Config Operator</literal> in the catalog. Click the <emphasis role="strong">Windows Machine Config Operator</emphasis> tile.</simpara>
+</listitem>
+<listitem>
+<simpara>Review the information about the Operator and click <emphasis role="strong">Install</emphasis>.</simpara>
+</listitem>
+<listitem>
+<simpara>On the <emphasis role="strong">Install Operator</emphasis> page:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Select the <emphasis role="strong">stable</emphasis> channel as the <emphasis role="strong">Update Channel</emphasis>. The <emphasis role="strong">stable</emphasis> channel enables the latest stable release of the WMCO to be installed.</simpara>
+</listitem>
+<listitem>
+<simpara>The <emphasis role="strong">Installation Mode</emphasis> is preconfigured because the WMCO must be available in a single namespace only.</simpara>
+</listitem>
+<listitem>
+<simpara>Choose the <emphasis role="strong">Installed Namespace</emphasis> for the WMCO. The default Operator recommended namespace is <literal>openshift-windows-machine-config-operator</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>Click the <emphasis role="strong">Enable Operator recommended cluster monitoring on the Namespace</emphasis> checkbox to enable cluster monitoring for the WMCO.</simpara>
+</listitem>
+<listitem>
+<simpara>Select an <emphasis role="strong">Approval Strategy</emphasis>.</simpara>
+<itemizedlist>
+<listitem>
+<simpara>The <emphasis role="strong">Automatic</emphasis> strategy allows Operator Lifecycle Manager (OLM) to automatically update the Operator when a new version is available.</simpara>
+</listitem>
+<listitem>
+<simpara>The <emphasis role="strong">Manual</emphasis> strategy requires a user with appropriate credentials to approve the Operator update.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</orderedlist>
+</listitem>
+</orderedlist>
+<orderedlist numeration="arabic">
+<listitem>
+<simpara>Click <emphasis role="strong">Install</emphasis>. The WMCO is now listed on the <emphasis role="strong">Installed Operators</emphasis> page.</simpara>
+<note>
+<simpara>The WMCO is installed automatically into the namespace you defined, like <literal>openshift-windows-machine-config-operator</literal>.</simpara>
+</note>
+</listitem>
+<listitem>
+<simpara>Verify that the <emphasis role="strong">Status</emphasis> shows <emphasis role="strong">Succeeded</emphasis> to confirm successful installation of the WMCO.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="installing-wmco-using-cli_enabling-windows-container-workloads">
+<title>Installing the Windows Machine Config Operator using the CLI</title>
+<simpara>You can use the OpenShift CLI (<literal>oc</literal>) to install the Windows Machine Config Operator (WMCO).</simpara>
+<note>
+<simpara>Dual NIC is not supported on WMCO-managed Windows instances.</simpara>
+</note>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a namespace for the WMCO.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Create a <literal>Namespace</literal> object YAML file for the WMCO. For example, <literal>wmco-namespace.yaml</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-windows-machine-config-operator <co xml:id="CO1-1"/>
+  labels:
+    openshift.io/cluster-monitoring: "true" <co xml:id="CO1-2"/></programlisting>
+<calloutlist>
+<callout arearefs="CO1-1">
+<para>It is recommended to deploy the WMCO in the <literal>openshift-windows-machine-config-operator</literal> namespace.</para>
+</callout>
+<callout arearefs="CO1-2">
+<para>This label is required for enabling cluster monitoring for the WMCO.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Create the namespace:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f &lt;file-name&gt;.yaml</programlisting>
+<simpara>For example:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f wmco-namespace.yaml</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Create the Operator group for the WMCO.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Create an <literal>OperatorGroup</literal> object YAML file. For example, <literal>wmco-og.yaml</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: windows-machine-config-operator
+  namespace: openshift-windows-machine-config-operator
+spec:
+  targetNamespaces:
+  - openshift-windows-machine-config-operator</programlisting>
+</listitem>
+<listitem>
+<simpara>Create the Operator group:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f &lt;file-name&gt;.yaml</programlisting>
+<simpara>For example:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f wmco-og.yaml</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Subscribe the namespace to the WMCO.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>Create a <literal>Subscription</literal> object YAML file. For example, <literal>wmco-sub.yaml</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: windows-machine-config-operator
+  namespace: openshift-windows-machine-config-operator
+spec:
+  channel: "stable" <co xml:id="CO2-1"/>
+  installPlanApproval: "Automatic" <co xml:id="CO2-2"/>
+  name: "windows-machine-config-operator"
+  source: "redhat-operators" <co xml:id="CO2-3"/>
+  sourceNamespace: "openshift-marketplace" <co xml:id="CO2-4"/></programlisting>
+<calloutlist>
+<callout arearefs="CO2-1">
+<para>Specify <literal>stable</literal> as the channel.</para>
+</callout>
+<callout arearefs="CO2-2">
+<para>Set an approval strategy. You can set <literal>Automatic</literal> or <literal>Manual</literal>.</para>
+</callout>
+<callout arearefs="CO2-3">
+<para>Specify the <literal>redhat-operators</literal> catalog source, which contains the <literal>windows-machine-config-operator</literal> package manifests. If your OpenShift Container Platform is installed on a restricted network, also known as a disconnected cluster, specify the name of the <literal>CatalogSource</literal> object you created when you configured the Operator LifeCycle Manager (OLM).</para>
+</callout>
+<callout arearefs="CO2-4">
+<para>Namespace of the catalog source. Use <literal>openshift-marketplace</literal> for the default OperatorHub catalog sources.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Create the subscription:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f &lt;file-name&gt;.yaml</programlisting>
+<simpara>For example:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f wmco-sub.yaml</programlisting>
+<simpara>The WMCO is now installed to the <literal>openshift-windows-machine-config-operator</literal>.</simpara>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Verify the WMCO installation:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get csv -n openshift-windows-machine-config-operator</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                    DISPLAY                           VERSION   REPLACES   PHASE
+windows-machine-config-operator.2.0.0   Windows Machine Config Operator   2.0.0                Succeeded</programlisting>
+</para>
+</formalpara>
+</listitem>
+</orderedlist>
+</section>
+</section>
+<section xml:id="configuring-secret-for-wmco_enabling-windows-container-workloads">
+<title>Configuring a secret for the Windows Machine Config Operator</title>
+<simpara>To run the Windows Machine Config Operator (WMCO), you must create a secret in the WMCO namespace containing a private key. This is required to allow the WMCO to communicate with the Windows virtual machine (VM).</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).</simpara>
+</listitem>
+<listitem>
+<simpara>You created a PEM-encoded file containing an RSA key.</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>Define the secret required to access the Windows VMs:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create secret generic cloud-private-key --from-file=private-key.pem=${HOME}/.ssh/&lt;key&gt; \
+    -n openshift-windows-machine-config-operator <co xml:id="CO3-1"/></programlisting>
+</listitem>
+</itemizedlist>
+<calloutlist>
+<callout arearefs="CO3-1">
+<para>You must create the private key in the WMCO namespace, like <literal>openshift-windows-machine-config-operator</literal>.</para>
+</callout>
+</calloutlist>
+<simpara>It is recommended to use a different private key than the one used when installing the cluster.</simpara>
+</section>
+<section xml:id="_additional-resources" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/installing/#ssh-agent-using_installing-azure-default">Generating a key pair for cluster node SSH access</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/operators/#olm-adding-operators-to-a-cluster">Adding Operators to a cluster</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="_creating-windows-machine-sets">
+<title>Creating Windows machine sets</title>
+<section xml:id="creating-windows-machineset-aws">
+<title>Creating a Windows machine set on AWS</title>
+<simpara>You can create a Windows <literal>MachineSet</literal> object to serve a specific purpose in your OpenShift Container Platform cluster on Amazon Web Services (AWS). For example, you might create infrastructure Windows machine sets and related machines so that you can move supporting Windows workloads to the new Windows machines.</simpara>
+<bridgehead xml:id="_prerequisites-2" renderas="sect3">Prerequisites</bridgehead>
+<itemizedlist>
+<listitem>
+<simpara>You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).</simpara>
+</listitem>
+<listitem>
+<simpara>You are using a supported Windows Server as the operating system image.</simpara>
+<simpara>Use one of the following <literal>aws</literal> commands, as appropriate for your Windows Server release, to query valid AMI images:</simpara>
+<formalpara>
+<title>Example Windows Server 2022 command</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ aws ec2 describe-images --region &lt;aws_region_name&gt; --filters "Name=name,Values=Windows_Server-2022*English*Core*Base*" "Name=is-public,Values=true" --query "reverse(sort_by(Images, &amp;CreationDate))[*].{name: Name, id: ImageId}" --output table</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>Example Windows Server 2019 command</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">$ aws ec2 describe-images --region &lt;aws_region_name&gt; --filters "Name=name,Values=Windows_Server-2019*English*Core*Base*" "Name=is-public,Values=true" --query "reverse(sort_by(Images, &amp;CreationDate))[*].{name: Name, id: ImageId}" --output table</programlisting>
+</para>
+</formalpara>
+<simpara>where:</simpara>
+<variablelist>
+<varlistentry>
+<term>&lt;aws_region_name&gt;</term>
+<listitem>
+<simpara>Specifies the name of your AWS region.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</itemizedlist>
+<section xml:id="machine-api-overview_creating-windows-machineset-aws">
+<title>Machine API overview</title>
+<simpara>The Machine API is a combination of primary resources that are based on the upstream Cluster API project and custom OpenShift Container Platform resources.</simpara>
+<simpara>For OpenShift Container Platform 4.14 clusters, the Machine API performs all node host provisioning management actions after the cluster installation finishes. Because of this system, OpenShift Container Platform 4.14 offers an elastic, dynamic provisioning method on top of public or private cloud infrastructure.</simpara>
+<simpara>The two primary resources are:</simpara>
+<variablelist>
+<varlistentry>
+<term>Machines</term>
+<listitem>
+<simpara>A fundamental unit that describes the host for a node. A machine has a <literal>providerSpec</literal> specification, which describes the types of compute nodes that are offered for different cloud platforms. For example, a machine type for a compute node might define a specific machine type and required metadata.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Machine sets</term>
+<listitem>
+<simpara><literal>MachineSet</literal> resources are groups of compute machines. Compute machine sets are to compute machines as replica sets are to pods. If you need more compute machines or must scale them down, you change the <literal>replicas</literal> field on the <literal>MachineSet</literal> resource to meet your compute need.</simpara>
+<warning>
+<simpara>Control plane machines cannot be managed by compute machine sets.</simpara>
+<simpara>Control plane machine sets provide management capabilities for supported control plane machines that are similar to what compute machine sets provide for compute machines.</simpara>
+<simpara>For more information, see “Managing control plane machines".</simpara>
+</warning>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>The following custom resources add more capabilities to your cluster:</simpara>
+<variablelist>
+<varlistentry>
+<term>Machine autoscaler</term>
+<listitem>
+<simpara>The <literal>MachineAutoscaler</literal> resource automatically scales compute machines in a cloud. You can set the minimum and maximum scaling boundaries for nodes in a specified compute machine set, and the machine autoscaler maintains that range of nodes.</simpara>
+<simpara>The <literal>MachineAutoscaler</literal> object takes effect after a <literal>ClusterAutoscaler</literal> object exists. Both <literal>ClusterAutoscaler</literal> and <literal>MachineAutoscaler</literal> resources are made available by the <literal>ClusterAutoscalerOperator</literal> object.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Cluster autoscaler</term>
+<listitem>
+<simpara>This resource is based on the upstream cluster autoscaler project. In the OpenShift Container Platform implementation, it is integrated with the Machine API by extending the compute machine set API. You can use the cluster autoscaler to manage your cluster in the following ways:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Set cluster-wide scaling limits for resources such as cores, nodes, memory, and GPU</simpara>
+</listitem>
+<listitem>
+<simpara>Set the priority so that the cluster prioritizes pods and new nodes are not brought online for less important pods</simpara>
+</listitem>
+<listitem>
+<simpara>Set the scaling policy so that you can scale up nodes but not scale them down</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Machine health check</term>
+<listitem>
+<simpara>The <literal>MachineHealthCheck</literal> resource detects when a machine is unhealthy, deletes it, and, on supported platforms, makes a new machine.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>In OpenShift Container Platform version 3.11, you could not roll out a multi-zone architecture easily because the cluster did not manage machine provisioning. Beginning with OpenShift Container Platform version 4.1, this process is easier. Each compute machine set is scoped to a single zone, so the installation program sends out compute machine sets across availability zones on your behalf. And then because your compute is dynamic, and in the face of a zone failure, you always have a zone for when you must rebalance your machines. In global Azure regions that do not have multiple availability zones, you can use availability sets to ensure high availability. The autoscaler provides best-effort balancing over the life of a cluster.</simpara>
+</section>
+<section xml:id="windows-machineset-aws_creating-windows-machineset-aws">
+<title>Sample YAML for a Windows MachineSet object on AWS</title>
+<simpara>This sample YAML defines a Windows <literal>MachineSet</literal> object running on Amazon Web Services (AWS) that the Windows Machine Config Operator (WMCO) can react upon.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO4-1"/>
+  name: &lt;infrastructure_id&gt;-windows-worker-&lt;zone&gt; <co xml:id="CO4-2"/>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO4-3"/>
+      machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-windows-worker-&lt;zone&gt; <co xml:id="CO4-4"/>
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO4-5"/>
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-windows-worker-&lt;zone&gt; <co xml:id="CO4-6"/>
+        machine.openshift.io/os-id: Windows <co xml:id="CO4-7"/>
+    spec:
+      metadata:
+        labels:
+          node-role.kubernetes.io/worker: "" <co xml:id="CO4-8"/>
+      providerSpec:
+        value:
+          ami:
+            id: &lt;windows_container_ami&gt; <co xml:id="CO4-9"/>
+          apiVersion: awsproviderconfig.openshift.io/v1beta1
+          blockDevices:
+            - ebs:
+                iops: 0
+                volumeSize: 120
+                volumeType: gp2
+          credentialsSecret:
+            name: aws-cloud-credentials
+          deviceIndex: 0
+          iamInstanceProfile:
+            id: &lt;infrastructure_id&gt;-worker-profile <co xml:id="CO4-10"/>
+          instanceType: m5a.large
+          kind: AWSMachineProviderConfig
+          placement:
+            availabilityZone: &lt;zone&gt; <co xml:id="CO4-11"/>
+            region: &lt;region&gt; <co xml:id="CO4-12"/>
+          securityGroups:
+            - filters:
+                - name: tag:Name
+                  values:
+                    - &lt;infrastructure_id&gt;-worker-sg <co xml:id="CO4-13"/>
+          subnet:
+            filters:
+              - name: tag:Name
+                values:
+                  - &lt;infrastructure_id&gt;-private-&lt;zone&gt; <co xml:id="CO4-14"/>
+          tags:
+            - name: kubernetes.io/cluster/&lt;infrastructure_id&gt; <co xml:id="CO4-15"/>
+              value: owned
+          userDataSecret:
+            name: windows-user-data <co xml:id="CO4-16"/>
+            namespace: openshift-machine-api</programlisting>
+<calloutlist>
+<callout arearefs="CO4-1 CO4-3 CO4-5 CO4-10 CO4-13 CO4-14 CO4-15">
+<para>Specify the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. You can obtain the infrastructure ID by running the following command:</para>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster</programlisting>
+</callout>
+<callout arearefs="CO4-2 CO4-4 CO4-6">
+<para>Specify the infrastructure ID, worker label, and zone.</para>
+</callout>
+<callout arearefs="CO4-7">
+<para>Configure the compute machine set as a Windows machine.</para>
+</callout>
+<callout arearefs="CO4-8">
+<para>Configure the Windows node as a compute machine.</para>
+</callout>
+<callout arearefs="CO4-9">
+<para>Specify the AMI ID of a supported Windows image with a container runtime installed.</para>
+</callout>
+<callout arearefs="CO4-11">
+<para>Specify the AWS zone, like <literal>us-east-1a</literal>.</para>
+</callout>
+<callout arearefs="CO4-12">
+<para>Specify the AWS region, like <literal>us-east-1</literal>.</para>
+</callout>
+<callout arearefs="CO4-16">
+<para>Created by the WMCO when it is configuring the first Windows machine. After that, the <literal>windows-user-data</literal> is available for all subsequent compute machine sets to consume.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="machineset-creating_creating-windows-machineset-aws">
+<title>Creating a compute machine set</title>
+<simpara>In addition to the compute machine sets created by the installation program, you can create your own to dynamically manage the machine compute resources for specific workloads of your choice.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>Deploy an OpenShift Container Platform cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>Install the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>Log in to <literal>oc</literal> as a user with <literal>cluster-admin</literal> permission.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a new YAML file that contains the compute machine set custom resource (CR) sample and is named <literal>&lt;file_name&gt;.yaml</literal>.</simpara>
+<simpara>Ensure that you set the <literal>&lt;clusterID&gt;</literal> and <literal>&lt;role&gt;</literal> parameter values.</simpara>
+</listitem>
+<listitem>
+<simpara>Optional: If you are not sure which value to set for a specific field, you can check an existing compute machine set from your cluster.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>To list the compute machine sets in your cluster, run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machinesets -n openshift-machine-api</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To view values of a specific compute machine set custom resource (CR), run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machineset &lt;machineset_name&gt; \
+  -n openshift-machine-api -o yaml</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO5-1"/>
+  name: &lt;infrastructure_id&gt;-&lt;role&gt; <co xml:id="CO5-2"/>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt;
+      machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-&lt;role&gt;
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt;
+        machine.openshift.io/cluster-api-machine-role: &lt;role&gt;
+        machine.openshift.io/cluster-api-machine-type: &lt;role&gt;
+        machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-&lt;role&gt;
+    spec:
+      providerSpec: <co xml:id="CO5-3"/>
+        ...</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO5-1">
+<para>The cluster infrastructure ID.</para>
+</callout>
+<callout arearefs="CO5-2">
+<para>A default node label.</para>
+<note>
+<simpara>For clusters that have user-provisioned infrastructure, a compute machine set can only create <literal>worker</literal> and <literal>infra</literal> type machines.</simpara>
+</note>
+</callout>
+<callout arearefs="CO5-3">
+<para>The values in the <literal>&lt;providerSpec&gt;</literal> section of the compute machine set CR are platform-specific. For more information about <literal>&lt;providerSpec&gt;</literal> parameters in the CR, see the sample compute machine set CR configuration for your provider.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Create a <literal>MachineSet</literal> CR by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f &lt;file_name&gt;.yaml</programlisting>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>View the list of compute machine sets by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machineset -n openshift-machine-api</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                       DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-windows-worker-us-east-1a  1         1         1       1           11m
+agl030519-vplxk-worker-us-east-1a          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d          0         0                             55m
+agl030519-vplxk-worker-us-east-1e          0         0                             55m
+agl030519-vplxk-worker-us-east-1f          0         0                             55m</programlisting>
+</para>
+</formalpara>
+<simpara>When the new compute machine set is available, the <literal>DESIRED</literal> and <literal>CURRENT</literal> values match. If the compute machine set is not available, wait a few minutes and run the command again.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="_additional-resources-2" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/machine_management/#overview-of-machine-management">Overview of machine management</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="creating-windows-machineset-azure">
+<title>Creating a Windows machine set on Azure</title>
+<simpara>You can create a Windows <literal>MachineSet</literal> object to serve a specific purpose in your OpenShift Container Platform cluster on Microsoft Azure. For example, you might create infrastructure Windows machine sets and related machines so that you can move supporting Windows workloads to the new Windows machines.</simpara>
+<bridgehead xml:id="_prerequisites-3" renderas="sect3">Prerequisites</bridgehead>
+<itemizedlist>
+<listitem>
+<simpara>You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).</simpara>
+</listitem>
+<listitem>
+<simpara>You are using a supported Windows Server as the operating system image.</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="machine-api-overview_creating-windows-machineset-azure">
+<title>Machine API overview</title>
+<simpara>The Machine API is a combination of primary resources that are based on the upstream Cluster API project and custom OpenShift Container Platform resources.</simpara>
+<simpara>For OpenShift Container Platform 4.14 clusters, the Machine API performs all node host provisioning management actions after the cluster installation finishes. Because of this system, OpenShift Container Platform 4.14 offers an elastic, dynamic provisioning method on top of public or private cloud infrastructure.</simpara>
+<simpara>The two primary resources are:</simpara>
+<variablelist>
+<varlistentry>
+<term>Machines</term>
+<listitem>
+<simpara>A fundamental unit that describes the host for a node. A machine has a <literal>providerSpec</literal> specification, which describes the types of compute nodes that are offered for different cloud platforms. For example, a machine type for a compute node might define a specific machine type and required metadata.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Machine sets</term>
+<listitem>
+<simpara><literal>MachineSet</literal> resources are groups of compute machines. Compute machine sets are to compute machines as replica sets are to pods. If you need more compute machines or must scale them down, you change the <literal>replicas</literal> field on the <literal>MachineSet</literal> resource to meet your compute need.</simpara>
+<warning>
+<simpara>Control plane machines cannot be managed by compute machine sets.</simpara>
+<simpara>Control plane machine sets provide management capabilities for supported control plane machines that are similar to what compute machine sets provide for compute machines.</simpara>
+<simpara>For more information, see “Managing control plane machines".</simpara>
+</warning>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>The following custom resources add more capabilities to your cluster:</simpara>
+<variablelist>
+<varlistentry>
+<term>Machine autoscaler</term>
+<listitem>
+<simpara>The <literal>MachineAutoscaler</literal> resource automatically scales compute machines in a cloud. You can set the minimum and maximum scaling boundaries for nodes in a specified compute machine set, and the machine autoscaler maintains that range of nodes.</simpara>
+<simpara>The <literal>MachineAutoscaler</literal> object takes effect after a <literal>ClusterAutoscaler</literal> object exists. Both <literal>ClusterAutoscaler</literal> and <literal>MachineAutoscaler</literal> resources are made available by the <literal>ClusterAutoscalerOperator</literal> object.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Cluster autoscaler</term>
+<listitem>
+<simpara>This resource is based on the upstream cluster autoscaler project. In the OpenShift Container Platform implementation, it is integrated with the Machine API by extending the compute machine set API. You can use the cluster autoscaler to manage your cluster in the following ways:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Set cluster-wide scaling limits for resources such as cores, nodes, memory, and GPU</simpara>
+</listitem>
+<listitem>
+<simpara>Set the priority so that the cluster prioritizes pods and new nodes are not brought online for less important pods</simpara>
+</listitem>
+<listitem>
+<simpara>Set the scaling policy so that you can scale up nodes but not scale them down</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Machine health check</term>
+<listitem>
+<simpara>The <literal>MachineHealthCheck</literal> resource detects when a machine is unhealthy, deletes it, and, on supported platforms, makes a new machine.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>In OpenShift Container Platform version 3.11, you could not roll out a multi-zone architecture easily because the cluster did not manage machine provisioning. Beginning with OpenShift Container Platform version 4.1, this process is easier. Each compute machine set is scoped to a single zone, so the installation program sends out compute machine sets across availability zones on your behalf. And then because your compute is dynamic, and in the face of a zone failure, you always have a zone for when you must rebalance your machines. In global Azure regions that do not have multiple availability zones, you can use availability sets to ensure high availability. The autoscaler provides best-effort balancing over the life of a cluster.</simpara>
+</section>
+<section xml:id="windows-machineset-azure_creating-windows-machineset-azure">
+<title>Sample YAML for a Windows MachineSet object on Azure</title>
+<simpara>This sample YAML defines a Windows <literal>MachineSet</literal> object running on Microsoft Azure that the Windows Machine Config Operator (WMCO) can react upon.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO6-1"/>
+  name: &lt;windows_machine_set_name&gt; <co xml:id="CO6-2"/>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO6-3"/>
+      machine.openshift.io/cluster-api-machineset: &lt;windows_machine_set_name&gt; <co xml:id="CO6-4"/>
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO6-5"/>
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: &lt;windows_machine_set_name&gt; <co xml:id="CO6-6"/>
+        machine.openshift.io/os-id: Windows <co xml:id="CO6-7"/>
+    spec:
+      metadata:
+        labels:
+          node-role.kubernetes.io/worker: "" <co xml:id="CO6-8"/>
+      providerSpec:
+        value:
+          apiVersion: azureproviderconfig.openshift.io/v1beta1
+          credentialsSecret:
+            name: azure-cloud-credentials
+            namespace: openshift-machine-api
+          image: <co xml:id="CO6-9"/>
+            offer: WindowsServer
+            publisher: MicrosoftWindowsServer
+            resourceID: ""
+            sku: 2019-Datacenter-with-Containers
+            version: latest
+          kind: AzureMachineProviderSpec
+          location: &lt;location&gt; <co xml:id="CO6-10"/>
+          managedIdentity: &lt;infrastructure_id&gt;-identity <co xml:id="CO6-11"/>
+          networkResourceGroup: &lt;infrastructure_id&gt;-rg <co xml:id="CO6-12"/>
+          osDisk:
+            diskSizeGB: 128
+            managedDisk:
+              storageAccountType: Premium_LRS
+            osType: Windows
+          publicIP: false
+          resourceGroup: &lt;infrastructure_id&gt;-rg <co xml:id="CO6-13"/>
+          subnet: &lt;infrastructure_id&gt;-worker-subnet
+          userDataSecret:
+            name: windows-user-data <co xml:id="CO6-14"/>
+            namespace: openshift-machine-api
+          vmSize: Standard_D2s_v3
+          vnet: &lt;infrastructure_id&gt;-vnet <co xml:id="CO6-15"/>
+          zone: "&lt;zone&gt;" <co xml:id="CO6-16"/></programlisting>
+<calloutlist>
+<callout arearefs="CO6-1 CO6-3 CO6-5 CO6-11 CO6-12 CO6-13 CO6-15">
+<para>Specify the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. You can obtain the infrastructure ID by running the following command:</para>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster</programlisting>
+</callout>
+<callout arearefs="CO6-2 CO6-4 CO6-6">
+<para>Specify the Windows compute machine set name. Windows machine names on Azure cannot be more than 15 characters long. Therefore, the compute machine set name cannot be more than 9 characters long, due to the way machine names are generated from it.</para>
+</callout>
+<callout arearefs="CO6-7">
+<para>Configure the compute machine set as a Windows machine.</para>
+</callout>
+<callout arearefs="CO6-8">
+<para>Configure the Windows node as a compute machine.</para>
+</callout>
+<callout arearefs="CO6-9">
+<para>Specify a <literal>WindowsServer</literal> image offering that defines the <literal>2019-Datacenter-with-Containers</literal> SKU.</para>
+</callout>
+<callout arearefs="CO6-10">
+<para>Specify the Azure region, like <literal>centralus</literal>.</para>
+</callout>
+<callout arearefs="CO6-14">
+<para>Created by the WMCO when it is configuring the first Windows machine. After that, the <literal>windows-user-data</literal> is available for all subsequent compute machine sets to consume.</para>
+</callout>
+<callout arearefs="CO6-16">
+<para>Specify the zone within your region to place machines on. Be sure that your region supports the zone that you specify.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="machineset-creating_creating-windows-machineset-azure">
+<title>Creating a compute machine set</title>
+<simpara>In addition to the compute machine sets created by the installation program, you can create your own to dynamically manage the machine compute resources for specific workloads of your choice.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>Deploy an OpenShift Container Platform cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>Install the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>Log in to <literal>oc</literal> as a user with <literal>cluster-admin</literal> permission.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a new YAML file that contains the compute machine set custom resource (CR) sample and is named <literal>&lt;file_name&gt;.yaml</literal>.</simpara>
+<simpara>Ensure that you set the <literal>&lt;clusterID&gt;</literal> and <literal>&lt;role&gt;</literal> parameter values.</simpara>
+</listitem>
+<listitem>
+<simpara>Optional: If you are not sure which value to set for a specific field, you can check an existing compute machine set from your cluster.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>To list the compute machine sets in your cluster, run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machinesets -n openshift-machine-api</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To view values of a specific compute machine set custom resource (CR), run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machineset &lt;machineset_name&gt; \
+  -n openshift-machine-api -o yaml</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO7-1"/>
+  name: &lt;infrastructure_id&gt;-&lt;role&gt; <co xml:id="CO7-2"/>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt;
+      machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-&lt;role&gt;
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt;
+        machine.openshift.io/cluster-api-machine-role: &lt;role&gt;
+        machine.openshift.io/cluster-api-machine-type: &lt;role&gt;
+        machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-&lt;role&gt;
+    spec:
+      providerSpec: <co xml:id="CO7-3"/>
+        ...</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO7-1">
+<para>The cluster infrastructure ID.</para>
+</callout>
+<callout arearefs="CO7-2">
+<para>A default node label.</para>
+<note>
+<simpara>For clusters that have user-provisioned infrastructure, a compute machine set can only create <literal>worker</literal> and <literal>infra</literal> type machines.</simpara>
+</note>
+</callout>
+<callout arearefs="CO7-3">
+<para>The values in the <literal>&lt;providerSpec&gt;</literal> section of the compute machine set CR are platform-specific. For more information about <literal>&lt;providerSpec&gt;</literal> parameters in the CR, see the sample compute machine set CR configuration for your provider.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Create a <literal>MachineSet</literal> CR by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f &lt;file_name&gt;.yaml</programlisting>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>View the list of compute machine sets by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machineset -n openshift-machine-api</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                       DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-windows-worker-us-east-1a  1         1         1       1           11m
+agl030519-vplxk-worker-us-east-1a          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d          0         0                             55m
+agl030519-vplxk-worker-us-east-1e          0         0                             55m
+agl030519-vplxk-worker-us-east-1f          0         0                             55m</programlisting>
+</para>
+</formalpara>
+<simpara>When the new compute machine set is available, the <literal>DESIRED</literal> and <literal>CURRENT</literal> values match. If the compute machine set is not available, wait a few minutes and run the command again.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="_additional-resources-3" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/machine_management/#overview-of-machine-management">Overview of machine management</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="creating-windows-machineset-gcp">
+<title>Creating a Windows machine set on GCP</title>
+<simpara>You can create a Windows <literal>MachineSet</literal> object to serve a specific purpose in your OpenShift Container Platform cluster on Google Cloud Platform (GCP). For example, you might create infrastructure Windows machine sets and related machines so that you can move supporting Windows workloads to the new Windows machines.</simpara>
+<bridgehead xml:id="_prerequisites-4" renderas="sect3">Prerequisites</bridgehead>
+<itemizedlist>
+<listitem>
+<simpara>You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).</simpara>
+</listitem>
+<listitem>
+<simpara>You are using a supported Windows Server as the operating system image.</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="machine-api-overview_creating-windows-machineset-gcp">
+<title>Machine API overview</title>
+<simpara>The Machine API is a combination of primary resources that are based on the upstream Cluster API project and custom OpenShift Container Platform resources.</simpara>
+<simpara>For OpenShift Container Platform 4.14 clusters, the Machine API performs all node host provisioning management actions after the cluster installation finishes. Because of this system, OpenShift Container Platform 4.14 offers an elastic, dynamic provisioning method on top of public or private cloud infrastructure.</simpara>
+<simpara>The two primary resources are:</simpara>
+<variablelist>
+<varlistentry>
+<term>Machines</term>
+<listitem>
+<simpara>A fundamental unit that describes the host for a node. A machine has a <literal>providerSpec</literal> specification, which describes the types of compute nodes that are offered for different cloud platforms. For example, a machine type for a compute node might define a specific machine type and required metadata.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Machine sets</term>
+<listitem>
+<simpara><literal>MachineSet</literal> resources are groups of compute machines. Compute machine sets are to compute machines as replica sets are to pods. If you need more compute machines or must scale them down, you change the <literal>replicas</literal> field on the <literal>MachineSet</literal> resource to meet your compute need.</simpara>
+<warning>
+<simpara>Control plane machines cannot be managed by compute machine sets.</simpara>
+<simpara>Control plane machine sets provide management capabilities for supported control plane machines that are similar to what compute machine sets provide for compute machines.</simpara>
+<simpara>For more information, see “Managing control plane machines".</simpara>
+</warning>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>The following custom resources add more capabilities to your cluster:</simpara>
+<variablelist>
+<varlistentry>
+<term>Machine autoscaler</term>
+<listitem>
+<simpara>The <literal>MachineAutoscaler</literal> resource automatically scales compute machines in a cloud. You can set the minimum and maximum scaling boundaries for nodes in a specified compute machine set, and the machine autoscaler maintains that range of nodes.</simpara>
+<simpara>The <literal>MachineAutoscaler</literal> object takes effect after a <literal>ClusterAutoscaler</literal> object exists. Both <literal>ClusterAutoscaler</literal> and <literal>MachineAutoscaler</literal> resources are made available by the <literal>ClusterAutoscalerOperator</literal> object.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Cluster autoscaler</term>
+<listitem>
+<simpara>This resource is based on the upstream cluster autoscaler project. In the OpenShift Container Platform implementation, it is integrated with the Machine API by extending the compute machine set API. You can use the cluster autoscaler to manage your cluster in the following ways:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Set cluster-wide scaling limits for resources such as cores, nodes, memory, and GPU</simpara>
+</listitem>
+<listitem>
+<simpara>Set the priority so that the cluster prioritizes pods and new nodes are not brought online for less important pods</simpara>
+</listitem>
+<listitem>
+<simpara>Set the scaling policy so that you can scale up nodes but not scale them down</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Machine health check</term>
+<listitem>
+<simpara>The <literal>MachineHealthCheck</literal> resource detects when a machine is unhealthy, deletes it, and, on supported platforms, makes a new machine.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>In OpenShift Container Platform version 3.11, you could not roll out a multi-zone architecture easily because the cluster did not manage machine provisioning. Beginning with OpenShift Container Platform version 4.1, this process is easier. Each compute machine set is scoped to a single zone, so the installation program sends out compute machine sets across availability zones on your behalf. And then because your compute is dynamic, and in the face of a zone failure, you always have a zone for when you must rebalance your machines. In global Azure regions that do not have multiple availability zones, you can use availability sets to ensure high availability. The autoscaler provides best-effort balancing over the life of a cluster.</simpara>
+</section>
+<section xml:id="windows-machineset-gcp_creating-windows-machineset-gcp">
+<title>Sample YAML for a Windows MachineSet object on GCP</title>
+<simpara>This sample YAML file defines a Windows <literal>MachineSet</literal> object running on Google Cloud Platform (GCP) that the Windows Machine Config Operator (WMCO) can use.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO8-1"/>
+  name: &lt;infrastructure_id&gt;-windows-worker-&lt;zone_suffix&gt; <co xml:id="CO8-2"/>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO8-3"/>
+      machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-windows-worker-&lt;zone_suffix&gt; <co xml:id="CO8-4"/>
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO8-5"/>
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-windows-worker-&lt;zone_suffix&gt; <co xml:id="CO8-6"/>
+        machine.openshift.io/os-id: Windows <co xml:id="CO8-7"/>
+    spec:
+      metadata:
+        labels:
+          node-role.kubernetes.io/worker: "" <co xml:id="CO8-8"/>
+      providerSpec:
+        value:
+          apiVersion: machine.openshift.io/v1beta1
+          canIPForward: false
+          credentialsSecret:
+            name: gcp-cloud-credentials
+          deletionProtection: false
+          disks:
+          - autoDelete: true
+            boot: true
+            image: &lt;windows_server_image&gt; <co xml:id="CO8-9"/>
+            sizeGb: 128
+            type: pd-ssd
+          kind: GCPMachineProviderSpec
+          machineType: n1-standard-4
+          networkInterfaces:
+          - network: &lt;infrastructure_id&gt;-network <co xml:id="CO8-10"/>
+            subnetwork: &lt;infrastructure_id&gt;-worker-subnet
+          projectID: &lt;project_id&gt; <co xml:id="CO8-11"/>
+          region: &lt;region&gt; <co xml:id="CO8-12"/>
+          serviceAccounts:
+          - email: &lt;infrastructure_id&gt;-w@&lt;project_id&gt;.iam.gserviceaccount.com
+            scopes:
+            - https://www.googleapis.com/auth/cloud-platform
+          tags:
+          - &lt;infrastructure_id&gt;-worker
+          userDataSecret:
+            name: windows-user-data <co xml:id="CO8-13"/>
+          zone: &lt;zone&gt; <co xml:id="CO8-14"/></programlisting>
+<calloutlist>
+<callout arearefs="CO8-1 CO8-3 CO8-5 CO8-10">
+<para>Specify the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. You can obtain the infrastructure ID by running the following command:</para>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster</programlisting>
+</callout>
+<callout arearefs="CO8-2 CO8-4 CO8-6">
+<para>Specify the infrastructure ID, worker label, and zone suffix (such as <literal>a</literal>).</para>
+</callout>
+<callout arearefs="CO8-7">
+<para>Configure the machine set as a Windows machine.</para>
+</callout>
+<callout arearefs="CO8-8">
+<para>Configure the Windows node as a compute machine.</para>
+</callout>
+<callout arearefs="CO8-9">
+<para>Specify the full path to an image of a supported version of Windows Server.</para>
+</callout>
+<callout arearefs="CO8-11">
+<para>Specify the GCP project that this cluster was created in.</para>
+</callout>
+<callout arearefs="CO8-12">
+<para>Specify the GCP region, such as <literal>us-central1</literal>.</para>
+</callout>
+<callout arearefs="CO8-13">
+<para>Created by the WMCO when it configures the first Windows machine. After that, the <literal>windows-user-data</literal> is available for all subsequent machine sets to consume.</para>
+</callout>
+<callout arearefs="CO8-14">
+<para>Specify the zone within the chosen region, such as <literal>us-central1-a</literal>.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="machineset-creating_creating-windows-machineset-gcp">
+<title>Creating a compute machine set</title>
+<simpara>In addition to the compute machine sets created by the installation program, you can create your own to dynamically manage the machine compute resources for specific workloads of your choice.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>Deploy an OpenShift Container Platform cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>Install the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>Log in to <literal>oc</literal> as a user with <literal>cluster-admin</literal> permission.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a new YAML file that contains the compute machine set custom resource (CR) sample and is named <literal>&lt;file_name&gt;.yaml</literal>.</simpara>
+<simpara>Ensure that you set the <literal>&lt;clusterID&gt;</literal> and <literal>&lt;role&gt;</literal> parameter values.</simpara>
+</listitem>
+<listitem>
+<simpara>Optional: If you are not sure which value to set for a specific field, you can check an existing compute machine set from your cluster.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>To list the compute machine sets in your cluster, run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machinesets -n openshift-machine-api</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To view values of a specific compute machine set custom resource (CR), run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machineset &lt;machineset_name&gt; \
+  -n openshift-machine-api -o yaml</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO9-1"/>
+  name: &lt;infrastructure_id&gt;-&lt;role&gt; <co xml:id="CO9-2"/>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt;
+      machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-&lt;role&gt;
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt;
+        machine.openshift.io/cluster-api-machine-role: &lt;role&gt;
+        machine.openshift.io/cluster-api-machine-type: &lt;role&gt;
+        machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-&lt;role&gt;
+    spec:
+      providerSpec: <co xml:id="CO9-3"/>
+        ...</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO9-1">
+<para>The cluster infrastructure ID.</para>
+</callout>
+<callout arearefs="CO9-2">
+<para>A default node label.</para>
+<note>
+<simpara>For clusters that have user-provisioned infrastructure, a compute machine set can only create <literal>worker</literal> and <literal>infra</literal> type machines.</simpara>
+</note>
+</callout>
+<callout arearefs="CO9-3">
+<para>The values in the <literal>&lt;providerSpec&gt;</literal> section of the compute machine set CR are platform-specific. For more information about <literal>&lt;providerSpec&gt;</literal> parameters in the CR, see the sample compute machine set CR configuration for your provider.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Create a <literal>MachineSet</literal> CR by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f &lt;file_name&gt;.yaml</programlisting>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>View the list of compute machine sets by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machineset -n openshift-machine-api</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-infra-us-east-1a    1         1         1       1           11m
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m</programlisting>
+</para>
+</formalpara>
+<simpara>When the new compute machine set is available, the <literal>DESIRED</literal> and <literal>CURRENT</literal> values match. If the compute machine set is not available, wait a few minutes and run the command again.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="creating-windows-machineset-gcp-additional" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/machine_management/#overview-of-machine-management">Overview of machine management</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="creating-windows-machineset-nutanix">
+<title>Creating a Windows MachineSet object on Nutanix</title>
+<simpara>You can create a Windows <literal>MachineSet</literal> object to serve a specific purpose in your OpenShift Container Platform cluster on Nutanix. For example, you might create infrastructure Windows machine sets and related machines so that you can move supporting Windows workloads to the new Windows machines.</simpara>
+<bridgehead xml:id="_prerequisites-5" renderas="sect3">Prerequisites</bridgehead>
+<itemizedlist>
+<listitem>
+<simpara>You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).</simpara>
+</listitem>
+<listitem>
+<simpara>You are using a supported Windows Server as the operating system image.</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="machine-api-overview_creating-windows-machineset-nutanix">
+<title>Machine API overview</title>
+<simpara>The Machine API is a combination of primary resources that are based on the upstream Cluster API project and custom OpenShift Container Platform resources.</simpara>
+<simpara>For OpenShift Container Platform 4.14 clusters, the Machine API performs all node host provisioning management actions after the cluster installation finishes. Because of this system, OpenShift Container Platform 4.14 offers an elastic, dynamic provisioning method on top of public or private cloud infrastructure.</simpara>
+<simpara>The two primary resources are:</simpara>
+<variablelist>
+<varlistentry>
+<term>Machines</term>
+<listitem>
+<simpara>A fundamental unit that describes the host for a node. A machine has a <literal>providerSpec</literal> specification, which describes the types of compute nodes that are offered for different cloud platforms. For example, a machine type for a compute node might define a specific machine type and required metadata.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Machine sets</term>
+<listitem>
+<simpara><literal>MachineSet</literal> resources are groups of compute machines. Compute machine sets are to compute machines as replica sets are to pods. If you need more compute machines or must scale them down, you change the <literal>replicas</literal> field on the <literal>MachineSet</literal> resource to meet your compute need.</simpara>
+<warning>
+<simpara>Control plane machines cannot be managed by compute machine sets.</simpara>
+<simpara>Control plane machine sets provide management capabilities for supported control plane machines that are similar to what compute machine sets provide for compute machines.</simpara>
+<simpara>For more information, see “Managing control plane machines".</simpara>
+</warning>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>The following custom resources add more capabilities to your cluster:</simpara>
+<variablelist>
+<varlistentry>
+<term>Machine autoscaler</term>
+<listitem>
+<simpara>The <literal>MachineAutoscaler</literal> resource automatically scales compute machines in a cloud. You can set the minimum and maximum scaling boundaries for nodes in a specified compute machine set, and the machine autoscaler maintains that range of nodes.</simpara>
+<simpara>The <literal>MachineAutoscaler</literal> object takes effect after a <literal>ClusterAutoscaler</literal> object exists. Both <literal>ClusterAutoscaler</literal> and <literal>MachineAutoscaler</literal> resources are made available by the <literal>ClusterAutoscalerOperator</literal> object.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Cluster autoscaler</term>
+<listitem>
+<simpara>This resource is based on the upstream cluster autoscaler project. In the OpenShift Container Platform implementation, it is integrated with the Machine API by extending the compute machine set API. You can use the cluster autoscaler to manage your cluster in the following ways:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Set cluster-wide scaling limits for resources such as cores, nodes, memory, and GPU</simpara>
+</listitem>
+<listitem>
+<simpara>Set the priority so that the cluster prioritizes pods and new nodes are not brought online for less important pods</simpara>
+</listitem>
+<listitem>
+<simpara>Set the scaling policy so that you can scale up nodes but not scale them down</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Machine health check</term>
+<listitem>
+<simpara>The <literal>MachineHealthCheck</literal> resource detects when a machine is unhealthy, deletes it, and, on supported platforms, makes a new machine.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>In OpenShift Container Platform version 3.11, you could not roll out a multi-zone architecture easily because the cluster did not manage machine provisioning. Beginning with OpenShift Container Platform version 4.1, this process is easier. Each compute machine set is scoped to a single zone, so the installation program sends out compute machine sets across availability zones on your behalf. And then because your compute is dynamic, and in the face of a zone failure, you always have a zone for when you must rebalance your machines. In global Azure regions that do not have multiple availability zones, you can use availability sets to ensure high availability. The autoscaler provides best-effort balancing over the life of a cluster.</simpara>
+</section>
+<section xml:id="windows-machineset-nutanix_creating-windows-machineset-nutanix">
+<title>Sample YAML for a Windows MachineSet object on Nutanix</title>
+<simpara>This sample YAML defines a Windows <literal>MachineSet</literal> object running on Nutanix that the Windows Machine Config Operator (WMCO) can react upon.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO10-1"/>
+  name: &lt;infrastructure_id&gt;-windows-worker-&lt;zone&gt; <co xml:id="CO10-2"/>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO10-3"/>
+      machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-windows-worker-&lt;zone&gt; <co xml:id="CO10-4"/>
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO10-5"/>
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-windows-worker-&lt;zone&gt; <co xml:id="CO10-6"/>
+        machine.openshift.io/os-id: Windows <co xml:id="CO10-7"/>
+    spec:
+      metadata:
+        labels:
+          node-role.kubernetes.io/worker: "" <co xml:id="CO10-8"/>
+      providerSpec:
+        value:
+          apiVersion: machine.openshift.io/v1
+          bootType: "" <co xml:id="CO10-9"/>
+          categories: null
+          cluster: <co xml:id="CO10-10"/>
+            type: uuid
+            uuid: &lt;cluster_uuid&gt;
+          credentialsSecret:
+            name: nutanix-credentials <co xml:id="CO10-11"/>
+          image: <co xml:id="CO10-12"/>
+            name: &lt;image_id&gt;
+            type: name
+          kind: NutanixMachineProviderConfig <co xml:id="CO10-13"/>
+          memorySize: 16Gi <co xml:id="CO10-14"/>
+          project:
+            type: ""
+          subnets: <co xml:id="CO10-15"/>
+          - type: uuid
+            uuid: &lt;subnet_uuid&gt;
+          systemDiskSize: 120Gi <co xml:id="CO10-16"/>
+          userDataSecret:
+            name: windows-user-data <co xml:id="CO10-17"/>
+          vcpuSockets: 4 <co xml:id="CO10-18"/>
+          vcpusPerSocket: 1 <co xml:id="CO10-19"/></programlisting>
+<calloutlist>
+<callout arearefs="CO10-1 CO10-3 CO10-5">
+<para>Specify the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. You can obtain the infrastructure ID by running the following command:</para>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster</programlisting>
+</callout>
+<callout arearefs="CO10-2 CO10-4 CO10-6">
+<para>Specify the infrastructure ID, worker label, and zone.</para>
+</callout>
+<callout arearefs="CO10-7">
+<para>Configure the compute machine set as a Windows machine.</para>
+</callout>
+<callout arearefs="CO10-8">
+<para>Configure the Windows node as a compute machine.</para>
+</callout>
+<callout arearefs="CO10-9">
+<para>Specifies the boot type that the compute machines use. For more information about boot types, see <link xlink:href="https://portal.nutanix.com/page/documents/kbs/details?targetId=kA07V000000H3K9SAK">Understanding UEFI, Secure Boot, and TPM in the Virtualized Environment</link>. Valid values are <literal>Legacy</literal>, <literal>SecureBoot</literal>, or <literal>UEFI</literal>. The default is <literal>Legacy</literal>.</para>
+<note>
+<simpara>You must use the <literal>Legacy</literal> boot type in OpenShift Container Platform 4.14.</simpara>
+</note>
+</callout>
+<callout arearefs="CO10-10">
+<para>Specifies a Nutanix Prism Element cluster configuration. In this example, the cluster type is <literal>uuid</literal>, so there is a <literal>uuid</literal> stanza.</para>
+</callout>
+<callout arearefs="CO10-11">
+<para>Specifies the secret name for the cluster. Do not change this value.</para>
+</callout>
+<callout arearefs="CO10-12">
+<para>Specifies the image to use. Use an image from an existing default compute machine set for the cluster.</para>
+</callout>
+<callout arearefs="CO10-13">
+<para>Specifies the cloud provider platform type. Do not change this value.</para>
+</callout>
+<callout arearefs="CO10-14">
+<para>Specifies the amount of memory for the cluster in Gi.</para>
+</callout>
+<callout arearefs="CO10-15">
+<para>Specifies a subnet configuration. In this example, the subnet type is <literal>uuid</literal>, so there is a <literal>uuid</literal> stanza.</para>
+</callout>
+<callout arearefs="CO10-16">
+<para>Specifies the size of the system disk in Gi.</para>
+</callout>
+<callout arearefs="CO10-17">
+<para>Specifies the name of the secret in the user data YAML file that is in the <literal>openshift-machine-api</literal> namespace. Use the value that installation program populates in the default compute machine set.</para>
+</callout>
+<callout arearefs="CO10-18">
+<para>Specifies the number of vCPU sockets.</para>
+</callout>
+<callout arearefs="CO10-19">
+<para>Specifies the number of vCPUs per socket.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="machineset-creating_creating-windows-machineset-nutanix">
+<title>Creating a compute machine set</title>
+<simpara>In addition to the compute machine sets created by the installation program, you can create your own to dynamically manage the machine compute resources for specific workloads of your choice.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>Deploy an OpenShift Container Platform cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>Install the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>Log in to <literal>oc</literal> as a user with <literal>cluster-admin</literal> permission.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a new YAML file that contains the compute machine set custom resource (CR) sample and is named <literal>&lt;file_name&gt;.yaml</literal>.</simpara>
+<simpara>Ensure that you set the <literal>&lt;clusterID&gt;</literal> and <literal>&lt;role&gt;</literal> parameter values.</simpara>
+</listitem>
+<listitem>
+<simpara>Optional: If you are not sure which value to set for a specific field, you can check an existing compute machine set from your cluster.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>To list the compute machine sets in your cluster, run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machinesets -n openshift-machine-api</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To view values of a specific compute machine set custom resource (CR), run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machineset &lt;machineset_name&gt; \
+  -n openshift-machine-api -o yaml</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO11-1"/>
+  name: &lt;infrastructure_id&gt;-&lt;role&gt; <co xml:id="CO11-2"/>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt;
+      machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-&lt;role&gt;
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt;
+        machine.openshift.io/cluster-api-machine-role: &lt;role&gt;
+        machine.openshift.io/cluster-api-machine-type: &lt;role&gt;
+        machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-&lt;role&gt;
+    spec:
+      providerSpec: <co xml:id="CO11-3"/>
+        ...</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO11-1">
+<para>The cluster infrastructure ID.</para>
+</callout>
+<callout arearefs="CO11-2">
+<para>A default node label.</para>
+<note>
+<simpara>For clusters that have user-provisioned infrastructure, a compute machine set can only create <literal>worker</literal> and <literal>infra</literal> type machines.</simpara>
+</note>
+</callout>
+<callout arearefs="CO11-3">
+<para>The values in the <literal>&lt;providerSpec&gt;</literal> section of the compute machine set CR are platform-specific. For more information about <literal>&lt;providerSpec&gt;</literal> parameters in the CR, see the sample compute machine set CR configuration for your provider.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Create a <literal>MachineSet</literal> CR by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f &lt;file_name&gt;.yaml</programlisting>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>View the list of compute machine sets by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machineset -n openshift-machine-api</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-infra-us-east-1a    1         1         1       1           11m
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m</programlisting>
+</para>
+</formalpara>
+<simpara>When the new compute machine set is available, the <literal>DESIRED</literal> and <literal>CURRENT</literal> values match. If the compute machine set is not available, wait a few minutes and run the command again.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="_additional-resources-4" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/machine_management/#overview-of-machine-management">Overview of machine management</link>.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="creating-windows-machineset-vsphere">
+<title>Creating a Windows machine set on vSphere</title>
+<simpara>You can create a Windows <literal>MachineSet</literal> object to serve a specific purpose in your OpenShift Container Platform cluster on VMware vSphere. For example, you might create infrastructure Windows machine sets and related machines so that you can move supporting Windows workloads to the new Windows machines.</simpara>
+<bridgehead xml:id="_prerequisites-6" renderas="sect3">Prerequisites</bridgehead>
+<itemizedlist>
+<listitem>
+<simpara>You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).</simpara>
+</listitem>
+<listitem>
+<simpara>You are using a supported Windows Server as the operating system image.</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="machine-api-overview_creating-windows-machineset-vsphere">
+<title>Machine API overview</title>
+<simpara>The Machine API is a combination of primary resources that are based on the upstream Cluster API project and custom OpenShift Container Platform resources.</simpara>
+<simpara>For OpenShift Container Platform 4.14 clusters, the Machine API performs all node host provisioning management actions after the cluster installation finishes. Because of this system, OpenShift Container Platform 4.14 offers an elastic, dynamic provisioning method on top of public or private cloud infrastructure.</simpara>
+<simpara>The two primary resources are:</simpara>
+<variablelist>
+<varlistentry>
+<term>Machines</term>
+<listitem>
+<simpara>A fundamental unit that describes the host for a node. A machine has a <literal>providerSpec</literal> specification, which describes the types of compute nodes that are offered for different cloud platforms. For example, a machine type for a compute node might define a specific machine type and required metadata.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Machine sets</term>
+<listitem>
+<simpara><literal>MachineSet</literal> resources are groups of compute machines. Compute machine sets are to compute machines as replica sets are to pods. If you need more compute machines or must scale them down, you change the <literal>replicas</literal> field on the <literal>MachineSet</literal> resource to meet your compute need.</simpara>
+<warning>
+<simpara>Control plane machines cannot be managed by compute machine sets.</simpara>
+<simpara>Control plane machine sets provide management capabilities for supported control plane machines that are similar to what compute machine sets provide for compute machines.</simpara>
+<simpara>For more information, see “Managing control plane machines".</simpara>
+</warning>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>The following custom resources add more capabilities to your cluster:</simpara>
+<variablelist>
+<varlistentry>
+<term>Machine autoscaler</term>
+<listitem>
+<simpara>The <literal>MachineAutoscaler</literal> resource automatically scales compute machines in a cloud. You can set the minimum and maximum scaling boundaries for nodes in a specified compute machine set, and the machine autoscaler maintains that range of nodes.</simpara>
+<simpara>The <literal>MachineAutoscaler</literal> object takes effect after a <literal>ClusterAutoscaler</literal> object exists. Both <literal>ClusterAutoscaler</literal> and <literal>MachineAutoscaler</literal> resources are made available by the <literal>ClusterAutoscalerOperator</literal> object.</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Cluster autoscaler</term>
+<listitem>
+<simpara>This resource is based on the upstream cluster autoscaler project. In the OpenShift Container Platform implementation, it is integrated with the Machine API by extending the compute machine set API. You can use the cluster autoscaler to manage your cluster in the following ways:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Set cluster-wide scaling limits for resources such as cores, nodes, memory, and GPU</simpara>
+</listitem>
+<listitem>
+<simpara>Set the priority so that the cluster prioritizes pods and new nodes are not brought online for less important pods</simpara>
+</listitem>
+<listitem>
+<simpara>Set the scaling policy so that you can scale up nodes but not scale them down</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Machine health check</term>
+<listitem>
+<simpara>The <literal>MachineHealthCheck</literal> resource detects when a machine is unhealthy, deletes it, and, on supported platforms, makes a new machine.</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+<simpara>In OpenShift Container Platform version 3.11, you could not roll out a multi-zone architecture easily because the cluster did not manage machine provisioning. Beginning with OpenShift Container Platform version 4.1, this process is easier. Each compute machine set is scoped to a single zone, so the installation program sends out compute machine sets across availability zones on your behalf. And then because your compute is dynamic, and in the face of a zone failure, you always have a zone for when you must rebalance your machines. In global Azure regions that do not have multiple availability zones, you can use availability sets to ensure high availability. The autoscaler provides best-effort balancing over the life of a cluster.</simpara>
+</section>
+<section xml:id="preparing-vsphere-for-windows-containers">
+<title>Preparing your vSphere environment for Windows container workloads</title>
+<simpara>You must prepare your vSphere environment for Windows container workloads by creating the vSphere Windows VM golden image and enabling communication with the internal API server for the WMCO.</simpara>
+<section xml:id="creating-the-vsphere-windows-vm-golden-image_creating-windows-machineset-vsphere">
+<title>Creating the vSphere Windows VM golden image</title>
+<simpara>Create a vSphere Windows virtual machine (VM) golden image.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You have created a private/public key pair, which is used to configure key-based authentication in the OpenSSH server. The private key must also be configured in the Windows Machine Config Operator (WMCO) namespace. This is required to allow the WMCO to communicate with the Windows VM. See the "Configuring a secret for the Windows Machine Config Operator" section for more details.</simpara>
+</listitem>
+</itemizedlist>
+<note>
+<simpara>You must use <link xlink:href="https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell">Microsoft PowerShell</link> commands in several cases when creating your Windows VM. PowerShell commands in this guide are distinguished by the <literal>PS C:\&gt;</literal> prefix.</simpara>
+</note>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Select a compatible Windows Server version. Currently, the Windows Machine Config Operator (WMCO) stable version supports Windows Server 2022 Long-Term Servicing Channel with the OS-level container networking patch <link xlink:href="https://support.microsoft.com/en-us/topic/april-25-2022-kb5012637-os-build-20348-681-preview-2233d69c-d4a5-4be9-8c24-04a450861a8d">KB5012637</link>.</simpara>
+</listitem>
+<listitem>
+<simpara>Create a new VM in the vSphere client using the VM golden image with a compatible Windows Server version. For more information about compatible versions, see the "Windows Machine Config Operator prerequisites" section of the "Red Hat OpenShift support for Windows Containers release notes."</simpara>
+<important>
+<simpara>The virtual hardware version for your VM must meet the infrastructure requirements for OpenShift Container Platform. For more information, see the "VMware vSphere infrastructure requirements" section in the OpenShift Container Platform documentation. Also, you can refer to VMware&#8217;s documentation on <link xlink:href="https://kb.vmware.com/s/article/1003746">virtual machine hardware versions</link>.</simpara>
+</important>
+</listitem>
+<listitem>
+<simpara>Install and configure VMware Tools version 11.0.6 or greater on the Windows VM. See the <link xlink:href="https://docs.vmware.com/en/VMware-Tools/index.html">VMware Tools documentation</link> for more information.</simpara>
+</listitem>
+<listitem>
+<simpara>After installing VMware Tools on the Windows VM, verify the following:</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>The <literal>C:\ProgramData\VMware\VMware Tools\tools.conf</literal> file exists with the following entry:</simpara>
+<programlisting language="ini" linenumbering="unnumbered">exclude-nics=</programlisting>
+<simpara>If the <literal>tools.conf</literal> file does not exist, create it with the <literal>exclude-nics</literal> option uncommented and set as an empty value.</simpara>
+<simpara>This entry ensures the cloned vNIC generated on the Windows VM by the hybrid-overlay is not ignored.</simpara>
+</listitem>
+<listitem>
+<simpara>The Windows VM has a valid IP address in vCenter:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">C:\&gt; ipconfig</programlisting>
+</listitem>
+<listitem>
+<simpara>The VMTools Windows service is running:</simpara>
+<programlisting language="posh" linenumbering="unnumbered">PS C:\&gt; Get-Service -Name VMTools | Select Status, StartType</programlisting>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Install and configure the OpenSSH Server on the Windows VM. See Microsoft&#8217;s documentation on <link xlink:href="https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">installing OpenSSH</link> for more details.</simpara>
+</listitem>
+<listitem>
+<simpara>Set up SSH access for an administrative user. See Microsoft&#8217;s documentation on the <link xlink:href="https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement#administrative-user">Administrative user</link> to do this.</simpara>
+<important>
+<simpara>The public key used in the instructions must correspond to the private key you create later in the WMCO namespace that holds your secret. See the "Configuring a secret for the Windows Machine Config Operator" section for more details.</simpara>
+</important>
+</listitem>
+<listitem>
+<simpara>You must create a new firewall rule in the Windows VM that allows incoming connections for container logs. Run the following PowerShell command to create the firewall rule on TCP port 10250:</simpara>
+<programlisting language="posh" linenumbering="unnumbered">PS C:\&gt; New-NetFirewallRule -DisplayName "ContainerLogsPort" -LocalPort 10250 -Enabled True -Direction Inbound -Protocol TCP -Action Allow -EdgeTraversalPolicy Allow</programlisting>
+</listitem>
+<listitem>
+<simpara>Clone the Windows VM so it is a reusable image. Follow the VMware documentation on how to <link xlink:href="https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.vm_admin.doc/GUID-1E185A80-0B97-4B46-A32B-3EF8F309BEED.html">clone an existing virtual machine</link> for more details.</simpara>
+</listitem>
+<listitem>
+<simpara>In the cloned Windows VM, run the <link xlink:href="https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/sysprep--generalize--a-windows-installation">Windows Sysprep tool</link>:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">C:\&gt; C:\Windows\System32\Sysprep\sysprep.exe /generalize /oobe /shutdown /unattend:&lt;path_to_unattend.xml&gt; <co xml:id="CO12-1"/></programlisting>
+<calloutlist>
+<callout arearefs="CO12-1">
+<para>Specify the path to your <literal>unattend.xml</literal> file.</para>
+</callout>
+</calloutlist>
+<note>
+<simpara>There is a limit on how many times you can run the <literal>sysprep</literal> command on a Windows image. Consult Microsoft&#8217;s <link xlink:href="https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/sysprep--generalize--a-windows-installation#limits-on-how-many-times-you-can-run-sysprep">documentation</link> for more information.</simpara>
+</note>
+<simpara>An example <literal>unattend.xml</literal> is provided, which maintains all the changes needed for the WMCO. You must modify this example; it cannot be used directly.</simpara>
+<example>
+<title>Example <literal>unattend.xml</literal></title>
+<programlisting language="xml" linenumbering="unnumbered">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;unattend xmlns="urn:schemas-microsoft-com:unattend"&gt;
+   &lt;settings pass="specialize"&gt;
+      &lt;component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"&gt;
+         &lt;InputLocale&gt;0409:00000409&lt;/InputLocale&gt;
+         &lt;SystemLocale&gt;en-US&lt;/SystemLocale&gt;
+         &lt;UILanguage&gt;en-US&lt;/UILanguage&gt;
+         &lt;UILanguageFallback&gt;en-US&lt;/UILanguageFallback&gt;
+         &lt;UserLocale&gt;en-US&lt;/UserLocale&gt;
+      &lt;/component&gt;
+      &lt;component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Security-SPP-UX" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"&gt;
+         &lt;SkipAutoActivation&gt;true&lt;/SkipAutoActivation&gt;
+      &lt;/component&gt;
+      &lt;component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-SQMApi" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"&gt;
+         &lt;CEIPEnabled&gt;0&lt;/CEIPEnabled&gt;
+      &lt;/component&gt;
+      &lt;component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"&gt;
+         &lt;ComputerName&gt;winhost&lt;/ComputerName&gt; <co xml:id="CO13-1"/>
+      &lt;/component&gt;
+   &lt;/settings&gt;
+   &lt;settings pass="oobeSystem"&gt;
+      &lt;component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"&gt;
+         &lt;AutoLogon&gt;
+            &lt;Enabled&gt;false&lt;/Enabled&gt; <co xml:id="CO13-2"/>
+         &lt;/AutoLogon&gt;
+         &lt;OOBE&gt;
+            &lt;HideEULAPage&gt;true&lt;/HideEULAPage&gt;
+            &lt;HideLocalAccountScreen&gt;true&lt;/HideLocalAccountScreen&gt;
+            &lt;HideOEMRegistrationScreen&gt;true&lt;/HideOEMRegistrationScreen&gt;
+            &lt;HideOnlineAccountScreens&gt;true&lt;/HideOnlineAccountScreens&gt;
+            &lt;HideWirelessSetupInOOBE&gt;true&lt;/HideWirelessSetupInOOBE&gt;
+            &lt;NetworkLocation&gt;Work&lt;/NetworkLocation&gt;
+            &lt;ProtectYourPC&gt;1&lt;/ProtectYourPC&gt;
+            &lt;SkipMachineOOBE&gt;true&lt;/SkipMachineOOBE&gt;
+            &lt;SkipUserOOBE&gt;true&lt;/SkipUserOOBE&gt;
+         &lt;/OOBE&gt;
+         &lt;RegisteredOrganization&gt;Organization&lt;/RegisteredOrganization&gt;
+         &lt;RegisteredOwner&gt;Owner&lt;/RegisteredOwner&gt;
+         &lt;DisableAutoDaylightTimeSet&gt;false&lt;/DisableAutoDaylightTimeSet&gt;
+         &lt;TimeZone&gt;Eastern Standard Time&lt;/TimeZone&gt;
+         &lt;UserAccounts&gt;
+            &lt;AdministratorPassword&gt;
+               &lt;Value&gt;MyPassword&lt;/Value&gt; <co xml:id="CO13-3"/>
+               &lt;PlainText&gt;true&lt;/PlainText&gt;
+            &lt;/AdministratorPassword&gt;
+         &lt;/UserAccounts&gt;
+      &lt;/component&gt;
+   &lt;/settings&gt;
+&lt;/unattend&gt;</programlisting>
+<calloutlist>
+<callout arearefs="CO13-1">
+<para>Specify the <literal>ComputerName</literal>, which must follow the <link xlink:href="https://kubernetes.io/docs/concepts/overview/working-with-objects/names">Kubernetes' names specification</link>. These specifications also apply to Guest OS customization performed on the resulting template while creating new VMs.</para>
+</callout>
+<callout arearefs="CO13-2">
+<para>Disable the automatic logon to avoid the security issue of leaving an open terminal with Administrator privileges at boot. This is the default value and must not be changed.</para>
+</callout>
+<callout arearefs="CO13-3">
+<para>Replace the <literal>MyPassword</literal> placeholder with the password for the Administrator account. This prevents the built-in Administrator account from having a blank password by default. Follow Microsoft&#8217;s <link xlink:href="https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements">best practices for choosing a password</link>.</para>
+</callout>
+</calloutlist>
+</example>
+<simpara>After the Sysprep tool has completed, the Windows VM will power off. You must not use or power on this VM anymore.</simpara>
+</listitem>
+<listitem>
+<simpara>Convert the Windows VM to <link xlink:href="https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.vm_admin.doc/GUID-5B3737CC-28DB-4334-BD18-6E12011CDC9F.html">a template in vCenter</link>.</simpara>
+</listitem>
+</orderedlist>
+<section xml:id="additional-resources_creating-windows-machineset-vsphere" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link linkend="configuring-secret-for-wmco_enabling-windows-container-workloads">Configuring a secret for the Windows Machine Config Operator</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/installing/#installation-vsphere-infrastructure_ipi-vsphere-installation-reqs">VMware vSphere infrastructure requirements</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+<section xml:id="enabling-internal-api-server-vsphere_creating-windows-machineset-vsphere">
+<title>Enabling communication with the internal API server for the WMCO on vSphere</title>
+<simpara>The Windows Machine Config Operator (WMCO) downloads the Ignition config files from the internal API server endpoint. You must enable communication with the internal API server so that your Windows virtual machine (VM) can download the Ignition config files, and the kubelet on the configured VM can only communicate with the internal API server.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>You have installed a cluster on vSphere.</simpara>
+</listitem>
+</itemizedlist>
+<itemizedlist>
+<title>Procedure</title>
+<listitem>
+<simpara>Add a new DNS entry for <literal>api-int.&lt;cluster_name&gt;.&lt;base_domain&gt;</literal> that points to the external API server URL <literal>api.&lt;cluster_name&gt;.&lt;base_domain&gt;</literal>. This can be a CNAME or an additional A record.</simpara>
+</listitem>
+</itemizedlist>
+<note>
+<simpara>The external API endpoint was already created as part of the initial cluster installation on vSphere.</simpara>
+</note>
+</section>
+</section>
+<section xml:id="windows-machineset-vsphere_creating-windows-machineset-vsphere">
+<title>Sample YAML for a Windows MachineSet object on vSphere</title>
+<simpara>This sample YAML defines a Windows <literal>MachineSet</literal> object running on VMware vSphere that the Windows Machine Config Operator (WMCO) can react upon.</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO14-1"/>
+  name: &lt;windows_machine_set_name&gt; <co xml:id="CO14-2"/>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO14-3"/>
+      machine.openshift.io/cluster-api-machineset: &lt;windows_machine_set_name&gt; <co xml:id="CO14-4"/>
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO14-5"/>
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: &lt;windows_machine_set_name&gt; <co xml:id="CO14-6"/>
+        machine.openshift.io/os-id: Windows <co xml:id="CO14-7"/>
+    spec:
+      metadata:
+        labels:
+          node-role.kubernetes.io/worker: "" <co xml:id="CO14-8"/>
+      providerSpec:
+        value:
+          apiVersion: vsphereprovider.openshift.io/v1beta1
+          credentialsSecret:
+            name: vsphere-cloud-credentials
+          diskGiB: 128 <co xml:id="CO14-9"/>
+          kind: VSphereMachineProviderSpec
+          memoryMiB: 16384
+          network:
+            devices:
+            - networkName: "&lt;vm_network_name&gt;" <co xml:id="CO14-10"/>
+          numCPUs: 4
+          numCoresPerSocket: 1
+          snapshot: ""
+          template: &lt;windows_vm_template_name&gt; <co xml:id="CO14-11"/>
+          userDataSecret:
+            name: windows-user-data <co xml:id="CO14-12"/>
+          workspace:
+             datacenter: &lt;vcenter_datacenter_name&gt; <co xml:id="CO14-13"/>
+             datastore: &lt;vcenter_datastore_name&gt; <co xml:id="CO14-14"/>
+             folder: &lt;vcenter_vm_folder_path&gt; <co xml:id="CO14-15"/>
+             resourcePool: &lt;vsphere_resource_pool&gt; <co xml:id="CO14-16"/>
+             server: &lt;vcenter_server_ip&gt; <co xml:id="CO14-17"/></programlisting>
+<calloutlist>
+<callout arearefs="CO14-1 CO14-3 CO14-5">
+<para>Specify the infrastructure ID that is based on the cluster ID that you set when you provisioned the cluster. You can obtain the infrastructure ID by running the following command:</para>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster</programlisting>
+</callout>
+<callout arearefs="CO14-2 CO14-4 CO14-6">
+<para>Specify the Windows compute machine set name. The compute machine set name cannot be more than 9 characters long, due to the way machine names are generated in vSphere.</para>
+</callout>
+<callout arearefs="CO14-7">
+<para>Configure the compute machine set as a Windows machine.</para>
+</callout>
+<callout arearefs="CO14-8">
+<para>Configure the Windows node as a compute machine.</para>
+</callout>
+<callout arearefs="CO14-9">
+<para>Specify the size of the vSphere Virtual Machine Disk (VMDK).</para>
+<note>
+<simpara>This parameter does not set the size of the Windows partition. You can resize the Windows partition by using the <literal>unattend.xml</literal> file or by creating the vSphere Windows virtual machine (VM) golden image with the required disk size.</simpara>
+</note>
+</callout>
+<callout arearefs="CO14-10">
+<para>Specify the vSphere VM network to deploy the compute machine set to. This VM network must be where other Linux compute machines reside in the cluster.</para>
+</callout>
+<callout arearefs="CO14-11">
+<para>Specify the full path of the Windows vSphere VM template to use, such as <literal>golden-images/windows-server-template</literal>. The name must be unique.</para>
+<important>
+<simpara>Do not specify the original VM template. The VM template must remain off and must be cloned for new Windows machines. Starting the VM template configures the VM template as a VM on the platform, which prevents it from being used as a template that compute machine sets can apply configurations to.</simpara>
+</important>
+</callout>
+<callout arearefs="CO14-12">
+<para>The <literal>windows-user-data</literal> is created by the WMCO when the first Windows machine is configured. After that, the <literal>windows-user-data</literal> is available for all subsequent compute machine sets to consume.</para>
+</callout>
+<callout arearefs="CO14-13">
+<para>Specify the vCenter Datacenter to deploy the compute machine set on.</para>
+</callout>
+<callout arearefs="CO14-14">
+<para>Specify the vCenter Datastore to deploy the compute machine set on.</para>
+</callout>
+<callout arearefs="CO14-15">
+<para>Specify the path to the vSphere VM folder in vCenter, such as <literal>/dc1/vm/user-inst-5ddjd</literal>.</para>
+</callout>
+<callout arearefs="CO14-16">
+<para>Optional: Specify the vSphere resource pool for your Windows VMs.</para>
+</callout>
+<callout arearefs="CO14-17">
+<para>Specify the vCenter server IP or fully qualified domain name.</para>
+</callout>
+</calloutlist>
+</section>
+<section xml:id="machineset-creating_creating-windows-machineset-vsphere">
+<title>Creating a compute machine set</title>
+<simpara>In addition to the compute machine sets created by the installation program, you can create your own to dynamically manage the machine compute resources for specific workloads of your choice.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>Deploy an OpenShift Container Platform cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>Install the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>Log in to <literal>oc</literal> as a user with <literal>cluster-admin</literal> permission.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a new YAML file that contains the compute machine set custom resource (CR) sample and is named <literal>&lt;file_name&gt;.yaml</literal>.</simpara>
+<simpara>Ensure that you set the <literal>&lt;clusterID&gt;</literal> and <literal>&lt;role&gt;</literal> parameter values.</simpara>
+</listitem>
+<listitem>
+<simpara>Optional: If you are not sure which value to set for a specific field, you can check an existing compute machine set from your cluster.</simpara>
+<orderedlist numeration="loweralpha">
+<listitem>
+<simpara>To list the compute machine sets in your cluster, run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machinesets -n openshift-machine-api</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-worker-us-east-1a   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c   1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d   0         0                             55m
+agl030519-vplxk-worker-us-east-1e   0         0                             55m
+agl030519-vplxk-worker-us-east-1f   0         0                             55m</programlisting>
+</para>
+</formalpara>
+</listitem>
+<listitem>
+<simpara>To view values of a specific compute machine set custom resource (CR), run the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machineset &lt;machineset_name&gt; \
+  -n openshift-machine-api -o yaml</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt; <co xml:id="CO15-1"/>
+  name: &lt;infrastructure_id&gt;-&lt;role&gt; <co xml:id="CO15-2"/>
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt;
+      machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-&lt;role&gt;
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: &lt;infrastructure_id&gt;
+        machine.openshift.io/cluster-api-machine-role: &lt;role&gt;
+        machine.openshift.io/cluster-api-machine-type: &lt;role&gt;
+        machine.openshift.io/cluster-api-machineset: &lt;infrastructure_id&gt;-&lt;role&gt;
+    spec:
+      providerSpec: <co xml:id="CO15-3"/>
+        ...</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO15-1">
+<para>The cluster infrastructure ID.</para>
+</callout>
+<callout arearefs="CO15-2">
+<para>A default node label.</para>
+<note>
+<simpara>For clusters that have user-provisioned infrastructure, a compute machine set can only create <literal>worker</literal> and <literal>infra</literal> type machines.</simpara>
+</note>
+</callout>
+<callout arearefs="CO15-3">
+<para>The values in the <literal>&lt;providerSpec&gt;</literal> section of the compute machine set CR are platform-specific. For more information about <literal>&lt;providerSpec&gt;</literal> parameters in the CR, see the sample compute machine set CR configuration for your provider.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+</listitem>
+<listitem>
+<simpara>Create a <literal>MachineSet</literal> CR by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f &lt;file_name&gt;.yaml</programlisting>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>View the list of compute machine sets by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machineset -n openshift-machine-api</programlisting>
+<formalpara>
+<title>Example output</title>
+<para>
+<programlisting language="terminal" linenumbering="unnumbered">NAME                                       DESIRED   CURRENT   READY   AVAILABLE   AGE
+agl030519-vplxk-windows-worker-us-east-1a  1         1         1       1           11m
+agl030519-vplxk-worker-us-east-1a          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1b          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1c          1         1         1       1           55m
+agl030519-vplxk-worker-us-east-1d          0         0                             55m
+agl030519-vplxk-worker-us-east-1e          0         0                             55m
+agl030519-vplxk-worker-us-east-1f          0         0                             55m</programlisting>
+</para>
+</formalpara>
+<simpara>When the new compute machine set is available, the <literal>DESIRED</literal> and <literal>CURRENT</literal> values match. If the compute machine set is not available, wait a few minutes and run the command again.</simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="_additional-resources-5" role="_additional-resources">
+<title>Additional resources</title>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/machine_management/#overview-of-machine-management">Overview of machine management</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</section>
+</chapter>
+<chapter xml:id="scheduling-windows-workloads">
+<title>Scheduling Windows container workloads</title>
+<simpara>You can schedule Windows workloads to Windows compute nodes.</simpara>
+<bridgehead xml:id="_prerequisites-7" renderas="sect2">Prerequisites</bridgehead>
+<itemizedlist>
+<listitem>
+<simpara>You installed the Windows Machine Config Operator (WMCO) using Operator Lifecycle Manager (OLM).</simpara>
+</listitem>
+<listitem>
+<simpara>You are using a Windows container as the OS image.</simpara>
+</listitem>
+<listitem>
+<simpara>You have created a Windows compute machine set.</simpara>
+</listitem>
+</itemizedlist>
+<section xml:id="windows-pod-placement_scheduling-windows-workloads">
+<title>Windows pod placement</title>
+<simpara>Before deploying your Windows workloads to the cluster, you must configure your Windows node scheduling so pods are assigned correctly. Since you have a machine hosting your Windows node, it is managed the same as a Linux-based node. Likewise, scheduling a Windows pod to the appropriate Windows node is completed similarly, using mechanisms like taints, tolerations, and node selectors.</simpara>
+<simpara>With multiple operating systems, and the ability to run multiple Windows OS variants in the same cluster, you must map your Windows pods to a base Windows OS variant by using a <literal>RuntimeClass</literal> object. For example, if you have multiple Windows nodes running on different Windows Server container versions, the cluster could schedule your Windows pods to an incompatible Windows OS variant. You must have <literal>RuntimeClass</literal> objects configured for each Windows OS variant on your cluster. Using a <literal>RuntimeClass</literal> object is also recommended if you have only one Windows OS variant available in your cluster.</simpara>
+<simpara>For more information, see Microsoft&#8217;s documentation on <link xlink:href="https://docs.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/update-containers#host-and-container-version-compatibility">Host and container version compatibility</link>.</simpara>
+<simpara>Also, it is recommended that you set the <literal>spec.os.name.windows</literal> parameter in your workload pods. The Windows Machine Config Operator (WMCO) uses this field to authoritatively identify the pod operating system for validation and is used to enforce Windows-specific pod security context constraints (SCCs). Currently, this parameter has no effect on pod scheduling. For more information about this parameter, see the <link xlink:href="https://kubernetes.io/docs/concepts/workloads/pods/#pod-os">Kubernetes Pods documentation</link>.</simpara>
+<important>
+<simpara>The container base image must be the same Windows OS version and build number that is running on the node where the conainer is to be scheduled.</simpara>
+<simpara>Also, if you upgrade the Windows nodes from one version to another, for example going from 20H2 to 2022, you must upgrade your container base image to match the new version. For more information, see <link xlink:href="https://learn.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/version-compatibility?tabs=windows-server-2022%2Cwindows-11-21H2">Windows container version compatibility</link>.</simpara>
+</important>
+<bridgehead xml:id="_additional-resources-6" role="_additional-resources" renderas="sect3">Additional resources</bridgehead>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/nodes/#nodes-scheduler-about">Controlling pod placement using the scheduler</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/nodes/#nodes-scheduler-taints-tolerations">Controlling pod placement using node taints</link></simpara>
+</listitem>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/nodes/#nodes-scheduler-node-selectors">Placing pods on specific nodes using node selectors</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+<section xml:id="creating-runtimeclass_scheduling-windows-workloads">
+<title>Creating a RuntimeClass object to encapsulate scheduling mechanisms</title>
+<simpara>Using a <literal>RuntimeClass</literal> object simplifies the use of scheduling mechanisms like taints and tolerations; you deploy a runtime class that encapsulates your taints and tolerations and then apply it to your pods to schedule them to the appropriate node. Creating a runtime class is also necessary in clusters that support multiple operating system variants.</simpara>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a <literal>RuntimeClass</literal> object YAML file. For example, <literal>runtime-class.yaml</literal>:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: node.k8s.io/v1beta1
+kind: RuntimeClass
+metadata:
+  name: &lt;runtime_class_name&gt; <co xml:id="CO16-1"/>
+handler: 'runhcs-wcow-process'
+scheduling:
+  nodeSelector: <co xml:id="CO16-2"/>
+    kubernetes.io/os: 'windows'
+    kubernetes.io/arch: 'amd64'
+    node.kubernetes.io/windows-build: '10.0.17763'
+  tolerations: <co xml:id="CO16-3"/>
+  - effect: NoSchedule
+    key: os
+    operator: Equal
+    value: "Windows"</programlisting>
+<calloutlist>
+<callout arearefs="CO16-1">
+<para>Specify the <literal>RuntimeClass</literal> object name, which is defined in the pods you want to be managed by this runtime class.</para>
+</callout>
+<callout arearefs="CO16-2">
+<para>Specify labels that must be present on nodes that support this runtime class. Pods using this runtime class can only be scheduled to a node matched by this selector. The node selector of the runtime class is merged with the existing node selector of the pod. Any conflicts prevent the pod from being scheduled to the node.</para>
+</callout>
+<callout arearefs="CO16-3">
+<para>Specify tolerations to append to pods, excluding duplicates, running with this runtime class during admission. This combines the set of nodes tolerated by the pod and the runtime class.</para>
+</callout>
+</calloutlist>
+</listitem>
+<listitem>
+<simpara>Create the <literal>RuntimeClass</literal> object:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f &lt;file-name&gt;.yaml</programlisting>
+<simpara>For example:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc create -f runtime-class.yaml</programlisting>
+</listitem>
+<listitem>
+<simpara>Apply the <literal>RuntimeClass</literal> object to your pod to ensure it is scheduled to the appropriate operating system variant:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: Pod
+metadata:
+  name: my-windows-pod
+spec:
+  runtimeClassName: &lt;runtime_class_name&gt; <co xml:id="CO17-1"/>
+...</programlisting>
+<calloutlist>
+<callout arearefs="CO17-1">
+<para>Specify the runtime class to manage the scheduling of your pod.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="sample-windows-workload-deployment_scheduling-windows-workloads">
+<title>Sample Windows container workload deployment</title>
+<simpara>You can deploy Windows container workloads to your cluster once you have a Windows compute node available.</simpara>
+<note>
+<simpara>This sample deployment is provided for reference only.</simpara>
+</note>
+<formalpara>
+<title>Example <literal>Service</literal> object</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: v1
+kind: Service
+metadata:
+  name: win-webserver
+  labels:
+    app: win-webserver
+spec:
+  ports:
+    # the port that this service should serve on
+  - port: 80
+    targetPort: 80
+  selector:
+    app: win-webserver
+  type: LoadBalancer</programlisting>
+</para>
+</formalpara>
+<formalpara>
+<title>Example <literal>Deployment</literal> object</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: win-webserver
+  name: win-webserver
+spec:
+  selector:
+    matchLabels:
+      app: win-webserver
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: win-webserver
+      name: win-webserver
+    spec:
+      tolerations:
+      - key: "os"
+        value: "Windows"
+        Effect: "NoSchedule"
+      containers:
+      - name: windowswebserver
+        image: mcr.microsoft.com/windows/servercore:ltsc2019
+        imagePullPolicy: IfNotPresent
+        command:
+        - powershell.exe
+        - -command
+        - $listener = New-Object System.Net.HttpListener; $listener.Prefixes.Add('http://*:80/'); $listener.Start();Write-Host('Listening at http://*:80/'); while ($listener.IsListening) { $context = $listener.GetContext(); $response = $context.Response; $content='&lt;html&gt;&lt;body&gt;&lt;H1&gt;Red Hat OpenShift + Windows Container Workloads&lt;/H1&gt;&lt;/body&gt;&lt;/html&gt;'; $buffer = [System.Text.Encoding]::UTF8.GetBytes($content); $response.ContentLength64 = $buffer.Length; $response.OutputStream.Write($buffer, 0, $buffer.Length); $response.Close(); };
+        securityContext:
+          runAsNonRoot: false
+          windowsOptions:
+            runAsUserName: "ContainerAdministrator"
+      nodeSelector:
+        kubernetes.io/os: windows
+      os:
+        name: windows</programlisting>
+</para>
+</formalpara>
+<note>
+<simpara>When using the <literal>mcr.microsoft.com/powershell:&lt;tag&gt;</literal> container image, you must define the command as <literal>pwsh.exe</literal>. If you are using the <literal>mcr.microsoft.com/windows/servercore:&lt;tag&gt;</literal> container image, you must define the command as <literal>powershell.exe</literal>. For more information, see Microsoft&#8217;s documentation.</simpara>
+</note>
+</section>
+<section xml:id="machineset-manually-scaling_scheduling-windows-workloads">
+<title>Scaling a compute machine set manually</title>
+<simpara>To add or remove an instance of a machine in a compute machine set, you can manually scale the compute machine set.</simpara>
+<simpara>This guidance is relevant to fully automated, installer-provisioned infrastructure installations. Customized, user-provisioned infrastructure installations do not have compute machine sets.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>Install an OpenShift Container Platform cluster and the <literal>oc</literal> command line.</simpara>
+</listitem>
+<listitem>
+<simpara>Log in to  <literal>oc</literal> as a user with <literal>cluster-admin</literal> permission.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>View the compute machine sets that are in the cluster by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machinesets -n openshift-machine-api</programlisting>
+<simpara>The compute machine sets are listed in the form of <literal>&lt;clusterid&gt;-worker-&lt;aws-region-az&gt;</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>View the compute machines that are in the cluster by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machine -n openshift-machine-api</programlisting>
+</listitem>
+<listitem>
+<simpara>Set the annotation on the compute machine that you want to delete by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc annotate machine/&lt;machine_name&gt; -n openshift-machine-api machine.openshift.io/delete-machine="true"</programlisting>
+</listitem>
+<listitem>
+<simpara>Scale the compute machine set by running one of the following commands:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc scale --replicas=2 machineset &lt;machineset&gt; -n openshift-machine-api</programlisting>
+<simpara>Or:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc edit machineset &lt;machineset&gt; -n openshift-machine-api</programlisting>
+<tip>
+<simpara>You can alternatively apply the following YAML to scale the compute machine set:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  name: &lt;machineset&gt;
+  namespace: openshift-machine-api
+spec:
+  replicas: 2</programlisting>
+</tip>
+<simpara>You can scale the compute machine set up or down. It takes several minutes for the new machines to be available.</simpara>
+<important>
+<simpara>By default, the machine controller tries to drain the node that is backed by the machine until it succeeds. In some situations, such as with a misconfigured pod disruption budget, the drain operation might not be able to succeed. If the drain operation fails, the machine controller cannot proceed removing the machine.</simpara>
+<simpara>You can skip draining the node by annotating <literal>machine.openshift.io/exclude-node-draining</literal> in a specific machine.</simpara>
+</important>
+</listitem>
+</orderedlist>
+<itemizedlist>
+<title>Verification</title>
+<listitem>
+<simpara>Verify the deletion of the intended machine by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machines</programlisting>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter xml:id="windows-node-upgrades">
+<title>Windows node upgrades</title>
+<simpara>You can ensure your Windows nodes have the latest updates by upgrading the Windows Machine Config Operator (WMCO).</simpara>
+<section xml:id="wmco-upgrades_windows-node-upgrades">
+<title>Windows Machine Config Operator upgrades</title>
+<simpara>When a new version of the Windows Machine Config Operator (WMCO) is released that is compatible with the current cluster version, the Operator is upgraded based on the upgrade channel and subscription approval strategy it was installed with when using the Operator Lifecycle Manager (OLM). The WMCO upgrade results in the Kubernetes components in the Windows machine being upgraded.</simpara>
+<note>
+<simpara>If you are upgrading to a new version of the WMCO and want to use cluster monitoring, you must have the <literal>openshift.io/cluster-monitoring=true</literal> label present in the WMCO namespace. If you add the label to a pre-existing WMCO namespace, and there are already Windows nodes configured, restart the WMCO pod to allow monitoring graphs to display.</simpara>
+</note>
+<simpara>For a non-disruptive upgrade, the WMCO terminates the Windows machines configured by the previous version of the WMCO and recreates them using the current version. This is done by deleting the <literal>Machine</literal> object, which results in the drain and deletion of the Windows node. To facilitate an upgrade, the WMCO adds a version annotation to all the configured nodes. During an upgrade, a mismatch in version annotation results in the deletion and recreation of a Windows machine. To have minimal service disruptions during an upgrade, the WMCO only updates one Windows machine at a time.</simpara>
+<simpara>After the update, it is recommended that you set the <literal>spec.os.name.windows</literal> parameter in your workload pods. The WMCO uses this field to authoritatively identify the pod operating system for validation and is used to enforce Windows-specific pod security context constraints (SCCs).</simpara>
+<important>
+<simpara>The WMCO is only responsible for updating Kubernetes components, not for Windows operating system updates. You provide the Windows image when creating the VMs; therefore, you are responsible for providing an updated image. You can provide an updated Windows image by changing the image configuration in the <literal>MachineSet</literal> spec.</simpara>
+</important>
+<simpara>For more information on Operator upgrades using the Operator Lifecycle Manager (OLM), see <link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/operators/#olm-upgrading-operators">Updating installed Operators</link>.</simpara>
+</section>
+</chapter>
+<chapter xml:id="byoh-windows-instance">
+<title>Using Bring-Your-Own-Host (BYOH) Windows instances as nodes</title>
+<simpara>Bring-Your-Own-Host (BYOH) allows for users to repurpose Windows Server VMs and bring them to OpenShift Container Platform. BYOH Windows instances benefit users looking to mitigate major disruptions in the event that a Windows server goes offline.</simpara>
+<section xml:id="configuring-byoh-windows-instance">
+<title>Configuring a BYOH Windows instance</title>
+<simpara>Creating a BYOH Windows instance requires creating a config map in the Windows Machine Config Operator (WMCO) namespace.</simpara>
+<formalpara>
+<title>Prerequisites</title>
+<para>Any Windows instances that are to be attached to the cluster as a node must fulfill the following requirements:</para>
+</formalpara>
+<itemizedlist>
+<listitem>
+<simpara>The instance must be on the same network as the Linux worker nodes in the cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>Port 22 must be open and running an SSH server.</simpara>
+</listitem>
+<listitem>
+<simpara>The default shell for the SSH server must be the <link xlink:href="https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_server_configuration#configuring-the-default-shell-for-openssh-in-windows">Windows Command shell</link>, or <literal>cmd.exe</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>Port 10250 must be open for log collection.</simpara>
+</listitem>
+<listitem>
+<simpara>An administrator user is present with the private key used in the secret set as an authorized SSH key.</simpara>
+</listitem>
+<listitem>
+<simpara>If you are creating a BYOH Windows instance for an installer-provisioned infrastructure (IPI) AWS cluster, you must add a tag to the AWS instance that matches the <literal>spec.template.spec.value.tag</literal> value in the compute machine set for your worker nodes. For example, <literal>kubernetes.io/cluster/&lt;cluster_id&gt;: owned</literal> or <literal>kubernetes.io/cluster/&lt;cluster_id&gt;: shared</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>If you are creating a BYOH Windows instance on vSphere, communication with the internal API server must be enabled.</simpara>
+</listitem>
+<listitem>
+<simpara>The hostname of the instance must follow the <link xlink:href="https://datatracker.ietf.org/doc/html/rfc1123">RFC 1123</link> DNS label requirements, which include the following standards:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>Contains only lowercase alphanumeric characters or '-'.</simpara>
+</listitem>
+<listitem>
+<simpara>Starts with an alphanumeric character.</simpara>
+</listitem>
+<listitem>
+<simpara>Ends with an alphanumeric character.</simpara>
+</listitem>
+</itemizedlist>
+</listitem>
+</itemizedlist>
+<note>
+<simpara>Windows instances deployed by the WMCO are configured with the containerd container runtime. Because the WMCO installs and manages the runtime, it is recommended that you not manually install containerd on nodes.</simpara>
+</note>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Create a ConfigMap named <literal>windows-instances</literal> in the WMCO namespace that describes the Windows instances to be added.</simpara>
+<note>
+<simpara>Format each entry in the config map&#8217;s data section by using the address as the key while formatting the value as <literal>username=&lt;username&gt;</literal>.</simpara>
+</note>
+<formalpara>
+<title>Example config map</title>
+<para>
+<programlisting language="yaml" linenumbering="unnumbered">kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: windows-instances
+  namespace: openshift-windows-machine-config-operator
+data:
+  10.1.42.1: |- <co xml:id="CO18-1"/>
+    username=Administrator <co xml:id="CO18-2"/>
+  instance.example.com: |-
+    username=core</programlisting>
+</para>
+</formalpara>
+<calloutlist>
+<callout arearefs="CO18-1">
+<para>The address that the WMCO uses to reach the instance over SSH, either a DNS name or an IPv4 address. A DNS PTR record must exist for this address. It is recommended that you use a DNS name with your BYOH instance if your organization uses DHCP to assign IP addresses. If not, you need to update the <literal>windows-instances</literal> ConfigMap whenever the instance is assigned a new IP address.</para>
+</callout>
+<callout arearefs="CO18-2">
+<para>The name of the administrator user created in the prerequisites.</para>
+</callout>
+</calloutlist>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="removing-byoh-windows-instance">
+<title>Removing BYOH Windows instances</title>
+<simpara>You can remove BYOH instances attached to the cluster by deleting the instance&#8217;s entry in the config map. Deleting an instance reverts that instance back to its state prior to adding to the cluster. Any logs and container runtime artifacts are not added to these instances.</simpara>
+<simpara>For an instance to be cleanly removed, it must be accessible with the current private key provided to WMCO. For example, to remove the <literal>10.1.42.1</literal> instance from the previous example, the config map would be changed to the following:</simpara>
+<programlisting language="yaml" linenumbering="unnumbered">kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: windows-instances
+  namespace: openshift-windows-machine-config-operator
+data:
+  instance.example.com: |-
+    username=core</programlisting>
+<simpara>Deleting <literal>windows-instances</literal> is viewed as a request to deconstruct all Windows instances added as nodes.</simpara>
+</section>
+</chapter>
+<chapter xml:id="removing-windows-nodes">
+<title>Removing Windows nodes</title>
+<simpara>You can remove a Windows node by deleting its host Windows machine.</simpara>
+<section xml:id="machine-delete_removing-windows-nodes">
+<title>Deleting a specific machine</title>
+<simpara>You can delete a specific machine.</simpara>
+<important>
+<simpara>Do not delete a control plane machine unless your cluster uses a control plane machine set.</simpara>
+</important>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>Install an OpenShift Container Platform cluster.</simpara>
+</listitem>
+<listitem>
+<simpara>Install the OpenShift CLI (<literal>oc</literal>).</simpara>
+</listitem>
+<listitem>
+<simpara>Log in to <literal>oc</literal> as a user with <literal>cluster-admin</literal> permission.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>View the machines that are in the cluster by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get machine -n openshift-machine-api</programlisting>
+<simpara>The command output contains a list of machines in the <literal>&lt;clusterid&gt;-&lt;role&gt;-&lt;cloud_region&gt;</literal> format.</simpara>
+</listitem>
+<listitem>
+<simpara>Identify the machine that you want to delete.</simpara>
+</listitem>
+<listitem>
+<simpara>Delete the machine by running the following command:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc delete machine &lt;machine&gt; -n openshift-machine-api</programlisting>
+<important>
+<simpara>By default, the machine controller tries to drain the node that is backed by the machine until it succeeds. In some situations, such as with a misconfigured pod disruption budget, the drain operation might not be able to succeed. If the drain operation fails, the machine controller cannot proceed removing the machine.</simpara>
+<simpara>You can skip draining the node by annotating <literal>machine.openshift.io/exclude-node-draining</literal> in a specific machine.</simpara>
+</important>
+<simpara>If the machine that you delete belongs to a machine set, a new machine is immediately created to satisfy the specified number of replicas.</simpara>
+</listitem>
+</orderedlist>
+</section>
+</chapter>
+<chapter xml:id="disabling-windows-container-workloads">
+<title>Disabling Windows container workloads</title>
+<simpara>You can disable the capability to run Windows container workloads by uninstalling the Windows Machine Config Operator (WMCO) and deleting the namespace that was added by default when you installed the WMCO.</simpara>
+<section xml:id="uninstalling-wmco_disabling-windows-container-workloads">
+<title>Uninstalling the Windows Machine Config Operator</title>
+<simpara>You can uninstall the Windows Machine Config Operator (WMCO) from your cluster.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>Delete the Windows <literal>Machine</literal> objects hosting your Windows workloads.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>From the <emphasis role="strong">Operators &#8594; OperatorHub</emphasis> page, use the <emphasis role="strong">Filter by keyword</emphasis> box to search for <literal>Red Hat Windows Machine Config Operator</literal>.</simpara>
+</listitem>
+<listitem>
+<simpara>Click the <emphasis role="strong">Red Hat Windows Machine Config Operator</emphasis> tile. The Operator tile indicates it is installed.</simpara>
+</listitem>
+<listitem>
+<simpara>In the <emphasis role="strong">Windows Machine Config Operator</emphasis> descriptor page, click <emphasis role="strong">Uninstall</emphasis>.</simpara>
+</listitem>
+</orderedlist>
+</section>
+<section xml:id="deleting-wmco-namespace_disabling-windows-container-workloads">
+<title>Deleting the Windows Machine Config Operator namespace</title>
+<simpara>You can delete the namespace that was generated for the Windows Machine Config Operator (WMCO) by default.</simpara>
+<itemizedlist>
+<title>Prerequisites</title>
+<listitem>
+<simpara>The WMCO is removed from your cluster.</simpara>
+</listitem>
+</itemizedlist>
+<orderedlist numeration="arabic">
+<title>Procedure</title>
+<listitem>
+<simpara>Remove all Windows workloads that were created in the <literal>openshift-windows-machine-config-operator</literal> namespace:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc delete --all pods --namespace=openshift-windows-machine-config-operator</programlisting>
+</listitem>
+<listitem>
+<simpara>Verify that all pods in the <literal>openshift-windows-machine-config-operator</literal> namespace are deleted or are reporting a terminating state:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc get pods --namespace openshift-windows-machine-config-operator</programlisting>
+</listitem>
+<listitem>
+<simpara>Delete the <literal>openshift-windows-machine-config-operator</literal> namespace:</simpara>
+<programlisting language="terminal" linenumbering="unnumbered">$ oc delete namespace openshift-windows-machine-config-operator</programlisting>
+</listitem>
+</orderedlist>
+<bridgehead xml:id="_additional-resources-7" role="_additional-resources" renderas="sect2">Additional resources</bridgehead>
+<itemizedlist>
+<listitem>
+<simpara><link xlink:href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/operators/#olm-deleting-operators-from-a-cluster">Deleting Operators from a cluster</link></simpara>
+</listitem>
+<listitem>
+<simpara><link linkend="removing-windows-nodes">Removing Windows nodes</link></simpara>
+</listitem>
+</itemizedlist>
+</section>
+</chapter>
+</book>

@@ -1,0 +1,112 @@
+:_mod-docs-content-type: ASSEMBLY
+[id="troubleshooting"]
+= Troubleshooting
+include::../includes/common-attributes.adoc[]
+include::../includes/attributes-openshift-dedicated.adoc[]
+:context: oadp-troubleshooting
+:namespace: openshift-adp
+:local-product: OADP
+:must-gather: registry.redhat.io/oadp/oadp-mustgather-rhel8:v1.1
+
+
+You can debug Velero custom resources (CRs) by using the xref:oadp-debugging-oc-cli_oadp-troubleshooting[OpenShift CLI tool] or the xref:migration-debugging-velero-resources_oadp-troubleshooting[Velero CLI tool]. The Velero CLI tool provides more detailed logs and information.
+
+You can check xref:oadp-installation-issues_oadp-troubleshooting[installation issues], xref:oadp-backup-restore-cr-issues_oadp-troubleshooting[backup and restore CR issues], and xref:oadp-restic-issues_oadp-troubleshooting[Restic issues].
+
+You can collect logs and CR information by using the xref:migration-using-must-gather_oadp-troubleshooting[`must-gather` tool].
+
+You can obtain the Velero CLI tool by:
+
+* Downloading the Velero CLI tool
+* Accessing the Velero binary in the Velero deployment in the cluster
+
+include::../includes/velero-obtaining-by-downloading.adoc[leveloffset=+1]
+include::../includes/velero-oadp-version-relationship.adoc[leveloffset=+2]
+include::../includes/velero-obtaining-by-accessing-binary.adoc[leveloffset=+1]
+
+include::../includes/oadp-debugging-oc-cli.adoc[leveloffset=+1]
+include::../includes/migration-debugging-velero-resources.adoc[leveloffset=+1]
+
+
+
+[id="oadp-pod-crash-resource-request"]
+== Pods crash or restart due to lack of memory or CPU
+
+If a Velero or Restic pod crashes due to a lack of memory or CPU, you can set specific resource requests for either of those resources.
+[role="_additional-resources"]
+.Additional resources
+* xref:oadp-velero-cpu-memory-requirements_about-installing-oadp[CPU and memory requirements]
+
+include::../includes/oadp-pod-crash-set-resource-request-velero.adoc[leveloffset=+2]
+include::../includes/oadp-pod-crash-set-resource-request-restic.adoc[leveloffset=+2]
+
+[IMPORTANT]
+====
+The values for the resource request fields must follow the same format as Kubernetes resource requirements.
+Also, if you do not specify `configuration.velero.podConfig.resourceAllocations` or `configuration.restic.podConfig.resourceAllocations`, the default `resources` specification for a Velero pod or a Restic pod is as follows:
+
+[source,yaml]
+----
+requests:
+  cpu: 500m
+  memory: 128Mi
+----
+====
+
+[id="issues-with-velero-and-admission-workbooks"]
+== Issues with Velero and admission webhooks
+
+Velero has limited abilities to resolve admission webhook issues during a restore. If you have workloads with admission webhooks, you might need to use an additional Velero plugin or make changes to how you restore the workload.
+
+Typically, workloads with admission webhooks require you to create a resource of a specific kind first. This is especially true if your workload has child resources because admission webhooks typically block child resources.
+
+For example, creating or restoring a top-level object such as `service.serving.knative.dev` typically creates child resources automatically. If you do this first, you will not need to use Velero to create and restore these resources. This avoids the problem of child resources being blocked by an admission webhook that Velero might use.
+
+[id="velero-restore-workarounds-for-workloads-with-admission-webhooks"]
+=== Restoring workarounds for Velero backups that use admission webhooks
+
+This section describes the additional steps required to restore resources for several types of Velero backups that use admission webhooks.
+
+include::../includes/migration-debugging-velero-admission-webhooks-knative.adoc[leveloffset=+3]
+include::../includes/migration-debugging-velero-admission-webhooks-ibm-appconnect.adoc[leveloffset=+3]
+include::../includes/oadp-plugins-receiving-eof-message.adoc[leveloffset=+2]
+
+[role="_additional-resources"]
+.Additional resources
+
+* link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/architecture/#admission-plugins[Admission plugins]
+* link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/architecture/#admission-webhooks-about_admission-plug-ins[Webhook admission plugins]
+* link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/architecture/#admission-webhook-types_admission-plug-ins[Types of webhook admission plugins]
+
+include::../includes/oadp-installation-issues.adoc[leveloffset=+1]
+include::../includes/oadp-operator-issues.adoc[leveloffset=+1]
+include::../includes/oadp-timeouts.adoc[leveloffset=+1]
+include::../includes/oadp-restic-timeouts.adoc[leveloffset=+2]
+include::../includes/oadp-velero-timeouts.adoc[leveloffset=+2]
+include::../includes/oadp-datamover-timeouts.adoc[leveloffset=+2]
+include::../includes/oadp-csi-snapshot-timeouts.adoc[leveloffset=+2]
+include::../includes/oadp-velero-default-timeouts.adoc[leveloffset=+2]
+include::../includes/oadp-item-restore-timeouts.adoc[leveloffset=+2]
+include::../includes/oadp-item-backup-timeouts.adoc[leveloffset=+2]
+include::../includes/oadp-backup-restore-cr-issues.adoc[leveloffset=+1]
+include::../includes/oadp-restic-issues.adoc[leveloffset=+1]
+include::../includes/oadp-restic-restore-failing-psa-policy.adoc[leveloffset=+2]
+
+include::../includes/migration-using-must-gather.adoc[leveloffset=+1]
+include::../includes/migration-combining-must-gather.adoc[leveloffset=+2]
+include::../includes/oadp-monitoring.adoc[leveloffset=+1]
+[role="_additional-resources"]
+.Additional resources
+* link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/monitoring/#about-openshift-monitoring[Monitoring stack]
+
+include::../includes/oadp-monitoring-setup.adoc[leveloffset=+2]
+include::../includes/oadp-creating-service-monitor.adoc[leveloffset=+2]
+include::../includes/oadp-creating-alerting-rule.adoc[leveloffset=+2]
+[role="_additional-resources"]
+.Additional resources
+* link:https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html-single/monitoring/#managing-alerts[Managing alerts]
+
+include::../includes/oadp-list-of-metrics.adoc[leveloffset=+2]
+include::../includes/oadp-viewing-metrics-ui.adoc[leveloffset=+2]
+
+:!oadp-troubleshooting:
