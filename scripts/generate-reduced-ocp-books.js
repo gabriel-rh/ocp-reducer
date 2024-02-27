@@ -226,7 +226,7 @@ function processTopic(topic, dir) {
                         //let full_relative_path = path.relative(process.env.INPUT_DIR, fixed_link_file_abs);
 
                         let full_relative_path = fixed_link_file.replace(/^(\.\.\/)+/, "");
-                        console.log('full_relative_path: ' + full_relative_path)
+                        //console.log('full_relative_path: ' + full_relative_path)
 
                         if (full_relative_path.startsWith("..")) {
                             console.log(`ERROR : link pointing outside source directory? ${link_file}`);
@@ -253,6 +253,10 @@ function processTopic(topic, dir) {
 
                             //console.log('fixed_link_file: ' + fixed_link_file)
                             if (link_anchor === undefined) {
+
+                            console.log('link_text: ' + link_text + ' link_file: ' + link_file)
+                            console.log('link_anchor: ' +  link_anchor + ' link_title: ' + link_title)
+                            console.log('full_relative_path: ' + full_relative_path)
                                 // ${file_to_id_map[fixed_link_file_abs]}
                                 fixed_link = `link:${fixed_link_file}#${link_title}`;
                             } else {
